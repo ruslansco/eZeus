@@ -31,7 +31,14 @@ bool readPakGlossary(const std::string& filename,
 //    if(test && name != "Test6.pak") return false;
     const auto ext = name.substr(name.size() - 3);
     if(ext != "pak") return false;
-    const auto txtFile = filename.substr(0, filename.size() - 3) + "txt";
+    std::string txtFile = filename.substr(0, filename.size() - 3) + "txt";
+    if(eLanguage::language() == "ru") {
+        const auto ruTxtFile = filename.substr(0, filename.size() - 3) + "_ru.txt";
+        std::ifstream ruFile(ruTxtFile);
+        if(ruFile.good()) {
+            txtFile = ruTxtFile;
+        }
+    }
     glossary.fPakPath = filename;
     std::ifstream file(txtFile);
     ZeusFile in(filename);
@@ -136,6 +143,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
     const auto title = new eLabel(window());
     title->setHugeFontSize();
+    title->setYellowFontColor();
     title->setSmallPadding();
     title->setText(editor ? eLanguage::zeusText(287, 3) :
                             eLanguage::zeusText(293, 9));
@@ -159,40 +167,36 @@ void eChooseGameEditMenu::initialize(const bool editor) {
         newB->setText(eLanguage::zeusText(287, 0));
         newB->fitContent();
         buttonsW->addWidget(newB);
-        newB->setPressAction([cw, p, this]() {
+        newB->setPressAction([this]() {
             const auto box = new eFramedWidget(window());
             box->setType(eFrameType::message);
-            box->setWidth(cw);
+            const auto res = resolution();
+            const int p = res.largePadding();
 
             const auto iw = new eWidget(window());
             iw->setNoPadding();
-            iw->setWidth(cw - 4*p);
+            iw->setWidth(300*res.multiplier());
 
             const auto title = new eLabel(window());
-            title->setHugeFontSize();
-            title->setSmallPadding();
+            title->setSmallFontSize();
+            title->setYellowFontColor();
             title->setText(eLanguage::zeusText(287, 0));
             title->fitContent();
             iw->addWidget(title);
             title->align(eAlignment::hcenter);
 
             const auto edit = new eLineEdit(window());
-            edit->setRenderBg(true);
-            edit->setText(eLanguage::zeusText(287, 0));
-            edit->fitContent();
-            edit->setText("");
-            edit->setWidth(cw - 6*p);
+            edit->setWidth(iw->width());
+            edit->setHeight(30*res.multiplier());
             iw->addWidget(edit);
-            edit->align(eAlignment::hcenter);
 
             const auto buttonsW = new eWidget(window());
             buttonsW->setNoPadding();
-            buttonsW->setWidth(iw->width());
 
             const auto cButton = new eCancelButton(window());
             buttonsW->addWidget(cButton);
-            cButton->setPressAction([this]() {
-                window()->showChooseGameEditMenu();
+            cButton->setPressAction([box]() {
+                box->deleteLater();
             });
 
             const auto proceedW = new eWidget(window());
@@ -207,14 +211,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
             const auto proceedB = new eProceedButton(window());
             proceedB->setPressAction([this, edit]() {
-                auto name = edit->text();
-                std::string trimmedName;
-                while(!name.empty() && name[0] == ' ') {
-                    name.erase(name.begin());
-                }
-                while(!name.empty() && name[name.size() - 1] == ' ') {
-                    name.pop_back();
-                }
+                const auto name = edit->text();
                 if(name.empty()) return;
                 eCampaign c;
                 c.initialize(name);
@@ -394,12 +391,16 @@ void eChooseGameEditMenu::initialize(const bool editor) {
 
         const auto selected = std::make_shared<eButtonBase*>(nullptr);
         bool first = true;
+        const int listW = scrollCont->listWidth();
         for(const auto& g : glossaries) {
             const auto w = new eButtonBase(window());
-            w->setTinyFontSize();
+            w->setSmallFontSize();
             w->setNoPadding();
             w->setText(g.fTitle);
             w->fitContent();
+            w->setWidth(listW);
+            w->setHeight(w->height() + 4);
+            w->setTextAlignment(eAlignment::left | eAlignment::vcenter);
             w->setMouseEnterAction([w]() {
                 w->setYellowFontColor();
             });
@@ -423,7 +424,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
             scrollArea->addWidget(w);
         }
 
-        scrollArea->stackVertically();
+        scrollArea->stackVertically(2);
         scrollArea->setNoPadding();
         scrollArea->fitContent();
         scrollCont->setScrollArea(scrollArea);

@@ -1,6 +1,9 @@
 #include "emessages.h"
 
 #include "egamedir.h"
+#include "elanguage.h"
+
+#include <filesystem>
 
 #include "eloadtexthelper.h"
 #include "estringhelpers.h"
@@ -393,7 +396,18 @@ bool eMessages::loadImpl() {
     if(mLoaded) return false;
     mLoaded = true;
 
-    const std::string path = eGameDir::path("Model/Zeus eventmsg.txt");
+    std::string path;
+    if(eLanguage::language() == "ru") {
+        path = eGameDir::path("Model/Zeus eventmsg_ru.txt");
+        if(!std::filesystem::exists(path)) {
+            path = eGameDir::path("Model/Zeus eventmsg.txt");
+        }
+    } else {
+        path = eGameDir::path("Model/Zeus eventmsg_en.txt");
+        if(!std::filesystem::exists(path)) {
+            path = eGameDir::path("Model/Zeus eventmsg.txt");
+        }
+    }
     eLoadTextHelper::load(path, fMessages);
 
     fPop100.fFull.fTitle = loadMessage("PHRASE_population_100_title");
@@ -1103,6 +1117,12 @@ bool eMessages::load() {
 
 bool eMessages::loaded() {
     return instance.mLoaded;
+}
+
+void eMessages::reload() {
+    instance.mLoaded = false;
+    instance.fMessages.clear();
+    instance.loadImpl();
 }
 
 std::string eMessages::message(const std::string& key) {

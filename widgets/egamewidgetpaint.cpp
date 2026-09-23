@@ -1,4 +1,4 @@
-﻿#include "egamewidget.h"
+#include "egamewidget.h"
 
 #include "eterraineditmenu.h"
 

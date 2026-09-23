@@ -12,78 +12,56 @@ void eFramedWidget::paintEvent(ePainter& p) {
     int iRes;
     int mult;
     iResAndMult(iRes, mult);
-    const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
-    if(!intrfc.fLoaded) return;
 
-    const int iMax = width()/dim + 1;
-    const int jMax = height()/dim + 1;
+    const SDL_Rect r = rect();
+    if(mType == eFrameType::outer || mType == eFrameType::message) {
+        // Ambient soft drop shadow
+        p.drawDropShadow(r, 10 * mult, 175);
 
-    const int lastX = width() - dim;
-    const int lastY = height() - dim;
+        // Deep Aegean Midnight Stone background
+        const SDL_Color bgDark{16, 26, 42, 238};
+        p.fillRect(r, bgDark);
 
-    const auto texCollId = [&](const int i, const int j) {
-        int texId;
-        if(i == 0) {
-            if(j == 0) {
-                texId = 0;
-            } else if(j == jMax - 1) {
-                texId = 6;
-            } else {
-                texId = 3;
-            }
-        } else if(i == iMax - 1) {
-            if(j == 0) {
-                texId = 2;
-            } else if(j == jMax - 1) {
-                texId = 8;
-            } else {
-                texId = 5;
-            }
-        } else if(j == 0) {
-            texId = 1;
-        } else if(j == jMax - 1) {
-            texId = 7;
-        } else {
-            texId = 4;
-        }
-        return texId;
-    };
-
-    if(mType == eFrameType::outer){
-        const auto& texs = intrfc.fComboBox[1];
-
-        for(int i = 0; i < iMax; i++) {
-            const int x = i == iMax - 1 ? lastX : dim*i;
-            for(int j = 0; j < jMax; j++) {
-                const int texId = texCollId(i, j);
-                const auto& tex = texs.getTexture(texId);
-                const int y = j == jMax - 1 ? lastY : dim*j;
-                p.drawTexture(x, y, tex);
-            }
-        }
-    } else {
-        const std::vector<eTextureCollection>* colls = nullptr;
-        if(mType == eFrameType::message) {
-            colls = &intrfc.fMessageBox;
-        } else {
-            colls = &intrfc.fInnerBox;
+        // Subtle gradient highlight in upper third
+        const int gh = std::min(r.h / 3, 40 * mult);
+        if(gh > 0) {
+            const SDL_Rect gradRect{r.x + 2, r.y + 2, r.w - 4, gh};
+            p.fillRect(gradRect, SDL_Color{36, 56, 88, 55});
         }
 
-        std::default_random_engine rng{1};
-         std::uniform_int_distribution<> dist{0, 100000};
-        for(int i = 0; i < iMax; i++) {
-            const int x = i == iMax - 1 ? lastX : dim*i;
-            for(int j = 0; j < jMax; j++) {
-                const int collId = texCollId(i, j);
-                const auto& coll = (*colls)[collId];
-                const int rand = dist(rng);
-                const int texId = rand % coll.size();
-                const auto& tex = coll.getTexture(texId);
-                const int y = j == jMax - 1 ? lastY : dim*j;
-                p.drawTexture(x, y, tex);
-            }
+        // Classical gold and bronze beveled frame
+        p.drawGoldFrame(r, std::max(1, mult));
+
+        // Corner decorative gold accents (L-shaped corners)
+        const int cs = 6 * mult;
+        if(r.w > 3 * cs && r.h > 3 * cs) {
+            const SDL_Color goldAccent{255, 215, 0, 240};
+            // Top-left
+            p.fillRect(SDL_Rect{r.x + 1, r.y + 1, cs, 2}, goldAccent);
+            p.fillRect(SDL_Rect{r.x + 1, r.y + 1, 2, cs}, goldAccent);
+            // Top-right
+            p.fillRect(SDL_Rect{r.x + r.w - cs - 1, r.y + 1, cs, 2}, goldAccent);
+            p.fillRect(SDL_Rect{r.x + r.w - 3, r.y + 1, 2, cs}, goldAccent);
+            // Bottom-left
+            p.fillRect(SDL_Rect{r.x + 1, r.y + r.h - 3, cs, 2}, goldAccent);
+            p.fillRect(SDL_Rect{r.x + 1, r.y + r.h - cs - 1, 2, cs}, goldAccent);
+            // Bottom-right
+            p.fillRect(SDL_Rect{r.x + r.w - cs - 1, r.y + r.h - 3, cs, 2}, goldAccent);
+            p.fillRect(SDL_Rect{r.x + r.w - 3, r.y + r.h - cs - 1, 2, cs}, goldAccent);
+        }
+    } else { // eFrameType::inner
+        // Inset dark background
+        const SDL_Color bgInner{10, 16, 26, 215};
+        p.fillRect(r, bgInner);
+
+        // Inset bronze border
+        const SDL_Color borderBronze{140, 105, 35, 190};
+        p.drawRect(r, borderBronze, 1);
+
+        // Inner shadow on top and left to give recessed depth
+        if(r.w > 2 && r.h > 2) {
+            p.fillRect(SDL_Rect{r.x + 1, r.y + 1, r.w - 2, 1}, SDL_Color{0, 0, 0, 90});
+            p.fillRect(SDL_Rect{r.x + 1, r.y + 1, 1, r.h - 2}, SDL_Color{0, 0, 0, 90});
         }
     }
-    //p.drawRect(rect(), {0, 0, 0, 255}, 2);
 }

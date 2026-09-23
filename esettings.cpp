@@ -41,6 +41,9 @@ void eSettings::write() const {
     file << "width" << " " << "\"" << wStr << "\"" << "\n";
     const auto hStr = std::to_string(fRes.height());
     file << "height" << " " << "\"" << hStr << "\"" << "\n";
+    file << "language" << " \"" << fLanguage << "\"\n";
+    file << "audio_language" << " \"" << fAudioLanguage << "\"\n";
+    file << "leader" << " \"" << fLeader << "\"\n";
     file.close();
 }
 
@@ -60,6 +63,15 @@ void eSettings::read() {
         const int width = std::stoi(widthStr);
         const int height = std::stoi(heightStr);
         fRes = eResolution(width, height);
+    }
+    if(settings.find("language") != settings.end() && !settings["language"].empty()) {
+        fLanguage = settings["language"];
+    }
+    if(settings.find("audio_language") != settings.end() && !settings["audio_language"].empty()) {
+        fAudioLanguage = settings["audio_language"];
+    }
+    if(settings.find("leader") != settings.end() && !settings["leader"].empty()) {
+        fLeader = settings["leader"];
     }
 }
 

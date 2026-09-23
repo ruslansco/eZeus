@@ -1,5 +1,7 @@
 #include "etopbarwidget.h"
 
+#include <cmath>
+
 #include "engine/egameboard.h"
 #include "engine/boardData/epopulationdata.h"
 #include "textures/egametextures.h"
@@ -8,6 +10,175 @@
 #include "egamewidget.h"
 
 #include "emainwindow.h"
+
+// ============================================================
+//  eSpeedControlWidget — graphical speed indicator
+// ============================================================
+
+void eSpeedControlWidget::initialize(int mult) {
+    mMult = mult;
+    setPadding(0);
+
+    // Layout: [Pause] sep [>] sep [>>] sep [>>>] sep [>>>>]
+    // Each triangle is ~sz wide, pause icon is ~sz wide
+    const int sz = 5 * mult;      // icon height/width unit
+    const int gap = 2 * mult;     // gap between buttons
+    const int sepW = 1 * mult;    // separator width
+    const int triW = sz;          // single triangle width
+    const int pauseW = sz;        // pause icon width
+
+    int x = gap;
+
+    // Button 0: Pause  ||
+    mBtnRegions[0] = {x, pauseW};
+    x += pauseW + gap + sepW + gap;
+
+    // Button 1: Slow  >
+    mBtnRegions[1] = {x, triW};
+    x += triW + gap;
+
+    // Button 2: Normal  >>
+    mBtnRegions[2] = {x, static_cast<int>(triW * 1.6)};
+    x += static_cast<int>(triW * 1.6) + gap;
+
+    // Button 3: Fast  >>>
+    mBtnRegions[3] = {x, static_cast<int>(triW * 2.2)};
+    x += static_cast<int>(triW * 2.2) + gap;
+
+    // Button 4: Very Fast  >>>>
+    mBtnRegions[4] = {x, static_cast<int>(triW * 2.8)};
+    x += static_cast<int>(triW * 2.8) + gap;
+
+    setWidth(x);
+    setHeight(sz + 4 * mult);
+}
+
+void eSpeedControlWidget::setState(eSpeedState state) {
+    mState = state;
+}
+
+int eSpeedControlWidget::hitTest(int mx, int my) const {
+    for(int i = 0; i < 5; i++) {
+        const auto& r = mBtnRegions[i];
+        if(mx >= r.x && mx < r.x + r.w) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void eSpeedControlWidget::drawPauseIcon(ePainter& p, int x, int cy,
+                                         int sz, const SDL_Color& color) const {
+    const int barW = std::max(2, sz / 4);
+    const int barH = sz;
+    const int gap = std::max(2, sz / 4);
+    const int halfH = barH / 2;
+
+    // Two vertical bars
+    SDL_Rect bar1{x, cy - halfH, barW, barH};
+    p.fillRect(bar1, color);
+
+    SDL_Rect bar2{x + barW + gap, cy - halfH, barW, barH};
+    p.fillRect(bar2, color);
+}
+
+void eSpeedControlWidget::drawTriangles(ePainter& p, int x, int cy,
+                                         int sz, int count,
+                                         const SDL_Color& color) const {
+    const int triW = static_cast<int>(sz * 0.7);
+    const int overlap = std::max(1, triW / 4);
+    const int halfH = sz / 2;
+
+    for(int i = 0; i < count; i++) {
+        const int tx = x + i * (triW - overlap);
+        // Filled triangle pointing right using horizontal scanlines
+        // Top vertex: (tx, cy - halfH), Bottom: (tx, cy + halfH), Tip: (tx+triW, cy)
+        for(int row = -halfH; row <= halfH; row++) {
+            // Linearly interpolate width based on distance from center
+            const double frac = 1.0 - std::abs(static_cast<double>(row)) / halfH;
+            const int rowW = std::max(1, static_cast<int>(triW * frac));
+            SDL_Rect line{tx, cy + row, rowW, 1};
+            p.fillRect(line, color);
+        }
+    }
+}
+
+void eSpeedControlWidget::paintEvent(ePainter& p) {
+    const int sz = 5 * mMult;
+    const int cy = height() / 2;   // vertical center
+
+    // Colors
+    const SDL_Color gold       = {212, 175, 55, 255};    // Active gold
+    const SDL_Color brightGold = {255, 223, 100, 255};   // Hover gold
+    const SDL_Color dimGray    = {100, 105, 115, 160};   // Inactive
+    const SDL_Color sepColor   = {80, 90, 100, 120};     // Separator
+
+    // Determine active button index
+    int activeBtn = -1;
+    switch(mState) {
+    case eSpeedState::paused: activeBtn = 0; break;
+    case eSpeedState::slow:   activeBtn = 1; break;
+    case eSpeedState::normal: activeBtn = 2; break;
+    case eSpeedState::fast:   activeBtn = 3; break;
+    case eSpeedState::vfast:  activeBtn = 4; break;
+    }
+
+    auto colorForBtn = [&](int idx) -> SDL_Color {
+        if(idx == activeBtn) return gold;
+        if(mHovered && idx == mHoveredBtn) return brightGold;
+        return dimGray;
+    };
+
+    // Draw separator line between pause and speed buttons
+    const int sepX = (mBtnRegions[0].x + mBtnRegions[0].w +
+                      mBtnRegions[1].x) / 2;
+    const int sepH = sz;
+    SDL_Rect sepRect{sepX, cy - sepH/2, std::max(1, mMult/2 + 1), sepH};
+    p.fillRect(sepRect, sepColor);
+
+    // Draw pause icon
+    drawPauseIcon(p, mBtnRegions[0].x, cy, sz, colorForBtn(0));
+
+    // Draw speed triangles: 1, 2, 3, 4 triangles
+    drawTriangles(p, mBtnRegions[1].x, cy, sz, 1, colorForBtn(1));
+    drawTriangles(p, mBtnRegions[2].x, cy, sz, 2, colorForBtn(2));
+    drawTriangles(p, mBtnRegions[3].x, cy, sz, 3, colorForBtn(3));
+    drawTriangles(p, mBtnRegions[4].x, cy, sz, 4, colorForBtn(4));
+}
+
+bool eSpeedControlWidget::mousePressEvent(const eMouseEvent& e) {
+    const int btn = hitTest(e.x(), e.y());
+    switch(btn) {
+    case 0: if(mPauseAction)  mPauseAction();  return true;
+    case 1: if(mSlowAction)   mSlowAction();   return true;
+    case 2: if(mNormalAction) mNormalAction();  return true;
+    case 3: if(mFastAction)   mFastAction();   return true;
+    case 4: if(mVFastAction)  mVFastAction();  return true;
+    }
+    return false;
+}
+
+bool eSpeedControlWidget::mouseEnterEvent(const eMouseEvent& e) {
+    mHovered = true;
+    mHoveredBtn = hitTest(e.x(), e.y());
+    return false;
+}
+
+bool eSpeedControlWidget::mouseLeaveEvent(const eMouseEvent& e) {
+    (void)e;
+    mHovered = false;
+    mHoveredBtn = -1;
+    return false;
+}
+
+bool eSpeedControlWidget::mouseMoveEvent(const eMouseEvent& e) {
+    mHoveredBtn = hitTest(e.x(), e.y());
+    return false;
+}
+
+// ============================================================
+//  eTopBarWidget
+// ============================================================
 
 void eTopBarWidget::initialize() {
     const auto& intrfc = eGameTextures::interface();
@@ -59,7 +230,13 @@ void eTopBarWidget::initialize() {
     mDateLabel->setEnabled(false);
 
     const auto s4 = new eWidget(window());
-    s4->setWidth(mult*15);
+    s4->setWidth(mult*8);
+
+    // Create graphical speed controls
+    createSpeedControls();
+
+    const auto s5 = new eWidget(window());
+    s5->setWidth(mult*15);
 
     addWidget(s0);
     addWidget(mCityLabel);
@@ -70,6 +247,8 @@ void eTopBarWidget::initialize() {
     addWidget(s3);
     addWidget(mDateLabel);
     addWidget(s4);
+    addWidget(mSpeedControl);
+    addWidget(s5);
 
     setHeight(12*mult);
 
@@ -77,8 +256,71 @@ void eTopBarWidget::initialize() {
     mDrachmasWidget->align(eAlignment::vcenter);
     mPopulationWidget->align(eAlignment::vcenter);
     mDateLabel->align(eAlignment::vcenter);
+    mSpeedControl->align(eAlignment::vcenter);
 
     layoutHorizontally();
+}
+
+void eTopBarWidget::createSpeedControls() {
+    const auto uiScale = resolution().uiScale();
+    const int icoll = static_cast<int>(uiScale);
+    const int mult = icoll + 1;
+
+    mSpeedControl = new eSpeedControlWidget(window());
+    mSpeedControl->initialize(mult);
+
+    // Wire up press actions
+    mSpeedControl->setPauseAction([this]() {
+        if(!mGW) return;
+        mGW->switchPause();
+    });
+
+    mSpeedControl->setSlowAction([this]() {
+        if(!mGW) return;
+        if(mGW->isPaused()) mGW->switchPause();
+        mGW->setSpeedId(0);
+    });
+
+    mSpeedControl->setNormalAction([this]() {
+        if(!mGW) return;
+        if(mGW->isPaused()) mGW->switchPause();
+        mGW->setSpeedId(1);
+    });
+
+    mSpeedControl->setFastAction([this]() {
+        if(!mGW) return;
+        if(mGW->isPaused()) mGW->switchPause();
+        mGW->setSpeedId(3);
+    });
+
+    mSpeedControl->setVFastAction([this]() {
+        if(!mGW) return;
+        if(mGW->isPaused()) mGW->switchPause();
+        mGW->setSpeedId(5);
+    });
+
+    updateSpeedControls();
+}
+
+void eTopBarWidget::updateSpeedControls() {
+    if(!mGW || !mSpeedControl) return;
+
+    const bool paused = mGW->isPaused();
+    const int sid = mGW->speedId();
+
+    using S = eSpeedControlWidget::eSpeedState;
+
+    if(paused) {
+        mSpeedControl->setState(S::paused);
+    } else if(sid == 0) {
+        mSpeedControl->setState(S::slow);
+    } else if(sid == 1) {
+        mSpeedControl->setState(S::normal);
+    } else if(sid <= 3) {
+        mSpeedControl->setState(S::fast);
+    } else {
+        mSpeedControl->setState(S::vfast);
+    }
 }
 
 void eTopBarWidget::setBoard(eGameBoard* const board) {
@@ -90,11 +332,9 @@ void eTopBarWidget::setGameWidget(eGameWidget* const gw) {
 }
 
 void eTopBarWidget::paintEvent(ePainter& p) {
-    // const bool update = (++mTime % 60) == 0;
     if(mBoard) {
         const auto cid = mGW->viewedCity();
         const auto pid = mBoard->personPlayer();
-//        const auto pid = mBoard->cityIdToPlayerId(cid);
         const auto& wb = mBoard->world();
         const auto c = wb.cityWithId(cid);
 

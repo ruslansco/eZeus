@@ -27,6 +27,7 @@ struct eGodSounds {
                const std::string& longName);
 
     void load();
+    void clear();
 
     void play(const eGodSound s);
 

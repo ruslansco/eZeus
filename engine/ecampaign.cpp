@@ -8,6 +8,7 @@
 #include "egamedir.h"
 #include "elanguage.h"
 #include "enumbers.h"
+#include "estringhelpers.h"
 
 #include <algorithm>
 
@@ -70,10 +71,14 @@ int eCampaign::audioFilesId() const {
 
 std::string eCampaign::audioFilesBasePath() const {
     {
-        auto name = mPakFilename;
+        std::string name = mPakFilename;
         if(name.size() > 4) {
-            const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
             name = name.substr(0, name.length() - 4);
+        } else {
+            name = mName;
+        }
+        if(!name.empty()) {
+            const auto baseDir = eGameDir::path("Audio/Voice/Campaign/");
             const auto basePath = baseDir + name + "_";
             std::ifstream file(basePath + "A_v.mp3");
             if(file.good()) return basePath;
@@ -83,6 +88,11 @@ std::string eCampaign::audioFilesBasePath() const {
         const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
                                       eGameDir::adventuresDir();
         const auto aDir = baseDir + mName + "/";
+        if(eGameDir::audioLanguage() == "ru") {
+            const auto ruBasePath = aDir + mName + "_ru_";
+            std::ifstream file(ruBasePath + "A_v.mp3");
+            if(file.good()) return ruBasePath;
+        }
         const auto basePath = aDir + mName + "_";
         std::ifstream file(basePath + "A_v.mp3");
         if(file.good()) return basePath;
@@ -172,7 +182,7 @@ bool eCampaign::sLoadStrings(const std::string& path, eMap& map) {
         value = value + line.substr(valueStart, valueLen);
 
         if(foundEnd) {
-            map[key] = value;
+            map[key] = eStringHelpers::toUtf8(value);
             key = "";
             value = "";
         }
@@ -184,7 +194,14 @@ bool eCampaign::loadStrings() {
     const auto baseDir = mIsPak ? eGameDir::pakAdventuresDir() :
                                   eGameDir::adventuresDir();
     const auto aDir = baseDir + mName + "/";
-    const auto txtFile = aDir + mName + ".txt";
+    std::string txtFile = aDir + mName + ".txt";
+    if(eLanguage::language() == "ru") {
+        const auto ruTxtFile = aDir + mName + "_ru.txt";
+        std::ifstream ruFile(ruTxtFile);
+        if(ruFile.good()) {
+            txtFile = ruTxtFile;
+        }
+    }
     std::map<std::string, std::string> map;
     const bool r = sLoadStrings(txtFile, map);
     if(!r) return false;
@@ -282,7 +299,14 @@ bool eCampaign::sReadGlossary(const std::string& name,
     glossary.fIsPak = false;
     const auto baseDir = eGameDir::adventuresDir();
     const auto aDir = baseDir + name + "/";
-    const auto txtFile = aDir + name + ".txt";
+    std::string txtFile = aDir + name + ".txt";
+    if(eLanguage::language() == "ru") {
+        const auto ruTxtFile = aDir + name + "_ru.txt";
+        std::ifstream ruFile(ruTxtFile);
+        if(ruFile.good()) {
+            txtFile = ruTxtFile;
+        }
+    }
     std::map<std::string, std::string> map;
     const bool r = sLoadStrings(txtFile, map);
     if(!r) return false;

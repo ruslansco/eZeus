@@ -11,6 +11,7 @@
 #include "widgets/eselectcolonywidget.h"
 
 #include "audio/emusic.h"
+#include "audio/esounds.h"
 
 #include "engine/ethreadpool.h"
 
@@ -24,6 +25,8 @@
 
 #include "widgets/efilewidget.h"
 #include "elanguage.h"
+#include "emessages.h"
+#include "widgets/efonts.h"
 
 #include "evectorhelpers.h"
 
@@ -44,16 +47,21 @@ bool eMainWindow::initialize(const eSettings& settings) {
     const auto& res = settings.fRes;
     const int w = res.width();
     const int h = res.height();
+    Uint32 windowFlags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE;
+    if(settings.fFullscreen) {
+        windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    }
     const auto window = SDL_CreateWindow("eZeus",
                                          SDL_WINDOWPOS_UNDEFINED,
                                          SDL_WINDOWPOS_UNDEFINED,
-                                         w, h, SDL_WINDOW_SHOWN);
+                                         w, h, windowFlags);
 
     if(!window) {
         printf("Window could not be created! SDL Error: %s\n",
                SDL_GetError());
         return false;
     }
+    SDL_SetWindowMinimumSize(window, 800, 600);
     const Uint32 flags = SDL_RENDERER_ACCELERATED/* |
                          SDL_RENDERER_PRESENTVSYNC*/;
     const auto renderer = SDL_CreateRenderer(window, -1, flags);
@@ -63,6 +71,7 @@ bool eMainWindow::initialize(const eSettings& settings) {
         SDL_DestroyWindow(window);
         return false;
     }
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 
     if(mSdlWindow) SDL_DestroyWindow(mSdlWindow);
     if(mSdlRenderer) SDL_DestroyRenderer(mSdlRenderer);
@@ -71,6 +80,8 @@ bool eMainWindow::initialize(const eSettings& settings) {
     setResolution(res);
     setFullscreen(settings.fFullscreen);
     mSettings = settings;
+    eGameDir::setAudioLanguage(mSettings.fAudioLanguage);
+    eFonts::setLanguage(mSettings.fLanguage);
     SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     const std::string icoPath = eGameDir::path("zeus.ico");
@@ -100,19 +111,24 @@ void eMainWindow::addSlot(const eSlot& slot) {
 }
 
 void eMainWindow::setResolution(const eResolution& res) {
-    if(mSettings.fRes == res && !mFirstFullscrenSetting) return;
+    if(mSettings.fRes == res && !mFirstResolutionSetting) return;
     mFirstResolutionSetting = false;
     mSettings.fRes = res;
     const int w = res.width();
     const int h = res.height();
     SDL_SetWindowSize(mSdlWindow, w, h);
+    SDL_SetWindowPosition(mSdlWindow, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    if(mWidget) {
+        mWidget->resize(w, h);
+    }
 }
 
 void eMainWindow::setFullscreen(const bool f) {
     if(mSettings.fFullscreen == f && !mFirstFullscrenSetting) return;
     mFirstFullscrenSetting = false;
     mSettings.fFullscreen = f;
-    SDL_SetWindowFullscreen(mSdlWindow, f ? SDL_WINDOW_FULLSCREEN : 0);
+    SDL_SetWindowFullscreen(mSdlWindow, f ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    mSettings.write();
 }
 
 void eMainWindow::startGameAction(eGameBoard* const board,
@@ -328,7 +344,17 @@ void eMainWindow::showMenuLoading() {
     const auto mlw = new eMenuLoadingWidget(this);
     mlw->setDoneAction([this]() {
         const auto ls = eRosterOfLeaders::sLeaders();
-        if(ls.size() == 1) setLeader(ls[0]);
+        if(!mSettings.fLeader.empty()) {
+            for(const auto& l : ls) {
+                if(l == mSettings.fLeader) {
+                    setLeader(l);
+                    break;
+                }
+            }
+        }
+        if(mLeader.empty() && !ls.empty()) {
+            setLeader(ls[0]);
+        }
         if(mLeader.empty()) {
             showRosterOfLeaders();
         } else {
@@ -358,14 +384,13 @@ void eMainWindow::showMainMenu() {
         const auto func = [this](const std::string& path) {
             return loadGame(path);
         };
-        const auto closeAct = [mm, fw]() {
-            mm->removeWidget(fw);
+        const auto closeAct = [fw]() {
             fw->deleteLater();
         };
         const auto dir = leaderSaveDir();
         fw->intialize(eLanguage::zeusText(1, 3),
                       dir, func, closeAct);
-        mm->addWidget(fw);
+        execDialog(fw, true, closeAct, mm);
         fw->align(eAlignment::center);
     };
 
@@ -399,6 +424,8 @@ void eMainWindow::showSettingsMenu() {
 
     const auto applyA = [this](const eSettings& settings) {
         const bool loadNeeded = settings.fRes != mSettings.fRes;
+        const bool langChanged = settings.fLanguage != mSettings.fLanguage;
+        const bool audioLangChanged = settings.fAudioLanguage != mSettings.fAudioLanguage;
         setResolution(settings.fRes);
         setFullscreen(settings.fFullscreen);
         mSettings = settings;
@@ -410,6 +437,16 @@ void eMainWindow::showSettingsMenu() {
             mSettings.fSmallTextures = true;
         }
         eGameTextures::setSettings(mSettings);
+        if(audioLangChanged) {
+            eGameDir::setAudioLanguage(mSettings.fAudioLanguage);
+            eSounds::reload();
+            eMusic::clearCampaignVoices();
+        }
+        if(langChanged) {
+            eFonts::setLanguage(mSettings.fLanguage);
+            eLanguage::reload(mSettings.fLanguage);
+            eMessages::reload();
+        }
         if(loadNeeded) showMenuLoading();
         else showMainMenu();
     };
@@ -591,6 +628,23 @@ int eMainWindow::exec() {
                     }
                 } else if(we == SDL_WINDOWEVENT_EXPOSED) {
                     resetRenderTargets = true;
+                } else if(we == SDL_WINDOWEVENT_SIZE_CHANGED || we == SDL_WINDOWEVENT_RESIZED) {
+                    const int newW = e.window.data1;
+                    const int newH = e.window.data2;
+                    if(newW > 0 && newH > 0 && (newW != width() || newH != height())) {
+                        mSettings.fRes = eResolution(newW, newH);
+                        mSettings.write();
+                        if(mWidget) {
+                            mWidget->resize(newW, newH);
+                        }
+                        if(mGW && mWidget != mGW) {
+                            mGW->resize(newW, newH);
+                        }
+                        if(mWW && mWidget != mWW) {
+                            mWW->resize(newW, newH);
+                        }
+                        resetRenderTargets = true;
+                    }
                 }
             } else if(e.type == SDL_RENDER_TARGETS_RESET ||
                       e.type == SDL_RENDER_DEVICE_RESET) {

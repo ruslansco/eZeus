@@ -22,6 +22,14 @@ void eHeroSounds::load() {
     fDie->addPath(wavsDir + "H_" + fLongName + "_die.wav");
 }
 
+void eHeroSounds::clear() {
+    mLoaded = false;
+    fArrival->clear();
+    fAttack->clear();
+    fHit->clear();
+    fDie->clear();
+}
+
 void eHeroSounds::play(const eHeroSound s) {
     switch(s) {
     case eHeroSound::arrived:

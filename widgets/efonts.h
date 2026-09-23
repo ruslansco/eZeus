@@ -24,10 +24,14 @@ public:
     static TTF_Font* requestFont(const eFont& font);
     static TTF_Font* defaultFont(const eResolution res);
     static TTF_Font* defaultFont(const int fs);
+    static void setLanguage(const std::string& lang);
+    static const std::string& language();
+    static void clearFonts();
 private:
     static TTF_Font* loadFont(const eFont& font);
 
     static std::map<eFont, TTF_Font*> sFonts;
+    static std::string sLanguage;
 };
 
 #endif // EFONTS_H

@@ -27,8 +27,8 @@ bool init() {
         printf("Warning: Linear texture filtering not enabled!");
     }
 
-    const int imgFlags = IMG_INIT_PNG;
-    if(!(IMG_Init(imgFlags) & imgFlags)) {
+    const int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+    if((IMG_Init(imgFlags) & imgFlags) != imgFlags) {
         printf("SDL_image could not initialize! SDL_image Error: %s\n",
                IMG_GetError());
         return false;
@@ -153,17 +153,41 @@ int main() {
     eNumbers::sLoad();
     eSettings settings;
     settings.read();
+
+    if(settings.fFullscreen) {
+        SDL_DisplayMode dm;
+        if(SDL_GetCurrentDisplayMode(0, &dm) == 0 && dm.w > 0 && dm.h > 0) {
+            settings.fRes = eResolution(dm.w, dm.h);
+            settings.write();
+        }
+    } else {
+        SDL_Rect displayBounds{0, 0, 1920, 1080};
+        if(SDL_GetDisplayUsableBounds(0, &displayBounds) == 0) {
+            if(settings.fRes.width() > displayBounds.w || settings.fRes.height() > displayBounds.h) {
+                int targetW = 1280;
+                int targetH = 720;
+                if(displayBounds.w >= 1600 && displayBounds.h >= 900) {
+                    targetW = 1600;
+                    targetH = 900;
+                }
+                settings.fRes = eResolution(targetW, targetH);
+                settings.write();
+            }
+        }
+    }
     bool found = false;
     const auto checkTextureSize = [&found](const std::string& path,
+                                           const std::string& looseDir,
                                            bool& setting) {
         if(!setting) return;
-        setting = std::filesystem::exists(path);
+        setting = std::filesystem::exists(path) ||
+                  (!looseDir.empty() && std::filesystem::exists(looseDir));
         if(setting) found = true;
     };
-    checkTextureSize(eGameDir::i15BinaryPath(), settings.fTinyTextures);
-    checkTextureSize(eGameDir::i30BinaryPath(), settings.fSmallTextures);
-    checkTextureSize(eGameDir::i45BinaryPath(), settings.fMediumTextures);
-    checkTextureSize(eGameDir::i60BinaryPath(), settings.fLargeTextures);
+    checkTextureSize(eGameDir::i15BinaryPath(), eGameDir::texturesDir() + "15", settings.fTinyTextures);
+    checkTextureSize(eGameDir::i30BinaryPath(), eGameDir::texturesDir() + "30", settings.fSmallTextures);
+    checkTextureSize(eGameDir::i45BinaryPath(), eGameDir::texturesDir() + "45", settings.fMediumTextures);
+    checkTextureSize(eGameDir::i60BinaryPath(), eGameDir::texturesDir() + "60", settings.fLargeTextures);
     if(!found) {
         printf("Could not find any textures!\n"
                "Make sure you have i15.e, i30.e, i45.e, or i60.e file in eZeus directory.\n");

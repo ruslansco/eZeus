@@ -1,12 +1,47 @@
 #include "ebinaryimageloader.h"
 
 #include <fstream>
+#include <filesystem>
 
 #include "esplitbinary.h"
 #include "egamedir.h"
 
 std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
+    // 1. Direct match: e.g. "Textures/45/interfaceNewParts_0.png", "Textures/Zeus_Title.png"
+    const auto basePath = eGameDir::texturesDir();
+    const auto loosePath = basePath + path;
+    if(std::filesystem::exists(loosePath)) {
+        const auto tex = std::make_shared<eTexture>();
+        if(tex->load(r, loosePath)) {
+            printf("Loaded custom texture: %s\n", loosePath.c_str());
+            return tex;
+        }
+    }
+
+    // 2. Full-screen art & maps (Zeus_Data_Images): can be shared across all UI scales
+    const auto dataImagesPos = path.find("Zeus_Data_Images/");
+    if(dataImagesPos != std::string::npos) {
+        const auto relDataImages = path.substr(dataImagesPos);
+        const auto sharedDataImages = basePath + relDataImages;
+        if(std::filesystem::exists(sharedDataImages)) {
+            const auto tex = std::make_shared<eTexture>();
+            if(tex->load(r, sharedDataImages)) {
+                printf("Loaded custom shared texture: %s\n", sharedDataImages.c_str());
+                return tex;
+            }
+        }
+        // Also check 60/Zeus_Data_Images/ fallback
+        const auto highResDataImages = basePath + "60/" + relDataImages;
+        if(std::filesystem::exists(highResDataImages)) {
+            const auto tex = std::make_shared<eTexture>();
+            if(tex->load(r, highResDataImages)) {
+                printf("Loaded custom high-res texture: %s\n", highResDataImages.c_str());
+                return tex;
+            }
+        }
+    }
+
     const auto it = eBinaryDataMap.find(path);
     if(it == eBinaryDataMap.end()) {
         printf("Could not find '%s' image\n", path.c_str());

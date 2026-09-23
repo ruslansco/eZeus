@@ -16,7 +16,7 @@ eMenuLoadingWidget::eMenuLoadingWidget(eMainWindow* const window) :
             text = "Loading music...";
             eMusic::loadMenu();
             eSounds::loadButtonSound();
-            eLanguage::load();
+            eLanguage::load(sett.fLanguage);
             return true;
         }
         return false;

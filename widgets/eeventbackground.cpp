@@ -13,8 +13,12 @@ void eEventBackground::initialize(eWidget* const parent,
 }
 
 void eEventBackground::paintEvent(ePainter& p) {
-    (void)p;
-    if(children().size() == 0) deleteLater();
+    if(children().size() == 0) {
+        deleteLater();
+        return;
+    }
+    // Dim background behind modal with cinematic scrim
+    p.fillRect(rect(), SDL_Color{8, 12, 18, 150});
 }
 
 bool eEventBackground::keyPressEvent(const eKeyPressEvent& e) {

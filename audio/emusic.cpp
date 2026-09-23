@@ -1,4 +1,4 @@
-﻿#include "emusic.h"
+#include "emusic.h"
 
 #include <fstream>
 
@@ -52,6 +52,12 @@ void eMusic::playCampaignVictoryMusic() {
 
 bool eMusic::playCampaignVoice(const std::string &path) {
     return sInstance->playCampaignVoiceImpl(path);
+}
+
+void eMusic::clearCampaignVoices() {
+    if(sInstance) {
+        sInstance->clearCampaignVoicesImpl();
+    }
 }
 
 void eMusic::incTimeImpl() {
@@ -136,6 +142,11 @@ bool eMusic::playCampaignVoiceImpl(const std::string &path) {
         it->second->playRandomSound();
     }
     return true;
+}
+
+void eMusic::clearCampaignVoicesImpl() {
+    Mix_HaltMusic();
+    mCampaignVoice.clear();
 }
 
 void eMusic::loadImpl() {

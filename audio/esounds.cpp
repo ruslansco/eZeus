@@ -1,4 +1,4 @@
-﻿#include "esounds.h"
+#include "esounds.h"
 
 #include "characters/egrower.h"
 #include "characters/ehunter.h"
@@ -24,6 +24,12 @@ void eSounds::loadButtonSound() {
 
 void eSounds::load() {
     sInstance->loadImpl();
+}
+
+void eSounds::reload() {
+    if(sInstance) {
+        sInstance->reloadImpl();
+    }
 }
 
 bool eSounds::loaded() {
@@ -1343,49 +1349,6 @@ void eSounds::loadImpl() {
     if(mLoaded) return;
     mLoaded = true;
 
-    mAphrodite.load();
-    mApollo.load();
-    mAres.load();
-    mArtemis.load();
-    mAthena.load();
-    mAtlas.load();
-    mDemeter.load();
-    mDionysus.load();
-    mHades.load();
-    mHephaestus.load();
-    mHera.load();
-    mHermes.load();
-    mPoseidon.load();
-    mZeus.load();
-
-    mAchilles.load();
-    mAtalanta.load();
-    mBellerophon.load();
-    mHercules.load();
-    mJason.load();
-    mOdysseus.load();
-    mPerseus.load();
-    mTheseus.load();
-
-    mCalydonianBoar.load();
-    mCerberus.load();
-    mChimera.load();
-    mCyclops.load();
-    mDragon.load();
-    mEchidna.load();
-    mHarpies.load();
-    mHector.load();
-    mHydra.load();
-    mKraken.load();
-    mMaenads.load();
-    mMedusa.load();
-    mMinotaur.load();
-    mScylla.load();
-    mSphinx.load();
-    mTalos.load();
-
-    mSatyr.load();
-
     {
         const std::string layer1Dir{eGameDir::path("Audio/Ambient/Layer1/")};
         for(const auto& s : {"wind1.wav",
@@ -1954,6 +1917,52 @@ void eSounds::loadImpl() {
         mGenHit.addPath(wavsDir + s);
     }
 
+    loadVoicesImpl();
+}
+
+void eSounds::loadVoicesImpl() {
+    mAphrodite.load();
+    mApollo.load();
+    mAres.load();
+    mArtemis.load();
+    mAthena.load();
+    mAtlas.load();
+    mDemeter.load();
+    mDionysus.load();
+    mHades.load();
+    mHephaestus.load();
+    mHera.load();
+    mHermes.load();
+    mPoseidon.load();
+    mZeus.load();
+
+    mAchilles.load();
+    mAtalanta.load();
+    mBellerophon.load();
+    mHercules.load();
+    mJason.load();
+    mOdysseus.load();
+    mPerseus.load();
+    mTheseus.load();
+
+    mCalydonianBoar.load();
+    mCerberus.load();
+    mChimera.load();
+    mCyclops.load();
+    mDragon.load();
+    mEchidna.load();
+    mHarpies.load();
+    mHector.load();
+    mHydra.load();
+    mKraken.load();
+    mMaenads.load();
+    mMedusa.load();
+    mMinotaur.load();
+    mScylla.load();
+    mSphinx.load();
+    mTalos.load();
+
+    mSatyr.load();
 
     const std::string walkerDir{eGameDir::path("Audio/Voice/Walker/")};
 
@@ -2231,4 +2240,65 @@ void eSounds::loadImpl() {
 
     loadIVoice("wtc", mWatchmanVoices);
     loadEVoices("wtc", mWatchmanVoices, 1, 5);
+}
+
+void eSounds::clearVoicesImpl() {
+    for(auto* g : {&mAphrodite, &mApollo, &mAres, &mArtemis, &mAthena,
+                   &mAtlas, &mDemeter, &mDionysus, &mHades, &mHephaestus,
+                   &mHera, &mHermes, &mPoseidon, &mZeus}) {
+        g->clear();
+    }
+    for(auto* h : {&mAchilles, &mAtalanta, &mBellerophon, &mHercules,
+                   &mJason, &mOdysseus, &mPerseus, &mTheseus}) {
+        h->clear();
+    }
+    for(auto* m : {&mCalydonianBoar, &mCerberus, &mChimera, &mCyclops,
+                   &mDragon, &mEchidna, &mHarpies, &mHector,
+                   &mHydra, &mKraken, &mMaenads, &mMedusa,
+                   &mMinotaur, &mScylla, &mSphinx, &mTalos}) {
+        m->clear();
+    }
+    mSatyr.clear();
+
+    for(auto* v : {
+        &mAphroditeVoices, &mApolloVoices, &mAresVoices, &mArtemisVoices,
+        &mAthenaVoices, &mAtlasVoices, &mDemeterVoices, &mDionysusVoices,
+        &mHadesVoices, &mHephaestusVoices, &mHeraVoices, &mHermesVoices,
+        &mPoseidonVoices, &mZeusVoices,
+
+        &mAchillesVoices, &mAtalantaVoices, &mBellerophonVoices,
+        &mHerculesVoices, &mJasonVoices, &mOdysseusVoices,
+        &mPerseusVoices, &mTheseusVoices,
+
+        &mCalydonianBoarVoices, &mCerberusVoices, &mChimeraVoices,
+        &mCyclopsVoices, &mDragonVoices, &mEchidnaVoices,
+        &mHarpiesVoices, &mHectorVoices, &mHydraVoices,
+        &mKrakenVoices, &mMaenadsVoices, &mMedusaVoices,
+        &mMinotaurVoices, &mScyllaVoices, &mSphinxVoices,
+        &mTalosVoices, &mSatyrVoices,
+
+        &mSettlerVoices, &mHomelessVoices, &mDisgruntledVoices, &mSickVoices,
+        &mStoneMinerVoices, &mActorVoices, &mPhilosopherVoices, &mArtisanVoices,
+        &mAstronomerVoices, &mInventorVoices, &mAthleteVoices, &mCompetitorVoices,
+        &mBronzeMinerVoices, &mSilverMinerVoices, &mFireFighterVoices,
+        &mBoarHunterVoices, &mDeerHunterVoices, &mClerkVoices, &mCuratorVoices,
+        &mFishingBoatVoices, &mGrowerVoices, &mOrangeTenderVoices,
+        &mGoatherdVoices, &mUrchinGathererVoices, &mShepherdVoices,
+        &mHealerVoices, &mLumberjackVoices, &mEliteVoices, &mPeddlerVoices,
+        &mPriestVoices, &mButcherVoices, &mScholarVoices, &mTraderVoices,
+        &mTradeBoatVoices, &mTriremeVoices, &mWatchmanVoices,
+        &mWaterDistributorVoices, &mFoodVendorVoices, &mFleeceVendorVoices,
+        &mOilVendorVoices, &mWineVendorVoices, &mArmorVendorVoices,
+        &mHorseVendorVoices, &mChariotVendorVoices, &mCartTransporterVoices,
+        &mChariotVoices, &mHopliteVoices, &mHorsemanVoices,
+        &mRockthrowerVoices, &mAmazonVoices
+    }) {
+        v->clear();
+    }
+}
+
+void eSounds::reloadImpl() {
+    if(!mLoaded) return;
+    clearVoicesImpl();
+    loadVoicesImpl();
 }

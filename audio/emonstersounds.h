@@ -36,11 +36,22 @@ public:
     void playHit() {
         fHit->playRandomSound();
     }
+
+    void clear() {
+        fVoice->clear();
+        fAttack->clear();
+        fDie->clear();
+        fHit->clear();
+    }
 };
 
 class eSatyrSounds : public eMonsterSoundsBase {
 public:
     void load();
+    void clear() {
+        mLoaded = false;
+        eMonsterSoundsBase::clear();
+    }
 private:
     bool mLoaded = false;
 };
@@ -51,6 +62,10 @@ public:
                    const std::string& longName);
 
     void load();
+    void clear() {
+        mLoaded = false;
+        eMonsterSoundsBase::clear();
+    }
 
     const std::string fShortName;
     const std::string fLongName;

@@ -9,8 +9,10 @@ public:
 
     static eLanguage instance;
 
-    static bool load();
+    static bool load(const std::string& lang = "en");
+    static bool reload(const std::string& lang);
     static bool loaded();
+    static const std::string& language();
 
     static const std::string& text(const std::string& key);
 
@@ -22,8 +24,9 @@ public:
     std::map<int, std::map<int, std::string>> fZeusText;
     std::map<int, eMM> fZeusMM;
 private:
-    bool loadImpl();
+    bool loadImpl(const std::string& lang);
     bool mLoaded = false;
+    std::string mLanguage = "en";
 };
 
 #endif // ELANGUAGE_H

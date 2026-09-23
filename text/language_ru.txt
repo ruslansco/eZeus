@@ -1,0 +1,137 @@
+settings "Настройки"
+editor "Редактор"
+city_editor "Редактор города"
+tribute "Дань"
+rec_tribute "Полученная дань"
+choose "Выбрать"
+relationship "Отношения"
+map "Карта"
+name "Имя"
+leader "Правитель"
+
+district_resource_count_type "Ресурсы района"
+total_resource_count_type "Всего ресурсов"
+district_population_type "Население района"
+total_population_type "Всего населения"
+sanctuary_ready_type "Святилище готово"
+
+district_resource_count "Район: %1, Количество: %2"
+total_resource_count "Всего %1: %2"
+district_population "Население района: %1"
+total_population "Всего населения: %1"
+sanctuary_ready "Святилище %1 готово"
+
+conditions "Условия"
+
+fog_of_war "Туман войны"
+no_fog_of_war "Без тумана войны"
+cities_on_board "Города на карте"
+resize "Изменить размер"
+width "Ширина"
+height "Высота"
+
+generate "Сгенерировать"
+water "Вода"
+forest "Лес"
+forest_to_fertile "Лес / плодородная"
+fertile "Плодородная"
+empty_dry "Сухая земля"
+scrub_dry "Сухой кустарник"
+flat_stones "Плоские камни"
+tall_stones "Высокие камни"
+elevation "Возвышенность"
+city "Город"
+
+clear "Очистить"
+
+return "Назад"
+add_city "Добавить город"
+water_trade "Морская торговля"
+land_trade "Сухопутная торговля"
+
+none "Нет"
+
+add "Добавить"
+
+gift_of_from_long_name "Подарок от %1"
+gift_of_to "Подарок для %1 от %2"
+god_visit "Визит бога"
+receive_request_long_name "Получена просьба о %1 %2"
+make_request "Запросить %1 у %2"
+
+invasion_by "Вторжение от %1"
+monster_attack "Нападение чудовища"
+receive_tribute_from "Получение дани от %1"
+god_quest "Задание бога"
+god_quest_fulfilled "Задание бога выполнено"
+player_conquest_event_long_name "Завоевание игрока"
+player_raid_event_long_name "Набег игрока"
+raid_resource_long_name "Трофеи набега получены"
+army_returns_event_long_name "Армия возвращается"
+
+military_change_long_name "Военные изменения"
+economic_change_long_name "Экономические изменения"
+god_trade_resumes_long_name "Божественная торговля возобновлена"
+request_aid_long_name "Просьба о помощи"
+request_strike_long_name "Просьба о нападении"
+rival_army_away_long_name "Вражеская армия ушла"
+earthquake_long_name "Землетрясение"
+tidal_wave_long_name "Приливная волна"
+supply_change_long_name "Изменение предложения %1 %2"
+supply_change_short_name "Изменение предложения"
+demand_change_long_name "Изменение спроса %1 %2"
+demand_change_short_name "Изменение спроса"
+price_change_long_name "Изменение цены на %1"
+price_change_short_name "Изменение цены"
+wage_change "Изменение зарплаты"
+
+triggers "Триггеры"
+
+early "Рано"
+comply "Согласиться"
+refuse "Отказать"
+too_late "Слишком поздно"
+lost_battle "Битва проиграна"
+
+fulfilled_trigger "Выполнено"
+killed_trigger "Убит"
+base_trigger "Базовый"
+
+period: "Период:"
+repeat: "Повтор:"
+
+hardcoded "Фиксированный"
+automatic "Автоматический"
+
+pay_tribute "Заплатить дань"
+receive_request "Получить запрос"
+gift_to "Подарок для"
+gift_from "Подарок от"
+
+iterative "Итеративный"
+random "Случайный"
+gods "Боги"
+
+resume_game "Продолжить приключение"
+
+resolution "Разрешение"
+
+tiny_textures "Крошечные текстуры"
+small_textures "Маленькие текстуры"
+medium_textures "Средние текстуры"
+large_textures "Большие текстуры"
+
+restore "Восстановить"
+cancel "Отмена"
+close "Закрыть"
+both_directions "Оба направления"
+one_direction "Одно направление"
+
+can_accept "Может принять"
+
+greetings "Приветствуем,"
+
+language "Язык"
+audio_language "Озвучка"
+english "English"
+russian "Русский"

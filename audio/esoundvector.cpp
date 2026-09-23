@@ -14,10 +14,15 @@ Mix_Chunk* loadSound(const std::string& path) {
 }
 
 eSoundVector::~eSoundVector() {
+    clear();
+}
+
+void eSoundVector::clear() {
     for(const auto& s : mPaths) {
         if(!s.first) continue;
         Mix_FreeChunk(s.first);
     }
+    mPaths.clear();
 }
 
 const bool sLoadOnAdd = false;

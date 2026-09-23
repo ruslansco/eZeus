@@ -19,8 +19,11 @@ public:
     static std::string pakAdventuresDir();
     static std::string saveDir();
     static std::string texturesDir();
+    static void setAudioLanguage(const std::string& lang);
+    static const std::string& audioLanguage();
 private:
     static std::string sPath;
+    static std::string sAudioLanguage;
 };
 
 #endif // EGAMEDIR_H

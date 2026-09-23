@@ -18,6 +18,7 @@ public:
                 const std::string& longName);
 
     void load();
+    void clear();
 
     void play(const eHeroSound s);
 

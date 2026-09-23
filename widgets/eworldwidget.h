@@ -36,6 +36,7 @@ public:
 
     void openDialog(eWidget* const d) override;
 protected:
+    void paintEvent(ePainter& p) override;
     bool keyPressEvent(const eKeyPressEvent& e) override;
 private:
     void openRequestDialog();
@@ -51,6 +52,7 @@ private:
     eFramedButton* mMapButton = nullptr;
     eFramedButton* mAddCityButton = nullptr;
     eFramedButton* mSettingsButton = nullptr;
+    stdsptr<eTexture> mOceanTex;
 };
 
 #endif // EWORLDWIDGET_H

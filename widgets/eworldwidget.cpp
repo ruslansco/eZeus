@@ -23,6 +23,7 @@
 #include "eacceptbutton.h"
 #include "ecancelbutton.h"
 #include "estringhelpers.h"
+#include "ebinaryimageloader.h"
 #include "widgets/ecitybutton.h"
 #include "widgets/echoosecitydialog.h"
 
@@ -374,10 +375,40 @@ void eWorldWidget::openGiftDialog() {
     openDialog(d);
 }
 
+void eWorldWidget::paintEvent(ePainter& p) {
+    p.fillRect(rect(), {12, 18, 28, 255});
+
+    if(!mOceanTex) {
+        mOceanTex = eBinaryImageLoader::load(renderer(), "Zeus_Data_Images/ocean.jpg");
+    }
+    if(mOceanTex) {
+        const int tw = mOceanTex->width();
+        const int th = mOceanTex->height();
+        if(tw > 0 && th > 0) {
+            for(int y = 0; y < height(); y += th) {
+                for(int x = 0; x < width(); x += tw) {
+                    p.drawTexture(x, y, mOceanTex);
+                }
+            }
+        }
+    }
+
+    if(mWMW && mWMW->visible()) {
+        const SDL_Rect mapRect = mWMW->rect();
+        p.drawDropShadow(mapRect, 12, 160);
+        p.drawGoldFrame(mapRect, 2);
+    }
+}
+
 void eWorldWidget::setMap(const eWorldMap map) {
     mWMW->setMap(map);
-    mWMW->align(eAlignment::center);
-    mWMW->setX((width() - mWM->width() - mWMW->width())/2);
+    const int pad = 24;
+    const int sidebarW = mWM ? mWM->width() : 0;
+    const int availW = width() - sidebarW - pad * 2;
+    const int availH = height() - pad * 2;
+    mWMW->fitToSize(availW, availH);
+    mWMW->setX((width() - sidebarW - mWMW->width()) / 2);
+    mWMW->setY((height() - mWMW->height()) / 2);
 }
 
 void eWorldWidget::openDialog(eWidget* const d) {

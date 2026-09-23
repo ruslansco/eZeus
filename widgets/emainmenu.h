@@ -13,15 +13,18 @@ public:
                     const eAction& settingsA,
                     const eAction& quitA,
                     const eAction& leaderA);
+protected:
+    void paintEvent(ePainter& p) override;
 private:
-    bool mousePressEvent(const eMouseEvent& e);
-    bool mouseReleaseEvent(const eMouseEvent& e);
-    bool mouseMoveEvent(const eMouseEvent& e);
-    bool mouseEnterEvent(const eMouseEvent& e);
-    bool mouseLeaveEvent(const eMouseEvent& e);
+    bool mousePressEvent(const eMouseEvent& e) override;
+    bool mouseReleaseEvent(const eMouseEvent& e) override;
+    bool mouseMoveEvent(const eMouseEvent& e) override;
+    bool mouseEnterEvent(const eMouseEvent& e) override;
+    bool mouseLeaveEvent(const eMouseEvent& e) override;
 
     bool mPressed = false;
     bool mHover = false;
+    std::shared_ptr<eTexture> mLogoTex;
 };
 
 #endif // EMAINMENU_H

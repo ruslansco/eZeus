@@ -28,6 +28,7 @@ public:
     static void playCampaignVictoryMusic();
 
     static bool playCampaignVoice(const std::string& path);
+    static void clearCampaignVoices();
 private:
     void incTimeImpl();
 
@@ -38,6 +39,7 @@ private:
     void playMissionVictoryMusicImpl();
     void playCampaignVictoryMusicImpl();
     bool playCampaignVoiceImpl(const std::string& path);
+    void clearCampaignVoicesImpl();
 
     void loadImpl();
     void loadMenuImpl();

@@ -23,6 +23,7 @@ public:
     void updateWidgets();
 
     void setMap(const eWorldMap map);
+    void fitToSize(const int maxW, const int maxH);
 protected:
     void paintEvent(ePainter& p);
     bool mousePressEvent(const eMouseEvent& e);

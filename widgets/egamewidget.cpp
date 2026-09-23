@@ -1770,6 +1770,17 @@ void eGameWidget::switchPause() {
         mPausedLabel = nullptr;
     }
     updateTipPositions();
+    updateSpeedDisplay();
+}
+
+void eGameWidget::setSpeedId(int id) {
+    mSpeedId = std::clamp(id, 0, sMaxSpeedId);
+    mSpeed = sSpeeds[mSpeedId];
+    updateSpeedDisplay();
+}
+
+void eGameWidget::updateSpeedDisplay() {
+    if(mTopBar) mTopBar->updateSpeedControls();
 }
 
 bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
@@ -1779,10 +1790,12 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
        k == SDL_Scancode::SDL_SCANCODE_RIGHTBRACKET) {
         mSpeedId = std::clamp(mSpeedId + 1, 0, sMaxSpeedId);
         mSpeed = sSpeeds[mSpeedId];
+        updateSpeedDisplay();
     } else if(k == SDL_Scancode::SDL_SCANCODE_KP_MINUS ||
               k == SDL_Scancode::SDL_SCANCODE_LEFTBRACKET) {
         mSpeedId = std::clamp(mSpeedId - 1, 0, sMaxSpeedId);
         mSpeed = sSpeeds[mSpeedId];
+        updateSpeedDisplay();
     } else if(k == SDL_Scancode::SDL_SCANCODE_R) {
         mRotate = !mRotate;
         mRotateFrame = (mRotateFrame/gRotateFrames + 1)*gRotateFrames;
@@ -1790,13 +1803,17 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         if(mRotateId > 3) mRotateId = 0;
     } else if(k == SDL_Scancode::SDL_SCANCODE_P) {
         switchPause();
-    } else if(k == SDL_Scancode::SDL_SCANCODE_LEFT) {
+    } else if(k == SDL_Scancode::SDL_SCANCODE_LEFT ||
+              k == SDL_Scancode::SDL_SCANCODE_A) {
         setDX(mDX + 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHT) {
+    } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHT ||
+              k == SDL_Scancode::SDL_SCANCODE_D) {
         setDX(mDX - 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_UP) {
+    } else if(k == SDL_Scancode::SDL_SCANCODE_UP ||
+              k == SDL_Scancode::SDL_SCANCODE_W) {
         setDY(mDY + 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_DOWN) {
+    } else if(k == SDL_Scancode::SDL_SCANCODE_DOWN ||
+              k == SDL_Scancode::SDL_SCANCODE_S) {
         setDY(mDY - 35);
     } else if(k == SDL_Scancode::SDL_SCANCODE_F1) {
         if(e.ctrlPressed()) {
@@ -1822,6 +1839,8 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         } else {
             viewBookmark(4);
         }
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F5) {
+        window()->setFullscreen(!window()->settings().fFullscreen);
     } else if(k == SDL_Scancode::SDL_SCANCODE_ESCAPE) {
         if(!mMsgBox && !mBoard->editorMode()) {
             mBoard->waitUntilFinished();

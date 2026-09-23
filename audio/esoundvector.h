@@ -12,6 +12,7 @@ public:
 
     int soundCount() const { return mPaths.size(); }
     void addPath(const std::string& path);
+    void clear();
     void play(const int id, const int chn = -1);
     void playRandomSound();
 private:

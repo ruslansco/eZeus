@@ -1,4 +1,4 @@
-﻿#ifndef ESOUNDS_H
+#ifndef ESOUNDS_H
 #define ESOUNDS_H
 
 #include "esoundvector.h"
@@ -16,6 +16,7 @@ public:
     static void loadButtonSound();
 
     static void load();
+    static void reload();
     static bool loaded();
 
     static void playButtonSound();
@@ -129,6 +130,9 @@ public:
     static eSoundVector* getCharacterVoices(eCharacter * const c);
 private:
     void loadImpl();
+    void loadVoicesImpl();
+    void clearVoicesImpl();
+    void reloadImpl();
 
     static eSounds* sInstance;
 

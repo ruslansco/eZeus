@@ -11,53 +11,64 @@ else()
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 endif()
 
-include(FetchContent)
+find_package(SDL2 CONFIG QUIET)
+find_package(SDL2_ttf CONFIG QUIET)
+find_package(SDL2_image CONFIG QUIET)
+find_package(SDL2_mixer CONFIG QUIET)
 
-# Disable unnecessary SDL components (optional but recommended)
-set(SDL_SHARED ON CACHE BOOL "" FORCE)
-set(SDL_STATIC OFF CACHE BOOL "" FORCE)
-set(SDL_TEST OFF CACHE BOOL "" FORCE)
-set(SDLIMAGE_AVIF OFF)
-set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
-if(MINGW)
-    add_compile_options(-Wa,-mbig-obj)
+if(NOT TARGET SDL2::SDL2 OR NOT TARGET SDL2_ttf::SDL2_ttf OR NOT TARGET SDL2_image::SDL2_image OR NOT TARGET SDL2_mixer::SDL2_mixer)
+    include(FetchContent)
+
+    # Disable unnecessary SDL components (optional but recommended)
+    set(SDL_SHARED ON CACHE BOOL "" FORCE)
+    set(SDL_STATIC OFF CACHE BOOL "" FORCE)
+    set(SDL_TEST OFF CACHE BOOL "" FORCE)
+    set(SDLIMAGE_AVIF OFF)
+    set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
+    if(MINGW)
+        add_compile_options(-Wa,-mbig-obj)
+    endif()
+
+    if(NOT TARGET SDL2::SDL2)
+        FetchContent_Declare(
+            SDL2
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+            GIT_TAG release-2.32.10
+            GIT_SHALLOW TRUE
+        )
+        FetchContent_MakeAvailable(SDL2)
+    endif()
+
+    if(NOT TARGET SDL2_ttf::SDL2_ttf)
+        FetchContent_Declare(
+            SDL2_ttf
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+            GIT_TAG release-2.24.0
+            GIT_SHALLOW TRUE
+        )
+        FetchContent_MakeAvailable(SDL2_ttf)
+    endif()
+
+    if(NOT TARGET SDL2_image::SDL2_image)
+        FetchContent_Declare(
+            SDL2_image
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
+            GIT_TAG release-2.8.12
+            GIT_SHALLOW TRUE
+        )
+        FetchContent_MakeAvailable(SDL2_image)
+    endif()
+
+    if(NOT TARGET SDL2_mixer::SDL2_mixer)
+        FetchContent_Declare(
+            SDL2_mixer
+            GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+            GIT_TAG release-2.8.2
+            GIT_SHALLOW TRUE
+        )
+        FetchContent_MakeAvailable(SDL2_mixer)
+    endif()
 endif()
-
-FetchContent_Declare(
-    SDL2
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-    GIT_TAG release-2.32.10
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(SDL2)
-
-FetchContent_Declare(
-    SDL2_ttf
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-    GIT_TAG release-2.24.0
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(SDL2_ttf)
-
-FetchContent_Declare(
-    SDL2_image
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-    GIT_TAG release-2.8.12
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(SDL2_image)
-
-FetchContent_Declare(
-    SDL2_mixer
-    GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
-    GIT_TAG release-2.8.2
-    GIT_SHALLOW TRUE
-)
-
-FetchContent_MakeAvailable(SDL2_mixer)
 
 add_executable(eZeus
     audio/egodsounds.cpp

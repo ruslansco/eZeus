@@ -1,4 +1,4 @@
-﻿#include "eworldmapwidget.h"
+#include "eworldmapwidget.h"
 
 #include "textures/egametextures.h"
 #include "textures/einterfacetextures.h"
@@ -779,4 +779,22 @@ void eWorldMapWidget::setMap(const eWorldMap map) {
 
     setTexture(tex);
     fitContent();
+}
+
+void eWorldMapWidget::fitToSize(const int maxW, const int maxH) {
+    const auto& tex = texture();
+    if(tex && tex->width() > 0 && tex->height() > 0 && maxW > 0 && maxH > 0) {
+        const double aspect = static_cast<double>(tex->width()) / tex->height();
+        int targetH = maxH;
+        int targetW = static_cast<int>(targetH * aspect);
+        if(targetW > maxW) {
+            targetW = maxW;
+            targetH = static_cast<int>(targetW / aspect);
+        }
+        setWidth(targetW);
+        setHeight(targetH);
+        updateWidgets();
+    } else {
+        fitContent();
+    }
 }

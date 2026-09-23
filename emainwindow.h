@@ -1,4 +1,4 @@
-﻿#ifndef EMAINWINDOW_H
+#ifndef EMAINWINDOW_H
 #define EMAINWINDOW_H
 
 #include "widgets/ewidget.h"
@@ -81,7 +81,11 @@ public:
     const stdsptr<eCampaign>& campaign() const { return mCampaign; }
 
     const std::string& leader() const { return mLeader; }
-    void setLeader(const std::string& leader) { mLeader = leader; }
+    void setLeader(const std::string& leader) {
+        mLeader = leader;
+        mSettings.fLeader = leader;
+        mSettings.write();
+    }
     std::string leaderSaveDir() const;
 private:
     void clearWidgets();

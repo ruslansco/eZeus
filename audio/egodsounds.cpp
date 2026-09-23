@@ -40,6 +40,24 @@ void eGodSounds::load() {
     fSanctify->addPath(wavsDir + "G_" + fLongName + "_sanctify.wav");
 }
 
+void eGodSounds::clear() {
+    mLoaded = false;
+    fWooing0->clear();
+    fJealousy1->clear();
+    fJealousy2->clear();
+    fInvade->clear();
+    fMonster->clear();
+    fQuest->clear();
+    fQuestFinished->clear();
+    fHelp->clear();
+    fAppear->clear();
+    fDisappear->clear();
+    fAttack->clear();
+    fCurse->clear();
+    fHit->clear();
+    fSanctify->clear();
+}
+
 void eGodSounds::play(const eGodSound s) {
     switch(s) {
     case eGodSound::wooing0:

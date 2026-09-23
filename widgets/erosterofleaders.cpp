@@ -39,6 +39,7 @@ void eRosterOfLeaders::initialize() {
 
     const auto title = new eLabel(window());
     title->setHugeFontSize();
+    title->setYellowFontColor();
     title->setText(eLanguage::zeusText(292, 3)); // roster of leaders
     title->fitContent();
     inner->addWidget(title);
@@ -56,8 +57,9 @@ void eRosterOfLeaders::initialize() {
     const auto createB = new eFramedButton(window());
     createB->setSmallFontSize();
     createB->setSmallPadding();
+    createB->setRenderBg(true);
     createB->setUnderline(false);
-    createB->setText(eLanguage::zeusText(292, 0)); // create leader
+    createB->setText("+ " + eLanguage::zeusText(292, 0)); // create leader
     createB->fitContent();
     createB->setWidth(bw);
     buttons1->addWidget(createB);
@@ -70,6 +72,7 @@ void eRosterOfLeaders::initialize() {
             const auto dir = eGameDir::saveDir() + name + "/";
             std::filesystem::create_directories(dir);
             const auto w = window();
+            w->setLeader(name);
             w->showRosterOfLeaders();
         }, eLanguage::zeusText(44, 374), true);
 
@@ -77,12 +80,12 @@ void eRosterOfLeaders::initialize() {
         d->align(eAlignment::center);
     });
 
-
-    const auto selected = std::make_shared<std::string>();
+    const auto selected = std::make_shared<std::string>(window()->leader());
 
     const auto deleteB = new eFramedButton(window());
     deleteB->setSmallFontSize();
     deleteB->setSmallPadding();
+    deleteB->setRenderBg(true);
     deleteB->setUnderline(false);
     deleteB->setText(eLanguage::zeusText(292, 1)); // delete leader
     deleteB->fitContent();
@@ -102,6 +105,7 @@ void eRosterOfLeaders::initialize() {
     const auto proceedB = new eFramedButton(window());
     proceedB->setSmallFontSize();
     proceedB->setSmallPadding();
+    proceedB->setRenderBg(true);
     proceedB->setUnderline(false);
     proceedB->setText(eLanguage::zeusText(292, 2)); // proceed
     proceedB->fitContent();
@@ -124,6 +128,7 @@ void eRosterOfLeaders::initialize() {
         const auto returnB = new eFramedButton(window());
         returnB->setSmallFontSize();
         returnB->setSmallPadding();
+        returnB->setRenderBg(true);
         returnB->setUnderline(false);
         returnB->setText(eLanguage::zeusText(292, 4)); // return
         returnB->fitContent();
@@ -152,36 +157,51 @@ void eRosterOfLeaders::initialize() {
 
         const auto leaders = eRosterOfLeaders::sLeaders();
 
+        if(selected->empty() && !leaders.empty()) {
+            *selected = leaders[0];
+        }
+
         int y = 0;
-        const auto selectedB = std::make_shared<eButton*>(nullptr);
+        const auto selectedB = std::make_shared<eFramedButton*>(nullptr);
         for(const auto& name : leaders) {
-            const auto b = new eButton(name, window());
+            const auto b = new eFramedButton(window());
+            b->setRenderBg(true);
             b->setUnderline(false);
-            b->setDarkFontColor();
-            b->setMouseEnterAction([b]() {
-                b->setLightFontColor();
-            });
-            b->setMouseLeaveAction([b, selected]() {
-                if(b->text() == *selected) {
-                    b->setLightFontColor();
-                } else {
-                    b->setDarkFontColor();
-                }
-            });
-            b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
-            b->setNoPadding();
+            b->setText("🏛️ " + name);
+            b->setSmallFontSize();
             b->fitContent();
             b->setWidth(swwidth);
+            b->setHeight(b->height() + 6);
+            b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+
+            const bool isInitial = (name == *selected);
+            if(isInitial) {
+                b->setYellowFontColor();
+                *selectedB = b;
+            } else {
+                b->setLightFontColor();
+            }
+
+            b->setMouseEnterAction([b, selected, name]() {
+                b->setYellowFontColor();
+            });
+            b->setMouseLeaveAction([b, selected, name]() {
+                if(name == *selected) {
+                    b->setYellowFontColor();
+                } else {
+                    b->setLightFontColor();
+                }
+            });
             filesWidget->addWidget(b);
             b->setY(y);
-            y += b->height();
-            b->setPressAction([b, selected, selectedB]() {
-                if(*selectedB) {
-                    (*selectedB)->setDarkFontColor();
+            y += b->height() + 4;
+            b->setPressAction([b, selected, selectedB, name, this]() {
+                if(*selectedB && *selectedB != b) {
+                    (*selectedB)->setLightFontColor();
                 }
                 *selectedB = b;
-                *selected = b->text();
-                b->setLightFontColor();
+                *selected = name;
+                b->setYellowFontColor();
             });
         }
         filesWidget->setNoPadding();

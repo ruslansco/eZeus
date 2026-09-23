@@ -5,95 +5,67 @@
 #include <random>
 
 void eFramedButton::paintEvent(ePainter& p) {
-    if(mRenderBg) renderBg(p);
-
     int iRes;
     int mult;
     iResAndMult(iRes, mult);
-    const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
-    if(!intrfc.fLoaded) return;
 
-    const eTextureCollection* coll = nullptr;
-    if(hovered()) {
-        coll = &intrfc.fButtonFrameHover;
-    } else {
-        coll = &intrfc.fButtonFrame;
-    }
+    const SDL_Rect r = rect();
 
-    const int iMax = width()/dim + 1;
-    const int jMax = height()/dim + 1;
+    if(mRenderBg) {
+        if(hovered()) {
+            // Ambient subtle glow
+            p.drawDropShadow(r, 4 * mult, 120);
 
-    const int lastX = width() - dim;
-    const int lastY = height() - dim;
+            // Elevated hover background
+            const SDL_Color bgHover{35, 55, 85, 245};
+            p.fillRect(r, bgHover);
 
-    const auto texCollId = [&](const int i, const int j) {
-        int texId;
-        if(i == 0) {
-            if(j == 0) {
-                texId = 0;
-            } else if(j == jMax - 1) {
-                texId = 6;
-            } else {
-                texId = 7;
-            }
-        } else if(i == iMax - 1) {
-            if(j == 0) {
-                texId = 2;
-            } else if(j == jMax - 1) {
-                texId = 4;
-            } else {
-                texId = 3;
-            }
-        } else if(j == 0) {
-            texId = 1;
-        } else if(j == jMax - 1) {
-            texId = 5;
+            // Amber gold tint overlay
+            const SDL_Color goldTint{255, 215, 0, 35};
+            p.fillRect(r, goldTint);
+
+            // Glowing gold border
+            const SDL_Color borderGold{255, 215, 0, 255};
+            p.drawRect(r, borderGold, std::max(1, mult));
+
+            // Top highlight line
+            const SDL_Color topHighlight{255, 255, 220, 90};
+            p.fillRect(SDL_Rect{r.x + 1, r.y + 1, r.w - 2, 1}, topHighlight);
+        } else if(pressed()) {
+            // Inset pressed state
+            const SDL_Color bgPressed{14, 22, 34, 250};
+            p.fillRect(r, bgPressed);
+
+            const SDL_Color borderPressed{212, 175, 55, 220};
+            p.drawRect(r, borderPressed, std::max(1, mult));
         } else {
-            texId = -1;
-        }
-        return texId;
-    };
+            // Normal state: dark Aegean stone
+            const SDL_Color bgNormal{22, 34, 52, 235};
+            p.fillRect(r, bgNormal);
 
-    for(int i = 0; i < iMax; i++) {
-        const int x = i == iMax - 1 ? lastX : dim*i;
-        for(int j = 0; j < jMax; j++) {
-            const int texId = texCollId(i, j);
-            if(texId == -1) continue;
-            const auto& tex = coll->getTexture(texId);
-            const int y = j == jMax - 1 ? lastY : dim*j;
-            p.drawTexture(x, y, tex);
+            // Warm bronze/gold border
+            const SDL_Color borderNormal{175, 135, 45, 210};
+            p.drawRect(r, borderNormal, std::max(1, mult));
+
+            // Top subtle highlight line
+            const SDL_Color topHighlight{255, 255, 255, 40};
+            p.fillRect(SDL_Rect{r.x + 1, r.y + 1, r.w - 2, 1}, topHighlight);
+
+            // Bottom subtle shadow
+            const SDL_Color botShadow{0, 0, 0, 70};
+            p.fillRect(SDL_Rect{r.x + 1, r.y + r.h - 2, r.w - 2, 1}, botShadow);
+        }
+    } else {
+        if(hovered()) {
+            // Subtle underline or border for un-rendered bg buttons
+            const SDL_Color borderGold{255, 215, 0, 180};
+            p.drawRect(r, borderGold, 1);
         }
     }
+
     eButton::paintEvent(p);
 }
 
 void eFramedButton::renderBg(ePainter& p) {
-    int iRes;
-    int mult;
-    iResAndMult(iRes, mult);
-    const int dim = 8*mult;
-    const auto& intrfc = eGameTextures::interface()[iRes];
-    if(!intrfc.fLoaded) return;
-
-    const int iMax = width()/dim + 1;
-    const int jMax = height()/dim + 1;
-
-    const int lastX = width() - dim;
-    const int lastY = height() - dim;
-
-    const auto colls = &intrfc.fMessageBox;
-    const auto& coll = (*colls)[4];
-    std::default_random_engine rng{1};
-    std::uniform_int_distribution<> dist{0, 100000};
-    for(int i = 0; i < iMax; i++) {
-        const int x = i == iMax - 1 ? lastX : dim*i;
-        for(int j = 0; j < jMax; j++) {
-            const int rand = dist(rng);
-            const int texId = rand % coll.size();
-            const auto& tex = coll.getTexture(texId);
-            const int y = j == jMax - 1 ? lastY : dim*j;
-            p.drawTexture(x, y, tex);
-        }
-    }
+    (void)p;
 }

@@ -13,6 +13,9 @@ namespace eStringHelpers {
     std::string pathToName(const std::string& path);
 
     void replaceSpecial(std::string& value);
+
+    bool isValidUtf8(const std::string& str);
+    std::string toUtf8(const std::string& str);
 };
 
 #endif // ESTRINGHELPERS_H

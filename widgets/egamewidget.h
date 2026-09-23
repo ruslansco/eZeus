@@ -280,8 +280,15 @@ private:
     eInfoWidget* openInfoWidget(eBuilding* const b);
     eInfoWidget* openInfoWidget(const std::vector<eCharacter *> chars);
 
+public:
     void switchPause();
+    bool isPaused() const { return mPaused; }
+    int speedId() const { return mSpeedId; }
+    int maxSpeedId() const { return sMaxSpeedId; }
+    void setSpeedId(int id);
+    void updateSpeedDisplay();
 
+private:
     stdsptr<eTexture> getBasementTexture(
             const int tx, const int ty, eBuilding* const d,
             const eTerrainTextures& trrTexs, const eWorldDirection dir,

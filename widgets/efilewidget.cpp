@@ -8,6 +8,7 @@
 #include "escrollwidgetcomplete.h"
 
 #include "elineedit.h"
+#include "eframedbutton.h"
 
 #include <string>
 #include <iostream>
@@ -37,6 +38,8 @@ void eFileWidget::intialize(const std::string& title,
     resize(ww, hh);
 
     mTitleLabel = new eLabel(title, window());
+    mTitleLabel->setHugeFontSize();
+    mTitleLabel->setYellowFontColor();
     mTitleLabel->fitContent();
     addWidget(mTitleLabel);
     mTitleLabel->align(eAlignment::top | eAlignment::hcenter);
@@ -97,28 +100,48 @@ void eFileWidget::intialize(const std::string& title,
     }
 
     int y = 0;
-    for(const auto& entry : sorted) {
-        const auto path = entry.second;
-        const auto name = path.filename().stem().u8string();
-        const auto b = new eButton(name, window());
-        b->setUnderline(false);
-        b->setDarkFontColor();
-        b->setMouseEnterAction([b]() {
-            b->setLightFontColor();
-        });
-        b->setMouseLeaveAction([b]() {
-            b->setDarkFontColor();
-        });
-        b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
-        b->setNoPadding();
-        b->fitContent();
-        b->setWidth(swwidth);
-        filesWidget->addWidget(b);
-        b->setY(y);
-        y += b->height();
-        b->setPressAction([this, name]() {
-            setFileName(name);
-        });
+    if(sorted.empty()) {
+        const auto emptyMsg = new eLabel("No saved adventures found.", window());
+        emptyMsg->setSmallFontSize();
+        emptyMsg->setLightFontColor();
+        emptyMsg->fitContent();
+        filesWidget->addWidget(emptyMsg);
+        emptyMsg->setY(y + 16);
+        y += emptyMsg->height() + 8;
+
+        const auto emptySub = new eLabel("Begin a New Adventure to build your city!", window());
+        emptySub->setVerySmallFontSize();
+        emptySub->setYellowFontColor();
+        emptySub->fitContent();
+        filesWidget->addWidget(emptySub);
+        emptySub->setY(y + 16);
+        y += emptySub->height() + 16;
+    } else {
+        for(const auto& entry : sorted) {
+            const auto path = entry.second;
+            const auto name = path.filename().stem().u8string();
+            const auto b = new eFramedButton(window());
+            b->setRenderBg(true);
+            b->setUnderline(false);
+            b->setText("🏛️ " + name);
+            b->setSmallFontSize();
+            b->fitContent();
+            b->setWidth(swwidth);
+            b->setHeight(b->height() + 4);
+            b->setTextAlignment(eAlignment::left | eAlignment::vcenter);
+            b->setMouseEnterAction([b]() {
+                b->setYellowFontColor();
+            });
+            b->setMouseLeaveAction([b]() {
+                b->setLightFontColor();
+            });
+            filesWidget->addWidget(b);
+            b->setY(y);
+            y += b->height() + 4;
+            b->setPressAction([this, name]() {
+                setFileName(name);
+            });
+        }
     }
     filesWidget->setNoPadding();
     filesWidget->fitContent();

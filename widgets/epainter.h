@@ -34,11 +34,18 @@ public:
                      const eAlignment align) const;
     void drawTexture(const int x, const int y,
                      const std::shared_ptr<eTexture>& tex) const;
+    void drawTextureScaled(const SDL_Rect& dstRect,
+                           const std::shared_ptr<eTexture>& tex) const;
     void fillRect(const SDL_Rect& rect,
                   const SDL_Color& color) const;
     void drawRect(const SDL_Rect& rect,
                   const SDL_Color& color,
                   const int width);
+    void drawDropShadow(const SDL_Rect& rect,
+                        const int size,
+                        const uint8_t maxAlpha) const;
+    void drawGoldFrame(const SDL_Rect& rect,
+                       const int borderWidth = 2) const;
     void drawText(const int x, const int y,
                   const std::string& text,
                   const eFontColor color,

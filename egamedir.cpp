@@ -3,7 +3,35 @@
 #include <SDL2/SDL_filesystem.h>
 #include <fstream>
 
+#include <filesystem>
+
 std::string eGameDir::sPath;
+std::string eGameDir::sAudioLanguage = "en";
+
+void eGameDir::setAudioLanguage(const std::string& lang) {
+    sAudioLanguage = lang;
+}
+
+const std::string& eGameDir::audioLanguage() {
+    return sAudioLanguage;
+}
+
+std::string eGameDir::path(const std::string& path) {
+    if(path.rfind("Audio/Voice/", 0) == 0) {
+        const auto sub = path.substr(12);
+        if(sAudioLanguage == "ru") {
+            const auto ruPath = sPath + "Audio/Voice_ru/" + sub;
+            if(std::filesystem::exists(ruPath)) {
+                return ruPath;
+            }
+        }
+        const auto enPath = sPath + "Audio/Voice_en/" + sub;
+        if(std::filesystem::exists(enPath)) {
+            return enPath;
+        }
+    }
+    return sPath + path;
+}
 
 void eGameDir::initialize() {
     sPath = exeDir() + "../../";
@@ -16,9 +44,6 @@ void eGameDir::initialize() {
     sPath = exeDir() + str;
 }
 
-std::string eGameDir::path(const std::string& path) {
-    return sPath + path;
-}
 
 std::string eGameDir::settingsPath() {
     return exeDir() + "../settings.txt";
@@ -68,5 +93,9 @@ std::string eGameDir::saveDir() {
 }
 
 std::string eGameDir::texturesDir() {
+    const auto dir = eGameDir::path("Textures/");
+    if(std::filesystem::exists(dir)) {
+        return dir;
+    }
     return exeDir() + "../Textures/";
 }

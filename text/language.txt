@@ -131,3 +131,8 @@ one_direction "One directions"
 can_accept "Can accept"
 
 greetings "Greetings,"
+
+language "Language"
+audio_language "Audio"
+english "English"
+russian "Russian"

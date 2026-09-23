@@ -216,6 +216,127 @@ void eSettingsMenu::initialize(const eApplyAction& settingsA,
         col1->addWidget(texsFrame);
     }
 
+    {
+        const auto langFrame = new eFramedWidget(window());
+        langFrame->setType(eFrameType::inner);
+        langFrame->setNoPadding();
+
+        const auto langWid = new eWidget(window());
+        langWid->setNoPadding();
+
+        const auto textLangRow = new eWidget(window());
+        textLangRow->setNoPadding();
+
+        const auto textLangLabel = new eLabel(window());
+        textLangLabel->setNoPadding();
+        textLangLabel->setSmallFontSize();
+        textLangLabel->setText(eLanguage::text("language") + ":");
+        textLangLabel->fitContent();
+        textLangRow->addWidget(textLangLabel);
+
+        const auto enTextBtn = new eFramedButton(window());
+        enTextBtn->setSmallPadding();
+        enTextBtn->setUnderline(false);
+        enTextBtn->setText("EN");
+        enTextBtn->fitContent();
+
+        const auto ruTextBtn = new eFramedButton(window());
+        ruTextBtn->setSmallPadding();
+        ruTextBtn->setUnderline(false);
+        ruTextBtn->setText("RU");
+        ruTextBtn->fitContent();
+
+        if(mSettings.fLanguage == "ru") {
+            ruTextBtn->setYellowFontColor();
+            enTextBtn->setLightFontColor();
+        } else {
+            enTextBtn->setYellowFontColor();
+            ruTextBtn->setLightFontColor();
+        }
+
+        enTextBtn->setPressAction([this, enTextBtn, ruTextBtn]() {
+            mSettings.fLanguage = "en";
+            enTextBtn->setYellowFontColor();
+            ruTextBtn->setLightFontColor();
+        });
+
+        ruTextBtn->setPressAction([this, enTextBtn, ruTextBtn]() {
+            mSettings.fLanguage = "ru";
+            ruTextBtn->setYellowFontColor();
+            enTextBtn->setLightFontColor();
+        });
+
+        textLangRow->addWidget(enTextBtn);
+        textLangRow->addWidget(ruTextBtn);
+
+        const auto audioLangRow = new eWidget(window());
+        audioLangRow->setNoPadding();
+
+        const auto audioLangLabel = new eLabel(window());
+        audioLangLabel->setNoPadding();
+        audioLangLabel->setSmallFontSize();
+        audioLangLabel->setText(eLanguage::text("audio_language") + ":");
+        audioLangLabel->fitContent();
+        audioLangRow->addWidget(audioLangLabel);
+
+        const auto enAudioBtn = new eFramedButton(window());
+        enAudioBtn->setSmallPadding();
+        enAudioBtn->setUnderline(false);
+        enAudioBtn->setText("EN");
+        enAudioBtn->fitContent();
+
+        const auto ruAudioBtn = new eFramedButton(window());
+        ruAudioBtn->setSmallPadding();
+        ruAudioBtn->setUnderline(false);
+        ruAudioBtn->setText("RU");
+        ruAudioBtn->fitContent();
+
+        if(mSettings.fAudioLanguage == "ru") {
+            ruAudioBtn->setYellowFontColor();
+            enAudioBtn->setLightFontColor();
+        } else {
+            enAudioBtn->setYellowFontColor();
+            ruAudioBtn->setLightFontColor();
+        }
+
+        enAudioBtn->setPressAction([this, enAudioBtn, ruAudioBtn]() {
+            mSettings.fAudioLanguage = "en";
+            enAudioBtn->setYellowFontColor();
+            ruAudioBtn->setLightFontColor();
+        });
+
+        ruAudioBtn->setPressAction([this, enAudioBtn, ruAudioBtn]() {
+            mSettings.fAudioLanguage = "ru";
+            ruAudioBtn->setYellowFontColor();
+            enAudioBtn->setLightFontColor();
+        });
+
+        audioLangRow->addWidget(enAudioBtn);
+        audioLangRow->addWidget(ruAudioBtn);
+
+        const int maxLabelW = std::max(textLangLabel->width(), audioLangLabel->width());
+        enTextBtn->setX(maxLabelW + p);
+        ruTextBtn->setX(enTextBtn->x() + enTextBtn->width() + p/2);
+        textLangLabel->setY((enTextBtn->height() - textLangLabel->height())/2);
+        textLangRow->fitContent();
+
+        enAudioBtn->setX(maxLabelW + p);
+        ruAudioBtn->setX(enAudioBtn->x() + enAudioBtn->width() + p/2);
+        audioLangLabel->setY((enAudioBtn->height() - audioLangLabel->height())/2);
+        audioLangRow->fitContent();
+
+        langWid->addWidget(textLangRow);
+        langWid->addWidget(audioLangRow);
+        langWid->stackVertically();
+        langWid->fitContent();
+
+        langFrame->addWidget(langWid);
+        langFrame->resize(langWid->width() + 2*p,
+                          langWid->height() + 2*p);
+        langWid->move(p, p);
+        col1->addWidget(langFrame);
+    }
+
     col1->layoutVertically();
 
     {

@@ -1,4 +1,5 @@
 #include "eloadtexthelper.h"
+#include "estringhelpers.h"
 
 #include <fstream>
 #include <algorithm>
@@ -30,7 +31,7 @@ bool eLoadTextHelper::load(const std::string& path, eMap& map) {
         const auto valueLen = valueEnd - valueStart;
         const auto value = str.substr(valueStart + 1, valueLen - 1);
 
-        map[key] = value;
+        map[key] = eStringHelpers::toUtf8(value);
     }
     return true;
 }
