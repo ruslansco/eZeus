@@ -7,6 +7,8 @@
 #include "engine/eworldcity.h"
 #include "pointers/estdselfref.h"
 
+#include <functional>
+
 class eWorldGoodsWidget;
 class eWorldTributeWidget;
 
@@ -28,7 +30,16 @@ public:
     void setText(const std::string& text);
     void updateLabels() const;
     void updateButtonsEnabled() const;
+    // The arrows beside the attitude: select the previous (-1) or next (1) city.
+    void setCycleAction(const std::function<void(int)>& a) { mCycle = a; }
+protected:
+    // lapis and gold, like the city's side panel (eGameMenu)
+    void paintEvent(ePainter& p) override;
 private:
+    float u(const double v) const { return static_cast<float>(v*mMult); }
+    int mMult = 1;
+    std::function<void(int)> mCycle;
+
     eWorldBoard* mBoard = nullptr;
 
     eLabel* mTextLabel = nullptr;

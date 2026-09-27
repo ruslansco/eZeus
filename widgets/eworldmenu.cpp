@@ -10,6 +10,11 @@
 #include "engine/eworldboard.h"
 
 #include "elanguage.h"
+#include "epanelstyle.h"
+#include "epanelwidgets.h"
+#include "textures/egeometrybatch.h"
+
+#include <cmath>
 
 void eWorldMenu::initialize(const eAction& openRequest,
                             const eAction& openFulfill,
@@ -24,140 +29,114 @@ void eWorldMenu::initialize(const eAction& openRequest,
     const auto& intrfc = eGameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto tex = coll.fWorldMenuBackground;
-    setTexture(tex);
+    setTexture(tex);    // gives the panel its width; paintEvent draws the new design
     setPadding(0);
     fitContent();
+    mMult = mult;
+    // on tall screens the panel runs to the bottom
+    setHeight(std::max(height(), window()->height()));
+    const int W = width();
+
+    const auto tr = [](const char* key, const char* fallback) {
+        const auto& t = eLanguage::text(key);
+        return t.empty() ? std::string(fallback) : t;
+    };
+    const auto medal = [&](const std::string& icon, const double cx,
+                           const double cy, const double d) {
+        const auto b = new ePanelActionButton(window(), icon);
+        const int s = std::round(d*mult);
+        b->resize(s, s);
+        b->move(std::round(cx*mult - s/2.), std::round(cy*mult - s/2.));
+        addWidget(b);
+        return b;
+    };
 
     {
-        const auto wlab = eButton::sCreate(coll.fWorldLeftArrowButton, window(), this);
-        const auto whb = eButton::sCreate(coll.fWorldHistoryButton, window(), this);
-        const auto wrab = eButton::sCreate(coll.fWorldRightArrowButton, window(), this);
-
-        const int xwlab = std::round(5.5*mult);
-        const int xwhb = std::round(34.5*mult);
-        const int xwrab = std::round(59.5*mult);
-
-        const int ywlab = std::round(48.5*mult);
-        const int ywhb = std::round(44.5*mult);
-        const int ywrab = ywlab;
-
-        wlab->setX(xwlab);
-        wlab->setY(ywlab);
-
-        whb->setX(xwhb);
-        whb->setY(ywhb);
-
-        wrab->setX(xwrab);
-        wrab->setY(ywrab);
+        // the attitude, between arrows that step through the cities
+        const double cy = 74.5;
+        const auto prev = medal("chevron_left", 10.5, cy, 15);
+        prev->setTooltip(tr("world_prev_city", "Previous city"));
+        prev->setPressAction([this]() { if(mCycle) mCycle(-1); });
+        const auto next = medal("chevron", W/double(mult) - 10.5, cy, 15);
+        next->setTooltip(tr("world_next_city", "Next city"));
+        next->setPressAction([this]() { if(mCycle) mCycle(1); });
+        prev->setVisible(showText);
+        next->setVisible(showText);
     }
 
     {
-        mRequestButton = eButton::sCreate(coll.fRequestButton, window(), this);
+        const double y1 = 243;
+        const double y2 = 268.5;
+        const double d = 23;
+        const double c = W/double(mult)/2;
+        mRequestButton = medal("request", c - 29, y1, d);
         mRequestButton->setTooltip(eLanguage::zeusText(44, 308));
-        mFulfillButton = eButton::sCreate(coll.fFulfillButton, window(), this);
+        mFulfillButton = medal("fulfill", c, y1, d);
         mFulfillButton->setTooltip(eLanguage::zeusText(44, 310));
-        mGiftButton = eButton::sCreate(coll.fGiftButton, window(), this);
+        mGiftButton = medal("gift", c + 29, y1, d);
         mGiftButton->setTooltip(eLanguage::zeusText(44, 311));
-        mRaidButton = eButton::sCreate(coll.fRaidButton, window(), this);
+        mRaidButton = medal("raid", c - 14.5, y2, d);
         mRaidButton->setTooltip(eLanguage::zeusText(44, 312));
-        mConquerButton = eButton::sCreate(coll.fConquerButton, window(), this);
+        mConquerButton = medal("conquer", c + 14.5, y2, d);
         mConquerButton->setTooltip(eLanguage::zeusText(44, 313));
+        // choosing a colony puts its own text on the panel
+        for(const auto b : {mRequestButton, mFulfillButton, mGiftButton,
+                            mRaidButton, mConquerButton}) {
+            b->setVisible(showText);
+        }
 
-        const int xwrb = std::round(6.5*mult);
-        const int xwfb = 35*mult;
-        const int xwgb = std::round(63.5*mult);
-        const int xwrdb = xwrb;
-        const int xwcb = 49*mult;
-
-        const int ywrb = 230*mult;
-        const int ywfb = ywrb;
-        const int ywgb = ywrb;
-        const int ywrdb = 259*mult;
-        const int ywcb = ywrdb;
-
-        mRequestButton->setX(xwrb);
-        mRequestButton->setY(ywrb);
         mRequestButton->setPressAction([this, openRequest]() {
             const bool editor = mBoard && mBoard->editorMode();
             if(editor) return;
             if(openRequest) openRequest();
         });
-
-        mFulfillButton->setX(xwfb);
-        mFulfillButton->setY(ywfb);
         mFulfillButton->setPressAction([this, openFulfill]() {
             const bool editor = mBoard && mBoard->editorMode();
             if(editor) return;
             if(openFulfill) openFulfill();
         });
-
-        mGiftButton->setX(xwgb);
-        mGiftButton->setY(ywgb);
         mGiftButton->setPressAction([this, openGift]() {
             const bool editor = mBoard && mBoard->editorMode();
             if(editor) return;
             if(openGift) openGift();
         });
-
-        mRaidButton->setX(xwrdb);
-        mRaidButton->setY(ywrdb);
         mRaidButton->setPressAction([this, openRaid]() {
             const bool editor = mBoard && mBoard->editorMode();
             if(editor) return;
             if(openRaid) openRaid();
         });
-
-        mConquerButton->setX(xwcb);
-        mConquerButton->setY(ywcb);
         mConquerButton->setPressAction([this, openConquer]() {
             const bool editor = mBoard && mBoard->editorMode();
             if(editor) return;
             if(openConquer) openConquer();
         });
 
-        const auto wh = eButton::sCreate(coll.fHelpButton, window(), this);
-        const int whx = 6*mult;
-        const int why = 286*mult;
-
-        wh->setX(whx);
-        wh->setY(why);
-
         if(showText) {
-            const auto wgw = eButton::sCreate(coll.fWorldSmallButton, window(), this);
-            wgw->setPressAction([this](){
+            const auto back = new ePanelPillButton(window(), eLanguage::zeusText(47, 8));
+            back->resize(W - std::round(12*mult), std::round(15*mult));
+            back->move(std::round(6*mult), std::round(284*mult));
+            back->setPressAction([this](){
                 const bool editor = mBoard && mBoard->editorMode();
                 if(editor) return;
                 window()->showGame(static_cast<eGameBoard*>(nullptr),
                                    eGameWidgetSettings());
             });
-            const int wgwx = 20*mult;
-            const int wgwy = 285*mult;
-
-            const auto backToCityStr = eLanguage::zeusText(47, 8);
-            const auto wgwtxt = new eLabel(backToCityStr, window());
-            wgwtxt->setSmallFontSize();
-            wgwtxt->fitContent();
-            wgw->addWidget(wgwtxt);
-            wgwtxt->align(eAlignment::center);
-
-            wgw->setX(wgwx);
-            wgw->setY(wgwy);
+            addWidget(back);
         }
 
-        const auto wat = eButton::sCreate(coll.fWorldBigButton, window(), this);
+        const auto wat = new eWidget(window());
+        wat->setNoPadding();
+        wat->resize(W - std::round(38*mult), std::round(15*mult));
+        wat->move(std::round(19*mult), std::round(67*mult));
+        addWidget(wat);
 
         mAttitudeLabel = new eLabel("unknown", window());
         mAttitudeLabel->setTooltip(eLanguage::zeusText(44, 333));
         mAttitudeLabel->setSmallFontSize();
+        mAttitudeLabel->setYellowFontColor();
         mAttitudeLabel->fitContent();
         wat->addWidget(mAttitudeLabel);
         mAttitudeLabel->align(eAlignment::center);
-
-        const int watx = 4*mult;
-        const int waty = 66*mult;
-
-        wat->setX(watx);
-        wat->setY(waty);
     }
 
     {
@@ -167,12 +146,13 @@ void eWorldMenu::initialize(const eAction& openRequest,
         mRelationshipLabel->fitContent();
         addWidget(mRelationshipLabel);
         mRelationshipLabel->align(eAlignment::hcenter);
-        const int rly = 14*mult;
+        const int rly = 16*mult;
         mRelationshipLabel->setY(rly);
 
         mNameLabel = new eLabel("a", window());
         mNameLabel->setNoPadding();
         mNameLabel->setSmallFontSize();
+        mNameLabel->setYellowFontColor();
         mNameLabel->fitContent();
         addWidget(mNameLabel);
         mNameLabel->align(eAlignment::hcenter);
@@ -405,4 +385,44 @@ void eWorldMenu::updateButtonsEnabled() const {
             mConquerButton->setTooltip(eLanguage::zeusText(44, 313));
         }
     }
+}
+
+void eWorldMenu::paintEvent(ePainter& p) {
+    using namespace ePanel;
+    const auto r = p.renderer();
+    const float ox = p.x();
+    const float oy = p.y();
+    const float W = width();
+    const float H = height();
+    const float hair = std::max(1.f, u(.45));
+    body(r, ox, oy, W, H, mMult);
+    const float bottom = std::min(oy + H, float(window()->height())) - u(3);
+    const float top = oy + u(304);
+    emblemAt(r, ox + W/2 + u(.6), top, u(58), bottom - top, mMult);
+    if(!mShowText) return;   // colony selection: its own content
+
+    // name plate
+    {
+        const SDL_FRect f{ox + u(4), oy + u(7), W - u(8), u(52)};
+        roundRect(r, f, u(4), SDL_Color{20, 36, 70, 150}, SDL_Color{8, 14, 32, 195});
+        roundRect(r, SDL_FRect{f.x + 1, f.y + 1, f.w - 2, u(18)}, u(4),
+                  SDL_Color{140, 180, 240, 26}, SDL_Color{140, 180, 240, 0});
+        roundRect(r, f, u(4), SDL_Color{240, 198, 104, 175}, SDL_Color{150, 106, 34, 110}, hair);
+        if(mCity) {
+            diamond(r, f.x + u(6), f.y + u(6), u(1.1), SDL_Color{214, 176, 70, 200});
+            diamond(r, f.x + f.w - u(6), f.y + u(6), u(1.1), SDL_Color{214, 176, 70, 200});
+        }
+    }
+    // attitude between its arrows
+    well(r, SDL_FRect{ox + u(19), oy + u(66.5), W - u(38), u(16)}, u(8), hair, true);
+    // goods / text card
+    {
+        const SDL_FRect f{ox + u(4), oy + u(87), W - u(8), u(112)};
+        roundRect(r, f, u(4), SDL_Color{20, 36, 70, 150}, SDL_Color{8, 14, 32, 195});
+        roundRect(r, f, u(4), SDL_Color{240, 198, 104, 175}, SDL_Color{150, 106, 34, 110}, hair);
+    }
+    // tribute
+    well(r, SDL_FRect{ox + u(4), oy + u(202), W - u(8), u(26)}, u(4), hair);
+    // actions
+    well(r, SDL_FRect{ox + u(4), oy + u(230), W - u(8), u(51)}, u(6), hair);
 }

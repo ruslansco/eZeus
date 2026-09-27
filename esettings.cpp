@@ -1,5 +1,9 @@
 #include "esettings.h"
 
+#include <cstdlib>
+
+#include <algorithm>
+
 #include <fstream>
 #include <iostream>
 
@@ -24,6 +28,8 @@ std::vector<eTileSize> eSettings::availableSizes() const {
 }
 
 void eSettings::write() const {
+    // screenshot / benchmark runs must not change the player's settings
+    if(getenv("EZEUS_SHOT") || getenv("EZEUS_MENU_SHOT")) return;
     const auto path = eGameDir::settingsPath();
     std::ofstream file;
     file.open(path);
@@ -44,6 +50,24 @@ void eSettings::write() const {
     file << "language" << " \"" << fLanguage << "\"\n";
     file << "audio_language" << " \"" << fAudioLanguage << "\"\n";
     file << "leader" << " \"" << fLeader << "\"\n";
+    file << "autosave_minutes" << " \"" << fAutosaveMinutes << "\"\n";
+    file << "autosave_slots" << " \"" << fAutosaveSlots << "\"\n";
+    auto writeKey = [&](const char* name, SDL_Scancode code) {
+        const char* keyName = SDL_GetScancodeName(code);
+        file << name << " \"" << (keyName ? keyName : "") << "\"\n";
+    };
+    writeKey("key_move_up", fKeyBindings.fMoveUp);
+    writeKey("key_move_down", fKeyBindings.fMoveDown);
+    writeKey("key_move_left", fKeyBindings.fMoveLeft);
+    writeKey("key_move_right", fKeyBindings.fMoveRight);
+    writeKey("key_pause", fKeyBindings.fPause);
+    writeKey("key_rotate", fKeyBindings.fRotate);
+    writeKey("key_clone", fKeyBindings.fClone);
+    writeKey("key_demolish", fKeyBindings.fDemolish);
+    writeKey("key_speed_up", fKeyBindings.fSpeedUp);
+    writeKey("key_speed_down", fKeyBindings.fSpeedDown);
+    writeKey("key_quick_save", fKeyBindings.fQuickSave);
+    writeKey("key_objectives", fKeyBindings.fObjectives);
     file.close();
 }
 
@@ -73,5 +97,35 @@ void eSettings::read() {
     if(settings.find("leader") != settings.end() && !settings["leader"].empty()) {
         fLeader = settings["leader"];
     }
+    const auto readInt = [&](const std::string& name, int& to, const int min, const int max) {
+        const auto it = settings.find(name);
+        if(it == settings.end() || it->second.empty()) return;
+        try {
+            to = std::clamp(std::stoi(it->second), min, max);
+        } catch(...) {}
+    };
+    readInt("autosave_minutes", fAutosaveMinutes, 0, 240);
+    readInt("autosave_slots", fAutosaveSlots, 1, 20);
+
+    auto readKey = [&](const std::string& name, SDL_Scancode& code) {
+        if(settings.find(name) != settings.end() && !settings[name].empty()) {
+            SDL_Scancode parsed = SDL_GetScancodeFromName(settings[name].c_str());
+            if(parsed != SDL_SCANCODE_UNKNOWN) {
+                code = parsed;
+            }
+        }
+    };
+    readKey("key_move_up", fKeyBindings.fMoveUp);
+    readKey("key_move_down", fKeyBindings.fMoveDown);
+    readKey("key_move_left", fKeyBindings.fMoveLeft);
+    readKey("key_move_right", fKeyBindings.fMoveRight);
+    readKey("key_pause", fKeyBindings.fPause);
+    readKey("key_rotate", fKeyBindings.fRotate);
+    readKey("key_clone", fKeyBindings.fClone);
+    readKey("key_demolish", fKeyBindings.fDemolish);
+    readKey("key_speed_up", fKeyBindings.fSpeedUp);
+    readKey("key_speed_down", fKeyBindings.fSpeedDown);
+    readKey("key_quick_save", fKeyBindings.fQuickSave);
+    readKey("key_objectives", fKeyBindings.fObjectives);
 }
 

@@ -8,6 +8,7 @@ class eViewModeButton;
 class eGameWidget;
 class eGameBoard;
 class eBasicButton;
+class eButton;
 enum class eCityId;
 
 class eDataWidget : public eWidget {
@@ -30,6 +31,8 @@ protected:
     eGameWidget* gameWidget() const { return mGW; }
     int spacing() const;
     void showMoreInfoButton();
+    // The corner button with another icon and tooltip (history, trade).
+    void setMoreInfoIcon(const std::string& icon, const std::string& tooltip);
 
     static int sCoverageToText(const int c);
 
@@ -40,7 +43,7 @@ protected:
 private:
     eCityId mLastPersonCityId = eCityId::neutralFriendly;
     eGameWidget* mGW = nullptr;
-    eBasicButton* mMoreInfo = nullptr;
+    eButton* mMoreInfo = nullptr;
     eWidget* mInnerWidget = nullptr;
     std::vector<eViewModeButton*> mButtons;
 };

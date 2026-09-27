@@ -1241,6 +1241,13 @@ void eGameTextures::loadRefinery() {
     });
 }
 
+void eGameTextures::loadWarehouseHD() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadWarehouseHD();
+    });
+}
+
 void eGameTextures::loadArtisansGuild() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];
@@ -1406,6 +1413,12 @@ void eGameTextures::loadBirdBath() {
     loadTexture([](const int i) {
         auto& c = sBuildingTextures[i];
         c.loadBirdBath();
+    });
+}
+
+void eGameTextures::loadRemastered(const std::string& id, const int n) {
+    loadTexture([id, n](const int i) {
+        sBuildingTextures[i].loadRemasteredN(id, n);
     });
 }
 
@@ -1947,6 +1960,25 @@ void eGameTextures::loadZeusSanctuary() {
         auto& c = sBuildingTextures[i];
         c.loadZeusSanctuary();
     });
+}
+
+void eGameTextures::loadSanctuaryHD() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadSanctuaryHD();
+    });
+}
+
+void eGameTextures::loadGodStatuesHD() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadGodStatuesHD();
+    });
+}
+
+void eGameTextures::loadGodStatueAnimationHD(int god, int sizeId) {
+    if(sizeId < 0 || sizeId >= static_cast<int>(sBuildingTextures.size())) return;
+    sBuildingTextures[sizeId].loadGodStatueAnimationHD(god);
 }
 
 void eGameTextures::loadPoseidonSanctuary() {

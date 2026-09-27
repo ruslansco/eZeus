@@ -40,6 +40,9 @@ public:
     void fillRect(const double x, const double y,
                   const int w, const int h,
                   const SDL_Color& color) const;
+    // Screen pixel of tile position (x, y), including the painter offset.
+    void screenPosition(const double x, const double y,
+                        int& pixX, int& pixY) const;
 private:
     void drawPositon(const double x, const double y,
                      int& pixX, int& pixY,

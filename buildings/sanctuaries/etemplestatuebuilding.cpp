@@ -81,15 +81,7 @@ eTempleStatueBuilding::getTexture(const eTileSize size) const {
             dirId = 2;
         }
     } else if(dir == eWorldDirection::S) {
-        if(mId == 0) {
-            dirId = 1;
-        } else if(mId == 1) {
-            dirId = 3;
-        } else if(mId == 2) {
-            dirId = 0;
-        } else { // if(mId == 3) {
-            dirId = 2;
-        }
+        dirId=(mId+2)%4;
     } else { // if(dir == eWorldDirection::W) {
         if(mId == 0) {
             dirId = 1;
@@ -100,6 +92,34 @@ eTempleStatueBuilding::getTexture(const eTileSize size) const {
         } else { // if(mId == 3) {
             dirId = 0;
         }
+    }
+    // Remastered statue: row in the order of eBuildingTextures::sStatueGods.
+    int hdRow = -1;
+    switch(mGod) {
+    case eGodType::zeus: hdRow = 0; break;
+    case eGodType::poseidon: hdRow = 1; break;
+    case eGodType::hades: hdRow = 2; break;
+    case eGodType::demeter: hdRow = 3; break;
+    case eGodType::athena: hdRow = 4; break;
+    case eGodType::artemis: hdRow = 5; break;
+    case eGodType::apollo: hdRow = 6; break;
+    case eGodType::ares: hdRow = 7; break;
+    case eGodType::hephaestus: hdRow = 8; break;
+    case eGodType::aphrodite: hdRow = 9; break;
+    case eGodType::hermes: hdRow = 10; break;
+    case eGodType::dionysus: hdRow = 11; break;
+    case eGodType::hera: hdRow = 12; break;
+    case eGodType::atlas: hdRow = 13; break;
+    }
+    if(hdRow >= 0) {
+        eGameTextures::loadGodStatueAnimationHD(hdRow,sizeId);
+        // Only completed sanctuaries awaken. Display time drives cosmetic motion;
+        // construction, divine visits and production retain their simulation clocks.
+        const bool awake=monument() && monument()->finished();
+        const int pose=awake?(board.animFrame(8.0)+(textureTime()-board.frame())/4)%16:16;
+        if(const auto& animated=blds.fGodStatuesAnimated[hdRow][dirId][pose]) return animated;
+        eGameTextures::loadGodStatuesHD();
+        if(const auto& hd = blds.fGodStatuesHD[hdRow][dirId]) return hd;
     }
     if(!coll) return nullptr;
     return coll->getTexture(dirId);

@@ -96,6 +96,13 @@ void eTilePainter::fillRect(const double x, const double y,
     mP.fillRect(SDL_Rect{pixX, pixY, w, h}, color);
 }
 
+void eTilePainter::screenPosition(const double x, const double y,
+                                  int& pixX, int& pixY) const {
+    drawPositon(x, y, pixX, pixY);
+    pixX += mP.x();
+    pixY += mP.y();
+}
+
 void eTilePainter::drawPositon(const double x, const double y,
                                int& pixX, int& pixY,
                                const double dx, const double dy) const {

@@ -150,4 +150,7 @@ void eBoardCity::write(eWriteStream& dst) const {
     }
 
     dst << mDefending;
+
+    mHistory.write(dst);
+    mTradeLedger.write(dst);
 }

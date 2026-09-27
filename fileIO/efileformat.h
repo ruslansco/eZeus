@@ -6,6 +6,7 @@ namespace eFileFormat {
         initial,
         settlerEmigrant,
         cartTarget,
+        cityHistory,
 
         nextVersion
     };

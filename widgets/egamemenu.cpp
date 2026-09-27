@@ -1,4 +1,5 @@
-﻿#include "egamemenu.h"
+#include "egamemenu.h"
+#include "eworldwidget.h"
 
 #include "textures/egametextures.h"
 #include "emainwindow.h"
@@ -29,6 +30,11 @@
 #include "ebuildwidget.h"
 #include "ebasicbutton.h"
 #include "erotatebutton.h"
+#include "epanelwidgets.h"
+#include "epanelstyle.h"
+#include "emenu3d.h"
+#include "efonts.h"
+#include "textures/egeometrybatch.h"
 
 struct eSubButtonData {
     eBuildingMode fMode;
@@ -136,7 +142,7 @@ private:
 };
 
 eWidget* eGameMenu::createPriceWidget(const eInterfaceTextures& coll) {
-    const auto r = new eWidget(window());
+    const auto r = new ePricePill(window());
     r->setNoPadding();
     const auto plabel = new eLabel("0", window());
     plabel->setTinyFontSize();
@@ -150,6 +156,12 @@ eWidget* eGameMenu::createPriceWidget(const eInterfaceTextures& coll) {
     r->addWidget(plabel);
     r->stackHorizontally();
     r->fitContent();
+    {
+        const int pad = std::max(2, r->height()/4);
+        r->setWidth(r->width() + pad);
+        ilabel->setX(ilabel->x() + pad/2);
+        plabel->setX(plabel->x() + pad/2);
+    }
     plabel->align(eAlignment::vcenter);
     mPriceWidgets.push_back(r);
     mPriceLabels.push_back(plabel);
@@ -172,7 +184,12 @@ eWidget* eGameMenu::createSubButtons(
         const auto& c = buttons[i];
 
         const auto createButton = [&](const eTextureCollection& texs) {
-            const auto b = eButton::sCreate(texs, window(), result);
+            const auto b = new ePanelTileButton(window());
+            b->setTexture(texs.getTexture(0));
+            b->setPadding(0);
+            b->fitContent();
+            b->setOpensList(!c.fSpr.empty());
+            result->addWidget(b);
             b->setPressAction(c.fPressedFunc);
             b->setMouseEnterAction([c, this]() {
                 mNameLabel->setText(c.fName);
@@ -244,6 +261,14 @@ void eGameMenu::setModeChangedAction(const eAction& func) {
     mModeChangeAct = func;
 }
 
+void eGameMenu::setUndoAction(const eAction& func) {
+    if(mUndoButton) mUndoButton->setPressAction(func);
+}
+
+void eGameMenu::setUndoEnabled(const bool e) {
+    if(mUndoButton && mUndoButton->enabled() != e) mUndoButton->setEnabled(e);
+}
+
 void eGameMenu::updateRequestButtons() {
     mOverDataW->updateRequestButtons();
 }
@@ -276,6 +301,333 @@ eGameMenu::~eGameMenu() {
     for(const auto s : mSubButtons) {
         delete s;
     }
+    if(mCalmTex) SDL_DestroyTexture(mCalmTex);
+    for(const auto& k : mKeyTex) {
+        if(k.fTex) SDL_DestroyTexture(k.fTex);
+    }
+}
+
+void eGameMenu::categoryChanged(const int i) {
+    (void)i;
+    // choosing a category leaves the big map
+    if(mMapMode && mTabs) mTabs->setIndex(0);
+}
+
+void eGameMenu::setMapMode(const bool m) {
+    if(m == mMapMode || !mMiniMap || !mMapHome) return;
+    mMapMode = m;
+    int tx = 0;
+    int ty = 0;
+    mMiniMap->viewedTile(tx, ty);
+    if(m) {
+        mPageBeforeMap = nullptr;
+        for(const auto& w : mWidgets) {
+            if(w.fW->visible()) mPageBeforeMap = w.fW;
+            w.fW->hide();
+        }
+        mMapHomeRect = SDL_Rect{mMiniMap->x(), mMiniMap->y(),
+                                mMiniMap->width(), mMiniMap->height()};
+        mMapHome->removeWidget(mMiniMap);
+        removeWidget(mVeil);
+        addWidget(mMiniMap);
+        addWidget(mVeil);
+        mMiniMap->setTileDim(2*mMult);
+        const int mapH = mBoard ? mBoard->rotatedHeight()*mMiniMap->tileDim()/2 : 0;
+        const int maxH = std::round(u(128));
+        mMiniMap->resize(std::round(u(63.5)), mapH > 0 ? std::min(mapH, maxH) : maxH);
+        mMiniMap->move(std::round(u(25.2)), std::round(u(14.5)));
+        mNameLabel->hide();
+    } else {
+        removeWidget(mMiniMap);
+        mMapHome->addWidget(mMiniMap);
+        mMiniMap->setTileDim(2);
+        mMiniMap->resize(mMapHomeRect.w, mMapHomeRect.h);
+        mMiniMap->move(mMapHomeRect.x, mMapHomeRect.y);
+        if(mPageBeforeMap) mPageBeforeMap->show();
+        mNameLabel->show();
+    }
+    mMiniMap->viewTile(tx, ty);
+    mMiniMap->scheduleUpdate();
+    if(mVeil) mVeil->trigger();
+}
+
+void eGameMenu::paintEvent(ePainter& p) {
+    using namespace ePanel;
+    // EZEUS_SHOT_PANEL=<category index>|map opens that page (screenshots of the panel)
+    static bool sShotPanelDone = false;
+    if(!sShotPanelDone) {
+        sShotPanelDone = true;
+        if(const char* const s = getenv("EZEUS_SHOT_PANEL")) {
+            const std::string v = s;
+            const auto& bs = categoryButtons();
+            if(v == "map") {
+                if(mTabs) mTabs->setIndex(1);
+            } else if(v == "world" || v == "world-city") {
+                const auto win = window();
+                const bool city = v == "world-city";
+                win->addSlot([win, city]() {
+                    win->showWorld();
+                    if(city && win->worldWidget()) {
+                        win->worldWidget()->selectNextCity(1);
+                        win->worldWidget()->selectNextCity(1);
+                    }
+                });
+            } else if(v == "history-real") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->showCityHistory(); });
+            } else if(v == "history" || v == "trade") {
+                const auto gw = mGW;
+                const bool history = v == "history";
+                if(gw) window()->addSlot([gw, history]() {
+                    if(history) gw->debugShowCityHistory();
+                    else gw->showTradeSummary();
+                });
+            } else if(v == "place" || v == "road") {
+                const auto gw = mGW;
+                const bool road = v == "road";
+                if(gw) window()->addSlot([gw, road]() { gw->debugPlacePreview(road); });
+            } else if(v == "house") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->debugHoverHouse(); });
+            } else if(v == "toasts") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->debugShowToasts(); });
+            } else if(v == "messages" || v == "badge") {
+                if(mGW) mGW->debugFillMessageLog();
+                // after this frame: opening a dialog adds to the game widget mid-paint
+                if(v == "messages" && mGW) {
+                    const auto gw = mGW;
+                    window()->addSlot([gw]() { gw->showMessageLog(); });
+                }
+            } else {
+                const int i = atoi(s);
+                if(i >= 0 && i < static_cast<int>(bs.size()) && !bs[i]->checked()) bs[i]->trigger();
+            }
+            // a screenshot wants the settled page, not the reveal
+            for(const auto& w : mWidgets) {
+                if(w.fW->visible()) mLastPage = w.fW;
+            }
+            if(mVeil) mVeil->cancel();
+        }
+    }
+    const auto r = p.renderer();
+    const float ox = p.x();
+    const float oy = p.y();
+    const float W = width();
+    const float H = height();
+    const float hair = std::max(1.f, u(.45));
+
+    // the panel casts a soft shadow over the map
+    {
+        const auto wt = white(r);
+        const float sw = u(9);
+        const SDL_Color a{0, 0, 0, 0};
+        const SDL_Color b{0, 0, 0, 120};
+        const SDL_Vertex v[4] = {{{ox - sw, oy}, a, {.5f, .5f}}, {{ox, oy}, b, {.5f, .5f}},
+                                 {{ox, oy + H}, b, {.5f, .5f}}, {{ox - sw, oy + H}, a, {.5f, .5f}}};
+        const int ids[6] = {0, 1, 2, 0, 2, 3};
+        eGeometryBatch::sFlush();
+        SDL_RenderGeometry(r, wt, v, 4, ids, 6);
+    }
+    // lapis body
+    if(const auto t = lapis(r)) {
+        int tw = 0;
+        int th = 0;
+        SDL_QueryTexture(t, nullptr, nullptr, &tw, &th);
+        for(int y = 0; y < H; y += th) {
+            for(int x = 0; x < W; x += tw) {
+                const int w = std::min<int>(tw, W - x);
+                const int h = std::min<int>(th, H - y);
+                const SDL_Rect src{0, 0, w, h};
+                const SDL_Rect dst{static_cast<int>(ox) + x, static_cast<int>(oy) + y, w, h};
+                SDL_RenderCopy(r, t, &src, &dst);
+            }
+        }
+    } else {
+        fill(r, SDL_FRect{ox, oy, W, H}, SDL_Color{12, 22, 46, 255});
+    }
+    gradient(r, SDL_FRect{ox, oy, W, H}, SDL_Color{6, 10, 24, 60}, SDL_Color{2, 4, 12, 150});
+
+    // gold bevel along the edge that meets the map
+    fill(r, SDL_FRect{ox, oy, std::max(1.f, u(.5)), H}, SDL_Color{2, 4, 10, 255});
+    gradient(r, SDL_FRect{ox + std::max(1.f, u(.5)), oy, std::max(1.f, u(.6)), H},
+             SDL_Color{246, 206, 110, 255}, SDL_Color{168, 120, 40, 255});
+    fill(r, SDL_FRect{ox + std::max(1.f, u(.5)) + std::max(1.f, u(.6)), oy, 1, H},
+         SDL_Color{255, 238, 180, 90});
+    {
+        const auto wt = white(r);
+        const float x0 = ox + u(1.2);
+        const float sw = u(3.5);
+        const SDL_Color a{0, 0, 0, 110};
+        const SDL_Color b{0, 0, 0, 0};
+        const SDL_Vertex v[4] = {{{x0, oy}, a, {.5f, .5f}}, {{x0 + sw, oy}, b, {.5f, .5f}},
+                                 {{x0 + sw, oy + H}, b, {.5f, .5f}}, {{x0, oy + H}, a, {.5f, .5f}}};
+        const int ids[6] = {0, 1, 2, 0, 2, 3};
+        SDL_RenderGeometry(r, wt, v, 4, ids, 6);
+    }
+
+    const SDL_Color wellTop{3, 7, 18, 165};
+    const SDL_Color wellBottom{6, 12, 28, 185};
+    const SDL_Color rimTop{236, 192, 96, 80};
+    const SDL_Color rimBottom{150, 106, 34, 60};
+    const auto well = [&](const SDL_FRect& f, const float rad, const bool strong) {
+        roundRect(r, f, rad, wellTop, wellBottom);
+        SDL_Color t = rimTop;
+        SDL_Color b = rimBottom;
+        if(strong) {
+            t.a = 170;
+            b.a = 120;
+        }
+        roundRect(r, f, rad, t, b, hair);
+    };
+    // category rail
+    well(SDL_FRect{ox + u(1.8), oy + u(10.3), u(24.4), u(226.8)}, u(12), false);
+    // content card
+    {
+        const SDL_FRect f{ox + u(23), oy + u(11.2), u(68), u(203.2)};
+        roundRect(r, f, u(4), SDL_Color{20, 36, 70, 150}, SDL_Color{8, 14, 32, 195});
+        roundRect(r, SDL_FRect{f.x + 1, f.y + 1, f.w - 2, u(20)}, u(4),
+                  SDL_Color{140, 180, 240, 26}, SDL_Color{140, 180, 240, 0});
+        roundRect(r, f, u(4), SDL_Color{240, 198, 104, 175}, SDL_Color{150, 106, 34, 110}, hair);
+        if(!mMapMode && mTitleH > 0) {
+            goldRule(r, f.x + u(4), oy + u(12) + mTitleH + u(.2), f.w - u(8), hair, 210, true);
+        }
+    }
+    // map mode: a frame round the big map and the colour key under it
+    if(mMapMode && mMiniMap) {
+        const SDL_FRect mf{ox + mMiniMap->x() - 1.f, oy + mMiniMap->y() - 1.f,
+                           mMiniMap->width() + 2.f, mMiniMap->height() + 2.f};
+        roundRect(r, mf, u(1), SDL_Color{236, 192, 96, 200}, SDL_Color{150, 106, 34, 170}, hair);
+        struct eKey { const char* fKey; const char* fText; SDL_Color fCol; };
+        static const eKey keys[] = {
+            {"map_key_roads", "Roads", {225, 225, 225, 255}},
+            {"map_key_housing", "Housing", {164, 65, 49, 255}},
+            {"map_key_elite", "Elite housing, temples", {238, 65, 16, 255}},
+            {"map_key_palace", "Palace", {230, 162, 0, 255}},
+            {"map_key_storage", "Storage and trade", {115, 186, 247, 255}},
+            {"map_key_farms", "Farms and husbandry", {123, 113, 49, 255}},
+            {"map_key_culture", "Culture", {33, 129, 115, 255}},
+            {"map_key_other", "Other buildings, people", {10, 10, 10, 255}},
+            {"map_key_fertile", "Fertile land", {155, 110, 110, 255}},
+            {"map_key_forest", "Forest", {90, 129, 41, 255}},
+            {"map_key_water", "Water", {25, 105, 115, 255}},
+        };
+        const int n = std::size(keys);
+        if(mKeyTex.empty()) {
+            const auto font = eFonts::defaultFont(std::max(9, static_cast<int>(std::round(u(4.6)))));
+            for(const auto& k : keys) {
+                const auto& s = eLanguage::text(k.fKey);
+                int w = 0;
+                int h = 0;
+                const auto t = eMenu3D::makeText(r, font, s.empty() ? k.fText : s,
+                                                 SDL_Color{255, 255, 255, 255}, w, h);
+                mKeyTex.push_back({t, w, h});
+            }
+        }
+        const float top = mf.y + mf.h + u(4);
+        const float row = std::min(u(6.2), (oy + u(211) - top)/n);
+        for(int i = 0; i < n; i++) {
+            const float cy = top + row*(i + .5f);
+            const float sx = ox + u(28);
+            const float s = u(3.2);
+            roundRect(r, SDL_FRect{sx, cy - s/2, s, s}, u(.7), keys[i].fCol, keys[i].fCol);
+            roundRect(r, SDL_FRect{sx, cy - s/2, s, s}, u(.7), SDL_Color{240, 200, 110, 150},
+                      SDL_Color{160, 112, 36, 150}, std::max(1.f, u(.3)));
+            const auto& kt = mKeyTex[i];
+            if(kt.fTex) {
+                SDL_SetTextureColorMod(kt.fTex, 232, 224, 204);
+                const SDL_FRect d{sx + s + u(2.2), cy - kt.fH/2.f, float(kt.fW), float(kt.fH)};
+                SDL_RenderCopyF(r, kt.fTex, nullptr, &d);
+            }
+        }
+    }
+
+    // tools, events, footer
+    well(SDL_FRect{ox + u(23), oy + u(216.4), u(68), u(20.2)}, u(10.1), false);
+    well(SDL_FRect{ox + u(2), oy + u(239.4), u(89), u(40.4)}, u(4), false);
+    well(SDL_FRect{ox + u(2), oy + u(281.3), u(89), u(18.8)}, u(9.4), false);
+
+    // an empty event list: a quiet line of text instead of a blank box
+    if(mEventW && mEventW->width() == 0) {
+        if(!mCalmTex) {
+            const auto& s = eLanguage::text("panel_calm");
+            const std::string txt = s.empty() ? "All is calm" : s;
+            const auto font = eFonts::defaultFont(std::max(9, static_cast<int>(std::round(u(5)))));
+            mCalmTex = eMenu3D::makeText(r, font, txt, SDL_Color{255, 255, 255, 255}, mCalmW, mCalmH);
+        }
+        if(mCalmTex) {
+            SDL_SetTextureColorMod(mCalmTex, 200, 186, 150);
+            SDL_SetTextureAlphaMod(mCalmTex, 170);
+            const float cx = ox + u(38.5);
+            const float cy = oy + u(259.6);
+            const SDL_FRect d{cx - mCalmW/2.f, cy - mCalmH/2.f, float(mCalmW), float(mCalmH)};
+            SDL_RenderCopyF(r, mCalmTex, nullptr, &d);
+            diamond(r, d.x - u(3.5), cy, u(.9), SDL_Color{214, 176, 70, 170});
+            diamond(r, d.x + d.w + u(3.5), cy, u(.9), SDL_Color{214, 176, 70, 170});
+        }
+    }
+
+    // the emblem at the foot of the panel, with a glint passing over it now and then
+    {
+        int ew = 0;
+        int eh = 0;
+        // between the footer and the bottom of the screen (the panel can be taller)
+        const float bottom = std::min(oy + H, float(window()->height())) - u(3);
+        const float top = oy + u(303);
+        const float room = bottom - top;
+        const float aspect = 1.08f;          // the emblem is a little taller than wide
+        const float tw = std::min(u(58), room/aspect);
+        const auto t = tw > u(14) ? emblem(r, static_cast<int>(std::ceil(tw)), ew, eh) : nullptr;
+        if(t) {
+            const float th = tw*eh/std::max(1, ew);
+            const float cx = ox + W/2 + u(.6);
+            glow(r, cx, top + th/2, tw*.62f, th*.62f, SDL_Color{255, 200, 110, 26}, true);
+            glow(r, cx, top + th*.55f, tw*.5f, th*.5f, SDL_Color{0, 0, 0, 90}, false);
+            const SDL_FRect d{cx - tw/2, top, tw, th};
+            SDL_RenderCopyF(r, t, nullptr, &d);
+            const double gt = std::fmod(time(), 7.0)/1.3;
+            if(gt < 1) {
+                const float gx = static_cast<float>(d.x - tw*.2 + (tw*1.4)*gt);
+                glow(r, gx, top + th*.45f, tw*.14f, th*.55f,
+                     SDL_Color{255, 236, 170, static_cast<Uint8>(90*std::sin(gt*3.14159))}, true);
+            }
+        }
+    }
+
+    // the open category: a gold marker that glides along the rail
+    {
+        const auto& bs = categoryButtons();
+        eCheckableButton* on = nullptr;
+        for(const auto b : bs) {
+            if(b->visible() && b->checked()) on = b;
+        }
+        const double now = time();
+        const double dt = mRailLast < 0 ? 0 : std::min(0.1, now - mRailLast);
+        mRailLast = now;
+        if(on) {
+            int bx = 0;
+            int by = 0;
+            on->mapTo(this, bx, by);
+            const double target = by + on->height()/2.0;
+            if(mRailY < 0) mRailY = target;
+            mRailY += (target - mRailY)*approach(dt, 13);
+            const float cy = oy + static_cast<float>(mRailY);
+            const Uint8 a = mMapMode ? 90 : 255;
+            glow(r, ox + u(3.3), cy, u(3.2), u(9), SDL_Color{255, 196, 90, static_cast<Uint8>(a*.45)}, true);
+            roundRect(r, SDL_FRect{ox + u(2.6), cy - u(6.5), std::max(2.f, u(1.2)), u(13)}, u(.6),
+                      SDL_Color{255, 238, 170, a}, SDL_Color{196, 140, 48, a});
+        }
+    }
+
+    // a new page in the content card: let the veil reveal it
+    {
+        eWidget* page = nullptr;
+        for(const auto& w : mWidgets) {
+            if(w.fW->visible()) page = w.fW;
+        }
+        if(page && page != mLastPage && mVeil) mVeil->trigger();
+        if(page) mLastPage = page;
+    }
 }
 
 void eGameMenu::initialize(eGameBoard* const b,
@@ -290,9 +642,12 @@ void eGameMenu::initialize(eGameBoard* const b,
     const auto& intrfc = eGameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto tex = coll.fGameMenuBackground;
-    setTexture(tex);
+    setTexture(tex);    // gives the panel its size; paintEvent draws the new design
     setPadding(0);
     fitContent();
+    mMult = mult;
+    // on tall screens the panel runs to the bottom edge
+    setHeight(std::max(height(), window()->height()));
 
     const int cmx = -padding();
     const int cmy = 5*height()/8;
@@ -312,8 +667,10 @@ void eGameMenu::initialize(eGameBoard* const b,
         const auto alabel = new eLabel(window());
         alabel->setSmallFontSize();
         alabel->setTinyPadding();
+        alabel->setYellowFontColor();
         alabel->setText(name);
         alabel->fitContent();
+        mTitleH = alabel->height();
         ww9->addWidget(alabel);
         dataW->setWidth(dataWidWidth);
         dataW->setHeight(dataWidHeight);
@@ -951,27 +1308,29 @@ void eGameMenu::initialize(eGameBoard* const b,
         w->hide();
     }
 
-    const auto b0 = addButton(coll.fPopulation, mWidgets[0]);
+    const int railW = 22*mult;
+    const int railH = 20*mult;
+    const auto b0 = addButton("population", railW, railH, mWidgets[0]);
     mPopulationButton = b0;
-    const auto b1 = addButton(coll.fHusbandry, mWidgets[1]);
+    const auto b1 = addButton("husbandry", railW, railH, mWidgets[1]);
     mHusbandryButton = b1;
-    const auto b2 = addButton(coll.fIndustry, mWidgets[2]);
+    const auto b2 = addButton("industry", railW, railH, mWidgets[2]);
     mIndustryButton = b2;
-    const auto b3 = addButton(coll.fDistribution, mWidgets[3]);
+    const auto b3 = addButton("distribution", railW, railH, mWidgets[3]);
     mDistributionButton = b3;
-    const auto b4 = addButton(coll.fHygieneSafety, mWidgets[4]);
+    const auto b4 = addButton("hygiene", railW, railH, mWidgets[4]);
     mHygieneSafetyButton = b4;
-    const auto b5 = addButton(coll.fAdministration, mWidgets[5]);
+    const auto b5 = addButton("administration", railW, railH, mWidgets[5]);
     mAdministrationButton = b5;
-    const auto b6a = addButton(coll.fCulture, mWidgets[6]);
+    const auto b6a = addButton("culture", railW, railH, mWidgets[6]);
     mCultureButton = b6a;
-    const auto b7 = addButton(coll.fMythology, mWidgets[8]);
+    const auto b7 = addButton("mythology", railW, railH, mWidgets[8]);
     mMythologyButton = b7;
-    const auto b8 = addButton(coll.fMilitary, mWidgets[9]);
+    const auto b8 = addButton("military", railW, railH, mWidgets[9]);
     mMilitaryButton = b8;
-    const auto b9 = addButton(coll.fAesthetics, mWidgets[10]);
+    const auto b9 = addButton("aesthetics", railW, railH, mWidgets[10]);
     mAesthethicsButton = b9;
-    const auto b10 = addButton(coll.fOverview, mWidgets[11]);
+    const auto b10 = addButton("overview", railW, railH, mWidgets[11]);
     mOverviewButton = b10;
 
     const auto setupButtonHover =
@@ -1001,7 +1360,7 @@ void eGameMenu::initialize(eGameBoard* const b,
 
     layoutButtons();
 
-    const auto b6b = addButton(coll.fScience, mWidgets[7]);
+    const auto b6b = addButton("science", railW, railH, mWidgets[7]);
     setupButtonHover(b6b, eLanguage::zeusText(88, 24));
     b6b->hide();
     b6b->move(b6a->x(), b6a->y());
@@ -1010,81 +1369,103 @@ void eGameMenu::initialize(eGameBoard* const b,
     connectButtons();
 
     {
-        const auto btmButtons = new eWidget(window());
-        btmButtons->setPadding(0);
-
-        const auto b = eButton::sCreate(coll.fBuildRoad, window(), btmButtons);
-        b->setPressAction([this]() {
-            setMode(eBuildingMode::road);
-        });
-        const auto rb = eButton::sCreate(coll.fRoadBlock, window(), btmButtons);
-        rb->setPressAction([this]() {
-            setMode(eBuildingMode::roadblock);
-        });
-        const auto e = eButton::sCreate(coll.fClear, window(), btmButtons);
-        e->setPressAction([this]() {
-            setMode(eBuildingMode::erase);
-        });
-        eButton::sCreate(coll.fUndo, window(), btmButtons);
-
-        const int x = mult*24;
-        const int y = std::round(mult*217.5);
-        btmButtons->resize(4*b->width(), b->height());
-        btmButtons->move(x, y);
-        btmButtons->layoutHorizontally();
-        addWidget(btmButtons);
+        // tools: road, roadblock, demolish, undo
+        const auto tools = new eWidget(window());
+        tools->setNoPadding();
+        const int box = std::round(16.5*mult);
+        const auto tool = [&](const char* icon, const std::string& tip,
+                              const eBuildingMode mode) {
+            const auto b = new ePanelActionButton(window(), icon);
+            b->resize(box, box);
+            b->setTooltip(tip);
+            if(mode != eBuildingMode::none) {
+                b->setPressAction([this, mode]() { setMode(mode); });
+                b->setActivePredicate([this, mode]() { return mMode == mode; });
+            }
+            tools->addWidget(b);
+            return b;
+        };
+        tool("road", eLanguage::zeusText(68, 20), eBuildingMode::road);
+        tool("roadblock", eLanguage::zeusText(67, 27), eBuildingMode::roadblock);
+        tool("demolish", eLanguage::zeusText(68, 30), eBuildingMode::erase);
+        mUndoButton = tool("undo", eLanguage::zeusText(68, 10), eBuildingMode::none);
+        mUndoButton->setEnabled(false);
+        tools->resize(std::round(64.0*mult), box);
+        tools->layoutHorizontally();
+        tools->move(std::round(25.0*mult), std::round(217.8*mult));
+        addWidget(tools);
     }
 
     {
-        const auto butts = new eWidget(window());
-        const auto info = eCheckableButton::sCreate(coll.fShowInfo, window(), butts);
-        const auto map = eCheckableButton::sCreate(coll.fShowMap, window(), butts);
-        info->setChecked(true);
-        info->setCheckAction([info, map](const bool c) {
-            if(!c) return info->setChecked(true);
-            map->setChecked(false);
-        });
-        map->setCheckAction([info, map](const bool c) {
-            if(!c) return map->setChecked(true);
-            info->setChecked(false);
-        });
-        butts->resize(info->width() + map->width(), info->height());
-        butts->layoutHorizontally();
-        butts->setX(mult*26);
-        addWidget(butts);
-    }
-
-    {
-        const auto m = eCheckableButton::sCreate(coll.fMessages, window(), this);
-        m->move(mult*73, mult*239);
+        // Info / Map switch
+        mTabs = new ePanelTabs(window());
+        const auto txt = [](const char* key, const char* fallback) {
+            const auto& s = eLanguage::text(key);
+            return s.empty() ? std::string(fallback) : s;
+        };
+        mTabs->initialize(txt("panel_info", "Info"), txt("panel_map", "Map"));
+        mTabs->resize(std::round(62.0*mult), std::round(9.5*mult));
+        mTabs->move(std::round(26.5*mult), std::round(0.8*mult));
+        mTabs->setChangeAction([this](const int i) { setMapMode(i == 1); });
+        addWidget(mTabs);
     }
     {
         const auto butts = new eWidget(window());
         butts->setPadding(0);
-        const auto goals = new eBasicButton(&eInterfaceTextures::fGoals, window());
+        const int box = std::round(16.5*mult);
+        const auto goals = new ePanelActionButton(window(), "goals");
+        goals->resize(box, box);
         goals->setTooltip(eLanguage::zeusText(68, 9));
-        butts->addWidget(goals);
         goals->setPressAction(goalsView);
+        butts->addWidget(goals);
         mRotateButton = new eRotateButton(window());
+        mRotateButton->setModern(true);
+        mRotateButton->resize(std::round(40.0*mult), box);
         butts->addWidget(mRotateButton);
-        mWorldButton = eButton::sCreate(coll.fWorld, window(), butts);
-        mWorldButton->setTooltip(eLanguage::zeusText(68, 17));
-        const int w = goals->width() + mRotateButton->width() + mWorldButton->width() + 5;
-        butts->resize(w, mWorldButton->height());
+        const auto world = new ePanelActionButton(window(), "world");
+        world->resize(box, box);
+        world->setTooltip(eLanguage::zeusText(68, 17));
+        butts->addWidget(world);
+        mWorldButton = world;
+        butts->resize(std::round(84.0*mult), box);
         butts->layoutHorizontally();
-        butts->setX(mult*5);
-        butts->setY(std::round(mult*282.5));
+        butts->move(std::round(4.5*mult), std::round(282.4*mult));
         addWidget(butts);
     }
 
     {
         mEventW = new eEventWidget(window());
         mEventW->setNoPadding();
-        mEventW->setX(mult*5);
-        mEventW->setY(mult*240);
+        mEventW->setX(std::round(6.5*mult));
+        mEventW->setY(std::round(243.5*mult));
         mEventW->setWidth(dataWidWidth);
         addWidget(mEventW);
     }
+
+    {
+        // messages: every message this session, with a count of new ones
+        const int box = std::round(16.5*mult);
+        const auto msgs = new ePanelActionButton(window(), "messages");
+        msgs->resize(box, box);
+        msgs->setTooltip(eLanguage::zeusText(68, 33));
+        msgs->move(std::round(72.8*mult), std::round(251.3*mult));
+        msgs->setPressAction([this]() {
+            if(mGW) mGW->showMessageLog();
+        });
+        msgs->setBadge([this]() {
+            return mGW ? mGW->unseenMessages() : 0;
+        });
+        addWidget(msgs);
+    }
+
+    mMapHome = ww11;
+    mLastPage = ww11;
+
+    // drawn over the content card after a category switch
+    mVeil = new ePanelVeil(window());
+    mVeil->resize(std::round(66.0*mult), std::round(202.0*mult));
+    mVeil->move(std::round(24.0*mult), std::round(12.0*mult));
+    addWidget(mVeil);
 
     mMiniMap->setBoard(b);
 
@@ -1122,6 +1503,12 @@ eMiniMap* eGameMenu::miniMap() const {
 
 void eGameMenu::pushEvent(const eEvent e, const eEventData& ed) {
     mEventW->pushEvent(e, ed);
+}
+
+void eGameMenu::tickEvents() {
+    if(mEventW) {
+        mEventW->tick();
+    }
 }
 
 void eGameMenu::setViewTileHandler(const eViewTileHandler& h) {
@@ -1175,6 +1562,9 @@ void eGameMenu::updateButtonsVisibility() {
 }
 
 void eGameMenu::viewedCityChanged() {
+    if(mEventW) {
+        mEventW->clear();
+    }
     mPopDataW->update();
     mHusbDataW->update();
     mEmplDataW->update();

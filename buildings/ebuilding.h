@@ -320,6 +320,10 @@ public:
     void incTime(const int by);
     int time() const { return mTime; }
     int textureTime() const;
+    // Playback rate of remastered 8-frame work loops (was 5 fps).
+    static constexpr double sHDAnimFps = 10.0;
+    // Current frame (0..7) of a remastered 8-frame work loop.
+    int hdAnimFrame() const;
     void setFrameShift(const int f) { mFrameShift = f; }
 
     void addUnderBuilding(eTile* const t);

@@ -12,4 +12,5 @@ ePodium::ePodium(eGameBoard& board,
                   [this]() { return e::make_shared<ePhilosopher>(getBoard()); },
                   eBuildingType::podium, 2, 2, 4, cid) {
     eGameTextures::loadPodium();
+    setHDFrames(&eBuildingTextures::fPodiumHD);
 }

@@ -19,6 +19,7 @@ public:
     std::shared_ptr<eTexture> loadTexture(const std::string& path);
     const std::shared_ptr<eTexture>& getTexture(const int id) const;
     int size() const;
+    void setScaleMode(const SDL_ScaleMode mode);
 private:
     SDL_Renderer* const mRenderer;
     std::vector<std::shared_ptr<eTexture>> mTexs;

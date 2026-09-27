@@ -11,6 +11,7 @@ public:
     void loadAll();
 
     void load();
+    void setScaleMode(const SDL_ScaleMode mode);
 
     const int fTileW;
     const int fTileH;

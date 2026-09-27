@@ -1,4 +1,8 @@
 #include "echaractertextures.h"
+#include "egamedir.h"
+#include <filesystem>
+#include <fstream>
+#include <algorithm>
 
 #include "espriteloader.h"
 
@@ -606,6 +610,7 @@ void loadBasicTexture(eBasicCharacterTextures& tex,
 void eCharacterTextures::loadPeddler() {
     if(fPeddlerLoaded) return;
     fPeddlerLoaded = true;
+    if(loadPersonHD(fPeddler, {}, fRenderer, fTileH, "peddler")) return;
     const auto& sds = spriteData(fTileH,
                                  ePeddlerSpriteData15,
                                  ePeddlerSpriteData30,
@@ -619,6 +624,7 @@ void eCharacterTextures::loadPeddler() {
 void eCharacterTextures::loadActor() {
     if(fActorLoaded) return;
     fActorLoaded = true;
+    if(loadPersonHD(fActor, {}, fRenderer, fTileH, "actor")) return;
     const auto& sds = spriteData(fTileH,
                                  eActorSpriteData15,
                                  eActorSpriteData30,
@@ -660,6 +666,7 @@ void eCharacterTextures::loadOx() {
 void eCharacterTextures::loadPorter() {
     if(fPorterLoaded) return;
     fPorterLoaded = true;
+    if(loadPersonHD(fPorter, {}, fRenderer, fTileH, "porter")) return;
 
     const auto& sds = spriteData(fTileH,
                                  ePorterSpriteData15,
@@ -711,7 +718,7 @@ void eCharacterTextures::loadTrailer() {
 void eCharacterTextures::loadSettlers() {
     if(fSettlersLoaded) return;
     fSettlersLoaded = true;
-    {
+    if(!loadPersonHD(fSettlers1, {}, fRenderer, fTileH, "settlers1")) {
         const auto& sds = spriteData(fTileH,
                                      eSettlers1SpriteData15,
                                      eSettlers1SpriteData30,
@@ -721,7 +728,7 @@ void eCharacterTextures::loadSettlers() {
                              &eSprMainOffset, fRenderer);
         loadBasicTexture(fSettlers1, 505, loader);
     }
-    {
+    if(!loadPersonHD(fSettlers2, {}, fRenderer, fTileH, "settlers2")) {
         const auto& sds = spriteData(fTileH,
                                      eSettlers2SpriteData15,
                                      eSettlers2SpriteData30,
@@ -736,6 +743,7 @@ void eCharacterTextures::loadSettlers() {
 void eCharacterTextures::loadFireFighter() {
     if(fFireFighterLoaded) return;
     fFireFighterLoaded = true;
+    if(loadPersonHD(fFireFighter, {{"carry", &fFireFighter.fCarry}, {"putout", &fFireFighter.fPutOut}}, fRenderer, fTileH, "firefighter")) return;
     const auto& sds = spriteData(fTileH,
                                  eFireFighterSpriteData15,
                                  eFireFighterSpriteData30,
@@ -759,6 +767,7 @@ void eCharacterTextures::loadFireFighter() {
 void eCharacterTextures::loadWatchman() {
     if(fWatchmanLoaded) return;
     fWatchmanLoaded = true;
+    if(loadPersonHD(fWatchman, {{"fight", &fWatchman.fFight}}, fRenderer, fTileH, "watchman")) return;
     const auto& sds = spriteData(fTileH,
                                  eWatchmanSpriteData15,
                                  eWatchmanSpriteData30,
@@ -778,6 +787,7 @@ void eCharacterTextures::loadWatchman() {
 void eCharacterTextures::loadGoatherd() {
     if(fGoatherdLoaded) return;
     fGoatherdLoaded = true;
+    if(loadPersonHD(fGoatherd, {{"carry", &fGoatherd.fCarry}, {"collect", nullptr, &fGoatherd.fCollect}, {"fight", nullptr, &fGoatherd.fFight}}, fRenderer, fTileH, "goatherd")) return;
     const auto& sds = spriteData(fTileH,
                                  eGoatherdSpriteData15,
                                  eGoatherdSpriteData30,
@@ -803,6 +813,7 @@ void eCharacterTextures::loadGoatherd() {
 void eCharacterTextures::loadBronzeMiner() {
     if(fBronzeMinerLoaded) return;
     fBronzeMinerLoaded = true;
+    if(loadPersonHD(fBronzeMiner, {{"collect", &fBronzeMiner.fCollect}, {"carry", &fBronzeMiner.fCarry}}, fRenderer, fTileH, "bronzeminer")) return;
     const auto& sds = spriteData(fTileH,
                                  eBronzeMinerSpriteData15,
                                  eBronzeMinerSpriteData30,
@@ -928,7 +939,8 @@ void eCharacterTextures::loadSheep() {
     if(fSheepLoaded) return;
     fSheepLoaded = true;
 
-    {
+    if(!loadAnimalHD(fFleecedSheep, &fFleecedSheep.fFight, &fFleecedSheep.fLayDown,
+                     fRenderer, fTileH, "sheep_fleeced")) {
         const auto& sds = spriteData(fTileH,
                                      eFleecedSheepSpriteData15,
                                      eFleecedSheepSpriteData30,
@@ -945,7 +957,8 @@ void eCharacterTextures::loadSheep() {
         }
     }
 
-    {
+    if(!loadAnimalHD(fNudeSheep, &fNudeSheep.fFight, &fNudeSheep.fLayDown,
+                     fRenderer, fTileH, "sheep_nude")) {
         const auto& sds = spriteData(fTileH,
                                      eNudeSheepSpriteData15,
                                      eNudeSheepSpriteData30,
@@ -985,6 +998,7 @@ void eCharacterTextures::loadHorse() {
 void eCharacterTextures::loadShepherd() {
     if(fShepherdLoaded) return;
     fShepherdLoaded = true;
+    if(loadPersonHD(fShepherd, {{"carry", &fShepherd.fCarry}, {"collect", nullptr, &fShepherd.fCollect}, {"fight", nullptr, &fShepherd.fFight}}, fRenderer, fTileH, "shepherd")) return;
     const auto& sds = spriteData(fTileH,
                                  eShepherdSpriteData15,
                                  eShepherdSpriteData30,
@@ -1089,6 +1103,7 @@ void eCharacterTextures::loadLumberjack() {
 void eCharacterTextures::loadTaxCollector() {
     if(fTaxCollectorLoaded) return;
     fTaxCollectorLoaded = true;
+    if(loadPersonHD(fTaxCollector, {}, fRenderer, fTileH, "taxcollector")) return;
     const auto& sds = spriteData(fTileH,
                                  eTaxCollectorSpriteData15,
                                  eTaxCollectorSpriteData30,
@@ -1100,9 +1115,17 @@ void eCharacterTextures::loadTaxCollector() {
     loadBasicTexture(fTaxCollector, 4625, loader);
 }
 
+namespace {
+bool loadCharacterHD(eBasicCharacterTextures& tex, SDL_Renderer* renderer, int tileH,
+                     const std::string& name);
+void loadCartHD(std::vector<std::shared_ptr<eTexture>>& cells,
+                SDL_Renderer* renderer, const int tileH);
+}
+
 void eCharacterTextures::loadTransporter() {
     if(fTransporterLoaded) return;
     fTransporterLoaded = true;
+    if(loadCharacterHD(fTransporter, fRenderer, fTileH, "transporter")) return;
     const auto& sds = spriteData(fTileH,
                                  eTransporterSpriteData15,
                                  eTransporterSpriteData30,
@@ -1117,7 +1140,9 @@ void eCharacterTextures::loadTransporter() {
 void eCharacterTextures::loadGrower() {
     if(fGrowerLoaded) return;
     fGrowerLoaded = true;
-    {
+    if(!loadPersonHD(fGrower, {{"workgrapes", &fGrower.fWorkOnGrapes}, {"workolives", &fGrower.fWorkOnOlives},
+                               {"collectgrapes", &fGrower.fCollectGrapes}, {"collectolives", &fGrower.fCollectOlives}},
+                     fRenderer, fTileH, "grower")) {
         const auto& sds = spriteData(fTileH,
                                      eGrowerSpriteData15,
                                      eGrowerSpriteData30,
@@ -1142,6 +1167,7 @@ void eCharacterTextures::loadGrower() {
 void eCharacterTextures::loadTrader() {
     if(fTraderLoaded) return;
     fTraderLoaded = true;
+    if(loadPersonHD(fTrader, {}, fRenderer, fTileH, "trader")) return;
     const auto& sds = spriteData(fTileH,
                                  eTraderSpriteData15,
                                  eTraderSpriteData30,
@@ -1156,6 +1182,7 @@ void eCharacterTextures::loadTrader() {
 void eCharacterTextures::loadWaterDistributor() {
     if(fWaterDistributorLoaded) return;
     fWaterDistributorLoaded = true;
+    if(loadPersonHD(fWaterDistributor, {}, fRenderer, fTileH, "waterdistributor")) return;
     const auto& sds = spriteData(fTileH,
                                  eWaterDistributorSpriteData15,
                                  eWaterDistributorSpriteData30,
@@ -1225,9 +1252,227 @@ void eCharacterTextures::loadHorseman() {
     }
 }
 
+namespace {
+// Remastered walker atlas in Textures/Remastered/characters/<name>/.
+// V2: 24 walk columns × 8 rows, paired 12-frame idle rows, then death.
+// Also accept the 12×9 layout (12 walk frames, death in row 8).
+bool loadCharacterHD(eBasicCharacterTextures& tex, SDL_Renderer* renderer, int tileH,
+                     const std::string& name) {
+    const auto base=eGameDir::texturesDir()+"Remastered/characters/"+name+"/"+std::to_string(tileH);
+    const auto sheet=std::make_shared<eTexture>();
+    const int cell=160*tileH/60;
+    int frames=0,deathRow=8;
+    for(const int density : {2,1}) {
+        const auto path=base+(density==2?"@2x.png":".png");
+        if(!std::filesystem::exists(path) || !sheet->load(renderer,path)) continue;
+        if(sheet->width()==24*cell*density && sheet->height()==13*cell*density) {
+            frames=24;deathRow=12;
+        } else if(sheet->width()==12*cell*density && sheet->height()==9*cell*density) {
+            frames=12;deathRow=8;
+        } else continue;
+        sheet->setDensity(density);sheet->setScaleMode(SDL_ScaleModeLinear);break;
+    }
+    if(!frames) return false;
+    const auto add=[&](eTextureCollection& collection,int column,int row) {
+        auto& t=collection.addTexture();
+        t->setParentTexture({column*cell,row*cell,cell,cell},sheet);t->setOffset(40,60);
+    };
+    for(int direction=0;direction<8;++direction) {
+        tex.fWalk.emplace_back(renderer);
+        for(int f=0;f<frames;++f) add(tex.fWalk.back(),f,direction);
+        if(frames==24) {
+            tex.fIdle.emplace_back(renderer);
+            for(int f=0;f<12;++f) add(tex.fIdle.back(),12*(direction%2)+f,8+direction/2);
+        }
+    }
+    for(int f=0;f<8;++f) add(tex.fDie,f,deathRow);
+    return true;
+}
+}
+
+bool loadPersonHD(eBasicCharacterTextures& tex, const std::vector<ePersonHDSlot>& slots,
+                  SDL_Renderer* renderer, int tileH, const std::string& name) {
+    if(tileH != 15 && tileH != 30) return false;
+    const auto dir = eGameDir::texturesDir() + "Remastered/characters/" + name + "/";
+    std::ifstream meta(dir + "person.txt");
+    int cols, x0, y0, w, h;
+    if(!(meta >> cols >> x0 >> y0 >> w >> h) || cols <= 0) return false;
+    struct eState { std::string fName; int fFrames; int fHeads; };
+    std::vector<eState> states;
+    eState st;
+    while(meta >> st.fName >> st.fFrames >> st.fHeads) states.push_back(st);
+    // Every state needs a destination of the right shape, and every slot a state.
+    const auto slotFor = [&](const std::string& n) -> const ePersonHDSlot* {
+        for(const auto& s : slots) if(n == s.fState) return &s;
+        return nullptr;
+    };
+    int total = 0;
+    bool walk = false, die = false;
+    for(const auto& s : states) {
+        if(s.fFrames <= 0 || (s.fHeads != 1 && s.fHeads != 8)) return false;
+        if(s.fName == "walk") { if(s.fHeads != 8) return false; walk = true; }
+        else if(s.fName == "die") { if(s.fHeads != 1) return false; die = true; }
+        else {
+            const auto slot = slotFor(s.fName);
+            if(!slot || (s.fHeads == 8 ? !slot->fDirs : !slot->fSingle)) return false;
+        }
+        total += s.fFrames*s.fHeads;
+    }
+    if(!walk || !die) return false;
+    for(const auto& s : slots) {
+        bool found = false;
+        for(const auto& t : states) found = found || t.fName == s.fState;
+        if(!found) return false;
+    }
+    const int rows = (total + cols - 1)/cols;
+    const int cw = w*tileH/60;
+    const int ch = h*tileH/60;
+    const auto sheet = std::make_shared<eTexture>();
+    bool loaded = false;
+    for(const int density : {2, 1}) {
+        const auto path = dir + std::to_string(tileH) + (density == 2 ? "@2x.png" : ".png");
+        if(!std::filesystem::exists(path) || !sheet->load(renderer, path)) continue;
+        if(sheet->width() != cols*cw*density || sheet->height() != rows*ch*density) continue;
+        sheet->setDensity(density);
+        sheet->setScaleMode(SDL_ScaleModeLinear);
+        loaded = true;
+        break;
+    }
+    if(!loaded) return false;
+    int i = 0;
+    const auto next = [&](eTextureCollection& coll) {
+        auto& t = coll.addTexture();
+        t->setParentTexture({i%cols*cw, i/cols*ch, cw, ch}, sheet);
+        t->setOffset((80 - x0)/2, (120 - y0)/2);   // ground anchor, tile-height-30 units
+        i++;
+    };
+    for(const auto& s : states) {
+        if(s.fHeads == 8) {
+            auto& v = s.fName == "walk" ? tex.fWalk : *slotFor(s.fName)->fDirs;
+            v.clear();
+            for(int d = 0; d < 8; d++) {
+                v.emplace_back(renderer);
+                for(int f = 0; f < s.fFrames; f++) next(v.back());
+            }
+        } else {
+            auto& c = s.fName == "die" ? tex.fDie : *slotFor(s.fName)->fSingle;
+            for(int f = 0; f < s.fFrames; f++) next(c);
+        }
+    }
+    return true;
+}
+
+bool loadAnimalHD(eBasicCharacterTextures& tex,
+                  std::vector<eTextureCollection>* fight,
+                  std::vector<eTextureCollection>* lay,
+                  SDL_Renderer* renderer, int tileH,
+                  const std::string& name) {
+    if(tileH != 15 && tileH != 30) return false;
+    const auto dir = eGameDir::texturesDir() + "Remastered/characters/" + name + "/";
+    std::ifstream meta(dir + "anim.txt");
+    int nw, nf, nl, nd, cols, x0, y0, w, h;
+    if(!(meta >> nw >> nf >> nl >> nd >> cols >> x0 >> y0 >> w >> h)) return false;
+    if(nw <= 0 || nd <= 0 || cols <= 0 || nf < 0 || nl < 0 ||
+       (nf > 0 && !fight) || (nl > 0 && !lay)) return false;
+    const int total = 8*(nw + nf + nl) + nd;
+    const int rows = (total + cols - 1)/cols;
+    const int cw = w*tileH/60;
+    const int ch = h*tileH/60;
+    const auto sheet = std::make_shared<eTexture>();
+    bool loaded = false;
+    for(const int density : {2, 1}) {
+        const auto path = dir + std::to_string(tileH) + (density == 2 ? "@2x.png" : ".png");
+        if(!std::filesystem::exists(path) || !sheet->load(renderer, path)) continue;
+        if(sheet->width() != cols*cw*density || sheet->height() != rows*ch*density) continue;
+        sheet->setDensity(density);
+        sheet->setScaleMode(SDL_ScaleModeLinear);
+        loaded = true;
+        break;
+    }
+    if(!loaded) return false;
+    int i = 0;
+    const auto next = [&](eTextureCollection& coll) {
+        auto& t = coll.addTexture();
+        t->setParentTexture({i%cols*cw, i/cols*ch, cw, ch}, sheet);
+        t->setOffset((80 - x0)/2, (120 - y0)/2);   // ground anchor, tile-height-30 units
+        i++;
+    };
+    const auto rowsOf = [&](std::vector<eTextureCollection>& v, const int n) {
+        v.clear();
+        for(int d = 0; d < 8; d++) {
+            v.emplace_back(renderer);
+            for(int f = 0; f < n; f++) next(v.back());
+        }
+    };
+    rowsOf(tex.fWalk, nw);
+    if(fight) rowsOf(*fight, nf);
+    if(lay) rowsOf(*lay, nl);
+    for(int f = 0; f < nd; f++) next(tex.fDie);
+    return true;
+}
+
+int eCharacterTextures::sCartHDRow(const eResourceType type, const int level) {
+    // Row order written by art/characters/transporter/package_sprites.py.
+    static const eResourceType food[] = {
+        eResourceType::urchin, eResourceType::fish, eResourceType::meat,
+        eResourceType::cheese, eResourceType::carrots, eResourceType::onions,
+        eResourceType::wheat, eResourceType::oranges, eResourceType::grapes,
+        eResourceType::olives};
+    static const eResourceType goods[] = {
+        eResourceType::wine, eResourceType::oliveOil, eResourceType::fleece,
+        eResourceType::bronze, eResourceType::orichalc, eResourceType::armor};
+    for(int i = 0; i < 10; i++) {
+        if(food[i] == type) return 1 + 3*i + std::clamp(level, 0, 2);
+    }
+    for(int i = 0; i < 6; i++) {
+        if(goods[i] == type) return 31 + 2*i + std::clamp(level, 0, 1);
+    }
+    return 0;
+}
+
+namespace {
+// Handcart atlas: 8 orientation columns x <rows> cargo rows of <w>x<h> logical
+// cells (tile height 60 units), cut from the 160 px canvas at (x, y). cart.txt
+// holds "rows x y w h"; the ground anchor sits at (80, 120) of that canvas.
+void loadCartHD(std::vector<std::shared_ptr<eTexture>>& cells,
+                SDL_Renderer* renderer, const int tileH) {
+    const auto dir = eGameDir::texturesDir() + "Remastered/characters/cart/";
+    std::ifstream meta(dir + "cart.txt");
+    int rows = 0, x0 = 0, y0 = 0, w = 0, h = 0;
+    if(!(meta >> rows >> x0 >> y0 >> w >> h) || rows != 43) return;
+    const int cw = w*tileH/60;
+    const int ch = h*tileH/60;
+    const auto sheet = std::make_shared<eTexture>();
+    bool loaded = false;
+    for(const int density : {2, 1}) {
+        const auto path = dir + std::to_string(tileH) + (density == 2 ? "@2x.png" : ".png");
+        if(!std::filesystem::exists(path) || !sheet->load(renderer, path)) continue;
+        if(sheet->width() != 8*cw*density || sheet->height() != rows*ch*density) continue;
+        sheet->setDensity(density);
+        sheet->setScaleMode(SDL_ScaleModeLinear);
+        loaded = true;
+        break;
+    }
+    if(!loaded) return;
+    // Offsets are in tile-height-30 units: the anchor within the cell, halved.
+    const int ox = (80 - x0)/2;
+    const int oy = (120 - y0)/2;
+    cells.clear();
+    for(int row = 0; row < rows; row++) {
+        for(int o = 0; o < 8; o++) {
+            auto t = std::make_shared<eTexture>();
+            t->setParentTexture({o*cw, row*ch, cw, ch}, sheet);
+            t->setOffset(ox, oy);
+            cells.push_back(std::move(t));
+        }
+    }
+}
+}
+
 void eCharacterTextures::loadHealer() {
     if(fHealerLoaded) return;
     fHealerLoaded = true;
+    if(loadCharacterHD(fHealer, fRenderer, fTileH, "physician")) return;
     const auto& sds = spriteData(fTileH,
                                  eHealerSpriteData15,
                                  eHealerSpriteData30,
@@ -1269,11 +1514,14 @@ void eCharacterTextures::loadCart() {
     }
     loadOrangesCart();
     loadOrichalcCart();
+    loadCartHD(fCartHD, fRenderer, fTileH);
 }
 
 void eCharacterTextures::loadBoar() {
     if(fBoarLoaded) return;
     fBoarLoaded = true;
+    if(loadAnimalHD(fBoar, &fBoar.fFight, &fBoar.fLayDown, fRenderer, fTileH,
+                    "boar")) return;
     const auto& sds = spriteData(fTileH,
                                  eBoarSpriteData15,
                                  eBoarSpriteData30,
@@ -1294,6 +1542,7 @@ void eCharacterTextures::loadBoar() {
 void eCharacterTextures::loadGymnast() {
     if(fGymnastLoaded) return;
     fGymnastLoaded = true;
+    if(loadPersonHD(fGymnast, {}, fRenderer, fTileH, "gymnast")) return;
 
     const auto& sds = spriteData(fTileH,
                                  eGymnastSpriteData15,
@@ -1308,6 +1557,7 @@ void eCharacterTextures::loadGymnast() {
 void eCharacterTextures::loadCompetitor() {
     if(fCompetitorLoaded) return;
     fCompetitorLoaded = true;
+    if(loadPersonHD(fCompetitor, {}, fRenderer, fTileH, "competitor")) return;
 
     const auto& sds = spriteData(fTileH,
                                  eCompetitorSpriteData15,
@@ -1322,6 +1572,8 @@ void eCharacterTextures::loadCompetitor() {
 void eCharacterTextures::loadGoat() {
     if(fGoatLoaded) return;
     fGoatLoaded = true;
+    if(loadAnimalHD(fGoat, &fGoat.fFight, &fGoat.fLayDown, fRenderer, fTileH,
+                    "goat")) return;
 
     const auto& sds = spriteData(fTileH,
                                  eGoatSpriteData15,
@@ -1342,6 +1594,8 @@ void eCharacterTextures::loadGoat() {
 void eCharacterTextures::loadWolf() {
     if(fWolfLoaded) return;
     fWolfLoaded = true;
+    if(loadAnimalHD(fWolf, &fWolf.fFight, &fWolf.fLayDown, fRenderer, fTileH,
+                    "wolf")) return;
 
     const auto& sds = spriteData(fTileH,
                                  eWolfSpriteData15,
@@ -1362,7 +1616,8 @@ void eCharacterTextures::loadWolf() {
 void eCharacterTextures::loadHunter() {
     if(fHunterLoaded) return;
     fHunterLoaded = true;
-    {
+    if(!loadPersonHD(fHunter, {{"collect", &fHunter.fCollect}, {"carry", &fHunter.fCarry}},
+                     fRenderer, fTileH, "hunter")) {
 
         const auto& sds = spriteData(fTileH,
                                      eHunterSpriteData15,
@@ -1385,6 +1640,7 @@ void eCharacterTextures::loadHunter() {
 void eCharacterTextures::loadPhilosopher() {
     if(fPhilosopherLoaded) return;
     fPhilosopherLoaded = true;
+    if(loadPersonHD(fPhilosopher, {}, fRenderer, fTileH, "philosopher")) return;
 
     const auto& sds = spriteData(fTileH,
                                  ePhilosopherSpriteData15,
@@ -1399,6 +1655,16 @@ void eCharacterTextures::loadPhilosopher() {
 void eCharacterTextures::loadUrchinGatherer() {
     if(fUrchinGathererLoaded) return;
     fUrchinGathererLoaded = true;
+    {   // HD: the "walk" state of the atlas is his wading / swimming.
+        eBasicCharacterTextures hd(fRenderer);
+        auto& u = fUrchinGatherer;
+        if(loadPersonHD(hd, {{"collect", &u.fCollect}, {"carry", &u.fCarry}, {"deposit", &u.fDeposit}},
+                        fRenderer, fTileH, "urchin")) {
+            u.fSwim = std::move(hd.fWalk);
+            for(int i = 0; i < hd.fDie.size(); i++) u.fDie.addTexture() = hd.fDie.getTexture(i);
+            return;
+        }
+    }
 
     const auto& sds = spriteData(fTileH,
                                  eUrchinGathererSpriteData15,
@@ -1513,6 +1779,7 @@ void eCharacterTextures::loadGreekHorseman() {
 void eCharacterTextures::loadDonkey() {
     if(fDonkeyLoaded) return;
     fDonkeyLoaded = true;
+    if(loadAnimalHD(fDonkey, nullptr, nullptr, fRenderer, fTileH, "donkey")) return;
 
     const auto& sds = spriteData(fTileH,
                                  eDonkeySpriteData15,

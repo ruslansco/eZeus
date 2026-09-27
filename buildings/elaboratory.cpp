@@ -12,4 +12,5 @@ eLaboratory::eLaboratory(eGameBoard& board,
                   [this]() { return e::make_shared<eInventor>(getBoard()); },
                   eBuildingType::laboratory, 4, 4, 9, cid) {
     eGameTextures::loadLaboratory();
+    setHDFrames(&eBuildingTextures::fLaboratoryHD);
 }

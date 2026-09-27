@@ -12,6 +12,8 @@ class eFramedButton;
 
 class eWorldWidget : public eMainWidget {
 public:
+    // Selects the previous (-1) or next (1) city shown on the map.
+    void selectNextCity(const int dir);
     using eMainWidget::eMainWidget;
 
     void initialize();

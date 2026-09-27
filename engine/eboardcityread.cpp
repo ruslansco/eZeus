@@ -1,3 +1,4 @@
+#include "fileIO/efileformat.h"
 #include "eboardcity.h"
 
 #include "einvasionhandler.h"
@@ -206,4 +207,9 @@ void eBoardCity::read(eReadStream& src) {
     }
 
     src >> mDefending;
+
+    if(src.formatVersion() >= eFileFormat::cityHistory) {
+        mHistory.read(src);
+        mTradeLedger.read(src);
+    }
 }

@@ -1,6 +1,7 @@
 #ifndef ECHARACTERTEXTURES_H
 #define ECHARACTERTEXTURES_H
 
+#include "engine/eresourcetype.h"
 #include "etexturecollection.h"
 
 struct eBasicCharacterTextures {
@@ -8,8 +9,30 @@ struct eBasicCharacterTextures {
         fDie(renderer) {}
 
     std::vector<eTextureCollection> fWalk;
+    // Optional remastered breathing/standing poses, indexed by orientation.
+    std::vector<eTextureCollection> fIdle;
     eTextureCollection fDie;
 };
+
+// Remastered animal atlas in Textures/Remastered/characters/<name>/ (see
+// art/characters/animals/package_animals.py). Tile heights 15 and 30 only; returns
+// false (keep the original sprites) when absent or inconsistent.
+// Remastered person walker (art/characters/people/package_people.py): person.txt lists
+// the states in atlas order. Every listed state must have a slot: "walk" and "die" go to
+// tex.fWalk / tex.fDie, the others to `slots` (8 headings -> vector, 1 -> collection).
+struct ePersonHDSlot {
+    const char* fState;
+    std::vector<eTextureCollection>* fDirs = nullptr;
+    eTextureCollection* fSingle = nullptr;
+};
+bool loadPersonHD(eBasicCharacterTextures& tex, const std::vector<ePersonHDSlot>& slots,
+                  SDL_Renderer* renderer, int tileH, const std::string& name);
+
+bool loadAnimalHD(eBasicCharacterTextures& tex,
+                  std::vector<eTextureCollection>* fight,
+                  std::vector<eTextureCollection>* lay,
+                  SDL_Renderer* renderer, int tileH,
+                  const std::string& name);
 
 struct eFishingBoatTextures {
     eFishingBoatTextures(SDL_Renderer* const renderer) :
@@ -557,6 +580,11 @@ public:
 
     std::vector<eTextureCollection> fOrangesCart;
     std::vector<eTextureCollection> fOrichalcCart;
+
+    // Remastered handcart (Textures/Remastered/characters/cart): cell
+    // [row*8 + orientation]; rows follow sCartHDRow. Empty when not installed.
+    std::vector<std::shared_ptr<eTexture>> fCartHD;
+    static int sCartHDRow(const eResourceType type, const int level);
 
     eOrangeTenderTextures fOrangeTender;
 

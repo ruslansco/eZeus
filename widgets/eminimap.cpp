@@ -88,26 +88,24 @@ void eMiniMap::paintEvent(ePainter& p) {
     const int nc = cities.size();
     const int period = nc > 0 ? 60/nc : 60;
 
-    const bool useTexture = false;
-
     if(!mTexture->fTexture || mTexture->fTotalUpdateScheduled) {
-        updateTexture(eCityId::neutralFriendly, useTexture);
+        updateTexture(eCityId::neutralFriendly);
         mTexture->fTotalUpdateScheduled = false;
         mTexture->fUpdateScheduled = false;
         mTexture->fTilesToUpdate.clear();
     } else if(mTexture->fUpdateScheduled) {
         for(const auto cid : cities) {
-            updateTexture(cid, useTexture);
+            updateTexture(cid);
         }
         mTexture->fUpdateScheduled = false;
     } else if(nc > 0 && mTime % period == 0) {
         const int id = mCityCounter % nc;
         const auto cid = cities[id];
-        updateTexture(cid, useTexture);
+        updateTexture(cid);
         mCityCounter++;
     }
     if(!mTexture->fTilesToUpdate.empty()) {
-        updateTexture(eCityId::neutralAggresive, useTexture);
+        updateTexture(eCityId::neutralAggresive);
         mTexture->fTilesToUpdate.clear();
     }
 
@@ -232,7 +230,7 @@ SDL_Color colorForTile(eTile* const tile) {
     return {66, 89, 148, 255};
 }
 
-void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
+void eMiniMap::updateTexture(const eCityId cid) {
     if(!mBoard) return;
     const auto rend = renderer();
     const int w = mBoard->rotatedWidth()*mTDim;
@@ -248,15 +246,10 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
             return;
         }
     }
-    fTex->setAsRenderTarget(rend);
-    SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
-    ePainter p(rend);
-
-    const auto& intrfc = eGameTextures::interface();
-    const int id = static_cast<int>(resolution().uiScale());
-    const auto& coll = intrfc[id];
-    const auto& ds = coll.fDiamond;
-    const auto& dtex = ds.getTexture(0);
+    // Tiles are written into a CPU buffer and uploaded once: one draw call
+    // per tile made each refresh a 10 ms frame spike on large maps.
+    auto& pixels = mTexture->fPixels;
+    if(pixels.size() != static_cast<size_t>(w*h)) pixels.assign(w*h, 0);
 
     const int xMin = 0;
     const int xMax = mBoard->rotatedWidth();
@@ -297,15 +290,21 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
                 }
             }
         }
-        if(useTexture) dtex->setColorMod(color.r, color.g, color.b);
         const int px = (x - xMin)*mTDim + (y % 2 ? mTDim/2 : 0);
         const int py = (y - yMin)*mTDim/2;
-        p.fillRect(SDL_Rect{px, py, mTDim, mTDim}, color);
-        if(useTexture) p.drawTexture(px, py, dtex);
+        const Uint32 c = (Uint32(color.r) << 24) | (Uint32(color.g) << 16) |
+                         (Uint32(color.b) << 8) | 0xFF;
+        const int x1 = std::min(px + mTDim, w);
+        const int y1 = std::min(py + mTDim, h);
+        for(int yy = std::max(py, 0); yy < y1; yy++) {
+            for(int xx = std::max(px, 0); xx < x1; xx++) {
+                pixels[yy*w + xx] = c;
+            }
+        }
     };
 
     if(cid == eCityId::neutralFriendly) {
-        SDL_RenderClear(rend);
+        std::fill(pixels.begin(), pixels.end(), 0);
         for(int x = xMin; x < xMax; x++) {
             for(int y = yMin; y < yMax; y++) {
                 const auto tile = mBoard->rotateddtile(x, y);
@@ -343,7 +342,7 @@ void eMiniMap::updateTexture(const eCityId cid, const bool useTexture) {
         }
     }
 
-    SDL_SetRenderTarget(rend, nullptr);
+    SDL_UpdateTexture(fTex->tex(), nullptr, pixels.data(), w*sizeof(Uint32));
 }
 
 void eMiniMap::viewFraction(const double fx, const double fy) {
@@ -404,6 +403,16 @@ void eMiniMap::scheduleUpdate() {
     for(auto& t : mTextures) {
         t.second.fUpdateScheduled = true;
     }
+}
+
+void eMiniMap::setTileDim(const int d) {
+    if(d == mTDim || d < 1) return;
+    int tx = 0;
+    int ty = 0;
+    viewedTile(tx, ty);
+    mTDim = d;
+    scheduleTotalUpdate();
+    viewTile(tx, ty);
 }
 
 void eMiniMap::scheduleTotalUpdate() {

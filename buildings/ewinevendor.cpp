@@ -10,4 +10,5 @@ eWineVendor::eWineVendor(eGameBoard& board, const eCityId cid) :
             0.35, -2.55, &eBuildingTextures::fWineVendorOverlay2,
             eBuildingType::wineVendor, 2, 2, 4, cid) {
     eGameTextures::loadWineVendorBuilding();
+    setHD("wine_vendor");
 }

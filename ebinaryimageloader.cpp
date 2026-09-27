@@ -9,8 +9,22 @@
 std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
     // 1. Direct match: e.g. "Textures/45/interfaceNewParts_0.png", "Textures/Zeus_Title.png"
+    //    A "<name>@2x.png" sibling holds the same sheet at double pixel density
+    //    (sharper when zoomed in); it takes precedence over the plain file.
     const auto basePath = eGameDir::texturesDir();
     const auto loosePath = basePath + path;
+    const auto ext = loosePath.rfind(".png");
+    if(ext != std::string::npos) {
+        const auto hiPath = loosePath.substr(0, ext) + "@2x.png";
+        if(std::filesystem::exists(hiPath)) {
+            const auto tex = std::make_shared<eTexture>();
+            if(tex->load(r, hiPath)) {
+                tex->setDensity(2);
+                printf("Loaded custom 2x texture: %s\n", hiPath.c_str());
+                return tex;
+            }
+        }
+    }
     if(std::filesystem::exists(loosePath)) {
         const auto tex = std::make_shared<eTexture>();
         if(tex->load(r, loosePath)) {

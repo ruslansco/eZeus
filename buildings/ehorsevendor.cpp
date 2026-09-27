@@ -11,6 +11,7 @@ eHorseVendor::eHorseVendor(eGameBoard& board,
             -0.55, -2.5, &eBuildingTextures::fHorseTrainerOverlay2,
             eBuildingType::horseTrainer, 2, 2, 4, cid) {
     eGameTextures::loadHorseVendor();
+    setHD("horse_trainer");
     setResMult(1);
     setMaxRes(4);
 }

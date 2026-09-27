@@ -114,6 +114,7 @@ void eWorldWidget::initialize() {
     mWMW->setSetTextAction([this](const std::string& text) {
         mWM->setText(text);
     });
+    mWM->setCycleAction([this](const int dir) { selectNextCity(dir); });
 
     addWidget(mWM);
     mWM->align(eAlignment::right | eAlignment::top);
@@ -441,4 +442,24 @@ bool eWorldWidget::keyPressEvent(const eKeyPressEvent& e) {
                            eGameWidgetSettings());
     }
     return true;
+}
+
+void eWorldWidget::selectNextCity(const int dir) {
+    // the cities shown on the map, in the world board's order
+    if(!mWorldBoard) return;
+    std::vector<stdsptr<eWorldCity>> cs;
+    for(const auto& c : mWorldBoard->cities()) {
+        if(c->visible()) cs.push_back(c);
+    }
+    if(cs.empty()) return;
+    const int n = cs.size();
+    int i = -1;
+    for(int j = 0; j < n; j++) {
+        if(cs[j] == mCity) i = j;
+    }
+    i = i < 0 ? (dir > 0 ? 0 : n - 1) : ((i + dir) % n + n) % n;
+    mCity = cs[i];
+    const bool editor = mWorldBoard->editorMode();
+    mSettingsButton->setVisible(mCity && editor);
+    mWM->setCity(mCity);
 }

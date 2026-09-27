@@ -50,3 +50,7 @@ void eScrollWidgetComplete::scrollToTheTop() {
 void eScrollWidgetComplete::clampDY() {
     mSW->clampDY();
 }
+
+void eScrollWidgetComplete::ensureVisible(const int y, const int h) {
+    mSW->ensureVisible(y, h);
+}

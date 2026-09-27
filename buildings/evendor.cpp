@@ -1,5 +1,7 @@
 ﻿#include "evendor.h"
 
+#include "engine/egameboard.h"
+
 #include "characters/echaracter.h"
 #include "characters/ecarttransporter.h"
 #include "textures/egametextures.h"
@@ -42,15 +44,22 @@ eVendor::~eVendor() {
 std::shared_ptr<eTexture> eVendor::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
+    if(mHD) {
+        if(const auto hd = blds[sizeId].remastered(mHD)) {
+            const int dir = static_cast<int>(getBoard().direction());
+            return (*hd)[dir][mResource > 0 ? hdAnimFrame() : 8];
+        }
+    }
     return blds[sizeId].*mBaseTex;
 }
 
 std::vector<eOverlay> eVendor::getOverlays(const eTileSize size) const {
+    const int sizeId = static_cast<int>(size);
+    const auto& texs = eGameTextures::buildings();
+    if(mHD && texs[sizeId].remastered(mHD)) return eEmployingBuilding::getOverlays(size);
     if(mResource <= 0) return {};
 
     auto os = eEmployingBuilding::getOverlays(size);
-    const int sizeId = static_cast<int>(size);
-    const auto& texs = eGameTextures::buildings();
 
     if(mOverlayTex) {
         eOverlay o;

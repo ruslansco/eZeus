@@ -4,13 +4,68 @@
 
 #include <algorithm>
 
+namespace {
+    const char* sGoodName(const eResourceType type) {
+        switch(type) {
+        case eResourceType::urchin: return "urchin";
+        case eResourceType::fish: return "fish";
+        case eResourceType::meat: return "meat";
+        case eResourceType::cheese: return "cheese";
+        case eResourceType::carrots: return "carrots";
+        case eResourceType::onions: return "onions";
+        case eResourceType::wheat: return "wheat";
+        case eResourceType::oranges: return "oranges";
+        case eResourceType::wood: return "wood";
+        case eResourceType::bronze: return "bronze";
+        case eResourceType::marble: return "marble";
+        case eResourceType::grapes: return "grapes";
+        case eResourceType::olives: return "olives";
+        case eResourceType::fleece: return "fleece";
+        case eResourceType::sculpture: return "sculpture";
+        case eResourceType::oliveOil: return "oliveOil";
+        case eResourceType::wine: return "wine";
+        case eResourceType::armor: return "armor";
+        case eResourceType::blackMarble: return "blackMarble";
+        case eResourceType::orichalc: return "orichalc";
+        default: return nullptr;
+        }
+    }
+}
+
 void eWarehouseBase::getSpaceOverlays(const eTileSize size,
                                       std::vector<eOverlay>& os,
-                                      const eXY& xy) const {
+                                      const eXY& xy,
+                                      const bool hd) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
     const int iMax = xy.size();
+    const auto& goods = texs.hdOverlays("storage_goods");
+    if(hd && !goods.empty()) {
+        // One pile sprite per bay, level = units stored (1-4). The library sprites are cut
+        // from one-tile cells drawn like a 1x1 building on the bay tile (N view: bays never
+        // rotate). Drawn back to front so nearer piles cover farther ones.
+        const auto& trr = eGameTextures::terrain()[sizeId];
+        const int cellH = 160*texs.fTileH/60;
+        std::vector<eOverlay> piles;
+        for(int i = 0; i < iMax; i++) {
+            const int count = resourceCount(i);
+            const auto name = sGoodName(resourceType(i));
+            if(count <= 0 || !name) continue;
+            const int level = std::clamp(count, 1, 4);
+            eOverlay o;
+            if(!eBuildingTextures::sHDOverlay(goods, name + std::to_string(level), 0, cellH,
+                                              trr.fTileW, trr.fTileH, o)) continue;
+            o.fX += xy[i].first;
+            o.fY += xy[i].second;        // same anchor as the original bay sprite
+            piles.push_back(o);
+        }
+        std::stable_sort(piles.begin(), piles.end(), [](const eOverlay& a, const eOverlay& b) {
+            return a.fX + a.fY < b.fX + b.fY;
+        });
+        os.insert(os.end(), piles.begin(), piles.end());
+        return;
+    }
     for(int i = 0; i < iMax; i++) {
         const int count = resourceCount(i);
         const auto type = resourceType(i);

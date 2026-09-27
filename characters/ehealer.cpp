@@ -8,3 +8,27 @@ eHealer::eHealer(eGameBoard& board) :
     eGameTextures::loadHealer();
     setProvide(eProvide::hygiene, 100000);
 }
+
+void eHealer::incTime(const int by) {
+    const double x0=absX(), y0=absY();
+    const bool walking=actionType()==eCharacterActionType::walk;
+    eBasicPatroler::incTime(by);
+    const double distance=std::hypot(absX()-x0,absY()-y0);
+    if((walking || actionType()==eCharacterActionType::walk) &&
+       distance<=speed()*.005*by+.001) mPresentation.travel(distance);
+}
+
+std::shared_ptr<eTexture> eHealer::getTexture(const eTileSize size) const {
+    const auto& tex=eGameTextures::characters()[static_cast<int>(size)].fHealer;
+    const auto row=static_cast<int>(rotatedOrientation());
+    // Old 12-frame HD sheets and original assets retain their original contract.
+    if(tex.fWalk[row].size()!=24 || tex.fIdle.size()!=8)
+        return eBasicPatroler::getTexture(size);
+    if(actionType()==eCharacterActionType::walk)
+        return tex.fWalk[row].getTexture(mPresentation.walkFrame(24,.64));
+    if(actionType()==eCharacterActionType::stand) {
+        const double clock=mPresentation.ready()?mPresentation.time():time();
+        return tex.fIdle[row].getTexture(int(clock/600.0*12)%12);
+    }
+    return eBasicPatroler::getTexture(size);
+}

@@ -158,6 +158,7 @@ add_executable(eZeus
     buildings/egatehouserenderer.h
     buildings/egranary.cpp
     buildings/egranary.h
+    buildings/ehdoverlays.h
     buildings/egrandagora.cpp
     buildings/egrandagora.h
     buildings/egrowerslodge.cpp
@@ -757,6 +758,8 @@ add_executable(eZeus
     engine/boardData/epopulationdata.cpp
     engine/boardData/epopulationdata.h
     engine/eboardcity.cpp
+    engine/ecityhistory.cpp
+    engine/ecityhistory.h
     engine/eboardcity.h
     engine/eboardcityread.cpp
     engine/eboardcitywrite.cpp
@@ -2637,7 +2640,12 @@ add_executable(eZeus
     textures/esurroundingterrain.cpp
     textures/esurroundingterrain.h
     textures/eterraintextures.cpp
+    textures/eterrainhd.cpp
+    textures/egeometrybatch.cpp
     textures/eterraintextures.h
+    textures/eterrainhd.h
+    textures/egeometrybatch.h
+    ebenchtimers.h
     textures/etiletotexture.cpp
     textures/etiletotexture.h
     textures/evaryingsizetex.cpp
@@ -2729,6 +2737,8 @@ add_executable(eZeus
     widgets/eclosabledialog.h
     widgets/econditionsettingswidget.cpp
     widgets/econditionsettingswidget.h
+    widgets/econtrolsmenu.cpp
+    widgets/econtrolsmenu.h
     widgets/edatebutton.cpp
     widgets/edatebutton.h
     widgets/edatewidget.cpp
@@ -2825,6 +2835,27 @@ add_executable(eZeus
     widgets/emainwidget.h
     widgets/emenuloadingwidget.cpp
     widgets/emenuloadingwidget.h
+    widgets/emenuscene.cpp
+    widgets/emenubutton.cpp
+    widgets/epanelstyle.cpp
+    widgets/emessagelogwidget.cpp
+    widgets/emessagelogwidget.h
+    widgets/emessagetoast.cpp
+    widgets/emessagetoast.h
+    widgets/ehousehovercard.cpp
+    widgets/ehousehovercard.h
+    widgets/ecityhistorywidget.cpp
+    widgets/ecityhistorywidget.h
+    widgets/etradesummarywidget.cpp
+    widgets/etradesummarywidget.h
+    widgets/epanelstyle.h
+    widgets/epanelwidgets.cpp
+    widgets/epanelwidgets.h
+    widgets/emenubutton.h
+    widgets/eadventurepreview.cpp
+    widgets/eadventurepreview.h
+    widgets/emenuscene.h
+    widgets/emenu3d.h
     widgets/emessagebox.cpp
     widgets/emessagebox.h
     widgets/emessagewidget.cpp
@@ -2851,6 +2882,8 @@ add_executable(eZeus
     widgets/enumlineedit.h
     widgets/enumlineeditwidget.cpp
     widgets/enumlineeditwidget.h
+    widgets/eobjectivetrackerwidget.cpp
+    widgets/eobjectivetrackerwidget.h
     widgets/eokbutton.cpp
     widgets/eokbutton.h
     widgets/epainter.cpp
@@ -2873,6 +2906,8 @@ add_executable(eZeus
     widgets/eresolution.h
     widgets/eresourcebutton.cpp
     widgets/eresourcebutton.h
+    widgets/esaveinfo.cpp
+    widgets/esaveinfo.h
     widgets/erightbutton.cpp
     widgets/erightbutton.h
     widgets/erosterofleaders.cpp

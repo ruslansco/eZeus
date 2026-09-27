@@ -81,6 +81,7 @@ private:
     // Button regions (x start, width) for hit testing
     struct BtnRegion { int x; int w; };
     BtnRegion mBtnRegions[5];
+    BtnRegion mSpeedTextRegion{0, 0};
 
     eAction mPauseAction;
     eAction mSlowAction;

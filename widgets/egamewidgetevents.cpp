@@ -1,4 +1,6 @@
 #include "egamewidget.h"
+#include "engine/eresourcetype.h"
+#include "elanguage.h"
 
 #include "audio/esounds.h"
 #include "emessages.h"
@@ -163,6 +165,61 @@ void eGameWidget::handleHeroArrivalEvent(eEventData& ed) {
     showMessage(ed, gm->fArrival);
 }
 
+eGameWidget::eToastStyle eGameWidget::sToastStyle(const eEvent e) {
+    // tone: 0 news, 1 alarm, 2 good news (eMessageToast::eTone)
+    switch(e) {
+    case eEvent::fire: return {"fire", 1};
+    case eEvent::collapse: return {"collapse", 1};
+    case eEvent::areaCutOff: return {"road", 1};
+
+    case eEvent::unemployment:
+    case eEvent::employees: return {"population", 0};
+
+    case eEvent::monsterSlain:
+    case eEvent::armyReturns:
+    case eEvent::aidArrives:
+    case eEvent::troopsRequestAttackAverted:
+    case eEvent::rivalArmyAway: return {"military", 2};
+    case eEvent::aidDeparts:
+    case eEvent::militaryBuildup:
+    case eEvent::militaryDecline: return {"military", 0};
+
+    case eEvent::godDisasterEnds:
+    case eEvent::godTradeResumes: return {"mythology", 2};
+
+    case eEvent::giftReceivedDrachmas: return {"coins", 2};
+    case eEvent::giftReceivedNeeded:
+    case eEvent::giftReceivedSells:
+    case eEvent::giftReceivedNotNeeded:
+    case eEvent::giftReceivedRefuse: return {"amphora", 2};
+
+    case eEvent::tradeOpensUp: return {"amphora", 2};
+    case eEvent::tradeShutdowns: return {"amphora", 1};
+    case eEvent::supplyIncrease:
+    case eEvent::supplyDecrease:
+    case eEvent::demandIncrease:
+    case eEvent::demandDecrease: return {"amphora", 0};
+    case eEvent::priceIncrease:
+    case eEvent::priceDecrease:
+    case eEvent::wageIncrease:
+    case eEvent::wageDecrease:
+    case eEvent::economicProsperity:
+    case eEvent::economicDecline:
+    case eEvent::tributeSuspended:
+    case eEvent::tributeResumed: return {"coins", 0};
+
+    case eEvent::cityBecomesActive:
+    case eEvent::cityBecomesInactive:
+    case eEvent::cityBecomesVisible:
+    case eEvent::cityBecomesInvisible: return {"world", 0};
+    case eEvent::cityRebellionOver:
+    case eEvent::colonyRestored: return {"world", 2};
+
+    case eEvent::shortageWarning: return {"amphora", 1};
+    default: return {};
+    }
+}
+
 void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     const auto& target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
@@ -174,6 +231,12 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
         const auto pid = mBoard->cityIdToPlayerId(cid);
         if(pid != ppid) return;
     }
+    // minor news shows as a card (showMessageImpl); reset on every way out
+    mToastStyle = sToastStyle(e);
+    struct eResetStyle {
+        eToastStyle& fS;
+        ~eResetStyle() { fS = eToastStyle(); }
+    } resetStyle{mToastStyle};
     const auto& inst = eMessages::instance;
     switch(e) {
     case eEvent::fire: {
@@ -1662,6 +1725,35 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
 
     case eEvent::areaCutOff: {
         showMessage(ed, inst.fAreaCutOff, true);
+        return;
+    } break;
+    case eEvent::shortageWarning: {
+        const auto tr = [](const char* key, const char* fallback) {
+            const auto& t = eLanguage::text(key);
+            return t.empty() ? std::string(fallback) : t;
+        };
+        const auto type = ed.fResourceType;
+        const bool money = type == eResourceType::drachmas;
+        std::string title;
+        std::string text;
+        if(money) {
+            title = tr("warn_treasury_title", "Treasury running low");
+            text = tr("warn_treasury_text", "At the pace of the last three months, the treasury (%n drachmas) lasts about %m more months.");
+        } else {
+            title = tr("warn_title", "Running low: %s");
+            text = tr("warn_text", "At the pace of the last three months, the stock of %s (%n) lasts about %m more months.");
+            const auto name = eResourceTypeHelpers::typeName(type);
+            eStringHelpers::replaceAll(title, "%s", name);
+            eStringHelpers::replaceAll(text, "%s", name);
+        }
+        eStringHelpers::replaceAll(text, "%n", std::to_string(ed.fResourceCount));
+        eStringHelpers::replaceAll(text, "%m", std::to_string(ed.fTime));
+        std::string icon = "amphora";
+        if(money) icon = "coins";
+        else if(type == eResourceType::food) icon = "husbandry";
+        else if(type == eResourceType::armor || type == eResourceType::horse) icon = "military";
+        mToastStyle.fIcon = icon;
+        showMessage(ed, eMessage{title, text});
         return;
     } break;
     } break;

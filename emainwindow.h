@@ -52,12 +52,18 @@ public:
     void episodeLost();
 
     bool saveGame(const std::string& path);
+    // saveGame without the screenshot-mode guard (EZEUS_SHOT_SAVE test).
+    bool saveGameUnchecked(const std::string& path);
+    // Screenshot / benchmark runs must never touch the player's saves.
+    static bool sSavingDisabled() { return getenv("EZEUS_SHOT") || getenv("EZEUS_MENU_SHOT"); }
     bool loadGame(const std::string& path);
     void closeGame();
 
     void showRosterOfLeaders();
     void showMenuLoading();
     void showMainMenu();
+    // Load Adventure dialog over parent (the main menu).
+    void showLoadDialog(eWidget* const parent);
     void showSettingsMenu();
     void showChooseGameMenu();
     void showChooseGameEditMenu();
@@ -69,8 +75,13 @@ public:
 
     eWidget* currentWidget() const { return mWidget; }
     eWorldWidget* worldWidget() const { return mWW; }
+    eGameWidget* gameWidget() const { return mGW; }
 
     const eSettings& settings() const { return mSettings; }
+    void setKeyBindings(const eKeyBindings& kb) {
+        mSettings.fKeyBindings = kb;
+        mSettings.write();
+    }
 
     void execDialog(eWidget* const d,
                     const bool closable = true,

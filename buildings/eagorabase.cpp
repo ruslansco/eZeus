@@ -112,6 +112,7 @@ SDL_Point eAgoraBase::pt(const int rx, const int ry,
 }
 
 eBuilding* eAgoraBase::building(const int id) const {
+    if(id < 0 || id >= static_cast<int>(mBs.size())) return nullptr;
     return mBs[id].get();
 }
 
@@ -142,8 +143,10 @@ void eAgoraBase::setBuilding(const int id, const stdsptr<eBuilding>& b) {
     for(int i = minX; i < maxX; i++) {
         for(int j = minY; j < maxY; j++) {
             const auto t = brd.tile(i, j);
-            b->addUnderBuilding(t);
-            t->setUnderBuilding(b);
+            if(t) {
+                b->addUnderBuilding(t);
+                t->setUnderBuilding(b);
+            }
         }
     }
 }

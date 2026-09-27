@@ -2,6 +2,7 @@
 
 #include "textures/egametextures.h"
 #include "enumbers.h"
+#include "engine/egameboard.h"
 
 eSculptureStudio::eSculptureStudio(eGameBoard& board,
                                    const eCityId cid) :
@@ -15,4 +16,17 @@ eSculptureStudio::eSculptureStudio(eGameBoard& board,
                         eNumbers::sSculptureStudioProcessingPeriod,
                         cid) {
     eGameTextures::loadSculptureStudio();
+}
+
+std::shared_ptr<eTexture> eSculptureStudio::getTexture(const eTileSize size) const {
+    const auto& textures=eGameTextures::buildings()[static_cast<int>(size)];
+    const auto& frames=textures.fSculptureStudioHD[static_cast<int>(getBoard().direction())];
+    if(!frames[0]) return eProcessingBuilding::getTexture(size);
+    return frames[overlayEnabled()?hdAnimFrame():8];
+}
+
+std::vector<eOverlay> eSculptureStudio::getOverlays(const eTileSize size) const {
+    const auto& textures=eGameTextures::buildings()[static_cast<int>(size)];
+    if(textures.fSculptureStudioHD[0][0]) return {};
+    return eProcessingBuilding::getOverlays(size);
 }

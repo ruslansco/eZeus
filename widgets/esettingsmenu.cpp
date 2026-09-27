@@ -1,351 +1,300 @@
 #include "esettingsmenu.h"
 
 #include "echeckbox.h"
-#include "elabeledwidget.h"
-#include "eframedwidget.h"
 #include "eframedbutton.h"
+#include "eframedwidget.h"
+#include "elabeledwidget.h"
 #include "eokbutton.h"
 
-#include "elanguage.h"
+#include "econtrolsmenu.h"
 #include "egamedir.h"
+#include "elanguage.h"
+#include "emainwindow.h"
+#include "emenubutton.h"
+#include "textures/egeometrybatch.h"
 
 #include <filesystem>
 
-eSettingsMenu::eSettingsMenu(const eSettings& iniSettings,
-                             eMainWindow* const window) :
-    eMainMenuBase(window),
-    mIniSettings(iniSettings),
-    mSettings(iniSettings) {
+eSettingsMenu::eSettingsMenu(const eSettings &iniSettings,
+                             eMainWindow *const window)
+    : eMainMenuBase(window), mIniSettings(iniSettings), mSettings(iniSettings) {
 
 }
 
-eWidget* createTextureBox(eMainWindow* const window,
-                          const bool checked,
-                          const eCheckAction& checkA,
-                          const std::string& text,
-                          const int p,
-                          const std::string& path) {
-    const bool missing = !std::filesystem::exists(path);
-    const auto w = new eWidget(window);
-    w->setNoPadding();
+eWidget *createTextureBox(eMainWindow *const window, const bool checked,
+                          const eCheckAction &checkA, const std::string &text,
+                          const int p, const std::string &path) {
+  const bool missing = !std::filesystem::exists(path);
+  const auto w = new eWidget(window);
+  w->setNoPadding();
 
-    const auto b = new eCheckBox(window);
-    b->setNoPadding();
-    b->setChecked(checked);
-    b->setCheckAction(checkA);
-    b->fitContent();
-    if(missing) b->hide();
+  const auto b = new eCheckBox(window);
+  b->setNoPadding();
+  b->setChecked(checked);
+  b->setCheckAction(checkA);
+  b->fitContent();
+  if (missing)
+    b->hide();
 
-    const auto l = new eLabel(window);
-    l->setNoPadding();
-    l->setSmallFontSize();
-    l->setText(text);
-    l->fitContent();
+  const auto l = new eLabel(window);
+  l->setNoPadding();
+  l->setSmallFontSize();
+  l->setText(text);
+  l->fitContent();
 
-    w->addWidget(b);
-    w->addWidget(l);
-    l->setX(b->width() + p);
-    w->fitContent();
+  w->addWidget(b);
+  w->addWidget(l);
+  l->setX(b->width() + p);
+  w->fitContent();
 
-    return w;
+  return w;
 }
 
-void eSettingsMenu::initialize(const eApplyAction& settingsA,
-                               const eFullscreenA& fullscreenA) {
-    eMainMenuBase::initialize();
+namespace {
+std::string tr(const std::string &key, const std::string &fallback) {
+  const auto &s = eLanguage::text(key);
+  return s.empty() ? fallback : s;
+}
 
-    const auto frame = new eFramedWidget(window());
-    frame->setType(eFrameType::message);
-    addWidget(frame);
+// Section title with a fading gold rule beneath.
+class eMenuHeading : public eLabel {
+public:
+  using eLabel::eLabel;
 
-    const auto res = resolution();
-
-    const int p = res.largePadding();
-    const int cww = res.centralWidgetLargeWidth();
-    const int cwh = res.centralWidgetLargeHeight();
-    frame->resize(cww, cwh);
-
-    frame->align(eAlignment::center);
-
-    const auto inner = new eWidget(window());
-    inner->setNoPadding();
-    frame->addWidget(inner);
-    inner->move(2*p, 2*p);
-    inner->resize(frame->width() - 4*p, frame->height() - 4*p);
-
-    const int colm = 2*p;
-    const int colw = (inner->width() - 2*colm)/3;
-    const int colh = inner->height();
-
-    const auto col1 = new eWidget(window());
-    col1->setNoPadding();
-    col1->setWidth(colw + 2*p);
-    col1->setHeight(colh);
-    inner->addWidget(col1);
-
-    const auto col2 = new eWidget(window());
-    col2->setNoPadding();
-    col2->setWidth(colw - p);
-    col2->setHeight(colh);
-    inner->addWidget(col2);
-    col2->setX(colw + 2*p + colm);
-
-    const auto col3 = new eWidget(window());
-    col3->setNoPadding();
-    col3->setWidth(colw - p);
-    col3->setHeight(colh);
-    inner->addWidget(col3);
-    col3->setX(2*colw + 2*p + 2*colm);
-
-    {
-        const auto res = mSettings.fRes;
-        const auto& ress = eResolution::sResolutions;
-        int y = 0;
-        eWidget* col = col2;
-        const auto currentButton = std::make_shared<eFramedButton*>();
-        const int iMax = ress.size();
-        for(int i = 0; i < iMax; i++) {
-            const auto& r = ress[i];
-            const auto b = new eFramedButton(window());
-            b->setSmallPadding();
-            b->setUnderline(false);
-            b->setText(r.name());
-            b->fitContent();
-            b->setWidth(col->width() - 2*p);
-            if(r == res) {
-                *currentButton = b;
-                b->setYellowFontColor();
-            }
-            col->addWidget(b);
-            b->setY(y);
-            b->align(eAlignment::hcenter);
-            b->setPressAction([this, currentButton, b, r]() {
-                if(*currentButton) {
-                    (*currentButton)->setLightFontColor();
-                }
-                *currentButton = b;
-                b->setYellowFontColor();
-                mSettings.fRes = r;
-            });
-            y += b->height() + p;
-            if(col->height() - y < b->height()) {
-                col = col3;
-                y = 0;
-            }
-        }
+protected:
+  void paintEvent(ePainter &p) override {
+    eLabel::paintEvent(p);
+    const int t = std::max(1, height() / 28);
+    const int w = width();
+    const int steps = 8;
+    for (int i = 0; i < steps; i++) {
+      const Uint8 a = static_cast<Uint8>(200 * (steps - i) / steps);
+      p.fillRect(SDL_Rect{i * w / steps, height() - t, w / steps + 1, t},
+                 SDL_Color{212, 175, 55, a});
     }
+  }
+};
+} // namespace
 
-    {
-        const auto fs = new eFramedButton(window());
-        fs->setUnderline(false);
-        fs->setText(mSettings.fFullscreen ?
-                        eLanguage::zeusText(42, 2) : // windowed screen
-                        eLanguage::zeusText(42, 1)); // full screen
-        fs->fitContent();
-        col1->addWidget(fs);
+void eSettingsMenu::initialize(const eApplyAction &settingsA,
+                               const eFullscreenA &fullscreenA) {
+  eMainMenuBase::initialize(eMenuShot::settings);
+  setBackAction([this]() { window()->showMainMenu(); });
 
-        fs->setPressAction([this, fs, fullscreenA]() {
-            const bool f = !mSettings.fFullscreen;
-            mSettings.fFullscreen = f;
-            fullscreenA(f);
-            fs->setText(f ? eLanguage::zeusText(42, 2) : // windowed screen
-                            eLanguage::zeusText(42, 1)); // full screen
-            fs->fitContent();
-            fs->align(eAlignment::hcenter);
-        });
-        fs->align(eAlignment::hcenter);
+  const auto res = resolution();
+  const int p = res.largePadding();
+  const double u = std::min(height() / 1080., width() / 1500.);
+  const auto U = [u](const double v) {
+    return static_cast<int>(std::round(v * u));
+  };
+
+  const auto title = new eLabel(window());
+  title->setHugeFontSize();
+  title->setYellowFontColor();
+  title->setText(eLanguage::zeusText(2, 0));
+  title->fitContent();
+  addWidget(title);
+  title->align(eAlignment::hcenter);
+  title->setY(U(44));
+
+  const int barH = U(64);
+  const int frameW = std::min(width() - U(80), U(1180));
+  const int top = title->y() + title->height() + U(22);
+  const int frameH = height() - top - barH - U(70);
+  const auto frame = new eFramedWidget(window());
+  frame->setType(eFrameType::message);
+  frame->resize(frameW, frameH);
+  frame->move((width() - frameW) / 2, top);
+  addWidget(frame);
+
+  const auto inner = new eWidget(window());
+  inner->setNoPadding();
+  frame->addWidget(inner);
+  inner->move(3 * p, 3 * p);
+  inner->resize(frameW - 6 * p, frameH - 6 * p);
+
+  const int gap = U(48);
+  const int leftW = (inner->width() - gap) * 44 / 100;
+  const int rightW = inner->width() - gap - leftW;
+
+  const auto left = new eWidget(window());
+  left->setNoPadding();
+  left->resize(leftW, inner->height());
+  inner->addWidget(left);
+
+  const auto right = new eWidget(window());
+  right->setNoPadding();
+  right->resize(rightW, inner->height());
+  right->move(leftW + gap, 0);
+  inner->addWidget(right);
+
+  const auto heading = [&](eWidget *const col, const std::string &text,
+                           const int y) {
+    const auto h = new eMenuHeading(window());
+    h->setSmallFontSize();
+    h->setYellowFontColor();
+    h->setNoPadding();
+    h->setText(text);
+    h->fitContent();
+    h->setTextAlignment(eAlignment::left | eAlignment::top);
+    h->resize(col->width(), h->height() + U(10));
+    h->move(0, y);
+    col->addWidget(h);
+    return y + h->height() + U(16);
+  };
+
+  // --- display -------------------------------------------------------------
+  int y = heading(left, tr("menu_display", "Display"), 0);
+  {
+    const auto fs = new eMenuButton(window());
+    fs->setup(mSettings.fFullscreen ? eLanguage::zeusText(42, 2) : // windowed
+                  eLanguage::zeusText(42, 1), // full screen
+              eMenuButton::eStyle::secondary, leftW);
+    fs->move(0, y);
+    left->addWidget(fs);
+    fs->setPressAction([this, fs, fullscreenA]() {
+      const bool f = !mSettings.fFullscreen;
+      mSettings.fFullscreen = f;
+      fullscreenA(f);
+      fs->setText(f ? eLanguage::zeusText(42, 2) : eLanguage::zeusText(42, 1));
+    });
+    y += fs->height() + U(30);
+  }
+
+  // --- language --------------------------------------------------------------
+  y = heading(left, eLanguage::text("language"), y);
+  {
+    const auto langRow = [&](const std::string &label,
+                             std::string *const value) {
+      const auto l = new eLabel(window());
+      l->setSmallFontSize();
+      l->setNoPadding();
+      l->setText(label + ":");
+      l->fitContent();
+      left->addWidget(l);
+      const int bw = U(96);
+      const auto en = new eMenuButton(window());
+      en->setup("EN", eMenuButton::eStyle::secondary, bw);
+      const auto ru = new eMenuButton(window());
+      ru->setup("RU", eMenuButton::eStyle::secondary, bw);
+      en->setSelected(*value != "ru");
+      ru->setSelected(*value == "ru");
+      en->setPressAction([value, en, ru]() {
+        *value = "en";
+        en->setSelected(true);
+        ru->setSelected(false);
+      });
+      ru->setPressAction([value, en, ru]() {
+        *value = "ru";
+        ru->setSelected(true);
+        en->setSelected(false);
+      });
+      left->addWidget(en);
+      left->addWidget(ru);
+      const int ew = std::max(en->width(), ru->width());
+      en->setWidth(ew);
+      ru->setWidth(ew);
+      ru->move(leftW - ew, y);
+      en->move(ru->x() - U(12) - ew, y);
+      l->move(0, y + (en->height() - l->height()) / 2);
+      y += en->height() + U(12);
+    };
+    langRow(eLanguage::text("language"), &mSettings.fLanguage);
+    langRow(eLanguage::text("audio_language"), &mSettings.fAudioLanguage);
+    y += U(18);
+  }
+
+  // --- textures
+  // ----------------------------------------------------------------
+  y = heading(left, tr("menu_textures", "Textures"), y);
+  {
+    const auto box = [&](const bool checked, const eCheckAction &a,
+                         const std::string &key, const std::string &path) {
+      const auto w =
+          createTextureBox(window(), checked, a, eLanguage::text(key), p, path);
+      left->addWidget(w);
+      w->move(0, y);
+      y += w->height() + U(8);
+    };
+    box(
+        mSettings.fTinyTextures,
+        [this](const bool c) { mSettings.fTinyTextures = c; }, "tiny_textures",
+        eGameDir::i15BinaryPath());
+    box(
+        mSettings.fSmallTextures,
+        [this](const bool c) { mSettings.fSmallTextures = c; },
+        "small_textures", eGameDir::i30BinaryPath());
+    box(
+        mSettings.fMediumTextures,
+        [this](const bool c) { mSettings.fMediumTextures = c; },
+        "medium_textures", eGameDir::i45BinaryPath());
+    box(
+        mSettings.fLargeTextures,
+        [this](const bool c) { mSettings.fLargeTextures = c; },
+        "large_textures", eGameDir::i60BinaryPath());
+    y += U(22);
+  }
+
+  // --- controls
+  // ------------------------------------------------------------------
+  {
+    const auto controlsBtn = new eMenuButton(window());
+    controlsBtn->setup(eLanguage::text("controls"),
+                       eMenuButton::eStyle::secondary, leftW);
+    controlsBtn->move(0, std::min(y, left->height() - controlsBtn->height()));
+    controlsBtn->setPressAction([this]() {
+      const auto cm = new eControlsMenu(
+          mSettings.fKeyBindings, window(),
+          [this](const eKeyBindings &b) { mSettings.fKeyBindings = b; });
+      cm->initialize();
+      window()->execDialog(cm);
+    });
+    left->addWidget(controlsBtn);
+  }
+
+  // --- resolution grid
+  // ---------------------------------------------------------------
+  {
+    int ry = heading(right, tr("menu_resolution", "Resolution"), 0);
+    const auto &ress = eResolution::sResolutions;
+    const int cols = 3;
+    const int cgap = U(12);
+    const int bw = (rightW - (cols - 1) * cgap) / cols;
+    const auto buttons = std::make_shared<std::vector<eMenuButton *>>();
+    int bh = 0;
+    for (int i = 0; i < static_cast<int>(ress.size()); i++) {
+      const auto r = ress[i];
+      const auto b = new eMenuButton(window());
+      b->setup(r.name(), eMenuButton::eStyle::secondary, bw);
+      b->setWidth(bw);
+      bh = b->height();
+      b->move((i % cols) * (bw + cgap), ry + (i / cols) * (bh + U(10)));
+      b->setSelected(r == mSettings.fRes);
+      b->setPressAction([this, buttons, b, r]() {
+        for (const auto o : *buttons)
+          o->setSelected(o == b);
+        mSettings.fRes = r;
+      });
+      buttons->push_back(b);
+      right->addWidget(b);
     }
+  }
 
-    {
-        const auto texsFrame = new eFramedWidget(window());
-        texsFrame->setType(eFrameType::inner);
-        texsFrame->setNoPadding();
+  // --- action bar
+  // ------------------------------------------------------------------------
+  const int barY = top + frameH + U(22);
+  const auto cancel = new eMenuButton(window());
+  cancel->setup(tr("menu_cancel", "Cancel"), eMenuButton::eStyle::secondary,
+                U(220));
+  cancel->setHeight(barH);
+  cancel->move(frame->x(), barY);
+  cancel->setPressAction([this]() { window()->showMainMenu(); });
+  addWidget(cancel);
 
-        const auto texsWid = new eWidget(window());
-
-        {
-            const auto checkA = [this](const bool c) {
-                mSettings.fTinyTextures = c;
-            };
-            const bool checked = mSettings.fTinyTextures;
-            const auto text = eLanguage::text("tiny_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p,
-                                            eGameDir::i15BinaryPath());
-            texsWid->addWidget(w);
-        }
-
-        {
-            const auto checkA = [this](const bool c) {
-                mSettings.fSmallTextures = c;
-            };
-            const bool checked = mSettings.fSmallTextures;
-            const auto text = eLanguage::text("small_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p,
-                                            eGameDir::i30BinaryPath());
-            texsWid->addWidget(w);
-        }
-
-        {
-            const auto checkA = [this](const bool c) {
-                mSettings.fMediumTextures = c;
-            };
-            const bool checked = mSettings.fMediumTextures;
-            const auto text = eLanguage::text("medium_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p,
-                                            eGameDir::i45BinaryPath());
-            texsWid->addWidget(w);
-        }
-
-        {
-            const auto checkA = [this](const bool c) {
-                mSettings.fLargeTextures = c;
-            };
-            const bool checked = mSettings.fLargeTextures;
-            const auto text = eLanguage::text("large_textures");
-            const auto w = createTextureBox(window(), checked, checkA, text, p,
-                                            eGameDir::i60BinaryPath());
-            texsWid->addWidget(w);
-        }
-
-        texsWid->stackVertically();
-        texsWid->fitContent();
-        texsFrame->addWidget(texsWid);
-        texsFrame->resize(texsWid->width() + 2*p,
-                          texsWid->height() + 2*p);
-        texsWid->move(2*p, 2*p);
-        col1->addWidget(texsFrame);
-    }
-
-    {
-        const auto langFrame = new eFramedWidget(window());
-        langFrame->setType(eFrameType::inner);
-        langFrame->setNoPadding();
-
-        const auto langWid = new eWidget(window());
-        langWid->setNoPadding();
-
-        const auto textLangRow = new eWidget(window());
-        textLangRow->setNoPadding();
-
-        const auto textLangLabel = new eLabel(window());
-        textLangLabel->setNoPadding();
-        textLangLabel->setSmallFontSize();
-        textLangLabel->setText(eLanguage::text("language") + ":");
-        textLangLabel->fitContent();
-        textLangRow->addWidget(textLangLabel);
-
-        const auto enTextBtn = new eFramedButton(window());
-        enTextBtn->setSmallPadding();
-        enTextBtn->setUnderline(false);
-        enTextBtn->setText("EN");
-        enTextBtn->fitContent();
-
-        const auto ruTextBtn = new eFramedButton(window());
-        ruTextBtn->setSmallPadding();
-        ruTextBtn->setUnderline(false);
-        ruTextBtn->setText("RU");
-        ruTextBtn->fitContent();
-
-        if(mSettings.fLanguage == "ru") {
-            ruTextBtn->setYellowFontColor();
-            enTextBtn->setLightFontColor();
-        } else {
-            enTextBtn->setYellowFontColor();
-            ruTextBtn->setLightFontColor();
-        }
-
-        enTextBtn->setPressAction([this, enTextBtn, ruTextBtn]() {
-            mSettings.fLanguage = "en";
-            enTextBtn->setYellowFontColor();
-            ruTextBtn->setLightFontColor();
-        });
-
-        ruTextBtn->setPressAction([this, enTextBtn, ruTextBtn]() {
-            mSettings.fLanguage = "ru";
-            ruTextBtn->setYellowFontColor();
-            enTextBtn->setLightFontColor();
-        });
-
-        textLangRow->addWidget(enTextBtn);
-        textLangRow->addWidget(ruTextBtn);
-
-        const auto audioLangRow = new eWidget(window());
-        audioLangRow->setNoPadding();
-
-        const auto audioLangLabel = new eLabel(window());
-        audioLangLabel->setNoPadding();
-        audioLangLabel->setSmallFontSize();
-        audioLangLabel->setText(eLanguage::text("audio_language") + ":");
-        audioLangLabel->fitContent();
-        audioLangRow->addWidget(audioLangLabel);
-
-        const auto enAudioBtn = new eFramedButton(window());
-        enAudioBtn->setSmallPadding();
-        enAudioBtn->setUnderline(false);
-        enAudioBtn->setText("EN");
-        enAudioBtn->fitContent();
-
-        const auto ruAudioBtn = new eFramedButton(window());
-        ruAudioBtn->setSmallPadding();
-        ruAudioBtn->setUnderline(false);
-        ruAudioBtn->setText("RU");
-        ruAudioBtn->fitContent();
-
-        if(mSettings.fAudioLanguage == "ru") {
-            ruAudioBtn->setYellowFontColor();
-            enAudioBtn->setLightFontColor();
-        } else {
-            enAudioBtn->setYellowFontColor();
-            ruAudioBtn->setLightFontColor();
-        }
-
-        enAudioBtn->setPressAction([this, enAudioBtn, ruAudioBtn]() {
-            mSettings.fAudioLanguage = "en";
-            enAudioBtn->setYellowFontColor();
-            ruAudioBtn->setLightFontColor();
-        });
-
-        ruAudioBtn->setPressAction([this, enAudioBtn, ruAudioBtn]() {
-            mSettings.fAudioLanguage = "ru";
-            ruAudioBtn->setYellowFontColor();
-            enAudioBtn->setLightFontColor();
-        });
-
-        audioLangRow->addWidget(enAudioBtn);
-        audioLangRow->addWidget(ruAudioBtn);
-
-        const int maxLabelW = std::max(textLangLabel->width(), audioLangLabel->width());
-        enTextBtn->setX(maxLabelW + p);
-        ruTextBtn->setX(enTextBtn->x() + enTextBtn->width() + p/2);
-        textLangLabel->setY((enTextBtn->height() - textLangLabel->height())/2);
-        textLangRow->fitContent();
-
-        enAudioBtn->setX(maxLabelW + p);
-        ruAudioBtn->setX(enAudioBtn->x() + enAudioBtn->width() + p/2);
-        audioLangLabel->setY((enAudioBtn->height() - audioLangLabel->height())/2);
-        audioLangRow->fitContent();
-
-        langWid->addWidget(textLangRow);
-        langWid->addWidget(audioLangRow);
-        langWid->stackVertically();
-        langWid->fitContent();
-
-        langFrame->addWidget(langWid);
-        langFrame->resize(langWid->width() + 2*p,
-                          langWid->height() + 2*p);
-        langWid->move(p, p);
-        col1->addWidget(langFrame);
-    }
-
-    col1->layoutVertically();
-
-    {
-        const auto b = new eOkButton(window());
-        frame->addWidget(b);
-        b->setPressAction([this, settingsA]() {
-            settingsA(mSettings);
-        });
-        b->align(eAlignment::bottom | eAlignment::right);
-        b->move(b->x() - 2*p, b->y() - 2*p);
-    }
+  const auto ok = new eMenuButton(window());
+  ok->setup(tr("menu_apply", "Apply"), eMenuButton::eStyle::primary, U(260));
+  ok->setHeight(barH);
+  ok->move(frame->x() + frameW - ok->width(), barY);
+  ok->setPressAction([this, settingsA]() { settingsA(mSettings); });
+  addWidget(ok);
 }

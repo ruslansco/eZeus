@@ -12,4 +12,5 @@ eFountain::eFountain(eGameBoard& board,
                     [this]() { return e::make_shared<eWaterDistributor>(getBoard()); },
                     eBuildingType::fountain, 2, 2, 4, cid)  {
     eGameTextures::loadFountain();
+    setHDFrames(&eBuildingTextures::fFountainHD);
 }

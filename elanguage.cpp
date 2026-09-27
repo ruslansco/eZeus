@@ -4,6 +4,7 @@
 
 #include "exmlparser.h"
 #include "egamedir.h"
+#include <filesystem>
 
 eLanguage eLanguage::instance;
 
@@ -44,16 +45,36 @@ bool eLanguage::loadImpl(const std::string& lang) {
     mLoaded = true;
     mLanguage = lang;
 
-    const std::string textXml = (lang == "ru") ? "Zeus_Text_ru.xml" : "Zeus_Text.xml";
-    const std::string mmXml = (lang == "ru") ? "Zeus_MM_ru.xml" : "Zeus_MM.xml";
-    const std::string langTxt = (lang == "ru") ? "Text/language_ru.txt" : "Text/language.txt";
+    const std::string baseDir = eGameDir::exeDir() + "../";
 
-    eXmlParser::sParse(fZeusText, eGameDir::exeDir() + "../" + textXml);
-    eXmlParser::sParse(fZeusMM, eGameDir::exeDir() + "../" + mmXml);
-
-    if(lang == "ru") {
-        eLoadTextHelper::load(eGameDir::exeDir() + "../Text/language.txt", fText);
+    std::string textXml = "Zeus_Text.xml";
+    if(lang != "en") {
+        const std::string candidate = "Zeus_Text_" + lang + ".xml";
+        if(std::filesystem::exists(baseDir + candidate)) {
+            textXml = candidate;
+        }
     }
-    const std::string path = eGameDir::exeDir() + "../" + langTxt;
-    return eLoadTextHelper::load(path, fText);
+
+    std::string mmXml = "Zeus_MM.xml";
+    if(lang != "en") {
+        const std::string candidate = "Zeus_MM_" + lang + ".xml";
+        if(std::filesystem::exists(baseDir + candidate)) {
+            mmXml = candidate;
+        }
+    }
+
+    eXmlParser::sParse(fZeusText, baseDir + textXml);
+    eXmlParser::sParse(fZeusMM, baseDir + mmXml);
+
+    // Always load base English strings first as default fallback
+    eLoadTextHelper::load(baseDir + "text/language.txt", fText);
+
+    // Overlay language-specific translations if present
+    if(lang != "en") {
+        const std::string langTxt = baseDir + "text/language_" + lang + ".txt";
+        if(std::filesystem::exists(langTxt)) {
+            eLoadTextHelper::load(langTxt, fText);
+        }
+    }
+    return true;
 }

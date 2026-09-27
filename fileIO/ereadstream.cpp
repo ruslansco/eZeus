@@ -1,4 +1,5 @@
 #include "ereadstream.h"
+#include <iostream>
 
 #include "engine/egameboard.h"
 #include "characters/actions/walkable/ewalkableobject.h"

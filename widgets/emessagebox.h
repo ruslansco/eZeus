@@ -26,6 +26,11 @@ public:
     void close();
     bool closable() const { return mClosable; }
 
+    // A message's title with its placeholders ([city_name], [god] ...) filled in.
+    static std::string sFormatTitle(const eEventData& ed, std::string title);
+    // A message's text with its placeholders filled in.
+    static std::string sFormatText(const eEventData& ed, std::string text);
+
     eWidget* createTributeWidget(const eResourceType type,
                                  const int count, const int space,
                                  const int months = -1,

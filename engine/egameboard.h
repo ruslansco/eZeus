@@ -154,6 +154,13 @@ public:
 
     void registerBuilding(eBuilding* const b);
     bool unregisterBuilding(eBuilding* const b);
+    void buildingErased(eBuilding* const b);
+
+    // Records the buildings a player action creates (for Undo). erased
+    // counts pre-existing buildings the action removed: such an action
+    // cannot be undone.
+    void startRecordingBuilt();
+    std::vector<eBuilding*> stopRecordingBuilt(int& erased);
 
     bool unregisterCommonHouse(eSmallHouse* const ch);
 
@@ -242,6 +249,10 @@ public:
     void incTime(const int by);
     void incFrame();
     int frame() const { return mFrame; }
+    // Wall-clock animation time, advanced every rendered frame (not per
+    // simulation tick) so cosmetic animations are smooth at any FPS.
+    void advanceAnimTime(const double ms) { mAnimMs += ms; }
+    int animFrame(const double fps) const { return static_cast<int>(mAnimMs*fps/1000.0); }
     void handleFinishedTasks();
     void scheduleDataUpdate();
     int totalTime() const { return mTotalTime; }
@@ -799,6 +810,7 @@ private:
 
     int mState = 0;
     int mFrame = 0;
+    double mAnimMs = 0.0;
     int mTotalTime = 0;
     int mTime = 0;
     int mEmploymentCheckTime = 0;
@@ -823,6 +835,9 @@ private:
     std::vector<eCharacterAction*> mCharacterActions;
     std::vector<eBuilding*> mTimedBuildings;
     std::vector<eBuilding*> mAllBuildings;
+    bool mRecordingBuilt = false;
+    std::vector<eBuilding*> mRecordedBuilt;
+    int mRecordedErased = 0;
     std::vector<eSpawner*> mSpawners;
     std::vector<eBanner*> mBanners;
 

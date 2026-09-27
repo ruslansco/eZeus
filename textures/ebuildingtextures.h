@@ -2,6 +2,11 @@
 #define EBUILDINGTEXTURES_H
 
 #include "etexturecollection.h"
+#include <array>
+#include <map>
+#include <string>
+
+#include "eoverlay.h"
 
 struct eSpriteData;
 
@@ -11,6 +16,49 @@ public:
                      SDL_Renderer* const renderer);
 
     void loadAll();
+
+    // Remastered pre-rendered building: 4 rows (eWorldDirection N, W, S, E) x
+    // 9 columns (working frames 0-7, worker-free idle pose 8).
+    using eHDFrames = std::array<std::array<std::shared_ptr<eTexture>, 9>, 4>;
+    // Loads Textures/Remastered/<id>/<tileH>.png. canvas60 is the square cell size
+    // at tileH 60; offsets are in tileH 30 units. Leaves frames empty (legacy
+    // fallback) if the atlas is missing or its dimensions do not match. cols < 9 loads a
+    // narrower sheet (e.g. the temple: 4 sprites x 4 construction stages).
+    void loadRemasteredAtlas(const std::string& id, const int canvas60,
+                             const int offsetX, const int offsetY,
+                             eHDFrames& frames, const int cols = 9);
+    // Remastered atlas of an n x n building keyed by asset id (canvas and offsets derived as
+    // in art/_kit/ezkit.py); remastered() is null until loaded or if the atlas is missing.
+    void loadRemasteredN(const std::string& id, const int n);
+    const eHDFrames* remastered(const std::string& id) const;
+    std::map<std::string, eHDFrames> fHDByName;
+    // HD state overlays (stored goods etc.): per name and direction a cropped sprite and
+    // its top-left inside the building's atlas cell (pixels at this zoom). Loaded from
+    // Textures/Remastered/<id>/overlays_<tileH>.{png,txt}; offsets as for the atlas.
+    struct eHDOverlaySprite {
+        std::shared_ptr<eTexture> fTex;
+        int fOX = 0;
+        int fOY = 0;
+    };
+    using eHDOverlaySet = std::map<std::string, std::array<eHDOverlaySprite, 4>>;
+    void loadRemasteredOverlays(const std::string& id, const int offsetX,
+                                const int offsetY, eHDOverlaySet& set);
+    // Overlay drawing `key` for direction `dir` exactly onto a building cell of height
+    // cellH at a zoom with tiles tileW x tileH. False when the sprite is not available.
+    static bool sHDOverlay(const eHDOverlaySet& set, const std::string& key, const int dir,
+                           const int cellH, const int tileW, const int tileH, eOverlay& o);
+    // Every remastered atlas also loads its overlays (if installed), keyed by asset id.
+    std::map<std::string, eHDOverlaySet> fHDOverlays;
+    const eHDOverlaySet& hdOverlays(const std::string& id) const {
+        static const eHDOverlaySet sEmpty;
+        const auto it = fHDOverlays.find(id);
+        return it == fHDOverlays.end() ? sEmpty : it->second;
+    }
+    // The warehouse's legacy art comes from the global load pass; its remastered
+    // atlas is loaded lazily when a warehouse is built.
+    bool fWarehouseHDLoaded = false;
+    void loadWarehouseHD();
+    void loadStorageGoodsHD();
 
     void load();
     bool fLoaded = false;
@@ -263,20 +311,28 @@ public:
     eTextureCollection fEliteHouseHorses;
 
     std::shared_ptr<eTexture> fGymnasium;
+    eHDFrames fGymnasiumHD{};
     eTextureCollection fGymnasiumOverlay;
 
     std::shared_ptr<eTexture> fCollege;
+    eHDFrames fCollegeHD{};
     eTextureCollection fCollegeOverlay;
 
     std::shared_ptr<eTexture> fDramaSchool;
+    eHDFrames fDramaSchoolHD{};
     eTextureCollection fDramaSchoolOverlay;
 
     std::shared_ptr<eTexture> fPodium;
+    eHDFrames fPodiumHD{};
     eTextureCollection fPodiumOverlay;
 
     std::shared_ptr<eTexture> fTheater;
+    eHDFrames fTheaterHD{};
     eTextureCollection fTheaterOverlay;
 
+    // Remastered Roman amphitheatre: two 5x5 pieces like the palace (see eStadium).
+    eHDFrames fStadiumAHD{};
+    eHDFrames fStadiumBHD{};
     std::shared_ptr<eTexture> fStadium1H;
     std::shared_ptr<eTexture> fStadium2H;
 
@@ -298,21 +354,27 @@ public:
     eTextureCollection fStadiumAudiance2H;
 
     std::shared_ptr<eTexture> fBibliotheke;
+    eHDFrames fBibliothekeHD{};
     eTextureCollection fBibliothekeOverlay;
 
     std::shared_ptr<eTexture> fObservatory;
+    eHDFrames fObservatoryHD{};
     eTextureCollection fObservatoryOverlay;
 
     std::shared_ptr<eTexture> fUniversity;
+    eHDFrames fUniversityHD{};
     eTextureCollection fUniversityOverlay;
 
     std::shared_ptr<eTexture> fLaboratory;
+    eHDFrames fLaboratoryHD{};
     eTextureCollection fLaboratoryOverlay;
 
     std::shared_ptr<eTexture> fInventorsWorkshop;
+    eHDFrames fInventorsWorkshopHD{};
     eTextureCollection fInventorsWorkshopOverlay;
 
     std::shared_ptr<eTexture> fMuseum;
+    eHDFrames fMuseumHD{};
     eTextureCollection fMuseumOverlay;
 
     std::shared_ptr<eTexture> fPalace1H;
@@ -321,15 +383,22 @@ public:
     std::shared_ptr<eTexture> fPalace1W;
     std::shared_ptr<eTexture> fPalace2W;
 
+    // Remastered Roman palace: the 8x4 palace is drawn as two 4x4 pieces (A = first four
+    // tiles along the long axis, B = the other four), rows by view (see ePalace).
+    eHDFrames fPalaceAHD{};
+    eHDFrames fPalaceTileHD[2]{};   // forecourt tiles: plain paving / candelabrum + banner
+    eHDFrames fPalaceBHD{};
     eTextureCollection fPalaceHOverlay;
     eTextureCollection fPalaceWOverlay;
 
     eTextureCollection fPalaceTiles;
 
     std::shared_ptr<eTexture> fFountain;
+    eHDFrames fFountainHD{};
     eTextureCollection fFountainOverlay;
 
     std::shared_ptr<eTexture> fHospital;
+    eHDFrames fHospitalHD{};
     eTextureCollection fHospitalOverlay;
 
 
@@ -343,9 +412,11 @@ public:
     eTextureCollection fOnions;
 
     std::shared_ptr<eTexture> fHuntingLodge;
+    eHDFrames fHuntingLodgeHD{};
     eTextureCollection fHuntingLodgeOverlay;
 
     eTextureCollection fFishery;
+    eHDFrames fFisheryHD{};
     eTextureCollection fFisheryBoatBuildingW;
     eTextureCollection fFisheryBoatBuildingH;
     std::vector<eTextureCollection> fFisheryOverlay;
@@ -354,32 +425,40 @@ public:
     eTextureCollection fFisheryUnpackingOverlayBL;
     eTextureCollection fFisheryUnpackingOverlayBR;
     eTextureCollection fUrchinQuay;
+    eHDFrames fUrchinQuayHD{};
     eTextureCollection fUrchinQuayUnpackingOverlayTL;
     eTextureCollection fUrchinQuayUnpackingOverlayTR;
     eTextureCollection fUrchinQuayUnpackingOverlayBL;
     eTextureCollection fUrchinQuayUnpackingOverlayBR;
 
     std::shared_ptr<eTexture> fCardingShed;
+    eHDFrames fCardingShedHD{};
     eTextureCollection fCardingShedOverlay;
 
     std::shared_ptr<eTexture> fDairy;
+    eHDFrames fDairyHD{};
     eTextureCollection fDairyOverlay;
 
     std::shared_ptr<eTexture> fGrowersLodge;
+    eHDFrames fGrowersLodgeHD{};
     eTextureCollection fGrowersLodgeOverlay;
 
 //    std::shared_ptr<eTexture> fCorral;
 //    eTextureCollection fCorralOverlay;
 
     std::shared_ptr<eTexture> fOrangeTendersLodge;
+    eHDFrames fOrangeTendersLodgeHD{};
     eTextureCollection fOrangeTendersLodgeOverlay;
 
     std::shared_ptr<eTexture> fTimberMill;
+    eHDFrames fTimberMillHD{};
     eTextureCollection fTimberMillOverlay;
 
     std::shared_ptr<eTexture> fMasonryShop;
+    eHDFrames fMasonryShopHD{};
     eTextureCollection fMasonryShopStones;
     std::shared_ptr<eTexture> fBlackMarbleWorkshop;
+    eHDFrames fBlackMarbleWorkshopHD{};
     eTextureCollection fBlackMarbleWorkshopStones;
     std::vector<eTextureCollection> fWaitingOverlay0;
     std::vector<eTextureCollection> fWaitingOverlay1;
@@ -387,26 +466,38 @@ public:
     std::vector<eTextureCollection> fMasonryShopOverlay2;
 
     std::shared_ptr<eTexture> fRefinery;
+    eHDFrames fRefineryHD{};
     eTextureCollection fRefineryOverlay;
 
     std::shared_ptr<eTexture> fOrichalcTowerOverlay;
 
     std::shared_ptr<eTexture> fMint;
+    eHDFrames fMintHD{};
+    // Remastered common houses: index level*2 + variant (Textures/Remastered/common_house_<level><a|b>).
+    std::array<eHDFrames, 14> fCommonHouseHD{};
+    // Remastered elite houses: index level*2 + variant (Textures/Remastered/elite_house_<level><a|b>).
+    std::array<eHDFrames, 10> fEliteHouseHD{};
     eTextureCollection fMintOverlay;
 
     std::shared_ptr<eTexture> fFoundry;
+    std::array<std::array<std::shared_ptr<eTexture>, 9>, 4> fFoundryHD{};
     eTextureCollection fFoundryOverlay;
 
     std::shared_ptr<eTexture> fArtisansGuild;
     eTextureCollection fArtisansGuildOverlay;
 
     std::shared_ptr<eTexture> fOlivePress;
+    // Rows: N, W, S, E. Columns 0..7: working; column 8: unstaffed/idle.
+    std::array<std::array<std::shared_ptr<eTexture>, 9>, 4> fOlivePressHD{};
     eTextureCollection fOlivePressOverlay;
 
     std::shared_ptr<eTexture> fWinery;
+    // Rows: N, W, S, E. Columns 0..7: working; column 8: idle.
+    std::array<std::array<std::shared_ptr<eTexture>, 9>, 4> fWineryHD{};
     eTextureCollection fWineryOverlay;
 
     std::shared_ptr<eTexture> fSculptureStudio;
+    std::array<std::array<std::shared_ptr<eTexture>, 9>, 4> fSculptureStudioHD{};
     eTextureCollection fSculptureStudioOverlay;
 
     eTextureCollection fTriremeWharf;
@@ -420,6 +511,7 @@ public:
     eTextureCollection fTriremeWharfOverlay2TR;
 
     std::shared_ptr<eTexture> fHorseRanch;
+    eHDFrames fHorseRanchHD{};
     eTextureCollection fHorseRanchOverlay;
     std::shared_ptr<eTexture> fHorseRanchEnclosure;
 
@@ -429,6 +521,7 @@ public:
     eTextureCollection fCorralProcessingOverlay;
 
     std::shared_ptr<eTexture> fArmory;
+    std::array<std::array<std::shared_ptr<eTexture>, 9>, 4> fArmoryHD{};
     eTextureCollection fArmoryOverlay;
 
     eTextureCollection fGatehouseW;
@@ -437,12 +530,15 @@ public:
     eTextureCollection fWall;
 
     std::shared_ptr<eTexture> fMaintenanceOffice;
+    eHDFrames fMaintenanceOfficeHD{};
     eTextureCollection fMaintenanceOfficeOverlay;
 
     std::shared_ptr<eTexture> fTaxOffice;
+    eHDFrames fTaxOfficeHD{};
     eTextureCollection fTaxOfficeOverlay;
 
     std::shared_ptr<eTexture> fWatchPost;
+    eHDFrames fWatchPostHD{};
     eTextureCollection fWatchPostOverlay;
 
     eTextureCollection fWaitingMeat;
@@ -488,18 +584,21 @@ public:
     eTextureCollection fChariotVendorOverlay2;
 
     std::shared_ptr<eTexture> fChariotFactory;
+    eHDFrames fChariotFactoryHD{};
     eTextureCollection fChariotFactoryOverlay;
     eTextureCollection fChariotFactoryOverlay1;
     std::vector<eTextureCollection> fChariotFactoryHorses;
     eTextureCollection fChariotFactoryChariots;
 
     std::shared_ptr<eTexture> fWarehouse;
+    eHDFrames fWarehouseHD{};
     eTextureCollection fWarehouseOverlay;
 
     eTextureCollection fPier1;
     std::shared_ptr<eTexture> fPier2;
 
     std::shared_ptr<eTexture> fTradingPost;
+    eHDFrames fTradingPostHD{};
     eTextureCollection fTradingPostOverlay;
 
     std::shared_ptr<eTexture> fWarehouseEmpty;
@@ -526,6 +625,7 @@ public:
     eTextureCollection fWarehouseWine;
 
     std::shared_ptr<eTexture> fGranary;
+    std::array<std::array<std::shared_ptr<eTexture>, 9>, 4> fGranaryHD{};
     eTextureCollection fGranaryOverlay;
 
     std::shared_ptr<eTexture> fGranaryUrchin;
@@ -652,6 +752,24 @@ public:
     eTextureCollection fAtlasMonuments;
 
     std::vector<eTextureCollection> fSanctuary;
+    // Remastered temple (art/sanctuary_temple): rows = temple sprite id 0-3 (see
+    // eTempleBuilding::rotatedId), columns = stage 0, 1, 2 and the Atlantean finish.
+    eHDFrames fSanctuaryHD{};
+    std::array<std::shared_ptr<eTexture>,6> fSanctuaryPavingHD{};
+    // Remastered god statues (art/sanctuary_statues): row per god in the order below, 4 views
+    // (eTempleStatueBuilding dirId). Cells 220 x 440 px at tileH 60, ground origin (110, 400).
+    static constexpr const char* sStatueGods[14] = {"zeus", "poseidon", "hades", "demeter", "athena", "artemis",
+        "apollo", "ares", "hephaestus", "aphrodite", "hermes", "dionysus", "hera", "atlas"};
+    std::array<std::array<std::shared_ptr<eTexture>, 4>, 14> fGodStatuesHD{};
+    bool fGodStatuesHDLoaded = false;
+    void loadGodStatuesHD();
+    // Animated gold colossi: per-god lazy sheets, 4 directions x (16 poses + idle).
+    using eGodStatueFrames = std::array<std::array<std::shared_ptr<eTexture>,17>,4>;
+    std::array<eGodStatueFrames,14> fGodStatuesAnimated{};
+    std::array<bool,14> fGodStatuesAnimatedLoaded{};
+    void loadGodStatueAnimationHD(int god);
+    bool fSanctuaryHDLoaded = false;
+    void loadSanctuaryHD();
     eTextureCollection fPoseidonSanctuary;
     eTextureCollection fPyramid;
     eTextureCollection fPyramid2;

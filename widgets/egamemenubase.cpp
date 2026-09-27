@@ -1,6 +1,7 @@
 #include "egamemenubase.h"
 
 #include "datawidgets/edatawidget.h"
+#include "epanelwidgets.h"
 
 void eGameMenuBase::initialize() {
     int x;
@@ -39,6 +40,17 @@ eCheckableButton* eGameMenuBase::addButton(
     return b;
 }
 
+eCheckableButton* eGameMenuBase::addButton(const std::string& icon,
+                                           const int w, const int h,
+                                           const eWid& wid) {
+    const auto b = new ePanelCategoryButton(window(), icon);
+    b->resize(w, h);
+    mButtonsWidget->addWidget(b);
+    mButtons.push_back(b);
+    mWidgets.push_back(wid);
+    return b;
+}
+
 void eGameMenuBase::connectAndLayoutButtons() {
     connectButtons();
     layoutButtons();
@@ -73,6 +85,7 @@ void eGameMenuBase::connectButtons() {
     for(int i = 0; i < iMax; i++) {
         const auto b = mButtons[i];
         b->setCheckAction([this, i, b](const bool c) {
+            categoryChanged(i);
             if(c) {
                 const int jMax = mButtons.size();
                 const int wSize = mWidgets.size();

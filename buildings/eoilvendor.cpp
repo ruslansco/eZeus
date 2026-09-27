@@ -10,4 +10,5 @@ eOilVendor::eOilVendor(eGameBoard& board, const eCityId cid) :
             -0.74, -2.45, &eBuildingTextures::fOilVendorOverlay2,
             eBuildingType::oilVendor, 2, 2, 4, cid) {
     eGameTextures::loadOilVendor();
+    setHD("oil_vendor");
 }

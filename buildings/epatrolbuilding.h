@@ -36,7 +36,12 @@ public:
     std::vector<eOverlay> getOverlays(const eTileSize size) const;
 protected:
     void setOverlaySpeed(const double s);
+    // Remastered pre-rendered art (4 directions x 8 working frames + idle). When
+    // set and loaded it replaces the base texture and the overlay.
+    using eHDTex = eBuildingTextures::eHDFrames eBuildingTextures::*;
+    void setHDFrames(const eHDTex hd) { mHDTex = hd; }
 private:
+    eHDTex mHDTex = nullptr;
     const eBaseTex mBaseTex;
     const eOverlays mOverlays;
 

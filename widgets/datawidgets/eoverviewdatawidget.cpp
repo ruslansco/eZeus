@@ -13,8 +13,10 @@
 #include "gameEvents/etroopsrequestevent.h"
 #include "widgets/elinewidget.h"
 #include "widgets/eminimap.h"
+#include "widgets/epanelstyle.h"
 
 #include <algorithm>
+#include <cmath>
 
 class eOverviewEntry : public eWidget {
 public:
@@ -47,8 +49,38 @@ public:
         mValueLabel->setText(txt);
         mValueLabel->fitContent();
         mValueLabel->align(eAlignment::right);
+        mHasValue = !txt.empty();
+    }
+
+    // 0 good, 1 needs an eye, 2 trouble: tints the badge behind the value
+    void setSeverity(const int s) { mSeverity = s; }
+protected:
+    void paintEvent(ePainter& p) override {
+        static const SDL_Color cols[3] = {{70, 200, 110, 255}, {240, 180, 60, 255}, {236, 76, 60, 255}};
+        const auto c = cols[std::clamp(mSeverity, 0, 2)];
+        const auto r = p.renderer();
+        const float h = height();
+        const float pulse = mSeverity == 2 ?
+            static_cast<float>(.6 + .4*std::sin(ePanel::time()*4)) : 1.f;
+        if(mHasValue) {
+            const float pad = h*.2f;
+            const float bw = mValueLabel->width() + 2*pad;
+            const float x = std::min(p.x() + mValueLabel->x() - pad, p.x() + width() - bw);
+            const SDL_FRect box{x, p.y() + h*.06f, bw, h*.88f};
+            ePanel::roundRect(r, box, box.h/2, SDL_Color{c.r, c.g, c.b, static_cast<Uint8>(58*pulse)},
+                              SDL_Color{c.r, c.g, c.b, static_cast<Uint8>(34*pulse)});
+            ePanel::roundRect(r, box, box.h/2, SDL_Color{c.r, c.g, c.b, static_cast<Uint8>(150*pulse)},
+                              SDL_Color{c.r, c.g, c.b, static_cast<Uint8>(110*pulse)}, std::max(1.f, h/14.f));
+        } else {
+            const float s = h*.2f;
+            ePanel::glow(r, p.x() + width() - s*1.6f, p.y() + h/2, s*2.2f, s*2.2f,
+                         SDL_Color{c.r, c.g, c.b, static_cast<Uint8>(110*pulse)}, true);
+            ePanel::diamond(r, p.x() + width() - s*1.6f, p.y() + h/2, s, c);
+        }
     }
 private:
+    bool mHasValue = false;
+    int mSeverity = 0;
     eLabel* mTitleLabel = nullptr;
     eLabel* mValueLabel = nullptr;
 };
@@ -67,6 +99,11 @@ void eOverviewDataWidget::initialize() {
     addViewButton(mSeeRoads);
 
     eDataWidget::initialize();
+    {
+        const auto& t = eLanguage::text("history_title");
+        setMoreInfoIcon("chart", t.empty() ? "City History" : t);
+        showMoreInfoButton();
+    }
 
     const auto inner = innerWidget();
     const int innerW = inner->width();
@@ -333,6 +370,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
                 string = 27; // terrible
             }
             mPopularity->setText(eLanguage::zeusText(61, string));
+            mPopularity->setSeverity(pop > 80 ? 0 : pop > 60 ? 1 : 2);
         }
         {
             const auto husbData = mBoard.husbandryData(cid);
@@ -348,6 +386,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
                     string = 97; // good
                 }
                 mFoodLevel->setText(eLanguage::zeusText(61, string));
+                mFoodLevel->setSeverity(string == 97 ? 0 : string == 95 ? 1 : 2);
             }
         }
         {
@@ -359,14 +398,17 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
                 if(u == 0) {
                     mUnemployment->setTitle(eLanguage::zeusText(61, 115)); // employment good
                     mUnemployment->setText("");
+                    mUnemployment->setSeverity(0);
                 } else if(f > 0) {
                     mUnemployment->setTitle(eLanguage::zeusText(61, 111)); // workers needed
                     mUnemployment->setText(std::to_string(f));
+                    mUnemployment->setSeverity(w > 0 && f > w/5 ? 2 : 1);
                 } else {
                     mUnemployment->setTitle(eLanguage::zeusText(61, 107)); // unemployment
                     int per = w == 0 ? 0 : std::round(100.*u/w);
                     per = std::clamp(per, 0, 100);
                     mUnemployment->setText(std::to_string(per) + "%");
+                    mUnemployment->setSeverity(per > 10 ? 2 : 1);
                 }
             }
         }
@@ -397,6 +439,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
                 string = 127; // appalling
             }
             mHygiene->setText(eLanguage::zeusText(61, string));
+            mHygiene->setSeverity(hygiene > 70 ? 0 : hygiene > 55 ? 1 : 2);
         }
         {
             const int unrest = mBoard.unrest(cid);
@@ -411,6 +454,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
                 string = 148; // low
             }
             mUnrest->setText(eLanguage::zeusText(61, string));
+            mUnrest->setSeverity(unrest == 0 ? 0 : unrest > 5 ? 2 : 1);
         }
         {
             const auto finances = mBoard.finances(cid);
@@ -425,6 +469,7 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
             }
 
             mFinances->setText(eLanguage::zeusText(61, string));
+            mFinances->setSeverity(string == 153 ? 0 : string == 154 ? 1 : 2);
         }
     }
     eWidget::paintEvent(p);
@@ -547,4 +592,8 @@ void eOverviewDataWidget::addCityRequests() {
         });
         mQuestButtons->addWidget(b);
     }
+}
+
+void eOverviewDataWidget::openMoreInfoWiget() {
+    if(const auto gw = gameWidget()) gw->showCityHistory();
 }

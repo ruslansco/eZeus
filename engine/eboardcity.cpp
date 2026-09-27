@@ -341,7 +341,69 @@ void eBoardCity::payTaxes(const int d, const int people) {
     mPeoplePaidTaxesThisYear += people;
 }
 
+void eBoardCity::recordHistory() {
+    const auto date = mBoard.date();
+    eHistorySample h;
+    h.fYear = date.year();
+    h.fMonth = static_cast<int>(date.month());
+    h.fPopulation = population();
+    h.fDrachmas = resourceCount(eResourceType::drachmas);
+    h.fFood = resourceCount(eResourceType::food);
+    h.fFleece = resourceCount(eResourceType::fleece);
+    h.fOil = resourceCount(eResourceType::oliveOil);
+    h.fWine = resourceCount(eResourceType::wine);
+    h.fArms = resourceCount(eResourceType::armor);
+    h.fHorses = resourceCount(eResourceType::horse);
+    h.fPopularity = mPopularity;
+    h.fUnrest = mUnrest;
+    h.fHealth = mHealth;
+    mHistory.add(h);
+}
+
+void eBoardCity::warnShortages() {
+    // How fast each stock fell over the last three months; warn when that
+    // pace empties it within three months. Again only after six months, or
+    // when it gets down to about one month.
+    const auto& ss = mHistory.samples();
+    const int n = ss.size();
+    if(n < 4) return;
+    const auto& now = ss[n - 1];
+    const auto& then = ss[n - 4];
+    if(now.monthIndex() - then.monthIndex() != 3) return;
+    const std::pair<eResourceType, int eHistorySample::*> watched[] = {
+        {eResourceType::food, &eHistorySample::fFood},
+        {eResourceType::fleece, &eHistorySample::fFleece},
+        {eResourceType::oliveOil, &eHistorySample::fOil},
+        {eResourceType::wine, &eHistorySample::fWine},
+        {eResourceType::armor, &eHistorySample::fArms},
+        {eResourceType::horse, &eHistorySample::fHorses},
+        {eResourceType::drachmas, &eHistorySample::fDrachmas}};
+    for(const auto& w : watched) {
+        const int stock = now.*(w.second);
+        const int before = then.*(w.second);
+        if(stock <= 0) continue;
+        const double perMonth = (before - stock)/3.0;
+        const bool money = w.first == eResourceType::drachmas;
+        if(perMonth < (money ? 20 : 1)) continue;
+        const int left = static_cast<int>(stock/perMonth);
+        if(left > 3) continue;
+        const int key = static_cast<int>(w.first);
+        const int last = mHistory.lastWarning(key);
+        const bool recent = last >= 0 && now.monthIndex() - last < 6;
+        const bool worse = mHistory.lastWarningMonths(key) > 1 && left <= 1;
+        if(recent && !worse) continue;
+        mHistory.setLastWarning(key, now.monthIndex());
+        mHistory.setLastWarningMonths(key, left);
+        eEventData ed(mId);
+        ed.fResourceType = w.first;
+        ed.fResourceCount = stock;
+        ed.fTime = std::max(1, left);
+        mBoard.event(eEvent::shortageWarning, ed);
+    }
+}
+
 void eBoardCity::nextYear() {
+    mTradeLedger.nextYear();
     mTaxesPaidLastYear = mTaxesPaidThisYear;
     mTaxesPaidThisYear = 0;
     mPeoplePaidTaxesLastYear = mPeoplePaidTaxesThisYear;
@@ -532,6 +594,11 @@ void eBoardCity::nextMonth() {
     }
 
     replace3By3AestheticByCommemorative();
+
+    if(personPlayerOwner()) {
+        recordHistory();
+        warnShortages();
+    }
 
     const auto date = mBoard.date();
     const bool pp = personPlayerOwner();

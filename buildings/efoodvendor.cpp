@@ -11,4 +11,5 @@ eFoodVendor::eFoodVendor(eGameBoard& board,
             0.35, -1.94, &eBuildingTextures::fFoodVendorOverlay2,
             eBuildingType::foodVendor, 2, 2, 4, cid) {
     eGameTextures::loadFoodVendor();
+    setHD("food_vendor");
 }

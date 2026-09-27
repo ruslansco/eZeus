@@ -18,6 +18,7 @@ public:
 
     void scrollToTheTop();
     void clampDY();
+    void ensureVisible(const int y, const int h);
 private:
     eScrollBar* mSB = nullptr;
     eScrollWidget* mSW = nullptr;

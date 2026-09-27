@@ -53,6 +53,8 @@ void eCharacterTextures::loadBlackMarbleTrailer() {
 void eCharacterTextures::loadOrangeTender() {
     if(fOrangeTenderLoded) return;
     fOrangeTenderLoded = true;
+    if(loadPersonHD(fOrangeTender, {{"workontree", &fOrangeTender.fWorkOnTree}, {"collect", &fOrangeTender.fCollect}},
+                    fRenderer, fTileH, "orangetender")) return;
     const auto& sds = spriteData(fTileH,
                                  eOrangeTenderSpriteData15,
                                  eOrangeTenderSpriteData30,
@@ -101,6 +103,8 @@ void eCharacterTextures::loadOrichalcCart() {
 void eCharacterTextures::loadDeerHunter() {
     if(fDeerHunterLoaded) return;
     fDeerHunterLoaded = true;
+    if(loadPersonHD(fDeerHunter, {{"collect", &fDeerHunter.fCollect}, {"carry", &fDeerHunter.fCarry}},
+                    fRenderer, fTileH, "deerhunter")) return;
     const auto& sds = spriteData(fTileH,
                                  eDeerHunterSpriteData15,
                                  eDeerHunterSpriteData30,
@@ -121,6 +125,7 @@ void eCharacterTextures::loadDeerHunter() {
 void eCharacterTextures::loadDeer() {
     if(fDeerLoaded) return;
     fDeerLoaded = true;
+    if(loadAnimalHD(fDeer, &fDeer.fFight, &fDeer.fLayDown, fRenderer, fTileH, "deer")) return;
 
     const auto& sds = spriteData(fTileH,
                                  eDeerSpriteData15,

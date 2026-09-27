@@ -36,6 +36,16 @@ eTextureSpace ePalace::getTextureSpace(const int tx, const int ty,
     const auto& plcs = blds[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
+    if(plcs.fPalaceAHD[0][0]) {
+        // Remastered palace: piece B covers the second four tiles along the long axis. A
+        // rotated palace is the same model turned a quarter, i.e. the next view row.
+        const bool h2 = mRotated ? ty - r.y > 3 : tx - r.x > 3;
+        const SDL_Rect rect = mRotated ? SDL_Rect{r.x, r.y + (h2 ? 4 : 0), 4, 4} :
+                                         SDL_Rect{r.x + (h2 ? 4 : 0), r.y, 4, 4};
+        const int row = (static_cast<int>(dir) + (mRotated ? 1 : 0)) % 4;
+        const auto& frames = h2 ? plcs.fPalaceBHD : plcs.fPalaceAHD;
+        return {frames[row][hdAnimFrame()], false, rect};
+    }
     const bool dirRot = dir == eWorldDirection::E ||
                         dir == eWorldDirection::W;
     const bool dirReorder = dir == eWorldDirection::E ||
@@ -90,6 +100,7 @@ std::vector<eOverlay> ePalace::getOverlays(const eTileSize size) const {
     const auto& texs = eGameTextures::buildings()[sizeId];
 
     std::vector<eOverlay> os;
+    if(texs.fPalaceAHD[0][0]) return os;     // the remastered palace animates in its sprite
 
     auto& board = getBoard();
     const auto dir = board.direction();

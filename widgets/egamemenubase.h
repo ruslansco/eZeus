@@ -25,10 +25,17 @@ public:
     void initialize();
     eCheckableButton* addButton(const eTextureCollection& coll,
                                 const eWid& w);
+    // A category medallion (ePanelCategoryButton) of w x h pixels.
+    eCheckableButton* addButton(const std::string& icon, const int w,
+                                const int h, const eWid& wid);
+    const std::vector<eCheckableButton*>& categoryButtons() const { return mButtons; }
     void connectAndLayoutButtons();
     void layoutButtons();
     void connectButtons();
 protected:
+    // A category button was pressed (also when it was already open).
+    virtual void categoryChanged(const int i) { (void)i; }
+
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseReleaseEvent(const eMouseEvent& e) override;
     bool mouseMoveEvent(const eMouseEvent& e) override;

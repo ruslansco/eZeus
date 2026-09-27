@@ -12,4 +12,5 @@ eCollege::eCollege(eGameBoard& board,
                             eBuildingType::podium}},
                           eBuildingType::college, 3, 3, 12, cid) {
     eGameTextures::loadCollege();
+    setHDFrames(&eBuildingTextures::fCollegeHD);
 }

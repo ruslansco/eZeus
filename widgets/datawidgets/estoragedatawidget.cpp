@@ -1,3 +1,4 @@
+#include "widgets/egamewidget.h"
 #include "estoragedatawidget.h"
 
 #include "engine/egameboard.h"
@@ -59,6 +60,11 @@ void eStorageDataWidget::initialize() {
     }
 
     eDataWidget::initialize();
+    {
+        const auto& t = eLanguage::text("trade_title");
+        setMoreInfoIcon("scales", t.empty() ? "Trade Summary" : t);
+        showMoreInfoButton();
+    }
 
     const auto inner = innerWidget();
 
@@ -117,4 +123,8 @@ void eStorageDataWidget::paintEvent(ePainter& p) {
         }*/
     }
     eWidget::paintEvent(p);
+}
+
+void eStorageDataWidget::openMoreInfoWiget() {
+    if(const auto gw = gameWidget()) gw->showTradeSummary();
 }

@@ -2,6 +2,7 @@
 
 #include "characters/emarbleminer.h"
 #include "textures/egametextures.h"
+#include "buildings/ehdoverlays.h"
 
 #include "textures/emarbletile.h"
 
@@ -30,8 +31,29 @@ eMasonryShop::eMasonryShop(eGameBoard& board, const eCityId cid) :
     setRawCountCollect(0);
 }
 
+std::shared_ptr<eTexture> eMasonryShop::getTexture(const eTileSize size) const {
+    const auto& textures = eGameTextures::buildings()[static_cast<int>(size)];
+    const auto& frames = textures.fMasonryShopHD[static_cast<int>(getBoard().direction())];
+    if(!frames[0]) return eResourceCollectBuilding::getTexture(size);
+    // Remastered stonemason's yard: sawing and dressing while staffed with marble
+    // to work, worker-free idle pose (column 8) otherwise.
+    const bool working = enabled() && rawCount() > 0;
+    return frames[working ? hdAnimFrame() : 8];
+}
+
 std::vector<eOverlay>
 eMasonryShop::getOverlays(const eTileSize size) const {
+    if(eGameTextures::buildings()[static_cast<int>(size)].fMasonryShopHD[0][0]) {
+        // Remastered: the stock this building holds, rendered in its own scene.
+        const int sizeId_ = static_cast<int>(size);
+        const auto& t_ = eGameTextures::buildings()[sizeId_];
+        const int dir_ = static_cast<int>(getBoard().direction());
+        const auto& set_ = t_.hdOverlays("masonry_shop");
+        std::vector<eOverlay> os_;
+        eAddHDStock(os_, set_, t_.fMasonryShopHD, "stock", resource(), dir_, sizeId_);
+        eAddHDStock(os_, set_, t_.fMasonryShopHD, "raw", rawCount(), dir_, sizeId_);
+        return os_;
+    }
     auto os = eResourceCollectBuilding::getOverlays(size);
     const int sizeId = static_cast<int>(size);
     const auto& btexs = eGameTextures::buildings()[sizeId];

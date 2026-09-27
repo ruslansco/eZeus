@@ -1,7 +1,9 @@
 #include "ehuntinglodge.h"
+#include "engine/egameboard.h"
 
 #include "characters/ehunter.h"
 #include "textures/egametextures.h"
+#include "buildings/ehdoverlays.h"
 #include "characters/actions/ehuntaction.h"
 #include "enumbers.h"
 
@@ -20,12 +22,27 @@ eHuntingLodge::~eHuntingLodge() {
 
 std::shared_ptr<eTexture> eHuntingLodge::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
-    return eGameTextures::buildings()[sizeId].fHuntingLodge;
+    const auto& texs = eGameTextures::buildings()[sizeId];
+    const auto& frames = texs.fHuntingLodgeHD[static_cast<int>(getBoard().direction())];
+    // Remastered lodge: butcher and hide scraper at work while enabled and staffed,
+    // worker-free idle pose (column 8) otherwise.
+    if(frames[0]) return frames[enabled() ? hdAnimFrame() : 8];
+    return texs.fHuntingLodge;
 }
 
 std::vector<eOverlay> eHuntingLodge::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings()[sizeId];
+    if(texs.fHuntingLodgeHD[0][0]) {
+        // Remastered: the stock this building holds, rendered in its own scene.
+        const int sizeId_ = static_cast<int>(size);
+        const auto& t_ = eGameTextures::buildings()[sizeId_];
+        const int dir_ = static_cast<int>(getBoard().direction());
+        const auto& set_ = t_.hdOverlays("hunting_lodge");
+        std::vector<eOverlay> os_;
+        eAddHDStock(os_, set_, t_.fHuntingLodgeHD, "stock", resource(), dir_, sizeId_);
+        return os_;
+    }
     const auto& coll = texs.fHuntingLodgeOverlay;
     const int texId = textureTime() % coll.size();
     eOverlay o;

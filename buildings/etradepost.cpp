@@ -49,8 +49,13 @@ std::shared_ptr<eTexture> eTradePost::getTexture(const eTileSize size) const {
     const auto& blds = eGameTextures::buildings();
     const auto& coll = blds[sizeId];
     switch(mType) {
-    case eTradePostType::post:
+    case eTradePostType::post: {
+        // Remastered trading booth on the rear tile; the goods bays are fixed
+        // screen overlays that never rotate, so the N row serves every direction.
+        const auto& frames = coll.fTradingPostHD[0];
+        if(frames[0]) return frames[enabled() ? hdAnimFrame() : 8];
         return coll.fTradingPost;
+    }
     default:
         return coll.fPier2;
     }
@@ -62,7 +67,8 @@ std::vector<eOverlay> eTradePost::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
-    if(enabled()) {
+    const bool hd = mType == eTradePostType::post && texs.fTradingPostHD[0][0];
+    if(enabled() && !hd) {
         const auto& coll = texs.fTradingPostOverlay;
         const int texId = textureTime() % coll.size();
         auto& o = os.emplace_back();
@@ -97,7 +103,7 @@ std::vector<eOverlay> eTradePost::getOverlays(const eTileSize size) const {
                     {1.5, -2.5},
                     {1.5, -1.5}};
 
-    getSpaceOverlays(size, os, xy);
+    getSpaceOverlays(size, os, xy, hd);
 
     return os;
 }
@@ -208,6 +214,10 @@ int eTradePost::buy(const int cash) {
             take(b.fType, 1);
             b.incUsed(thisPid, 1);
             spent += price;
+            if(const auto thisC = brd.boardCityWithId(thisCid)) {
+                thisC->tradeLedger().addExport(static_cast<int>(targetCid),
+                                               b.fType, 1, price);
+            }
         }
         const auto pid = playerId();
         brd.incDrachmas(pid, spent, eFinanceTarget::exports);
@@ -250,6 +260,10 @@ int eTradePost::sell(const int items) {
             addNotAccept(b.fType, 1);
             b.incUsed(thisPid, 1);
             earned += price;
+            if(const auto thisC = brd.boardCityWithId(thisCid)) {
+                thisC->tradeLedger().addImport(static_cast<int>(srcCid),
+                                               b.fType, 1, price);
+            }
         }
         const auto pid = playerId();
         brd.incDrachmas(pid, -earned, eFinanceTarget::importCosts);

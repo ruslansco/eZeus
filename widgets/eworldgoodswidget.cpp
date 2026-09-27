@@ -6,6 +6,7 @@
 #include "eworldgoodswidget.h"
 #include "engine/egameboard.h"
 #include "eframedbutton.h"
+#include "epanelwidgets.h"
 #include "eresourcebutton.h"
 #include "evaluebutton.h"
 #include "evectorhelpers.h"
@@ -128,14 +129,13 @@ void eWorldGoodsWidget::initialize() {
     addWidget(mGoodsLabel);
     mGoodsLabel->align(eAlignment::top | eAlignment::hcenter);
 
-    mOrdersButton = eButton::sCreate(coll.fWorldSmallButton, window(), this);
-
-    const auto ordersStr = eLanguage::zeusText(47, 7);
-    const auto ordersTxt = new eLabel(ordersStr, window());
-    ordersTxt->setSmallFontSize();
-    ordersTxt->fitContent();
-    mOrdersButton->addWidget(ordersTxt);
-    ordersTxt->align(eAlignment::center);
+    {
+        // same size as the original button, drawn as the panel's gold pill
+        const auto& tex = coll.fWorldSmallButton.getTexture(0);
+        mOrdersButton = new ePanelPillButton(window(), eLanguage::zeusText(47, 7));
+        mOrdersButton->resize(tex ? tex->width() : 120, tex ? tex->height() : 20);
+        addWidget(mOrdersButton);
+    }
     mOrdersButton->align(eAlignment::hcenter);
     mOrdersButton->setY(mGoodsLabel->y() + mGoodsLabel->height());
 

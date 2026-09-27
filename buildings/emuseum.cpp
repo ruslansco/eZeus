@@ -12,6 +12,7 @@ eMuseum::eMuseum(eGameBoard& board,
                   [this]() { return e::make_shared<eCurator>(getBoard()); },
                   eBuildingType::museum, 6, 6, 50, cid) {
     eGameTextures::loadMuseum();
+    setHDFrames(&eBuildingTextures::fMuseumHD);
     board.registerMuseum(this);
 }
 

@@ -9,6 +9,7 @@ inline bool operator==(const eSettings& s0, const eSettings& s1) {
     if(s0.fFullscreen != s1.fFullscreen) return false;
     if(s0.fLanguage != s1.fLanguage) return false;
     if(s0.fAudioLanguage != s1.fAudioLanguage) return false;
+    if(s0.fKeyBindings != s1.fKeyBindings) return false;
     return true;
 }
 

@@ -2,6 +2,9 @@
 
 #include "audio/esounds.h"
 #include "elanguage.h"
+#include "epanelstyle.h"
+
+#include <cmath>
 
 eRotateButton::eRotateButton(eMainWindow* const window) :
     eLabel(window) {
@@ -152,4 +155,48 @@ void eRotateButton::updateTexture() {
     const auto& coll = intrfc[iRes].fRotation;
 
     setTexture(coll.getTexture(texId));
+}
+
+void eRotateButton::paintEvent(ePainter& p) {
+    if(!mModern) return eLabel::paintEvent(p);
+    const auto r = p.renderer();
+    const double now = ePanel::time();
+    const double dt = mLast < 0 ? 0 : std::min(0.1, now - mLast);
+    mLast = now;
+    for(int i = 0; i < 3; i++) {
+        const auto portion = i == 0 ? eButtonHoverPortion::left :
+                             i == 1 ? eButtonHoverPortion::center :
+                                      eButtonHoverPortion::right;
+        const double target = (mHover && mEnabled && mHovered == portion) ? 1 : 0;
+        mHoverAnim[i] += (target - mHoverAnim[i])*ePanel::approach(dt, 14);
+    }
+    // the needle turns the short way round to the new heading
+    const double target = 90.0*static_cast<int>(mDirection);
+    double diff = std::fmod(target - mNeedle + 540.0, 360.0) - 180.0;
+    mNeedle += diff*ePanel::approach(dt, 9);
+
+    const float x = p.x(), y = p.y(), w = width(), h = height();
+    const float ph = h*0.78f;
+    const SDL_FRect pill{x, y + (h - ph)/2, w, ph};
+    ePanel::roundRect(r, pill, ph/2, SDL_Color{6, 12, 26, 230}, SDL_Color{16, 26, 50, 230});
+    ePanel::roundRect(r, pill, ph/2, SDL_Color{236, 192, 96, 150}, SDL_Color{150, 106, 34, 120},
+                      std::max(1.f, h/26.f));
+    const float seg = w/3;
+    const int ipx = std::max(8, static_cast<int>(std::round(ph*0.72f)));
+    for(const int i : {0, 2}) {
+        const double hv = mHoverAnim[i];
+        const float cx = x + seg*(i + .5f) + (i == 0 ? -seg*.08f : seg*.08f);
+        if(hv > .01) {
+            ePanel::glow(r, cx, y + h/2, seg*.55f, ph*.7f, SDL_Color{255, 200, 110, static_cast<Uint8>(70*hv)}, true);
+        }
+        const SDL_Color c{static_cast<Uint8>(236 + 19*hv), static_cast<Uint8>(192 + 40*hv),
+                          static_cast<Uint8>(96 + 64*hv), static_cast<Uint8>(mEnabled ? 255 : 110)};
+        ePanel::drawIcon(r, i == 0 ? "rotate_left" : "rotate_right", cx, y + h/2, ipx, c);
+    }
+    const float d = h*0.98f;
+    ePanel::medallion(r, x + w/2, y + h/2, d, "", mHoverAnim[1], 0, mPressed ? 1 : 0, mEnabled);
+    const int cpx = std::max(8, static_cast<int>(std::round(d*0.6f)));
+    const SDL_Color cc{static_cast<Uint8>(236 + 19*mHoverAnim[1]), static_cast<Uint8>(192 + 40*mHoverAnim[1]),
+                       static_cast<Uint8>(96 + 64*mHoverAnim[1]), 255};
+    ePanel::drawIcon(r, "compass", x + w/2, y + h/2, cpx, cc, true, mNeedle);
 }

@@ -22,6 +22,14 @@ eTextureSpace eEliteHousing::getTextureSpace(
     if(!SDL_PointInRect(&p, &r)) return {nullptr};
     auto& board = getBoard();
     const auto dir = board.direction();
+    if(!atlantean() && mPeople > 0 && mLevel >= 0 && mLevel < 5) {
+        // Remastered estate: one 4x4 sprite drawn through the engine's per-tile slicing,
+        // the household task looping while the house is inhabited.
+        eGameTextures::loadEliteHouse();
+        const auto& texs = eGameTextures::buildings()[static_cast<int>(size)];
+        const auto& frames = texs.fEliteHouseHD[mLevel*2 + seed() % 2][static_cast<int>(dir)];
+        if(frames[0]) return {frames[hdAnimFrame()], true, r};
+    }
     const auto& coll = getTextureCollection(size);
     const int rx = r.x;
     const int ry = r.y;

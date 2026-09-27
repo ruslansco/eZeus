@@ -1,4 +1,8 @@
 #include "ebuildingtextures.h"
+#include "egamedir.h"
+#include <filesystem>
+#include <map>
+#include <fstream>
 
 #include "offsets/SprAmbient.h"
 
@@ -915,6 +919,8 @@ void eBuildingTextures::loadAll() {
     loadSanctuary();
     loadZeusSanctuary();
     loadPoseidonSanctuary();
+    loadSanctuaryHD();
+    loadGodStatuesHD();
     loadPyramid();
     loadPyramid2();
     loadPoseidonHerosHall();
@@ -1037,6 +1043,12 @@ void eBuildingTextures::loadCommonHouse() {
             loader.load(1, i, coll);
         }
     }
+    for(int level = 0; level < 7; level++) {
+        for(int v = 0; v < 2; v++) {
+            const auto id = "common_house_" + std::to_string(level) + (v ? "b" : "a");
+            loadRemasteredAtlas(id, 320, 20, -11, fCommonHouseHD[level*2 + v]);
+        }
+    }
 }
 
 void eBuildingTextures::loadEliteHouse() {
@@ -1060,6 +1072,12 @@ void eBuildingTextures::loadEliteHouse() {
     for(int i = 46; i < 50; i++) {
         loader.load(16, i, fEliteHouseHorses);
     }
+    for(int level = 0; level < 5; level++) {
+        for(int v = 0; v < 2; v++) {
+            const auto id = "elite_house_" + std::to_string(level) + (v ? "b" : "a");
+            loadRemasteredAtlas(id, 640, 40, -22, fEliteHouseHD[level*2 + v]);
+        }
+    }
 }
 
 void eBuildingTextures::loadCollege() {
@@ -1078,6 +1096,7 @@ void eBuildingTextures::loadCollege() {
     for(int i = 2; i < 26; i++) {
         loader.load(1, i, fCollegeOverlay);
     }
+    loadRemasteredAtlas("college", 480, 30, -16, fCollegeHD);
 }
 
 void eBuildingTextures::loadGymnasium() {
@@ -1097,6 +1116,7 @@ void eBuildingTextures::loadGymnasium() {
     for(int i = 27; i < 59; i++) {
         loader.load(26, i, fGymnasiumOverlay);
     }
+    loadRemasteredAtlas("gymnasium", 480, 30, -16, fGymnasiumHD);
 }
 
 void eBuildingTextures::loadDramaSchool() {
@@ -1115,6 +1135,7 @@ void eBuildingTextures::loadDramaSchool() {
     for(int i = 60; i < 84; i++) {
         loader.load(59, i, fDramaSchoolOverlay);
     }
+    loadRemasteredAtlas("drama_school", 480, 30, -16, fDramaSchoolHD);
 }
 
 void eBuildingTextures::loadPodium() {
@@ -1133,6 +1154,7 @@ void eBuildingTextures::loadPodium() {
     for(int i = 85; i < 109; i++) {
         loader.load(84, i, fPodiumOverlay);
     }
+    loadRemasteredAtlas("podium", 320, 20, -11, fPodiumHD);
 }
 
 void eBuildingTextures::loadTheater() {
@@ -1164,11 +1186,14 @@ void eBuildingTextures::loadTheater() {
             loader.load(656, i, fTheaterOverlay);
         }
     }
+    loadRemasteredAtlas("theater", 800, 50, -27, fTheaterHD);
 }
 
 void eBuildingTextures::loadStadium() {
     if(fStadiumLoaded) return;
     fStadiumLoaded = true;
+    loadRemasteredAtlas("stadium_a", 800, 50, -27, fStadiumAHD);
+    loadRemasteredAtlas("stadium_b", 800, 50, -27, fStadiumBHD);
 
     {
         const auto& sds = spriteData(fTileH,
@@ -1275,6 +1300,7 @@ void eBuildingTextures::loadFountain() {
     for(int i = 2; i < 8; i++) {
         loader.load(1, i, fFountainOverlay);
     }
+    loadRemasteredAtlas("fountain", 320, 20, -11, fFountainHD);
 }
 
 void eBuildingTextures::loadHospital() {
@@ -1292,6 +1318,7 @@ void eBuildingTextures::loadHospital() {
     for(int i = 9; i < 21; i++) {
         loader.load(8, i, fHospitalOverlay);
     }
+    loadRemasteredAtlas("hospital", 640, 40, -22, fHospitalHD);
 }
 
 void eBuildingTextures::loadOliveTree() {
@@ -1371,6 +1398,7 @@ void eBuildingTextures::loadHuntingLodge() {
     for(int i = 33; i < 48; i++) {
         loader.load(32, i, fHuntingLodgeOverlay);
     }
+    loadRemasteredAtlas("hunting_lodge", 320, 20, -11, fHuntingLodgeHD);
 }
 
 void eBuildingTextures::loadFishery() {
@@ -1433,6 +1461,7 @@ void eBuildingTextures::loadFishery() {
     }
 
     loadFisheryOverlay();
+    loadRemasteredAtlas("fishery", 320, 20, -11, fFisheryHD);
 }
 
 void eBuildingTextures::loadFisheryOverlay() {
@@ -1513,6 +1542,7 @@ void eBuildingTextures::loadUrchinQuay() {
     }
 
     loadFisheryOverlay();
+    loadRemasteredAtlas("urchin_quay", 320, 20, -11, fUrchinQuayHD);
 }
 
 void eBuildingTextures::loadCardingShed() {
@@ -1531,6 +1561,7 @@ void eBuildingTextures::loadCardingShed() {
     for(int i = 57; i < 69; i++) {
         loader.load(56, i, fCardingShedOverlay);
     }
+    loadRemasteredAtlas("carding_shed", 320, 20, -11, fCardingShedHD);
 }
 
 void eBuildingTextures::loadDairy() {
@@ -1549,6 +1580,7 @@ void eBuildingTextures::loadDairy() {
     for(int i = 70; i < 91; i++) {
         loader.load(69, i, fDairyOverlay);
     }
+    loadRemasteredAtlas("dairy", 320, 20, -11, fDairyHD);
 }
 
 void eBuildingTextures::loadGrowersLodge() {
@@ -1567,6 +1599,7 @@ void eBuildingTextures::loadGrowersLodge() {
     for(int i = 92; i < 102; i++) {
         loader.load(91, i, fGrowersLodgeOverlay);
     }
+    loadRemasteredAtlas("growers_lodge", 320, 20, -11, fGrowersLodgeHD);
 }
 
 void eBuildingTextures::loadTimberMill() {
@@ -1585,6 +1618,178 @@ void eBuildingTextures::loadTimberMill() {
     for(int i = 2; i < 12; i++) {
         loader.load(1, i, fTimberMillOverlay);
     }
+    loadRemasteredAtlas("timber_mill", 320, 20, -11, fTimberMillHD);
+}
+
+void eBuildingTextures::loadWarehouseHD() {
+    if(fWarehouseHDLoaded) return;
+    fWarehouseHDLoaded = true;
+    loadRemasteredAtlas("warehouse", 480, 30, -16, fWarehouseHD);
+    loadStorageGoodsHD();
+}
+
+void eBuildingTextures::loadStorageGoodsHD() {
+    if(fHDOverlays.count("storage_goods")) return;
+    // Shared goods library of the warehouse and trade post (one-tile cells, offset of a 1x1).
+    loadRemasteredOverlays("storage_goods", 10, -5, fHDOverlays["storage_goods"]);
+}
+
+void eBuildingTextures::loadRemasteredOverlays(const std::string& id,
+                                               const int offsetX,
+                                               const int offsetY,
+                                               eHDOverlaySet& set) {
+    const auto dir = eGameDir::texturesDir() + "Remastered/" + id + "/";
+    const auto png = dir + "overlays_" + std::to_string(fTileH) + ".png";
+    const auto txt = dir + "overlays_" + std::to_string(fTileH) + ".txt";
+    if(!std::filesystem::exists(png) || !std::filesystem::exists(txt)) return;
+    const auto sheet = std::make_shared<eTexture>();
+    if(!sheet->load(fRenderer, png)) return;
+    sheet->setScaleMode(SDL_ScaleModeLinear);
+    const auto dirId = [](const std::string& d) {
+        return d == "N" ? 0 : d == "W" ? 1 : d == "S" ? 2 : d == "E" ? 3 : -1;
+    };
+    std::string name, d;
+    int x, y, w, h, ox, oy;
+    // Twice-as-dense sprites for zoomed-in views (overlays_<2*tileH>): the packer crops them to
+    // exactly twice this set's boxes, so each pairs with its sprite here like the atlases do.
+    std::shared_ptr<eTexture> hiSheet;
+    std::map<std::pair<std::string, int>, std::pair<SDL_Rect, SDL_Point>> hiRects;   // sheet rect, place in cell
+    const auto hiPng = dir + "overlays_" + std::to_string(2*fTileH) + ".png";
+    const auto hiTxt = dir + "overlays_" + std::to_string(2*fTileH) + ".txt";
+    if(fTileH <= 30 && std::filesystem::exists(hiPng) && std::filesystem::exists(hiTxt)) {
+        hiSheet = std::make_shared<eTexture>();
+        if(hiSheet->load(fRenderer, hiPng)) {
+            hiSheet->setScaleMode(SDL_ScaleModeLinear);
+            std::ifstream hiFile(hiTxt);
+            while(hiFile >> name >> d >> x >> y >> w >> h >> ox >> oy) {
+                const int di = dirId(d);
+                if(di < 0 || x + w > hiSheet->width() || y + h > hiSheet->height()) continue;
+                hiRects[{name, di}] = {{x, y, w, h}, {ox, oy}};
+            }
+        } else {
+            hiSheet.reset();
+        }
+    }
+    std::ifstream file(txt);
+    while(file >> name >> d >> x >> y >> w >> h >> ox >> oy) {
+        const int di = dirId(d);
+        if(di < 0 || w <= 0 || h <= 0 || x + w > sheet->width() || y + h > sheet->height()) continue;
+        auto tex = std::make_shared<eTexture>();
+        tex->setParentTexture({x, y, w, h}, sheet);
+        tex->setOffset(offsetX, offsetY);
+        const auto hi = hiRects.find({name, di});
+        if(hi != hiRects.end()) {
+            const auto& [r, at] = hi->second;
+            if(r.w == 2*w && r.h == 2*h && at.x == 2*ox && at.y == 2*oy) {
+                auto dense = std::make_shared<eTexture>();
+                dense->setParentTexture(r, hiSheet);
+                dense->setDensity(2);
+                auto hiTex = std::make_shared<eTexture>();
+                hiTex->setParentTexture({r.x, r.y, w, h}, dense);
+                tex->setHiRes(hiTex);
+            }
+        }
+        auto& sp = set[name][di];
+        sp.fTex = std::move(tex);
+        sp.fOX = ox;
+        sp.fOY = oy;
+    }
+}
+
+bool eBuildingTextures::sHDOverlay(const eHDOverlaySet& set, const std::string& key,
+                                   const int dir, const int cellH,
+                                   const int tileW, const int tileH, eOverlay& o) {
+    const auto it = set.find(key);
+    if(it == set.end()) return false;
+    const auto& sp = it->second[dir];
+    if(!sp.fTex) return false;
+    // The building cell is drawn top-aligned at the building's anchor; the overlay is drawn
+    // unaligned, so shift it by its place inside the cell (whole pixels: exact placement).
+    const double dx = sp.fOX;
+    const double dy = sp.fOY - cellH;
+    o.fTex = sp.fTex;
+    o.fX = dx/tileW + dy/tileH;
+    o.fY = dy/tileH - dx/tileW;
+    o.fAlignTop = false;
+    return true;
+}
+
+namespace {
+// Remastered sheets are shared between tile-size sets: the 60 px sheet is both
+// the large set's atlas and the small set's zoomed-in detail.
+std::shared_ptr<eTexture> sRemasteredSheet(SDL_Renderer* const r,
+                                           const std::string& path,
+                                           const int w, const int h) {
+    static std::map<std::string, std::weak_ptr<eTexture>> sCache;
+    if(const auto cached = sCache[path].lock()) {
+        return cached->width() == w && cached->height() == h ? cached : nullptr;
+    }
+    if(!std::filesystem::exists(path)) return nullptr;
+    const auto sheet = std::make_shared<eTexture>();
+    if(!sheet->load(r, path) || sheet->width() != w || sheet->height() != h) {
+        return nullptr;
+    }
+    sheet->setScaleMode(SDL_ScaleModeLinear);
+    sCache[path] = sheet;
+    return sheet;
+}
+}
+
+void eBuildingTextures::loadRemasteredAtlas(const std::string& id,
+                                            const int canvas60,
+                                            const int offsetX,
+                                            const int offsetY,
+                                            eHDFrames& frames,
+                                            const int cols) {
+    const auto dir = eGameDir::texturesDir() + "Remastered/" + id + "/";
+    const int cell = canvas60*fTileH/60;
+    const auto sheet = sRemasteredSheet(fRenderer, dir + std::to_string(fTileH) + ".png",
+                                        cols*cell, 4*cell);
+    if(!sheet) return;
+    // Twice-as-dense sheet for zoomed-in views, addressed in this set's units.
+    std::shared_ptr<eTexture> dense;
+    if(fTileH <= 30) {
+        const auto hi = sRemasteredSheet(fRenderer, dir + std::to_string(2*fTileH) + ".png",
+                                         2*cols*cell, 8*cell);
+        if(hi) {
+            dense = std::make_shared<eTexture>();
+            dense->setParentTexture({0, 0, hi->width(), hi->height()}, hi);
+            dense->setDensity(2);
+        }
+    }
+    for(int direction = 0; direction < 4; ++direction) {
+        for(int frame = 0; frame < cols; ++frame) {
+            const SDL_Rect rect{frame*cell, direction*cell, cell, cell};
+            auto tex = std::make_shared<eTexture>();
+            tex->setParentTexture(rect, sheet);
+            // The legacy anchor is the footprint diamond's bounding-box bottom-left;
+            // offsets move the render's ground origin onto it.
+            tex->setOffset(offsetX, offsetY);
+            if(dense) {
+                auto hiTex = std::make_shared<eTexture>();
+                hiTex->setParentTexture(rect, dense);
+                tex->setHiRes(hiTex);
+            }
+            frames[direction][frame] = std::move(tex);
+        }
+    }
+    loadRemasteredOverlays(id, offsetX, offsetY, fHDOverlays[id]);
+}
+
+void eBuildingTextures::loadRemasteredN(const std::string& id, const int n) {
+    if(fHDByName.count(id)) return;
+    const int c = 160*n;
+    int off = 39*n;                  // ezkit.origin_offset
+    while((c - (c/2 + off + 30*n)) % 2) off++;
+    const int ox = (c/2 - 60*n)/2;
+    const int oy = -(c - (c/2 + off + 30*n))/2;
+    loadRemasteredAtlas(id, c, ox, oy, fHDByName[id]);
+}
+
+const eBuildingTextures::eHDFrames* eBuildingTextures::remastered(const std::string& id) const {
+    const auto it = fHDByName.find(id);
+    if(it == fHDByName.end() || !it->second[0][0]) return nullptr;
+    return &it->second;
 }
 
 void eBuildingTextures::loadMasonryShop() {
@@ -1605,6 +1810,8 @@ void eBuildingTextures::loadMasonryShop() {
     }
 
     loadMasonryShopOverlays();
+    loadRemasteredAtlas("masonry_shop", 320, 20, -11, fMasonryShopHD);
+    loadRemasteredAtlas("black_marble_workshop", 320, 20, -11, fBlackMarbleWorkshopHD);
 }
 
 void eBuildingTextures::loadMasonryShopOverlays() {
@@ -1639,6 +1846,7 @@ void eBuildingTextures::loadMint() {
     for(int i = 22; i < 32; i++) {
         loader.load(21, i, fMintOverlay);
     }
+    loadRemasteredAtlas("mint", 320, 20, -11, fMintHD);
 }
 
 void eBuildingTextures::loadFoundry() {
@@ -1657,6 +1865,7 @@ void eBuildingTextures::loadFoundry() {
     for(int i = 37; i < 49; i++) {
         loader.load(36, i, fFoundryOverlay);
     }
+    loadRemasteredAtlas("foundry", 320, 20, -11, fFoundryHD);
 }
 
 void eBuildingTextures::loadArtisansGuild() {
@@ -1693,6 +1902,11 @@ void eBuildingTextures::loadOlivePress() {
     for(int i = 61; i < 73; i++) {
         loader.load(60, i, fOlivePressOverlay);
     }
+
+    // Original draw anchor is footprint bottom-left: center is (+120,-60)
+    // at tileH=60. New canvas origin is (160,238), leaving 40/22 px padding.
+    // eTilePainter stores offsets in tileH=30 units, subtracting each.
+    loadRemasteredAtlas("olive_press", 320, 20, -11, fOlivePressHD);
 }
 
 void eBuildingTextures::loadWinery() {
@@ -1711,6 +1925,8 @@ void eBuildingTextures::loadWinery() {
     for(int i = 74; i < 86; i++) {
         loader.load(73, i, fWineryOverlay);
     }
+
+    loadRemasteredAtlas("winery", 320, 20, -11, fWineryHD);
 }
 
 void eBuildingTextures::loadSculptureStudio() {
@@ -1728,6 +1944,7 @@ void eBuildingTextures::loadSculptureStudio() {
     for(int i = 87; i < 122; i++) {
         loader.load(86, i, fSculptureStudioOverlay);
     }
+    loadRemasteredAtlas("sculpture_studio", 320, 20, -11, fSculptureStudioHD);
 }
 
 void eBuildingTextures::loadTriremeWharf() {
@@ -1822,6 +2039,7 @@ void eBuildingTextures::loadHorseRanch() {
 
         fHorseRanchEnclosure = loader.load(41, 41);
     }
+    loadRemasteredAtlas("horse_ranch", 480, 30, -16, fHorseRanchHD);
 }
 
 void eBuildingTextures::loadArmory() {
@@ -1840,6 +2058,7 @@ void eBuildingTextures::loadArmory() {
     for(int i = 23; i < 41; i++) {
         loader.load(22, i, fArmoryOverlay);
     }
+    loadRemasteredAtlas("armory", 320, 20, -11, fArmoryHD);
 }
 
 void eBuildingTextures::loadGatehouseAndTower() {
@@ -1900,6 +2119,7 @@ void eBuildingTextures::loadMaintenanceOffice() {
     for(int i = 2; i < 46; i++) {
         loader.load(1, i, fMaintenanceOfficeOverlay);
     }
+    loadRemasteredAtlas("maintenance_office", 320, 20, -11, fMaintenanceOfficeHD);
 }
 
 void eBuildingTextures::loadTaxOffice() {
@@ -1918,6 +2138,7 @@ void eBuildingTextures::loadTaxOffice() {
     for(int i = 47; i < 65; i++) {
         loader.load(46, i, fTaxOfficeOverlay);
     }
+    loadRemasteredAtlas("tax_office", 320, 20, -11, fTaxOfficeHD);
 }
 
 void eBuildingTextures::loadWatchpost() {
@@ -1949,6 +2170,7 @@ void eBuildingTextures::loadWatchpost() {
             loader.load(2958, i, fWatchPostOverlay);
         }
     }
+    loadRemasteredAtlas("watch_post", 320, 20, -11, fWatchPostHD);
 }
 
 void eBuildingTextures::loadRoadblock() {
@@ -1997,6 +2219,8 @@ void eBuildingTextures::loadPalaceTiles() {
 
     loader.load(25, 25, fPalaceTiles);
     loader.load(26, 26, fPalaceTiles);
+    loadRemasteredAtlas("palace_tile_plain", 160, 10, -5, fPalaceTileHD[0]);
+    loadRemasteredAtlas("palace_tile_lamp", 160, 10, -5, fPalaceTileHD[1]);
 }
 
 void eBuildingTextures::loadPalace() {
@@ -2035,6 +2259,8 @@ void eBuildingTextures::loadPalace() {
 
         generateFlipped(fPalaceHOverlay, fPalaceWOverlay);
     }
+    loadRemasteredAtlas("palace_a", 640, 40, -22, fPalaceAHD);
+    loadRemasteredAtlas("palace_b", 640, 40, -22, fPalaceBHD);
 }
 
 void eBuildingTextures::loadSanctuary() {
@@ -2193,6 +2419,95 @@ void eBuildingTextures::loadSanctuary() {
     }
 }
 
+void eBuildingTextures::loadSanctuaryHD() {
+    if(fSanctuaryHDLoaded) return;
+    fSanctuaryHDLoaded = true;
+    loadRemasteredAtlas("sanctuary_temple", 640, 40, -22, fSanctuaryHD, 4);
+    const auto dir=eGameDir::texturesDir()+"Remastered/sanctuary_court/";
+    const int w=2*fTileH,h=fTileH;
+    const auto sheet=sRemasteredSheet(fRenderer,dir+std::to_string(fTileH)+".png",6*w,h);
+    if(!sheet) return;
+    std::shared_ptr<eTexture> dense;
+    if(fTileH<=30) {
+        const auto hi=sRemasteredSheet(fRenderer,dir+std::to_string(2*fTileH)+".png",12*w,2*h);
+        if(hi) {
+            dense=std::make_shared<eTexture>();
+            dense->setParentTexture({0,0,hi->width(),hi->height()},hi);dense->setDensity(2);
+        }
+    }
+    for(int i=0;i<6;++i) {
+        auto tex=std::make_shared<eTexture>();
+        tex->setParentTexture({i*w,0,w,h},sheet);
+        if(dense) {
+            auto hi=std::make_shared<eTexture>();hi->setParentTexture({i*w,0,w,h},dense);tex->setHiRes(hi);
+        }
+        fSanctuaryPavingHD[i]=std::move(tex);
+    }
+}
+
+void eBuildingTextures::loadGodStatuesHD() {
+    if(fGodStatuesHDLoaded) return;
+    fGodStatuesHDLoaded = true;
+    const auto dir = eGameDir::texturesDir() + "Remastered/sanctuary_statues/";
+    const int w = 220*fTileH/60;
+    const int h = 440*fTileH/60;
+    const auto sheet = sRemasteredSheet(fRenderer, dir + std::to_string(fTileH) + ".png", 4*w, 14*h);
+    if(!sheet) return;
+    std::shared_ptr<eTexture> dense;
+    if(fTileH <= 30) {
+        const auto hi = sRemasteredSheet(fRenderer, dir + std::to_string(2*fTileH) + ".png", 8*w, 28*h);
+        if(hi) {
+            dense = std::make_shared<eTexture>();
+            dense->setParentTexture({0, 0, hi->width(), hi->height()}, hi);
+            dense->setDensity(2);
+        }
+    }
+    for(int god = 0; god < 14; ++god) {
+        for(int view = 0; view < 4; ++view) {
+            const SDL_Rect rect{view*w, god*h, w, h};
+            auto tex = std::make_shared<eTexture>();
+            tex->setParentTexture(rect, sheet);
+            tex->setOffset(25, -5);      // tileH 30 units: the tile diamond's bottom-left
+            if(dense) {
+                auto hiTex = std::make_shared<eTexture>();
+                hiTex->setParentTexture(rect, dense);
+                tex->setHiRes(hiTex);
+            }
+            fGodStatuesHD[god][view] = std::move(tex);
+        }
+    }
+}
+
+void eBuildingTextures::loadGodStatueAnimationHD(int god) {
+    if(god<0 || god>=14 || fGodStatuesAnimatedLoaded[god]) return;
+    fGodStatuesAnimatedLoaded[god]=true;
+    const auto dir=eGameDir::texturesDir()+"Remastered/sanctuary_statues/"+sStatueGods[god]+"/";
+    const int w=240*fTileH/60,h=480*fTileH/60;
+    const auto sheet=sRemasteredSheet(fRenderer,dir+std::to_string(fTileH)+".png",17*w,4*h);
+    if(!sheet) return;
+    std::shared_ptr<eTexture> dense;
+    if(fTileH<=30) {
+        const auto hi=sRemasteredSheet(fRenderer,dir+std::to_string(2*fTileH)+".png",34*w,8*h);
+        if(hi) {
+            dense=std::make_shared<eTexture>();
+            dense->setParentTexture({0,0,hi->width(),hi->height()},hi);
+            dense->setDensity(2);
+        }
+    }
+    for(int view=0;view<4;++view) for(int frame=0;frame<17;++frame) {
+        const SDL_Rect rect{frame*w,view*h,w,h};
+        auto tex=std::make_shared<eTexture>();
+        tex->setParentTexture(rect,sheet);
+        tex->setOffset(30,-5);
+        if(dense) {
+            auto hi=std::make_shared<eTexture>();
+            hi->setParentTexture(rect,dense);
+            tex->setHiRes(hi);
+        }
+        fGodStatuesAnimated[god][view][frame]=std::move(tex);
+    }
+}
+
 void eBuildingTextures::loadZeusSanctuary() {
     if(fZeusSanctuaryLoaded) return;
     fZeusSanctuaryLoaded = true;
@@ -2279,6 +2594,7 @@ void eBuildingTextures::loadOrangeTendersLodge() {
     for(int i = 52; i < 87; i++) {
         loader.load(51, i, fOrangeTendersLodgeOverlay);
     }
+    loadRemasteredAtlas("orange_tenders_lodge", 320, 20, -11, fOrangeTendersLodgeHD);
 }
 
 void eBuildingTextures::loadWaterPark() {
@@ -2326,6 +2642,7 @@ void eBuildingTextures::loadBaths() {
                          nullptr, fRenderer);
 
     fBaths = loader.load(36, 36);
+    loadRemasteredN("baths", 4);
     for(int i = 37; i < 53; i++) {
         loader.load(36, i, fBathsOverlay);
     }
@@ -2517,6 +2834,12 @@ void eBuildingTextures::loadColumns() {
 
     fColumnConnectionH = loader.load(34, 37);
     fColumnConnectionW = loader.load(34, 38);
+    for(const auto kind : {"doric", "ionic", "corinthian"}) {
+        const std::string id = std::string(kind) + "_column";
+        loadRemasteredN(id, 1);
+        loadRemasteredN(id + "_link_l", 1);
+        loadRemasteredN(id + "_link_r", 1);
+    }
 }
 
 void eBuildingTextures::loadCommemorative() {
@@ -2638,6 +2961,23 @@ void eBuildingTextures::loadPark() {
                                  eParkSpriteData60);
     eSpriteLoader loader(fTileH, "park", sds,
                          nullptr, fRenderer);
+
+    // Remastered Roman gardens replace every variant when all are installed.
+    const std::vector<std::pair<const char*, int>> hd = {
+        {"park_herm", 1}, {"park_topiary", 1}, {"park_oleander", 1}, {"park_pine", 1},
+        {"park_fountain", 2}, {"park_pergola", 2}, {"park_statue", 2}, {"park_tholos", 3}};
+    bool allHD = true;
+    for(const auto& [id, n] : hd) {
+        loadRemasteredN(id, n);
+        allHD = allHD && remastered(id);
+    }
+    if(allHD) {
+        for(const auto& [id, n] : hd) {
+            auto& coll = n == 1 ? fPark : n == 2 ? fLargePark : fHugePark;
+            coll.addTexture() = (*remastered(id))[0][0];
+        }
+        return;
+    }
 
     for(int i = 12; i < 16; i++) {
         loader.load(12, i, fPark);
@@ -2855,6 +3195,10 @@ void eBuildingTextures::loadHeraMonuments() {
 void eBuildingTextures::loadAgora() {
     if(fAgoraLoaded) return;
     fAgoraLoaded = true;
+    for(const auto id : {"agora_space", "food_vendor", "fleece_vendor", "oil_vendor", "wine_vendor",
+                         "arms_vendor", "horse_trainer", "chariot_vendor"}) {
+        loadRemasteredN(id, 2);
+    }
 
     {
         const auto& sds = spriteData(fTileH,
@@ -2983,11 +3327,13 @@ void eBuildingTextures::loadGranary() {
     fGranaryFish = loader.load(29, 47);
     fGranaryMeat = loader.load(29, 48);
     fGranaryCheese = loader.load(29, 49);
-    fGranaryCheese->setOffset(-3, 2);
+    if(fGranaryCheese) fGranaryCheese->setOffset(-3, 2);
     fGranaryCarrots = loader.load(29, 50);
     fGranaryOnions = loader.load(29, 51);
-    fGranaryOnions->setOffset(-4, 0);
+    if(fGranaryOnions) fGranaryOnions->setOffset(-4, 0);
     fGranaryWheat = loader.load(29, 52);
+
+    loadRemasteredAtlas("granary", 640, 40, -22, fGranaryHD);
 }
 
 void eBuildingTextures::loadPier() {
@@ -3019,7 +3365,7 @@ void eBuildingTextures::loadPier() {
 
 
         fPier2 = loader.load(25, 25);
-        fPier2->setOffset(-88, 90);
+        if(fPier2) fPier2->setOffset(-88, 90);
     }
 }
 
@@ -3050,8 +3396,10 @@ void eBuildingTextures::loadTradingPost() {
                              nullptr, fRenderer);
 
         fTradingPost = loader.load(27, 27);
-        fTradingPost->setOffset(-88, 90);
+        if(fTradingPost) fTradingPost->setOffset(-88, 90);   // no 45/60 art in some installs
     }
+    loadRemasteredAtlas("trade_post", 640, 40, -22, fTradingPostHD);
+    loadStorageGoodsHD();
 }
 
 void eBuildingTextures::load() {
@@ -3196,7 +3544,7 @@ void eBuildingTextures::load() {
                              nullptr, fRenderer);
 
         fWarehouse = loader.load(23, 23);
-        fWarehouse->setOffset(-58, 60);
+        if(fWarehouse) fWarehouse->setOffset(-58, 60);
     }
 
     {
@@ -3233,7 +3581,7 @@ void eBuildingTextures::load() {
         }
 
         fGranaryOranges = loader.load(87, 122);
-        fGranaryOranges->setOffset(-3, -3);
+        if(fGranaryOranges) fGranaryOranges->setOffset(-3, -3);
 
         for(int i = 123; i < 129; i++) {
             loader.load(87, i, fOrangeTree);

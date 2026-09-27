@@ -1,6 +1,8 @@
 #include "egranary.h"
 
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
+#include "buildings/ehdoverlays.h"
 
 eGranary::eGranary(eGameBoard& board, const eCityId cid) :
     eStorageBuilding(board, eBuildingType::granary,
@@ -12,6 +14,9 @@ eGranary::eGranary(eGameBoard& board, const eCityId cid) :
 
 std::shared_ptr<eTexture> eGranary::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
+    const auto direction = static_cast<int>(getBoard().direction());
+    const auto& frames = mTextures[sizeId].fGranaryHD[direction];
+    if(frames[0]) return frames[enabled() ? hdAnimFrame() : 8];
     return mTextures[sizeId].fGranary;
 }
 
@@ -19,6 +24,30 @@ std::vector<eOverlay> eGranary::getOverlays(const eTileSize size) const {
     std::vector<eOverlay> os;
     const int sizeId = static_cast<int>(size);
     const auto& texs = mTextures[sizeId];
+    if(texs.fGranaryHD[0][0]) {
+        // Remastered granary: each of the 8 storage bays shows the food it holds.
+        const int dir = static_cast<int>(getBoard().direction());
+        const auto& set = texs.hdOverlays("granary");
+        for(int i = 0; i < 8; i++) {
+            if(resourceCount(i) <= 0) continue;
+            const char* food = nullptr;
+            switch(resourceType(i)) {
+            case eResourceType::urchin: food = "urchin"; break;
+            case eResourceType::fish: food = "fish"; break;
+            case eResourceType::meat: food = "meat"; break;
+            case eResourceType::cheese: food = "cheese"; break;
+            case eResourceType::carrots: food = "carrots"; break;
+            case eResourceType::onions: food = "onions"; break;
+            case eResourceType::wheat: food = "wheat"; break;
+            case eResourceType::oranges: food = "oranges"; break;
+            default: break;
+            }
+            if(food) {
+                eAddHDOverlay(os, set, texs.fGranaryHD, "slot" + std::to_string(i) + "_" + food, dir, sizeId);
+            }
+        }
+        return os;
+    }
     if(enabled()) {
         const auto& coll = texs.fGranaryOverlay;
         const int texId = textureTime() % coll.size();

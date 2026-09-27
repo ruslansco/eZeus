@@ -15,6 +15,7 @@
 #include "ai/eaicityplan.h"
 #include "egameevents.h"
 #include "ereinforcements.h"
+#include "ecityhistory.h"
 
 class ePalace;
 class eSanctuary;
@@ -178,6 +179,14 @@ public:
     int dramaAstronomyCoverage() const { return mDramaCoverage; }
     int allCultureScienceCoverage() const { return mAllDiscCoverage; }
     int taxesCoverage() const { return mTaxesCoverage; }
+    // Monthly record for the history chart and the early warnings.
+    const eCityHistory& history() const { return mHistory; }
+    // Takes this month's sample (done at the start of every month).
+    void recordHistory();
+    // Trade with each partner, this year and last.
+    eTradeLedger& tradeLedger() { return mTradeLedger; }
+    const eTradeLedger& tradeLedger() const { return mTradeLedger; }
+
     int unrest() const { return mUnrest; }
     int popularity() const { return mPopularity; }
     int health() const { return mHealth; }
@@ -580,6 +589,10 @@ private:
     int mDramaCoverage = 0;
     int mAllDiscCoverage = 0;
     int mTaxesCoverage = 0;
+    void warnShortages();
+    eCityHistory mHistory;
+    eTradeLedger mTradeLedger;
+
     int mUnrest = 0; // percent
     int mPopularity = 0;
     int mHealth = 0;

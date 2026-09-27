@@ -1,6 +1,7 @@
 #include "ehorseranch.h"
 
 #include "textures/egametextures.h"
+#include "buildings/ehdoverlays.h"
 
 #include "ehorseranchenclosure.h"
 #include "engine/egameboard.h"
@@ -27,6 +28,10 @@ std::shared_ptr<eTexture> eHorseRanch::getTexture(
         const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
+    const auto& frames = blds[sizeId].fHorseRanchHD[static_cast<int>(getBoard().direction())];
+    // Remastered ranch: stable hand and groom at work while enabled and staffed,
+    // worker-free idle pose (column 8) otherwise.
+    if(frames[0]) return frames[enabled() ? hdAnimFrame() : 8];
     return blds[sizeId].fHorseRanch;
 }
 
@@ -35,6 +40,16 @@ std::vector<eOverlay> eHorseRanch::getOverlays(
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
+    if(texs.fHorseRanchHD[0][0]) {
+        // Remastered: the stock this building holds, rendered in its own scene.
+        const int sizeId_ = static_cast<int>(size);
+        const auto& t_ = eGameTextures::buildings()[sizeId_];
+        const int dir_ = static_cast<int>(getBoard().direction());
+        const auto& set_ = t_.hdOverlays("horse_ranch");
+        std::vector<eOverlay> os_;
+        eAddHDStock(os_, set_, t_.fHorseRanchHD, "wheat", mWheat > 0 ? std::clamp((mWheat - 50)/100, 0, 7) + 1 : 0, dir_, sizeId_);
+        return os_;
+    }
     const auto& coll = texs.fHorseRanchOverlay;
     const int texId = textureTime() % coll.size();
 

@@ -10,7 +10,8 @@
 void eGameMainMenu::initialize(const eAction& resumeAct,
                                const eAction& saveAct,
                                const eAction& loadAct,
-                               const eAction& exitAct) {
+                               const eAction& exitAct,
+                               const eAction& controlsAct) {
     setType(eFrameType::message);
 
     const auto resButt = new eFramedButton(window());
@@ -36,6 +37,16 @@ void eGameMainMenu::initialize(const eAction& resumeAct,
     loadButt->setPressAction(loadAct);
     addWidget(loadButt);
     loadButt->align(eAlignment::hcenter);
+
+    if(controlsAct) {
+        const auto ctrlButt = new eFramedButton(window());
+        ctrlButt->setUnderline(false);
+        ctrlButt->setText(eLanguage::text("controls"));
+        ctrlButt->fitContent();
+        ctrlButt->setPressAction(controlsAct);
+        addWidget(ctrlButt);
+        ctrlButt->align(eAlignment::hcenter);
+    }
 
     const auto exitButt = new eFramedButton(window());
     exitButt->setUnderline(false);

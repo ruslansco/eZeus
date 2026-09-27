@@ -736,11 +736,26 @@ void eHerosHall::updateRequirementStatus(eHeroRequirement& hr) {
     }
 }
 
+static const char* sHeroHallHD(const eHeroType t) {
+    switch(t) {
+    case eHeroType::achilles: return "hero_hall_achilles";
+    case eHeroType::hercules: return "hero_hall_hercules";
+    case eHeroType::jason: return "hero_hall_jason";
+    case eHeroType::odysseus: return "hero_hall_odysseus";
+    case eHeroType::perseus: return "hero_hall_perseus";
+    case eHeroType::theseus: return "hero_hall_theseus";
+    case eHeroType::bellerophon: return "hero_hall_bellerophon";
+    case eHeroType::atalanta: return "hero_hall_atalanta";
+    }
+    return "hero_hall_theseus";
+}
+
 eHerosHall::eHerosHall(const eHeroType type, eGameBoard& board,
                        const eCityId cid) :
     eBuilding(board, sHeroTypeToHallType(type), 4, 4, cid),
     mType(type) {
     eGameTextures::loadHerosHall();
+    eGameTextures::loadRemastered(sHeroHallHD(type), 4);
     if(atlantean()) {
         eGameTextures::loadPoseidonHerosHall();
     } else {
@@ -821,6 +836,10 @@ eHerosHall::~eHerosHall() {
 std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings()[sizeId];
+    // Remastered Roman heroon: one atlas per hero (the statue is part of the sprite).
+    if(const auto hd = texs.remastered(sHeroHallHD(mType))) {
+        return (*hd)[static_cast<int>(getBoard().direction())][hdAnimFrame()];
+    }
     if(atlantean()) {
         return texs.fPoseidonHeroHall;
     } else {
@@ -831,6 +850,7 @@ std::shared_ptr<eTexture> eHerosHall::getTexture(const eTileSize size) const {
 std::vector<eOverlay> eHerosHall::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings()[sizeId];
+    if(texs.remastered(sHeroHallHD(mType))) return {};
     const auto& statues = texs.fHeroStatues;
     int id;
     switch(mType) {

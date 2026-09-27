@@ -2413,11 +2413,18 @@ int eBuilding::textureTime() const {
     return mFrameShift + board.frame();
 }
 
+int eBuilding::hdAnimFrame() const {
+    auto& board = getBoard();
+    // mFrameShift is in 20 Hz ticks; /4 keeps one HD frame per 4 ticks.
+    return (mFrameShift/4 + board.animFrame(sHDAnimFps)) % 8;
+}
+
 void eBuilding::addUnderBuilding(eTile* const t) {
     mUnderBuilding.push_back(t);
 }
 
 void eBuilding::erase() {
+    getBoard().buildingErased(this);
     deleteLater();
     for(const auto t : mUnderBuilding) {
         t->setUnderBuilding(nullptr);

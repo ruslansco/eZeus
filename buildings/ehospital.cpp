@@ -11,4 +11,5 @@ eHospital::eHospital(eGameBoard& board,
                     [this]() { return e::make_shared<eHealer>(getBoard()); },
                     eBuildingType::hospital, 4, 4, 11, cid)  {
     eGameTextures::loadHospital();
+    setHDFrames(&eBuildingTextures::fHospitalHD);
 }

@@ -410,7 +410,11 @@ enum class eEvent {
     wageIncrease,
     wageDecrease,
 
-    areaCutOff
+    areaCutOff,
+
+    // our own: something in storage (or the treasury) runs out soon;
+    // fResourceType (drachmas for the treasury), fTime = months left
+    shortageWarning
 };
 
 #endif // EEVENT_H

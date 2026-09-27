@@ -2,6 +2,8 @@
 
 #include "eviewmodebutton.h"
 #include "widgets/ebasicbutton.h"
+#include "widgets/epanelwidgets.h"
+#include "textures/egametextures.h"
 #include "elanguage.h"
 #include "engine/egameboard.h"
 
@@ -38,8 +40,14 @@ void eDataWidget::initialize() {
     frame->addWidget(mInnerWidget);
     mInnerWidget->move(pp, pp);
 
-    const auto coll = &eInterfaceTextures::fMoreInfo;
-    mMoreInfo = new eBasicButton(coll, window());
+    {
+        // same footprint as the original magnifier sprite
+        const int iRes = static_cast<int>(resolution().uiScale());
+        const auto& tex = eGameTextures::interface()[iRes].fMoreInfo.getTexture(0);
+        const auto b = new ePanelActionButton(window(), "more");
+        b->resize(tex ? tex->width() : 20, tex ? tex->height() : 20);
+        mMoreInfo = b;
+    }
     frame->addWidget(mMoreInfo);
     mMoreInfo->align(eAlignment::right | eAlignment::bottom);
     mMoreInfo->move(mMoreInfo->x() - pp, mMoreInfo->y() - pp);
@@ -81,6 +89,11 @@ int eDataWidget::spacing() const {
 
 void eDataWidget::showMoreInfoButton() {
     mMoreInfo->show();
+}
+
+void eDataWidget::setMoreInfoIcon(const std::string& icon, const std::string& tooltip) {
+    if(const auto b = dynamic_cast<ePanelActionButton*>(mMoreInfo)) b->setIcon(icon);
+    mMoreInfo->setTooltip(tooltip);
 }
 
 int eDataWidget::sCoverageToText(const int c) {

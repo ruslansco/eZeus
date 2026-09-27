@@ -12,4 +12,5 @@ eInventorsWorkshop::eInventorsWorkshop(eGameBoard& board,
                             eBuildingType::laboratory}},
                           eBuildingType::inventorsWorkshop, 3, 3, 12, cid) {
     eGameTextures::loadInventorsWorkshop();
+    setHDFrames(&eBuildingTextures::fInventorsWorkshopHD);
 }

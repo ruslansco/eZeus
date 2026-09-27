@@ -14,6 +14,9 @@ public:
     void setScaling(const double s) {
         mScaling = s;
     }
+
+    // Adventure picture number b at a UI scale.
+    static std::shared_ptr<eTexture> sTexture(const int b, const eUIScale scale);
 protected:
     void sizeHint(int& w, int& h);
 

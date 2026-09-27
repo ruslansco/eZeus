@@ -11,6 +11,7 @@ eChariotVendor::eChariotVendor(eGameBoard& board,
             -0.45, -2.75, &eBuildingTextures::fChariotVendorOverlay2,
             eBuildingType::chariotVendor, 2, 2, 4, cid) {
     eGameTextures::loadChariotVendor();
+    setHD("chariot_vendor");
     setResMult(1);
     setMaxRes(4);
 }

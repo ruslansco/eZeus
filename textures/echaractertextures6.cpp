@@ -101,6 +101,7 @@ void eCharacterTextures::loadDisgruntled() {
 void eCharacterTextures::loadSick() {
     if(fSickLoaded) return;
     fSickLoaded = true;
+    if(loadPersonHD(fSick, {{"fight", &fSick.fFight}}, fRenderer, fTileH, "sick")) return;
     const auto& sds = spriteData(fTileH,
                                  eSickSpriteData15,
                                  eSickSpriteData30,

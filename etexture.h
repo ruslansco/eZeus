@@ -90,13 +90,29 @@ public:
     void setAlpha(const Uint8 alpha);
     void clearAlphaMod();
     void setColorMod(const Uint8 r, const Uint8 g, const Uint8 b);
+    // The modulation last set through setColorMod (no SDL round trip).
+    void colorMod(Uint8& r, Uint8& g, Uint8& b) const;
     void clearColorMod();
 
     void setFlipTex(const std::shared_ptr<eTexture>& tex);
     void setParentTexture(const SDL_Rect& rect,
                           const std::shared_ptr<eTexture>& tex);
 
-    SDL_Texture* tex() const { return mTex; }
+    void setScaleMode(const SDL_ScaleMode mode);
+
+    // Pixel density of a root texture: a "@2x" sheet stores twice the
+    // pixels of its logical size. Width, height and all source rects stay
+    // in logical units; the extra detail shows when the view is zoomed in.
+    void setDensity(const int d);
+    int density() const { return mParentTex ? mDensity*mParentTex->density() : mDensity; }
+
+    // Same image at a higher pixel density, drawn instead of this texture
+    // while the renderer is scaled up (zoomed in), so it stays sharp.
+    void setHiRes(const std::shared_ptr<eTexture>& tex) { mHiRes = tex; }
+    const std::shared_ptr<eTexture>& hiRes() const { return mHiRes; }
+
+    SDL_Texture* tex() const { return mParentTex ? mParentTex->tex() : mTex; }
+    const eTexture* parentTexture() const { return mParentTex.get(); }
 private:
     std::shared_ptr<eTexture> mParentTex;
     int mX = 0;
@@ -105,7 +121,10 @@ private:
     int mHeight = 0;
     int mOffsetX = 0;
     int mOffsetY = 0;
+    int mDensity = 1;
+    SDL_Color mColorMod{255, 255, 255, 255};
     std::shared_ptr<eTexture> mFlipTex;
+    std::shared_ptr<eTexture> mHiRes;
     SDL_Texture* mTex = nullptr;
 };
 

@@ -16,8 +16,15 @@ public:
                         const eCityId cid);
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const;
+protected:
+    // Remastered (Roman) atlas id, see eBuildingTextures::remastered(); when loaded it
+    // replaces the sprite and any legacy overlays (the animation is in the atlas).
+    void setHD(const char* const id) { mHD = id; }
+    const std::string& hdId() const { return mHD; }
+    const eBuildingTextures::eHDFrames* hdFrames(const eTileSize size) const;
 private:
     const eBaseTex mTexture;
+    std::string mHD;
 };
 
 class eOverlayAesthBuilding : public eAestheticsBuilding {

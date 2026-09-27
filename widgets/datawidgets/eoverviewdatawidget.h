@@ -13,6 +13,9 @@ public:
     using eDataWidget::eDataWidget;
 
     void initialize() override;
+protected:
+    void openMoreInfoWiget() override;
+public:
 
     void shown() override;
 

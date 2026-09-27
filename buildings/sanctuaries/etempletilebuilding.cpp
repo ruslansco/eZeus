@@ -24,6 +24,9 @@ eTempleTileBuilding::getTileTexture(const eTileSize size) const {
     if(!f) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    eGameTextures::loadSanctuaryHD();
+    const int hdId=mId>=10?mId-10:mId;
+    if(hdId>=0 && hdId<6 && blds.fSanctuaryPavingHD[hdId]) return blds.fSanctuaryPavingHD[hdId];
     const auto& coll = blds.fSanctuaryTiles;
     if(mId > 9) return coll.getTexture(mId - 10);
     return coll.getTexture(mId);

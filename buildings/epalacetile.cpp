@@ -20,6 +20,8 @@ std::shared_ptr<eTexture> ePalaceTile::getTexture(const eTileSize size) const {
     const auto& texs = eGameTextures::buildings();
     const auto& coll = texs[sizeId].fPalaceTiles;
     const int id = mOther ? 1 : 0;
+    const auto& hd = texs[sizeId].fPalaceTileHD[id];
+    if(hd[0][0]) return hd[0][0];
     return coll.getTexture(id);
 }
 

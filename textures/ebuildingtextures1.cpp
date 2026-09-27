@@ -201,6 +201,7 @@ void eBuildingTextures::loadRefinery() {
     for(int i = 2; i < 15; i++) {
         loader.load(1, i, fRefineryOverlay);
     }
+    loadRemasteredAtlas("refinery", 320, 20, -11, fRefineryHD);
 }
 
 void eBuildingTextures::loadBlackMarbleWorkshop() {
@@ -358,6 +359,7 @@ void eBuildingTextures::loadChariotFactory() {
             }
         }
     }
+    loadRemasteredAtlas("chariot_factory", 640, 40, -22, fChariotFactoryHD);
 }
 
 void eBuildingTextures::loadBibliotheke() {
@@ -376,6 +378,7 @@ void eBuildingTextures::loadBibliotheke() {
     for(int i = 106; i < 141; i++) {
         loader.load(105, i, fBibliothekeOverlay);
     }
+    loadRemasteredAtlas("bibliotheke", 320, 20, -11, fBibliothekeHD);
 }
 
 void eBuildingTextures::loadObservatory() {
@@ -394,6 +397,7 @@ void eBuildingTextures::loadObservatory() {
     for(int i = 142; i < 162; i++) {
         loader.load(141, i, fObservatoryOverlay);
     }
+    loadRemasteredAtlas("observatory", 800, 50, -27, fObservatoryHD);
 }
 
 void eBuildingTextures::loadUniversity() {
@@ -412,6 +416,7 @@ void eBuildingTextures::loadUniversity() {
     for(int i = 2; i < 26; i++) {
         loader.load(1, i, fUniversityOverlay);
     }
+    loadRemasteredAtlas("university", 480, 30, -16, fUniversityHD);
 }
 
 void eBuildingTextures::loadLaboratory() {
@@ -430,6 +435,7 @@ void eBuildingTextures::loadLaboratory() {
     for(int i = 27; i < 67; i++) {
         loader.load(26, i, fLaboratoryOverlay);
     }
+    loadRemasteredAtlas("laboratory", 640, 40, -22, fLaboratoryHD);
 }
 
 void eBuildingTextures::loadInventorsWorkshop() {
@@ -448,6 +454,7 @@ void eBuildingTextures::loadInventorsWorkshop() {
     for(int i = 68; i < 105; i++) {
         loader.load(67, i, fInventorsWorkshopOverlay);
     }
+    loadRemasteredAtlas("inventors_workshop", 480, 30, -16, fInventorsWorkshopHD);
 }
 
 void eBuildingTextures::loadMuseum() {
@@ -466,6 +473,7 @@ void eBuildingTextures::loadMuseum() {
     for(int i = 163; i < 185; i++) {
         loader.load(162, i, fMuseumOverlay);
     }
+    loadRemasteredAtlas("museum", 960, 60, -33, fMuseumHD);
 }
 
 void eBuildingTextures::loadCorral() {

@@ -49,6 +49,12 @@ std::shared_ptr<eTexture> eSmallHouse::getTexture(const eTileSize size) const {
         coll = &texs.fCommonHouse[mLevel];
     }
     const int texId = seed() % coll->size();
+    if(!atlantean() && mLevel >= 0 && mLevel < 7) {
+        // Remastered house: the resident's household task loops while the house is inhabited.
+        const auto& hd = texs.fCommonHouseHD[mLevel*2 + texId % 2];
+        const auto& frames = hd[static_cast<int>(getBoard().direction())];
+        if(frames[0]) return frames[hdAnimFrame()];
+    }
     return coll->getTexture(texId);
 }
 

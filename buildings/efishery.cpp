@@ -56,6 +56,22 @@ std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto o = sRotated(mO, dir);
+    {
+        // Remastered fishery: the model's sea side renders top-right in its N row,
+        // bottom-right in W, bottom-left in S and top-left in E (as the urchin quay).
+        const auto& hd = blds[sizeId].fFisheryHD;
+        if(hd[0][0]) {
+            int row = 0;
+            switch(o) {
+            case eDiagonalOrientation::topRight: row = 0; break;
+            case eDiagonalOrientation::bottomRight: row = 1; break;
+            case eDiagonalOrientation::bottomLeft: row = 2; break;
+            case eDiagonalOrientation::topLeft: row = 3; break;
+            default: row = 0; break;
+            }
+            return hd[row][enabled() ? hdAnimFrame() : 8];
+        }
+    }
     int id = 3;
     switch(o) {
     case eDiagonalOrientation::topRight:
@@ -81,6 +97,7 @@ std::shared_ptr<eTexture> eFishery::getTexture(const eTileSize size) const {
 std::vector<eOverlay> eFishery::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    if(blds.fFisheryHD[0][0]) return {};
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto oo = sRotated(mO, dir);

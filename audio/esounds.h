@@ -20,6 +20,8 @@ public:
     static bool loaded();
 
     static void playButtonSound();
+    // Thunderclap for the front-end lightning (Zeus' strike).
+    static void playMenuThunderSound();
 
     static void playPlaceBuildingSound();
 
@@ -139,6 +141,7 @@ private:
     bool mLoaded{false};
 
     eSoundVector mButton;
+    eSoundVector mMenuThunder;
     eSoundVector mPlaceBuilding;
 
     eSoundVector mEnvironment;

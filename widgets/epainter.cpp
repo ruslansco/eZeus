@@ -1,5 +1,7 @@
 #include "epainter.h"
 
+#include "textures/egeometrybatch.h"
+
 ePainter::ePainter(SDL_Renderer* const renderer) :
     mRenderer(renderer) {
 
@@ -91,6 +93,7 @@ void ePainter::drawTextureScaled(const SDL_Rect& dstRect,
 
 void ePainter::fillRect(const SDL_Rect& rect,
                         const SDL_Color& color) const {
+    eGeometryBatch::sFlush();
     SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(mRenderer, color.r, color.g, color.b, color.a);
     const SDL_Rect dRect{rect.x + mX, rect.y + mY, rect.w, rect.h};
@@ -100,6 +103,7 @@ void ePainter::fillRect(const SDL_Rect& rect,
 void ePainter::drawRect(const SDL_Rect& rect,
                         const SDL_Color& color,
                         const int width) {
+    eGeometryBatch::sFlush();
     SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_BLEND);
     const SDL_Rect r1{rect.x,
                       rect.y,
@@ -127,6 +131,7 @@ void ePainter::drawDropShadow(const SDL_Rect& rect,
                               const int size,
                               const uint8_t maxAlpha) const {
     if(size <= 0 || maxAlpha == 0) return;
+    eGeometryBatch::sFlush();
     SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_BLEND);
     const int steps = 4;
     for(int i = steps; i >= 1; --i) {
@@ -141,6 +146,7 @@ void ePainter::drawDropShadow(const SDL_Rect& rect,
 
 void ePainter::drawGoldFrame(const SDL_Rect& rect,
                              const int borderWidth) const {
+    eGeometryBatch::sFlush();
     SDL_SetRenderDrawBlendMode(mRenderer, SDL_BLENDMODE_BLEND);
     // Outer shadow border
     const SDL_Color outerDark{10, 16, 26, 240};
@@ -202,11 +208,13 @@ void ePainter::drawPolygon(std::vector<SDL_Point> pts,
         pt.x += mX;
         pt.y += mY;
     }
+    eGeometryBatch::sFlush();
     SDL_SetRenderDrawColor(mRenderer, color.r, color.g, color.b, color.a);
     SDL_RenderDrawLines(mRenderer, pts.data(), pts.size());
 }
 
 void ePainter::setClipRect(const SDL_Rect* const rect) {
+    eGeometryBatch::sFlush();
     if(rect) {
         const auto r = SDL_Rect{rect->x + mX, rect->y + mY,
                                 rect->w, rect->h};

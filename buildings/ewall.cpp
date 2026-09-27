@@ -9,6 +9,7 @@
 eWall::eWall(eGameBoard& board, const eCityId cid) :
     eBuilding(board, eBuildingType::wall, 1, 1, cid) {
     eGameTextures::loadWall();
+    for(int m = 0; m < 16; m++) eGameTextures::loadRemastered("wall_" + std::to_string(m), 1);
     setHP(eNumbers::sWallHP);
 }
 
@@ -56,6 +57,12 @@ eWall::getTexture(const eTileSize size) const {
                      trt == eBuildingType::tower ||
                      trt == eBuildingType::gatehouse;
 
+    {
+        // Remastered Roman wall: one sprite per screen-relative connection mask
+        // (1 top-right, 2 bottom-left, 4 top-left, 8 bottom-right), see art/walls.
+        const int mask = (trb ? 1 : 0) | (blb ? 2 : 0) | (tlb ? 4 : 0) | (brb ? 8 : 0);
+        if(const auto hd = blds.remastered("wall_" + std::to_string(mask))) return (*hd)[0][0];
+    }
     const auto tt = t->topRotated<eTile>(dir);
     const auto b = t->bottomRotated<eTile>(dir);
     const auto l = t->leftRotated<eTile>(dir);

@@ -13,4 +13,5 @@ eUniversity::eUniversity(eGameBoard& board, const eCityId cid) :
                             eBuildingType::museum}},
                           eBuildingType::university, 3, 3, 12, cid) {
     eGameTextures::loadUniversity();
+    setHDFrames(&eBuildingTextures::fUniversityHD);
 }

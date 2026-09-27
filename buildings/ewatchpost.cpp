@@ -11,4 +11,5 @@ eWatchpost::eWatchpost(eGameBoard& board,
                     [this]() { return e::make_shared<eWatchman>(getBoard()); },
                     eBuildingType::watchPost, 2, 2, 6, cid)  {
     eGameTextures::loadWatchpost();
+    setHDFrames(&eBuildingTextures::fWatchPostHD);
 }

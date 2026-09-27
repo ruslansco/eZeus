@@ -1,4 +1,6 @@
 #include "etexture.h"
+#include "textures/egeometrybatch.h"
+#include "ebenchtimers.h"
 
 #include <algorithm>
 
@@ -13,6 +15,8 @@ void eTexture::reset() {
     mTex = nullptr;
     mWidth = 0;
     mHeight = 0;
+    mDensity = 1;
+    mColorMod = SDL_Color{255, 255, 255, 255};
 }
 
 bool eTexture::create(SDL_Renderer* const r,
@@ -28,10 +32,12 @@ bool eTexture::create(SDL_Renderer* const r,
 }
 
 void eTexture::setAsRenderTarget(SDL_Renderer* const r) {
+    eGeometryBatch::sFlush();
     SDL_SetRenderTarget(r, mTex);
 }
 
 bool eTexture::load(SDL_Renderer* const r, const std::string& path) {
+    const eBenchScope bench(eBenchTimers::texLoad);
     reset();
     const auto surf = IMG_Load(path.c_str());
     if(!surf) {
@@ -137,6 +143,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
                         TTF_Font& font,
                         const int width,
                         const eAlignment align) {
+    const eBenchScope bench(eBenchTimers::text);
     reset();
 
     if(width) {
@@ -168,7 +175,9 @@ bool eTexture::loadText(SDL_Renderer* const r,
                 return false;
             }
             {
-                SDL_SetRenderTarget(r, mTex);
+                eGeometryBatch::sFlush();
+                const auto previousTarget = SDL_GetRenderTarget(r);
+    SDL_SetRenderTarget(r, mTex);
                 const auto bm = SDL_ComposeCustomBlendMode(
                                     SDL_BLENDFACTOR_ONE,
                                     SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
@@ -197,7 +206,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
                     }
                 }
 
-                SDL_SetRenderTarget(r, nullptr);
+                SDL_SetRenderTarget(r, previousTarget);
             }
 
             return true;
@@ -231,7 +240,9 @@ bool eTexture::loadText(SDL_Renderer* const r,
         return false;
     }
     {
-        SDL_SetRenderTarget(r, mTex);
+        eGeometryBatch::sFlush();
+        const auto previousTarget = SDL_GetRenderTarget(r);
+    SDL_SetRenderTarget(r, mTex);
         const auto bm = SDL_ComposeCustomBlendMode(
                             SDL_BLENDFACTOR_ONE,
                             SDL_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
@@ -258,7 +269,7 @@ bool eTexture::loadText(SDL_Renderer* const r,
         SDL_DestroyTexture(tex2);
         SDL_DestroyTexture(tex1);
 
-        SDL_SetRenderTarget(r, nullptr);
+        SDL_SetRenderTarget(r, previousTarget);
     }
     return true;
 }
@@ -278,16 +289,36 @@ void eTexture::render(SDL_Renderer* const r,
                       const SDL_Rect& srcRect,
                       const SDL_Rect& dstRect,
                       const bool flipped) const {
+    if(mHiRes && !mFlipTex) {
+        float sx = 1.f;
+        float sy = 1.f;
+        SDL_RenderGetScale(r, &sx, &sy);
+        if(sx > 1.01f || sy > 1.01f) {
+            const SDL_Rect hiSrc{srcRect.x - mX + mHiRes->x(),
+                                 srcRect.y - mY + mHiRes->y(),
+                                 srcRect.w, srcRect.h};
+            mHiRes->render(r, hiSrc, dstRect, flipped);
+            return;
+        }
+    }
     if(mFlipTex) {
         mFlipTex->render(r, srcRect, dstRect, true);
     } else if(mParentTex) {
-        mParentTex->render(r, srcRect, dstRect, flipped);
+        // A dense view of its parent maps logical source rects to parent pixels.
+        const SDL_Rect src = mDensity == 1 ? srcRect :
+            SDL_Rect{mX + (srcRect.x - mX)*mDensity, mY + (srcRect.y - mY)*mDensity,
+                     srcRect.w*mDensity, srcRect.h*mDensity};
+        mParentTex->render(r, src, dstRect, flipped);
     } else if(mTex) {
+        eGeometryBatch::sFlush();
+        const SDL_Rect src = mDensity == 1 ? srcRect :
+            SDL_Rect{srcRect.x*mDensity, srcRect.y*mDensity,
+                     srcRect.w*mDensity, srcRect.h*mDensity};
         if(flipped) {
-            SDL_RenderCopyEx(r, mTex, &srcRect, &dstRect, 0, nullptr,
+            SDL_RenderCopyEx(r, mTex, &src, &dstRect, 0, nullptr,
                              SDL_RendererFlip::SDL_FLIP_HORIZONTAL);
         } else {
-            SDL_RenderCopy(r, mTex, &srcRect, &dstRect);
+            SDL_RenderCopy(r, mTex, &src, &dstRect);
         }
     }
 }
@@ -363,7 +394,10 @@ bool eTexture::isNull() const {
 void eTexture::setAlpha(const Uint8 alpha) {
     if(mFlipTex) mFlipTex->setAlpha(alpha);
     else if(mParentTex) mParentTex->setAlpha(alpha);
-    else SDL_SetTextureAlphaMod(mTex, alpha);
+    else if(mTex) {
+        SDL_SetTextureBlendMode(mTex, SDL_BLENDMODE_BLEND);
+        SDL_SetTextureAlphaMod(mTex, alpha);
+    }
 }
 
 void eTexture::clearAlphaMod() {
@@ -373,7 +407,19 @@ void eTexture::clearAlphaMod() {
 void eTexture::setColorMod(const Uint8 r, const Uint8 g, const Uint8 b) {
     if(mFlipTex) mFlipTex->setColorMod(r, g, b);
     else if(mParentTex) mParentTex->setColorMod(r, g, b);
-    else SDL_SetTextureColorMod(mTex, r, g, b);
+    else if(mTex) {
+        if(mColorMod.r == r && mColorMod.g == g && mColorMod.b == b) return;
+        mColorMod = SDL_Color{r, g, b, 255};
+        SDL_SetTextureColorMod(mTex, r, g, b);
+    }
+}
+
+void eTexture::colorMod(Uint8& r, Uint8& g, Uint8& b) const {
+    if(mFlipTex) return mFlipTex->colorMod(r, g, b);
+    if(mParentTex) return mParentTex->colorMod(r, g, b);
+    r = mColorMod.r;
+    g = mColorMod.g;
+    b = mColorMod.b;
 }
 
 void eTexture::clearColorMod() {
@@ -395,4 +441,17 @@ void eTexture::setParentTexture(const SDL_Rect& rect,
     mY = rect.y;
     mWidth = rect.w;
     mHeight = rect.h;
+}
+
+void eTexture::setDensity(const int d) {
+    if(d < 1 || d == mDensity) return;
+    mWidth = mWidth*mDensity/d;
+    mHeight = mHeight*mDensity/d;
+    mDensity = d;
+}
+
+void eTexture::setScaleMode(const SDL_ScaleMode mode) {
+    if(mFlipTex) mFlipTex->setScaleMode(mode);
+    else if(mParentTex) mParentTex->setScaleMode(mode);
+    else if(mTex) SDL_SetTextureScaleMode(mTex, mode);
 }

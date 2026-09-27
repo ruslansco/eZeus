@@ -44,6 +44,12 @@ void eScrollWidget::scrollToTheTop() {
     clampDY();
 }
 
+void eScrollWidget::ensureVisible(const int y, const int h) {
+    if(y < mDy) mDy = y;
+    else if(y + h > mDy + height()) mDy = y + h - height();
+    clampDY();
+}
+
 void eScrollWidget::paintEvent(ePainter& p) {
     //p.fillRect(rect(), {255, 0, 0, 255});
     if(mScrollArea) {

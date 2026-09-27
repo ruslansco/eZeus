@@ -21,4 +21,5 @@ eMaintenanceOffice::eMaintenanceOffice(eGameBoard& board,
                     gFireFighterActGenerator,
                     eBuildingType::maintenanceOffice, 2, 2, 5, cid)  {
     eGameTextures::loadMaintenanceOffice();
+    setHDFrames(&eBuildingTextures::fMaintenanceOfficeHD);
 }

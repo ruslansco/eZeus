@@ -39,3 +39,9 @@ eTextureCollection::getTexture(const int id) const {
 int eTextureCollection::size() const {
     return mTexs.size();
 }
+
+void eTextureCollection::setScaleMode(const SDL_ScaleMode mode) {
+    for(auto& t : mTexs) {
+        if(t) t->setScaleMode(mode);
+    }
+}

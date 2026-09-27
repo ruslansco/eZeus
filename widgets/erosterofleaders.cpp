@@ -16,7 +16,10 @@
 namespace fs = std::filesystem;
 
 void eRosterOfLeaders::initialize() {
-    eMainMenuBase::initialize();
+    eMainMenuBase::initialize(eMenuShot::roster);
+    if(!window()->leader().empty()) {
+        setBackAction([this]() { window()->showMainMenu(); });
+    }
 
     const auto frame = new eFramedWidget(window());
     frame->setType(eFrameType::message);

@@ -445,3 +445,16 @@ eGodType eBuildingModeHelpers::toGodType(const eBuildingMode mode) {
     const auto gt = static_cast<eGodType>(id);
     return gt;
 }
+
+eBuildingMode eBuildingModeHelpers::toBuildingMode(const eBuildingType type) {
+    if(type == eBuildingType::none) return eBuildingMode::none;
+    if(type == eBuildingType::erase) return eBuildingMode::erase;
+    for(int i = static_cast<int>(eBuildingMode::road); i <= static_cast<int>(eBuildingMode::crosswalk); ++i) {
+        const auto mode = static_cast<eBuildingMode>(i);
+        if(toBuildingType(mode) == type) {
+            return mode;
+        }
+    }
+    return eBuildingMode::none;
+}
+

@@ -12,4 +12,5 @@ eBibliotheke::eBibliotheke(eGameBoard& board,
                     [this]() { return e::make_shared<eScholar>(getBoard()); },
                     eBuildingType::bibliotheke, 2, 2, 5, cid) {
     eGameTextures::loadBibliotheke();
+    setHDFrames(&eBuildingTextures::fBibliothekeHD);
 }

@@ -40,6 +40,16 @@ void eSounds::playButtonSound() {
     sInstance->mButton.playRandomSound();
 }
 
+void eSounds::playMenuThunderSound() {
+    if(!sInstance) return;
+    auto& v = sInstance->mMenuThunder;
+    if(v.soundCount() == 0) {
+        const std::string wavsDir{eGameDir::path("Audio/Wavs/")};
+        v.addPath(wavsDir + "G_zeus_hit.wav");
+    }
+    v.playRandomSound();
+}
+
 void eSounds::playPlaceBuildingSound() {
     sInstance->mPlaceBuilding.playRandomSound();
 }

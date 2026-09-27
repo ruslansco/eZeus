@@ -12,4 +12,5 @@ eGymnasium::eGymnasium(eGameBoard& board, const eCityId cid) :
                     eBuildingType::gymnasium, 3, 3, 7, cid,
                     [this]() { return e::make_shared<eGymnast>(getBoard()); }) {
     eGameTextures::loadGymnasium();
+    setHDFrames(&eBuildingTextures::fGymnasiumHD);
 }

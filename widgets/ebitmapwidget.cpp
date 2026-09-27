@@ -19,12 +19,14 @@ void eBitmapWidget::paintEvent(ePainter& p) {
     const int w = std::round(mult*mScaling*400);
     const int h = std::round(mult*mScaling*300);
     const SDL_Rect dstRect{p.x(), p.y(), w, h};
-    SDL_RenderCopy(p.renderer(), tex->tex(), &srcRect, &dstRect);
+    tex->render(p.renderer(), srcRect, dstRect);
 }
 
 stdsptr<eTexture> eBitmapWidget::texture() const {
-    const auto res = resolution();
-    const auto uiScale = res.uiScale();
+    return sTexture(mBitmap, resolution().uiScale());
+}
+
+stdsptr<eTexture> eBitmapWidget::sTexture(const int mBitmap, const eUIScale uiScale) {
     const int iRes = static_cast<int>(uiScale);
     const auto& intrfc = eGameTextures::interface()[iRes];
     if(mBitmap == 0) {

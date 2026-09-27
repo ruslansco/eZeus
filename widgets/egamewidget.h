@@ -2,6 +2,8 @@
 #define EGAMEWIDGET_H
 
 #include <deque>
+#include <optional>
+#include <chrono>
 
 #include "emainwidget.h"
 #include "eframedlabel.h"
@@ -35,6 +37,9 @@ class eGameBoard;
 class eAgoraBase;
 class eInfoWidget;
 class eFramedButton;
+class eObjectiveTrackerWidget;
+class eMessageToast;
+class eHouseHoverCard;
 
 enum class eAgoraOrientation;
 enum class eGodType;
@@ -47,6 +52,14 @@ using eBuildingCreator = std::function<stdsptr<eBuilding>()>;
 struct eSavedMessage {
     eEventData fEd;
     eMessage fMsg;
+    bool fReplay = false;   // re-opened from the message list: not logged again
+};
+
+// A message the player was sent, kept for the side panel's message list.
+struct eLoggedMessage {
+    eEventData fEd;
+    eMessage fMsg;
+    int fId = 0;
 };
 
 struct eGameWidgetSettings {
@@ -108,7 +121,16 @@ public:
                  int& idX, int& idY) const;
 
     void setViewMode(const eViewMode m);
+    void toggleViewMode(const eViewMode m, const std::string& nameKey);
+    void resetViewMode();
     eViewMode viewMode() const { return mViewMode; }
+
+    double zoomScale() const { return mZoomScale; }
+    int currentZoomIndex() const;
+    void zoomSteps(const int steps, const int x, const int y);
+private:
+    void updateZoomAnimation(const double dt = 0.0);
+public:
 
     void viewFraction(const double fx, const double fy);
     void viewTile(eTile* const tile);
@@ -125,8 +147,33 @@ public:
     void setSettings(const eGameWidgetSettings& s);
 
     void updateRequestButtons();
+    // Every message shown to the player this session, oldest first.
+    const std::vector<eLoggedMessage>& messageLog() const { return mMessageLog; }
+    // Messages that arrived since the list was last opened.
+    int unseenMessages() const { return static_cast<int>(mMessageLog.size()) - mMessagesSeen; }
+    void showMessageLog();
+    // The viewed city's monthly record as charts (eCityHistoryWidget).
+    void showCityHistory();
+    // Trade per partner this year and last, and unsold stock (eTradeSummaryWidget).
+    void showTradeSummary();
+    // Screenshot aid (EZEUS_SHOT_PANEL=messages|badge): sample log entries.
+    void debugFillMessageLog();
+    // Opens a logged message again, read-only (its choices already happened).
+    void replayMessage(const int i);
+    // Screenshot aid (EZEUS_SHOT_PANEL=toasts): sample minor-message cards.
+    void debugShowToasts();
+    // Screenshot aid (EZEUS_SHOT_PANEL=history): the chart with ten sample years.
+    void debugShowCityHistory();
+    // Screenshot aid (EZEUS_SHOT_PANEL=house): rests the mouse on a house.
+    void debugHoverHouse();
+    // Screenshot aid (EZEUS_SHOT_PANEL=place|road): a fountain being placed
+    // next to a road, or a road being dragged.
+    void debugPlacePreview(const bool road);
+
+    // frames: how long it stays (20 per second)
     void showTip(const ePlayerCityTarget& target,
-                 const std::string& tip);
+                 const std::string& tip,
+                 const int frames = 200);
     void showQuestion(const std::string& title,
                       const std::string& q,
                       const eAction& action);
@@ -148,6 +195,7 @@ protected:
     bool keyPressEvent(const eKeyPressEvent& e) override;
     bool mousePressEvent(const eMouseEvent& e) override;
     bool mouseMoveEvent(const eMouseEvent& e) override;
+    bool mouseLeaveEvent(const eMouseEvent& e) override;
     bool mouseReleaseEvent(const eMouseEvent& e) override;
     bool mouseWheelEvent(const eMouseWheelEvent& e) override;
 private:
@@ -159,8 +207,6 @@ private:
                 const int wSpan, const int hSpan,
                 const int a);
 
-    void showGoals();
-
     void setDX(const int dx);
     void setDY(const int dy);
     void clampViewBox();
@@ -170,7 +216,6 @@ private:
 
     using eApply = std::function<void(eTile* const)>;
     eApply editFunc();
-    bool buildMouseRelease();
 
     using eTileAction = std::function<void(eTile* const)>;
     void iterateOverVisibleTiles(const eTileAction& a);
@@ -236,6 +281,8 @@ private:
                           double& xf, double& yf) const;
 
     void updateMinimap();
+    void updateSmoothCamera(const double dt = 0.0);
+    bool stepSimulation();
 
     int rotationId() const;
     int hippodromeId() const;
@@ -283,10 +330,35 @@ private:
 public:
     void switchPause();
     bool isPaused() const { return mPaused; }
+    bool hasModalDialog() const;
+    bool isSimulationRunning() const { return !mPaused && !hasModalDialog(); }
     int speedId() const { return mSpeedId; }
     int maxSpeedId() const { return sMaxSpeedId; }
     void setSpeedId(int id);
     void updateSpeedDisplay();
+    void showSpeedToast();
+
+    int topBarHeight() const;
+    void showGoals();
+    void toggleObjectivesTracker();
+    eObjectiveTrackerWidget* objectivesTracker() const { return mObjectivesTracker; }
+
+    void openInGameMenu();
+    void cloneHoveredBuilding();
+    void toggleQuickDemolish();
+    void quickSaveGame();
+    void updateTimedAutosave(const double ms);
+    void timedAutosave(const int slots);
+
+    bool buildMouseRelease();
+    bool buildMouseReleaseRecorded();
+    bool undoAvailable() const;
+    void undoLastBuild();
+    void clearUndo();
+    void setPressedTileForTest(const int x, const int y) { mPressedTX = x; mPressedTY = y; mLeftPressed = true; }
+    void setHoverTileForTest(const int x, const int y) { mHoverTX = x; mHoverTY = y; }
+    eGameMenu* gameMenu() const { return mGm; }
+    void setGameMenuForTest(eGameMenu* const gm) { mGm = gm; }
 
 private:
     stdsptr<eTexture> getBasementTexture(
@@ -328,6 +400,24 @@ private:
 
     int mDX = 0;
     int mDY = 0;
+    double mPreciseDX = 0.0;
+    double mPreciseDY = 0.0;
+    double mPanVX = 0.0;
+    double mPanVY = 0.0;
+    std::chrono::high_resolution_clock::time_point mLastFrameTime{};
+    std::chrono::high_resolution_clock::time_point mLastCameraTime{};
+    double mSimAccumulatorMs = 0.0;
+
+    struct eUndoEntry {
+        std::vector<stdptr<eBuilding>> fBuildings;
+        ePlayerId fPlayer;
+        int fRefund = 0;
+        int fGameTime = 0;
+        std::chrono::steady_clock::time_point fRealTime;
+    };
+    std::optional<eUndoEntry> mUndo;
+    double mAutosaveMs = 0.0;
+    bool mTimingInitialized = false;
 
     bool mLeftPressed = false;
     bool mMovedSincePress = false;
@@ -348,6 +438,18 @@ private:
     eTileSize mTileSize = eTileSize::s30;
     int mTileW = 60;
     int mTileH = 30;
+    double mZoomScale = 1.0;
+    double mTargetZoomScale = 1.0;
+    int mZoomIndex = 1;
+
+    // Fast, responsive smooth zoom with cursor-centric positioning
+    bool mZoomAnimating = false;
+    bool mZoomInstant = false;
+    int mZoomAnchorX = 0;
+    int mZoomAnchorY = 0;
+    double mZoomMapX = 0.0;
+    double mZoomMapY = 0.0;
+    std::chrono::steady_clock::time_point mLastWheelTime{};
 
     int mUpdateRect = 0;
     std::vector<SDL_Rect> mUpdateRects;
@@ -365,9 +467,41 @@ private:
     eFramedLabel* mPausedLabel = nullptr;
 
     eTopBarWidget* mTopBar = nullptr;
+    eObjectiveTrackerWidget* mObjectivesTracker = nullptr;
     eInfoWidget* mInfoWidget = nullptr;
     eMessageBox* mMsgBox = nullptr;
     std::deque<eSavedMessage> mSavedMsgs;
+    // log: record it for the message list (not for queued or re-opened ones);
+    // replay: keep its original date and addressee
+    void showMessageImpl(eEventData& ed, const eMessage& msg,
+                         const bool prepend, const bool replay,
+                         const bool log);
+    std::vector<eLoggedMessage> mMessageLog;
+    int mMessagesSeen = 0;
+    int mNextMessageId = 0;
+
+    // Minor events (fire, workers, world news ...) show as eMessageToast
+    // cards instead of a message box; fTone < 0 means a full message box.
+    struct eToastStyle {
+        std::string fIcon;
+        int fTone = -1;
+    };
+    static eToastStyle sToastStyle(const eEvent e);
+    eToastStyle mToastStyle;         // of the event being handled
+    std::string mCondensedText;      // its short text, for the card
+    std::vector<eMessageToast*> mToasts;
+    void showToast(const eEventData& ed, const eMessage& msg,
+                   const eToastStyle& style, const int logId);
+    void layoutToasts();
+
+    // The card that says what a house needs, while the mouse rests on it.
+    eHouseHoverCard* mHouseCard = nullptr;
+    bool mMouseOnMap = false;
+    const eBuilding* mCardHouse = nullptr;   // identity only
+    double mCardSince = 0;
+    void updateHouseCard();
+    int mMiddlePressX = -1000;   // a middle click without a drag copies
+    int mMiddlePressY = -1000;
     eTerrainEditMenu* mTem = nullptr;
     eGameMenu* mGm = nullptr;
     eArmyMenu* mAm = nullptr;
@@ -395,6 +529,7 @@ private:
     eLabel* mBuyCityName = nullptr;
     eLabel* mBuyCityPrice = nullptr;
     eFramedButton* mBuyCityButton = nullptr;
+    std::vector<eWidget*> mEditorWidgets;
 };
 
 #endif // EGAMEWIDGET_H

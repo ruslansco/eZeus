@@ -17,6 +17,11 @@ protected:
 private:
     const eViewMode mVM;
     eGameWidget* mGW = nullptr;
+    eLabel* mLabel = nullptr;
+    double mHover = 0;
+    double mOn = 0;
+    double mLast = -1;
+    int mColorState = -1;
 };
 
 #endif // EVIEWMODEBUTTON_H

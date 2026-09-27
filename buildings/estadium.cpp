@@ -35,6 +35,16 @@ eTextureSpace eStadium::getTextureSpace(const int tx, const int ty,
     const auto& plcs = blds[sizeId];
     auto& board = getBoard();
     const auto dir = board.direction();
+    if(plcs.fStadiumAHD[0][0]) {
+        // Remastered amphitheatre: piece B covers the second five tiles along the long axis;
+        // a rotated stadium is the same model turned a quarter (the next view row).
+        const bool h2 = mRotated ? ty - r.y > 4 : tx - r.x > 4;
+        const SDL_Rect rect = mRotated ? SDL_Rect{r.x, r.y + (h2 ? 5 : 0), 5, 5} :
+                                         SDL_Rect{r.x + (h2 ? 5 : 0), r.y, 5, 5};
+        const int row = (static_cast<int>(dir) + (mRotated ? 1 : 0)) % 4;
+        const auto& frames = h2 ? plcs.fStadiumBHD : plcs.fStadiumAHD;
+        return {frames[row][overlayEnabled() ? hdAnimFrame() : 8], false, rect};
+    }
     const bool dirRot = dir == eWorldDirection::E ||
                         dir == eWorldDirection::W;
     const bool dirReorder = dir == eWorldDirection::E ||
@@ -89,6 +99,7 @@ std::vector<eOverlay> eStadium::getOverlays(const eTileSize size) const {
     const auto& texs = eGameTextures::buildings()[sizeId];
 
     std::vector<eOverlay> os;
+    if(texs.fStadiumAHD[0][0]) return os;    // crowd and games are in the remastered sprite
 
     auto& board = getBoard();
     const auto dir = board.direction();

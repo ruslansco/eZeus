@@ -322,6 +322,7 @@ void eCharacterTextures::loadButcher() {
 void eCharacterTextures::loadScholar() {
     if(fScholarLoaded) return;
     fScholarLoaded = true;
+    if(loadPersonHD(fScholar, {}, fRenderer, fTileH, "scholar")) return;
     const auto& sds = spriteData(fTileH,
                                  eScholarSpriteData15,
                                  eScholarSpriteData30,

@@ -11,4 +11,5 @@ eTheater::eTheater(eGameBoard& board, const eCityId cid) :
                   [this]() { return e::make_shared<eActor>(getBoard()); },
                   eBuildingType::theater, 5, 5, 18, cid) {
     eGameTextures::loadTheater();
+    setHDFrames(&eBuildingTextures::fTheaterHD);
 }

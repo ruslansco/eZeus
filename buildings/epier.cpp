@@ -8,6 +8,7 @@ ePier::ePier(eGameBoard& board, const eDiagonalOrientation o,
     eBuilding(board, eBuildingType::pier, 2, 2, cid),
     mO(o) {
     eGameTextures::loadPier();
+    eGameTextures::loadRemastered("pier", 2);
 }
 
 std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const {
@@ -17,6 +18,16 @@ std::shared_ptr<eTexture> ePier::getTexture(const eTileSize size) const {
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto o = sRotated(mO, dir);
+    if(const auto hd = blds[sizeId].remastered("pier")) {
+        int row = 0;                          // sea side top-right in the N row
+        switch(o) {
+        case eDiagonalOrientation::bottomRight: row = 1; break;
+        case eDiagonalOrientation::bottomLeft: row = 2; break;
+        case eDiagonalOrientation::topLeft: row = 3; break;
+        default: row = 0; break;
+        }
+        return (*hd)[row][hdAnimFrame()];
+    }
     int id = 3;
     switch(o) {
     case eDiagonalOrientation::topRight:

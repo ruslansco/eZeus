@@ -16,6 +16,8 @@ eTriremeWharf::eTriremeWharf(eGameBoard& board,
                        3, 3, 100, cid),
     mO(o) {
     eGameTextures::loadTriremeWharf();
+    eGameTextures::loadRemastered("trireme_wharf", 3);
+    eGameTextures::loadRemastered("trireme_wharf_docked", 3);
     setStashable(eResourceType::wood | eResourceType::armor);
 }
 
@@ -31,6 +33,25 @@ std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const 
     auto& board = getBoard();
     const auto dir = board.direction();
     const auto o = sRotated(mO, dir);
+    {
+        // Remastered navalia: sea side top-right in the N row (as the fishery). Docked
+        // trireme = its own static atlas; building = the working loop; else the empty slip.
+        const auto& b = blds[sizeId];
+        const auto slip = b.remastered("trireme_wharf");
+        if(slip) {
+            int row = 0;
+            switch(o) {
+            case eDiagonalOrientation::bottomRight: row = 1; break;
+            case eDiagonalOrientation::bottomLeft: row = 2; break;
+            case eDiagonalOrientation::topLeft: row = 3; break;
+            default: row = 0; break;
+            }
+            if(mTrireme && isAtWharf()) {
+                if(const auto docked = b.remastered("trireme_wharf_docked")) return (*docked)[row][0];
+            }
+            return (*slip)[row][mTriremeBuildingTime > 0 ? hdAnimFrame() : 8];
+        }
+    }
     int id = 3;
     switch(o) {
     case eDiagonalOrientation::topRight:
@@ -54,6 +75,7 @@ std::shared_ptr<eTexture> eTriremeWharf::getTexture(const eTileSize size) const 
 }
 
 std::vector<eOverlay> eTriremeWharf::getOverlays(const eTileSize size) const {
+    if(eGameTextures::buildings()[static_cast<int>(size)].remastered("trireme_wharf")) return {};
     if(!enabled()) return {};
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];

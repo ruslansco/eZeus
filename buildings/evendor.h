@@ -28,6 +28,9 @@ public:
 
     std::shared_ptr<eTexture> getTexture(const eTileSize size) const override;
     std::vector<eOverlay> getOverlays(const eTileSize size) const override;
+    // Remastered Roman stall atlas (eBuildingTextures::remastered): working frames while
+    // stocked, the idle column (bare stall) when empty; replaces the legacy overlays.
+    void setHD(const char* const id) { mHD = id; }
 
     void erase() override;
 
@@ -61,6 +64,7 @@ public:
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:
+    const char* mHD = nullptr;
     int mResMult = 100;
     stdsptr<eAgoraBase> mAgora;
     int mMaxResource = 10*mResMult;

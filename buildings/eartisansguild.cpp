@@ -1,11 +1,13 @@
 #include "eartisansguild.h"
 
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
 #include "characters/actions/eartisanaction.h"
 
 eArtisansGuild::eArtisansGuild(eGameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::artisansGuild, 2, 2, 25, cid) {
     eGameTextures::loadArtisansGuild();
+    eGameTextures::loadRemastered("artisans_guild", 2);
 }
 
 eArtisansGuild::~eArtisansGuild() {
@@ -15,6 +17,9 @@ eArtisansGuild::~eArtisansGuild() {
 std::shared_ptr<eTexture> eArtisansGuild::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings()[sizeId];
+    if(const auto hd = texs.remastered("artisans_guild")) {
+        return (*hd)[static_cast<int>(getBoard().direction())][enabled() ? hdAnimFrame() : 8];
+    }
     return texs.fArtisansGuild;
 }
 
@@ -22,6 +27,7 @@ std::vector<eOverlay> eArtisansGuild::
     getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings()[sizeId];
+    if(texs.remastered("artisans_guild")) return {};
 
     const auto& coll = texs.fArtisansGuildOverlay;
     const int texId = textureTime() % coll.size();

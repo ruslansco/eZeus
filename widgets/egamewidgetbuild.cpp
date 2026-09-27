@@ -567,7 +567,7 @@ eGameWidget::eApply eGameWidget::editFunc() {
 }
 
 bool eGameWidget::buildMouseRelease() {
-    const auto cid = mViewedCityId;
+    const auto cid = (mViewedCityId != eCityId::neutralFriendly) ? mViewedCityId : mBoard->currentCityId();
     const auto pid = mBoard->personPlayer();
 
     const auto& wrld = mBoard->world();
@@ -813,19 +813,25 @@ bool eGameWidget::buildMouseRelease() {
             }
         } break;
         case eBuildingMode::commonHousing: {
-            const int sMinX = std::min(mPressedTX, mHoverTX);
-            const int sMinY = std::min(mPressedTY, mHoverTY);
-            const int sMaxX = std::max(mPressedTX, mHoverTX);
-            const int sMaxY = std::max(mPressedTY, mHoverTY);
-
-            for(int x = sMinX; x <= sMaxX; x++) {
-                for(int y = sMinY - 1; y <= sMaxY; y++) {
-                    const bool cb = mBoard->canBuildBase(x, x + 2, y, y + 2, mEditorMode, cid, pid);
-                    if(!cb) continue;
-                    const auto t = mBoard->tile(x, y);
-                    if(!t) continue;
-                    r = mBoard->build(t->x(), t->y() + 1, 2, 2, cid, pid, mEditorMode,
-                          [this]() { return e::make_shared<eSmallHouse>(*mBoard, mViewedCityId); }) || r;
+            if(mPressedTX == mHoverTX && mPressedTY == mHoverTY) {
+                const auto t = mBoard->tile(mHoverTX, mHoverTY);
+                if(t && mBoard->canBuild(t->x(), t->y(), 2, 2, mEditorMode, cid, pid)) {
+                    r = mBoard->build(t->x(), t->y(), 2, 2, cid, pid, mEditorMode,
+                          [this, cid]() { return e::make_shared<eSmallHouse>(*mBoard, cid); });
+                }
+            } else {
+                const int dxStep = (mHoverTX >= mPressedTX ? 2 : -2);
+                const int dyStep = (mHoverTY >= mPressedTY ? 2 : -2);
+                for(int x = mPressedTX; (dxStep > 0 ? x <= mHoverTX : x >= mHoverTX); x += dxStep) {
+                    for(int y = mPressedTY; (dyStep > 0 ? y <= mHoverTY : y >= mHoverTY); y += dyStep) {
+                        const int d = mBoard->drachmas(ppid);
+                        if(!mEditorMode && d < -1000) break;
+                        const auto t = mBoard->tile(x, y);
+                        if(t && mBoard->canBuild(x, y, 2, 2, mEditorMode, cid, pid)) {
+                            r = mBoard->build(x, y, 2, 2, cid, pid, mEditorMode,
+                                  [this, cid]() { return e::make_shared<eSmallHouse>(*mBoard, cid); }) || r;
+                        }
+                    }
                 }
             }
         } break;
@@ -1043,13 +1049,30 @@ bool eGameWidget::buildMouseRelease() {
             mGm->clearMode();
         } break;
         case eBuildingMode::eliteHousing: {
-            const auto t1 = mBoard->tile(mHoverTX, mHoverTY);
-            if(!t1) return true;
-            const bool cb = mBoard->canBuild(t1->x() + 1, t1->y() + 1, 4, 4, mEditorMode, cid, pid);
-            if(!cb) return true;
-            r = mBoard->build(t1->x() + 1, t1->y() + 1, 4, 4, cid, pid, mEditorMode, [&]() {
-                return e::make_shared<eEliteHousing>(*mBoard, mViewedCityId);
-            });
+            if(mPressedTX == mHoverTX && mPressedTY == mHoverTY) {
+                const auto t1 = mBoard->tile(mHoverTX, mHoverTY);
+                if(!t1) return true;
+                const bool cb = mBoard->canBuild(t1->x() + 1, t1->y() + 1, 4, 4, mEditorMode, cid, pid);
+                if(!cb) return true;
+                r = mBoard->build(t1->x() + 1, t1->y() + 1, 4, 4, cid, pid, mEditorMode, [&, cid]() {
+                    return e::make_shared<eEliteHousing>(*mBoard, cid);
+                });
+            } else {
+                const int dxStep = (mHoverTX >= mPressedTX ? 4 : -4);
+                const int dyStep = (mHoverTY >= mPressedTY ? 4 : -4);
+                for(int x = mPressedTX; (dxStep > 0 ? x <= mHoverTX : x >= mHoverTX); x += dxStep) {
+                    for(int y = mPressedTY; (dyStep > 0 ? y <= mHoverTY : y >= mHoverTY); y += dyStep) {
+                        const int d = mBoard->drachmas(ppid);
+                        if(!mEditorMode && d < -1000) break;
+                        const auto t = mBoard->tile(x, y);
+                        if(t && mBoard->canBuild(x + 1, y + 1, 4, 4, mEditorMode, cid, pid)) {
+                            r = mBoard->build(x + 1, y + 1, 4, 4, cid, pid, mEditorMode, [&, cid]() {
+                                return e::make_shared<eEliteHousing>(*mBoard, cid);
+                            }) || r;
+                        }
+                    }
+                }
+            }
         } break;
         case eBuildingMode::taxOffice: {
             r = mBoard->build(mHoverTX, mHoverTY, 2, 2, cid, pid, mEditorMode,
@@ -1434,12 +1457,28 @@ bool eGameWidget::buildMouseRelease() {
         } break;
 
 
-        case eBuildingMode::wall:
-            apply = [this, cid, pid, &r](eTile* const tile) {
-                r = mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
-                      [this]() { return e::make_shared<eWall>(*mBoard, mViewedCityId); }) || r;
-            };
-            break;
+        case eBuildingMode::wall: {
+            const int minX = std::min(mPressedTX, mHoverTX);
+            const int maxX = std::max(mPressedTX, mHoverTX);
+            const int minY = std::min(mPressedTY, mHoverTY);
+            const int maxY = std::max(mPressedTY, mHoverTY);
+            const bool fill = (SDL_GetModState() & KMOD_SHIFT) != 0;
+
+            for(int x = minX; x <= maxX; x++) {
+                for(int y = minY; y <= maxY; y++) {
+                    if(!fill && x != minX && x != maxX && y != minY && y != maxY) {
+                        continue;
+                    }
+                    const int d = mBoard->drachmas(ppid);
+                    if(!mEditorMode && d < -1000) break;
+
+                    const auto t = mBoard->tile(x, y);
+                    if(!t) continue;
+                    r = mBoard->build(x, y, 1, 1, cid, pid, mEditorMode,
+                          [this, cid]() { return e::make_shared<eWall>(*mBoard, cid); }) || r;
+                }
+            }
+        } break;
         case eBuildingMode::tower: {
             r = mBoard->build(mHoverTX, mHoverTY, 2, 2, cid, pid, mEditorMode,
                   [this]() { return e::make_shared<eTower>(*mBoard, mViewedCityId); });
@@ -1643,14 +1682,22 @@ bool eGameWidget::buildMouseRelease() {
                                                eResourceType::chariot, mViewedCityId);
         } break;
 
-        case eBuildingMode::park:
-            apply = [this, cid, pid, &r](eTile* const tile) {
-                r = mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
-                      [this]() { return e::make_shared<ePark>(*mBoard, mViewedCityId); },
-                      false, true) || r;
-            };
+        case eBuildingMode::park: {
+            const int minX = std::min(mPressedTX, mHoverTX);
+            const int maxX = std::max(mPressedTX, mHoverTX);
+            const int minY = std::min(mPressedTY, mHoverTY);
+            const int maxY = std::max(mPressedTY, mHoverTY);
+            for(int x = minX; x <= maxX; x++) {
+                for(int y = minY; y <= maxY; y++) {
+                    const int d = mBoard->drachmas(ppid);
+                    if(!mEditorMode && d < -1000) break;
+                    r = mBoard->build(x, y, 1, 1, cid, pid, mEditorMode,
+                          [this]() { return e::make_shared<ePark>(*mBoard, mViewedCityId); },
+                          false, true) || r;
+                }
+            }
             mBoard->scheduleTerrainUpdate();
-            break;
+        } break;
         case eBuildingMode::doricColumn:
         case eBuildingMode::ionicColumn:
         case eBuildingMode::corinthianColumn: {
@@ -1693,16 +1740,24 @@ bool eGameWidget::buildMouseRelease() {
             }
             return true;
         } break;
-        case eBuildingMode::avenue:
-            apply = [this, cid, pid, &r](eTile* const tile) {
-                const bool hr = canBuildAvenue(tile, cid, pid, mEditorMode);
-                if(!hr) return;
-                r = mBoard->build(tile->x(), tile->y(), 1, 1, cid, pid, mEditorMode,
-                      [this]() { return e::make_shared<eAvenue>(*mBoard, mViewedCityId); },
-                      false, true) || r;
-            };
+        case eBuildingMode::avenue: {
+            const int minX = std::min(mPressedTX, mHoverTX);
+            const int maxX = std::max(mPressedTX, mHoverTX);
+            const int minY = std::min(mPressedTY, mHoverTY);
+            const int maxY = std::max(mPressedTY, mHoverTY);
+            for(int x = minX; x <= maxX; x++) {
+                for(int y = minY; y <= maxY; y++) {
+                    const int d = mBoard->drachmas(ppid);
+                    if(!mEditorMode && d < -1000) break;
+                    const auto t = mBoard->tile(x, y);
+                    if(!t || !canBuildAvenue(t, cid, pid, mEditorMode)) continue;
+                    r = mBoard->build(x, y, 1, 1, cid, pid, mEditorMode,
+                          [this]() { return e::make_shared<eAvenue>(*mBoard, mViewedCityId); },
+                          false, true) || r;
+                }
+            }
             mBoard->scheduleTerrainUpdate();
-            break;
+        } break;
 
 
         case eBuildingMode::populationMonument:
@@ -2136,8 +2191,7 @@ bool eGameWidget::buildMouseRelease() {
     }
 
     if(apply) {
-        const auto btype = mTem->brushType();
-        if(btype == eBrushType::apply) {
+        if(!mTem->visible() || mTem->brushType() == eBrushType::apply) {
             mInflTiles.clear();
             const int minX = std::min(mPressedTX, mHoverTX);
             const int minY = std::min(mPressedTY, mHoverTY);

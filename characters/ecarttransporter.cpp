@@ -2,6 +2,8 @@
 
 #include "textures/egametextures.h"
 
+#include <cmath>
+
 #include "characters/actions/efollowaction.h"
 #include "engine/egameboard.h"
 #include "etrailer.h"
@@ -69,6 +71,16 @@ eOverlay eCartTransporter::getSecondaryTexture(const eTileSize size) const {
         ci = std::clamp(rCount/4, 0, 1);
         break;
     default: break;
+    }
+
+    if(!texs.fCartHD.empty()) {
+        // Remastered cart, rendered this far ahead of the pusher along his
+        // heading (art/characters/transporter, CART_AHEAD).
+        static const int travel[8][2] = {{0, -1}, {1, -1}, {1, 0}, {1, 1},
+                                         {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}};
+        const double ahead = 0.72/std::hypot(travel[oi][0], travel[oi][1]);
+        const int row = rCount <= 0 ? 0 : eCharacterTextures::sCartHDRow(rType, ci);
+        return {ahead*travel[oi][0], ahead*travel[oi][1], texs.fCartHD[row*8 + oi]};
     }
 
     double xx;

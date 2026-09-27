@@ -16,6 +16,8 @@ public:
     void scrollDown();
     void scrollToTheTop();
     void clampDY();
+    // Scrolls just enough to show rows y .. y + h of the scroll area.
+    void ensureVisible(const int y, const int h);
 
     void renderTargetsReset() override;
 protected:

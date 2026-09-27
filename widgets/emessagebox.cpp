@@ -31,6 +31,71 @@ std::string string_format(const std::string& format, Args... args) {
     return std::string(buf.get(), buf.get() + size - 1); // We don't want the '\0' inside
 }
 
+std::string eMessageBox::sFormatText(const eEventData& ed, std::string text) {
+    eStringHelpers::replaceAll(text, "[greeting]",
+                               eLanguage::text("greetings"));
+    eStringHelpers::replaceAll(text, "[player_name]",
+                               ed.fPlayerName);
+    eStringHelpers::replaceAll(text, "[god]",
+                               eGod::sGodName(ed.fGod));
+    eStringHelpers::replaceAll(text, "[monster]",
+                               eMonster::sMonsterName(ed.fMonster));
+
+    const auto type = ed.fResourceType;
+    const auto item = eResourceTypeHelpers::typeLongName(type);
+    const auto itemshort = eResourceTypeHelpers::typeName(type);
+    const int count = ed.fResourceCount;
+    const auto countStr = std::to_string(count);
+
+    eStringHelpers::replaceAll(text, "[amount]",
+                               countStr);
+    eStringHelpers::replaceAll(text, "[item]",
+                               item);
+    eStringHelpers::replaceAll(text, "[itemshort]",
+                               itemshort);
+
+    const int giftSize = eGiftHelpers::giftCount(type);
+    if(giftSize > 0) {
+        const int size = count/giftSize;
+        std::string giftSize;
+        if(size < 2) giftSize = eLanguage::zeusText(162, 0);
+        else if(size < 3) giftSize = eLanguage::zeusText(162, 1);
+        else giftSize = eLanguage::zeusText(162, 2);
+        eStringHelpers::replaceAll(text, "[gift_size]",
+                                   giftSize);
+    }
+
+    if(const auto c = ed.fCity) {
+        const auto nat = c->nationality();
+        const auto natName = eWorldCity::sNationalityName(nat);
+        eStringHelpers::replaceAll(text, "[nationality]",
+                                   natName);
+        eStringHelpers::replaceAll(text, "[city_name]",
+                                   c->name());
+        eStringHelpers::replaceAll(text, "[last_colony]",
+                                   c->name());
+        eStringHelpers::replaceAll(text, "[leader_name]",
+                                   c->leader());
+        eStringHelpers::replaceAll(text, "[a_foreign_army]",
+                                   c->anArmy());
+        if(ed.fType == eMessageEventType::invasionMessage) {
+            eStringHelpers::replaceAll(text, "[time_until_attack]",
+                                      std::to_string(ed.fTime));
+        }
+    }
+    const auto c = ed.fRivalCity ? ed.fRivalCity : ed.fCity;
+    if(c) {
+        const auto nat = c->nationality();
+        const auto natName = eWorldCity::sNationalityName(nat);
+        eStringHelpers::replaceAll(text, "[rival_nationality]",
+                                   natName);
+        eStringHelpers::replaceAll(text, "[rival_city_name]",
+                                   c->name());
+    }
+
+    return text;
+}
+
 void eMessageBox::initialize(eGameBoard& board,
                              const eEventData& ed,
                              const eAction& viewTile,
@@ -44,26 +109,7 @@ void eMessageBox::initialize(eGameBoard& board,
     const auto w0 = new eWidget(window());
     {
         w0->setNoPadding();
-        if(const auto& c = ed.fCity) {
-            eStringHelpers::replaceAll(msg.fTitle, "[city_name]",
-                                       c->name());
-        }
-        if(const auto& c = ed.fRivalCity) {
-            eStringHelpers::replaceAll(msg.fTitle, "[rival_city_name]",
-                                       c->name());
-        }
-        {
-            const auto type = ed.fResourceType;
-            const auto nameShort = eResourceTypeHelpers::typeName(type);
-            eStringHelpers::replaceAll(msg.fTitle, "[itemshort]",
-                                       nameShort);
-        }
-
-        eStringHelpers::replaceAll(msg.fTitle, "[god]",
-                                   eGod::sGodName(ed.fGod));
-
-        eStringHelpers::replaceAll(msg.fTitle, "[monster]",
-                                   eMonster::sMonsterName(ed.fMonster));
+        msg.fTitle = sFormatTitle(ed, msg.fTitle);
 
         const auto title = new eLabel(msg.fTitle, window());
         title->setHugeFontSize();
@@ -117,66 +163,10 @@ void eMessageBox::initialize(eGameBoard& board,
     const auto text = new eLabel(window());
     text->setSmallFontSize();
     text->setWrapWidth(width() - 8*p);
-    eStringHelpers::replaceAll(msg.fText, "[greeting]",
-                               eLanguage::text("greetings"));
-    eStringHelpers::replaceAll(msg.fText, "[player_name]",
-                               ed.fPlayerName);
-    eStringHelpers::replaceAll(msg.fText, "[god]",
-                               eGod::sGodName(ed.fGod));
-    eStringHelpers::replaceAll(msg.fText, "[monster]",
-                               eMonster::sMonsterName(ed.fMonster));
+    msg.fText = sFormatText(ed, msg.fText);
 
     const auto type = ed.fResourceType;
-    const auto item = eResourceTypeHelpers::typeLongName(type);
-    const auto itemshort = eResourceTypeHelpers::typeName(type);
     const int count = ed.fResourceCount;
-    const auto countStr = std::to_string(count);
-
-    eStringHelpers::replaceAll(msg.fText, "[amount]",
-                               countStr);
-    eStringHelpers::replaceAll(msg.fText, "[item]",
-                               item);
-    eStringHelpers::replaceAll(msg.fText, "[itemshort]",
-                               itemshort);
-
-    const int giftSize = eGiftHelpers::giftCount(type);
-    if(giftSize > 0) {
-        const int size = count/giftSize;
-        std::string giftSize;
-        if(size < 2) giftSize = eLanguage::zeusText(162, 0);
-        else if(size < 3) giftSize = eLanguage::zeusText(162, 1);
-        else giftSize = eLanguage::zeusText(162, 2);
-        eStringHelpers::replaceAll(msg.fText, "[gift_size]",
-                                   giftSize);
-    }
-
-    if(const auto c = ed.fCity) {
-        const auto nat = c->nationality();
-        const auto natName = eWorldCity::sNationalityName(nat);
-        eStringHelpers::replaceAll(msg.fText, "[nationality]",
-                                   natName);
-        eStringHelpers::replaceAll(msg.fText, "[city_name]",
-                                   c->name());
-        eStringHelpers::replaceAll(msg.fText, "[last_colony]",
-                                   c->name());
-        eStringHelpers::replaceAll(msg.fText, "[leader_name]",
-                                   c->leader());
-        eStringHelpers::replaceAll(msg.fText, "[a_foreign_army]",
-                                   c->anArmy());
-        if(ed.fType == eMessageEventType::invasionMessage) {
-            eStringHelpers::replaceAll(msg.fText, "[time_until_attack]",
-                                      std::to_string(ed.fTime));
-        }
-    }
-    const auto c = ed.fRivalCity ? ed.fRivalCity : ed.fCity;
-    if(c) {
-        const auto nat = c->nationality();
-        const auto natName = eWorldCity::sNationalityName(nat);
-        eStringHelpers::replaceAll(msg.fText, "[rival_nationality]",
-                                   natName);
-        eStringHelpers::replaceAll(msg.fText, "[rival_city_name]",
-                                   c->name());
-    }
 
     ww->addWidget(text);
     addWidget(ww);
@@ -546,6 +536,20 @@ void eMessageBox::initialize(eGameBoard& board,
     }
     w0->align(eAlignment::hcenter);
     ww->align(eAlignment::hcenter);
+}
+
+std::string eMessageBox::sFormatTitle(const eEventData& ed, std::string title) {
+    if(const auto& c = ed.fCity) {
+        eStringHelpers::replaceAll(title, "[city_name]", c->name());
+    }
+    if(const auto& c = ed.fRivalCity) {
+        eStringHelpers::replaceAll(title, "[rival_city_name]", c->name());
+    }
+    const auto nameShort = eResourceTypeHelpers::typeName(ed.fResourceType);
+    eStringHelpers::replaceAll(title, "[itemshort]", nameShort);
+    eStringHelpers::replaceAll(title, "[god]", eGod::sGodName(ed.fGod));
+    eStringHelpers::replaceAll(title, "[monster]", eMonster::sMonsterName(ed.fMonster));
+    return title;
 }
 
 void eMessageBox::close() {

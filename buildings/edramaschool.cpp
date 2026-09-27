@@ -12,4 +12,5 @@ eDramaSchool::eDramaSchool(eGameBoard& board,
                             eBuildingType::theater}},
                           eBuildingType::dramaSchool, 3, 3, 10, cid) {
     eGameTextures::loadDramaSchool();
+    setHDFrames(&eBuildingTextures::fDramaSchoolHD);
 }

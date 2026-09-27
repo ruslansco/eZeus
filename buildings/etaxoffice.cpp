@@ -11,4 +11,5 @@ eTaxOffice::eTaxOffice(eGameBoard& board, const eCityId cid) :
                     [this]() { return e::make_shared<eTaxCollector>(getBoard()); },
                     eBuildingType::taxOffice, 2, 2, 8, cid) {
     eGameTextures::loadTaxOffice();
+    setHDFrames(&eBuildingTextures::fTaxOfficeHD);
 }

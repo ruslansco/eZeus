@@ -1,6 +1,7 @@
 #include "etower.h"
 
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
 
 #include "characters/actions/earcheraction.h"
 #include "vec2.h"
@@ -13,6 +14,7 @@
 eTower::eTower(eGameBoard& board, const eCityId cid) :
     eEmployingBuilding(board, eBuildingType::tower, 2, 2, 15, cid) {
     eGameTextures::loadGatehouseAndTower();
+    eGameTextures::loadRemastered("tower", 2);
     setHP(eNumbers::sTowerHP);
     if(atlantean()) {
         eGameTextures::loadPoseidonTowerArcher();
@@ -39,6 +41,9 @@ std::shared_ptr<eTexture>
 eTower::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& texs = eGameTextures::buildings();
+    if(const auto r = texs[sizeId].remastered("tower")) {
+        return (*r)[static_cast<int>(getBoard().direction())][0];
+    }
     return texs[sizeId].fTower;
 }
 
@@ -52,6 +57,9 @@ eTower::getOverlays(const eTileSize size) const {
     } else {
         aTexs = &texs.fArcher;
     }
+    // The Roman tower's platform (art/tower, z 2.5) is ~0.6 tiles lower than the original
+    // (~3.1): move the archer straight down the screen by that much.
+    const double hd = eGameTextures::buildings()[sizeId].remastered("tower") ? .71 : 0.;
     if(mAttack) {
         const int oid = static_cast<int>(mAttackOrientation);
         const auto& coll = &aTexs->fFight[oid];
@@ -59,8 +67,8 @@ eTower::getOverlays(const eTileSize size) const {
         const int texId = t % coll->size();
         eOverlay o;
         o.fTex = coll->getTexture(texId);
-        o.fX = -3.5;
-        o.fY = -5.5;
+        o.fX = -3.5 + hd;
+        o.fY = -5.5 + hd;
         return {o};
     } else {
         const auto& colls = aTexs->fPatrol;
@@ -71,8 +79,8 @@ eTower::getOverlays(const eTileSize size) const {
         const auto& coll = colls[id];
         eOverlay o;
         o.fTex = coll.getTexture(tt % coll.size());
-        o.fX = -3.5;
-        o.fY = -5.5;
+        o.fX = -3.5 + hd;
+        o.fY = -5.5 + hd;
         return {o};
     }
 }

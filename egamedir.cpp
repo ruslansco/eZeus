@@ -19,10 +19,10 @@ const std::string& eGameDir::audioLanguage() {
 std::string eGameDir::path(const std::string& path) {
     if(path.rfind("Audio/Voice/", 0) == 0) {
         const auto sub = path.substr(12);
-        if(sAudioLanguage == "ru") {
-            const auto ruPath = sPath + "Audio/Voice_ru/" + sub;
-            if(std::filesystem::exists(ruPath)) {
-                return ruPath;
+        if(sAudioLanguage != "en") {
+            const auto langPath = sPath + "Audio/Voice_" + sAudioLanguage + "/" + sub;
+            if(std::filesystem::exists(langPath)) {
+                return langPath;
             }
         }
         const auto enPath = sPath + "Audio/Voice_en/" + sub;

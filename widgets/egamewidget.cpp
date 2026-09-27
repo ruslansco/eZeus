@@ -1,4 +1,17 @@
+#include "textures/eterrainhd.h"
+#include "enumbers.h"
+#include "widgets/ebuildingstoerase.h"
 #include "egamewidget.h"
+#include "emessagelogwidget.h"
+#include "emessagetoast.h"
+#include "ecityhistorywidget.h"
+#include "engine/eevent.h"
+#include "etradesummarywidget.h"
+#include "ehousehovercard.h"
+#include "buildings/ehousebase.h"
+#include "epanelstyle.h"
+#include "econtrolsmenu.h"
+#include <filesystem>
 
 #include "engine/egameboard.h"
 
@@ -55,6 +68,7 @@
 
 #include "widgets/eenlistforcesdialog.h"
 #include "widgets/eepisodeintroductionwidget.h"
+#include "widgets/eobjectivetrackerwidget.h"
 #include "widgets/eworldwidget.h"
 #include "engine/ecampaign.h"
 #include "audio/emusic.h"
@@ -69,6 +83,31 @@
 
 #include <algorithm>
 
+struct eZoomStep {
+    eTileSize tileSize;
+    double scale;
+};
+
+static const std::vector<eZoomStep> sZoomSteps = {
+    {eTileSize::s30, 0.50},  // Level 0: Strategic Overview (50%)
+    {eTileSize::s30, 1.00},  // Level 1: Default Native (100%)
+    {eTileSize::s30, 1.50},  // Level 2: Magnified (150%)
+    {eTileSize::s30, 2.00}   // Level 3: Close-Up Inspection (200%)
+};
+
+int eGameWidget::currentZoomIndex() const {
+    double bestDiff = 1e9;
+    int bestIdx = 1;
+    for(size_t i = 0; i < sZoomSteps.size(); i++) {
+        const double diff = std::abs(sZoomSteps[i].scale - mZoomScale);
+        if(diff < bestDiff) {
+            bestDiff = diff;
+            bestIdx = static_cast<int>(i);
+        }
+    }
+    return bestIdx;
+}
+
 eGameWidget::eGameWidget(eMainWindow* const window) :
     eMainWidget(window) {}
 
@@ -77,6 +116,9 @@ eGameWidget::~eGameWidget() {
 }
 
 void eGameWidget::setBoard(eGameBoard* const board) {
+    mUndo.reset();
+    mAutosaveMs = 0.0;
+    if(mObjectivesTracker) mObjectivesTracker->setBoard(board);
     if(mBoard == board) return;
     if(mBoard) {
         if(mEditorShowBuildings) {
@@ -96,6 +138,7 @@ void eGameWidget::setBoard(eGameBoard* const board) {
     }
     mBoard = board;
     if(!mBoard) return;
+    mViewedCityId = mBoard->currentCityId();
     mBoard->setEventHandler([this](const eEvent e, eEventData& ed) {
         handleEvent(e, ed);
     });
@@ -190,8 +233,14 @@ eGameWidgetSettings eGameWidget::settings() const {
 void eGameWidget::setSettings(const eGameWidgetSettings& s) {
     if(mPaused != s.fPaused) switchPause();
     mSpeedId = s.fSpeedId;
-    mSpeed = s.fSpeed;
-    setTileSize(s.fTileSize);
+    mSpeed = sSpeeds[mSpeedId];
+    updateSpeedDisplay();
+    if(mObjectivesTracker) mObjectivesTracker->updatePosition();
+    setTileSize(eTileSize::s30);
+    mZoomScale = 1.0;
+    mTargetZoomScale = 1.0;
+    mZoomIndex = currentZoomIndex();
+    mZoomAnimating = false;
     if(mBoard) mBoard->setWorldDirection(s.fDir);
     setDX(s.fDX);
     setDY(s.fDY);
@@ -233,6 +282,14 @@ void eGameWidget::initializeNumbers() {
 void eGameWidget::initialize() {
     mEditorMode = mBoard->editorMode();
     initializeNumbers();
+    // Decode the HD terrain plates now rather than on the first frame drawn
+    // at each zoom level (a visible hitch of 150+ ms).
+    const auto hdSizes = window()->settings().availableSizes();
+    for(const auto& step : sZoomSteps) {
+        if(!eVectorHelpers::contains(hdSizes, step.tileSize)) continue;
+        const auto& trrTexs = eGameTextures::terrain().at(static_cast<int>(step.tileSize));
+        eTerrainHD::get(renderer(), trrTexs.fTileW, trrTexs.fTileH);
+    }
     mGm = new eGameMenu(window());
     const auto viewGoals = [this]() {
         showGoals();
@@ -249,6 +306,9 @@ void eGameWidget::initialize() {
 
     mGm->setModeChangedAction([this]() {
         setPatrolBuilding(nullptr);
+    });
+    mGm->setUndoAction([this]() {
+        undoLastBuild();
     });
 
     const auto mm = mGm->miniMap();
@@ -282,6 +342,14 @@ void eGameWidget::initialize() {
     addWidget(mTopBar);
     mTopBar->align(eAlignment::top);
 
+    mObjectivesTracker = new eObjectiveTrackerWidget(window());
+    mObjectivesTracker->initialize(this, mBoard);
+    addWidget(mObjectivesTracker);
+
+    mHouseCard = new eHouseHoverCard(window());
+    addWidget(mHouseCard);
+    mHouseCard->hide();
+
     mTem = new eTerrainEditMenu(window());
     mTem->initialize(this, mBoard);
     addWidget(mTem);
@@ -303,6 +371,7 @@ void eGameWidget::initialize() {
         const auto settingsButt = new eFramedButton(str, window());
         settingsButt->fitContent();
         addWidget(settingsButt);
+        mEditorWidgets.push_back(settingsButt);
         settingsButt->move(mGm->x() - settingsButt->width() - p,
                            mTopBar->height() + p);
         settingsButt->hide();
@@ -334,6 +403,7 @@ void eGameWidget::initialize() {
                 settingsButt->setVisible(mTerrainEditMode);
             });
             addWidget(editorSwitch);
+            mEditorWidgets.push_back(editorSwitch);
             editorSwitch->setVisible(mEditorMode);
         }
 
@@ -402,6 +472,7 @@ void eGameWidget::initialize() {
 
         cityEditorWidget->stackVertically(p);
         addWidget(cityEditorWidget);
+        mEditorWidgets.push_back(cityEditorWidget);
 
         const auto cityEditorSwitch = new eFramedButton(window());
         cityEditorSwitch->setRenderBg(true);
@@ -424,6 +495,7 @@ void eGameWidget::initialize() {
             cityEditorWidget->setVisible(mEditorShowBuildings);
         });
         addWidget(cityEditorSwitch);
+        mEditorWidgets.push_back(cityEditorSwitch);
         cityEditorSwitch->setVisible(mEditorMode);
         const int y = cityEditorSwitch->y() + cityEditorSwitch->height() + p;
         cityEditorWidget->move(p, y);
@@ -535,10 +607,12 @@ void eGameWidget::initialize() {
 
 void eGameWidget::pixToId(const int pixX, const int pixY,
                           int& idX, int& idY) const {
+    const double effectivePixX = mZoomScale > 0.0 ? pixX / mZoomScale : pixX;
+    const double effectivePixY = mZoomScale > 0.0 ? pixY / mZoomScale : pixY;
     const double w = mTileW;
     const double h = mTileH;
-    idX = std::round((pixX - mDX)/w + (pixY - mDY)/h - 0.5);
-    idY = std::round(-(pixX - mDX)/w + (pixY - mDY)/h - 0.5);
+    idX = std::round((effectivePixX - mDX)/w + (effectivePixY - mDY)/h - 0.5);
+    idY = std::round(-(effectivePixX - mDX)/w + (effectivePixY - mDY)/h - 0.5);
 
     const auto dir = mBoard->direction();
     const int width = mBoard->width();
@@ -558,8 +632,8 @@ void eGameWidget::pixToId(const int pixX, const int pixY,
             const int dy = -a*2 + 2;
             const int tpx = std::round(0.5 * (x - y + dx) * mTileW) + mDX;
             const int tpy = std::round(0.5 * (x + y + dy) * mTileH) + mDY;
-            const int dist = std::sqrt((tpx - pixX)*(tpx - pixX) +
-                                       (tpy - pixY)*(tpy - pixY));
+            const int dist = std::sqrt((tpx - effectivePixX)*(tpx - effectivePixX) +
+                                       (tpy - effectivePixY)*(tpy - effectivePixY));
             if(dist < mTileH) {
                 idX = x;
                 idY = y;
@@ -580,6 +654,27 @@ void eGameWidget::setViewMode(const eViewMode m) {
     mViewMode = m;
 }
 
+void eGameWidget::toggleViewMode(const eViewMode m, const std::string& nameKey) {
+    if(!mBoard) return;
+    eSounds::playButtonSound();
+    if(mViewMode == m) {
+        setViewMode(eViewMode::defaultView);
+        showTip(ePlayerCityTarget(mBoard->personPlayer()), eLanguage::text("overlay_normal"));
+    } else {
+        setViewMode(m);
+        showTip(ePlayerCityTarget(mBoard->personPlayer()), eLanguage::text(nameKey));
+    }
+}
+
+void eGameWidget::resetViewMode() {
+    if(!mBoard) return;
+    if(mViewMode != eViewMode::defaultView) {
+        eSounds::playButtonSound();
+        setViewMode(eViewMode::defaultView);
+        showTip(ePlayerCityTarget(mBoard->personPlayer()), eLanguage::text("overlay_normal"));
+    }
+}
+
 void eGameWidget::mapDimensions(int& mdx, int& mdy) const {
     const int w = mBoard->rotatedWidth();
     const int h = mBoard->rotatedHeight();
@@ -591,17 +686,20 @@ void eGameWidget::viewBoxSize(double& fx, double& fy) const {
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    fx = (width() - mGm->width())/double(mdx);
-    fy = height()/double(mdy);
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    fx = ((width() - mGm->width()) / s)/double(mdx);
+    fy = (height() / s)/double(mdy);
 }
 
 void eGameWidget::viewedFraction(double& fx, double& fy) const {
     int mdx;
     int mdy;
     mapDimensions(mdx, mdy);
-    const int w = width() - mGm->width();
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    const double w = (width() - mGm->width()) / s;
+    const double h = height() / s;
     fx = (0.5*w - mDX)/mdx;
-    fy = (0.5*height() - mDY)/mdy;
+    fy = (0.5*h - mDY)/mdy;
 }
 
 void eGameWidget::tileViewFraction(eTile* const tile,
@@ -620,9 +718,11 @@ void eGameWidget::viewFraction(const double fx, const double fy) {
     int mdy;
     mapDimensions(mdx, mdy);
 
-    const int w = width() - mGm->width();
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    const int w = std::round((width() - mGm->width()) / s);
+    const int h = std::round(height() / s);
     const int dx = -fx*mdx + w/2;
-    const int dy = -fy*mdy + height()/2;
+    const int dy = -fy*mdy + h/2;
     setDX(dx);
     setDY(dy);
 }
@@ -724,12 +824,14 @@ void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
     const int rw = mBoard->rotatedWidth();
     const int rh = mBoard->rotatedHeight();
 
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
     const int minX = std::clamp(-mDX/mTileW, 0, rw);
-    const int visWidth = width() - mGm->width();
+    const int visWidth = std::round((width() - mGm->width()) / s);
     const int maxX = std::clamp(minX + visWidth/mTileW, 0, rw);
 
     const int minY = std::clamp(-2*mDY/mTileH, 0, rh);
-    const int maxY = std::clamp(minY + 2*height()/mTileH, 0, rh);
+    const int visHeight = std::round(height() / s);
+    const int maxY = std::clamp(minY + 2*visHeight/mTileH, 0, rh);
 
     const bool play = Mix_Playing(-1) == 0 && (eRand::rand() % 250) == 0;
     if(play) {
@@ -1099,7 +1201,9 @@ void eGameWidget::updateHippodromeIds() {
 void eGameWidget::showMessage(eEventData& ed,
                               const eMessageType& msg,
                               const bool prepend) {
+    mCondensedText = msg.fCondensed.fText;
     showMessage(ed, msg.fFull, prepend);
+    mCondensedText.clear();
 }
 
 void eGameWidget::showMessage(eEventData& ed,
@@ -1111,11 +1215,15 @@ void eGameWidget::showMessage(eEventData& ed,
         reason = msg.fNoReason;
     }
     eStringHelpers::replace(m.fFull.fText, "[reason_phrase]", reason);
+    mCondensedText = m.fCondensed.fText;
+    eStringHelpers::replace(mCondensedText, "[reason_phrase]", reason);
     showMessage(ed, m.fFull, prepend);
+    mCondensedText.clear();
 }
 
 void eGameWidget::showTip(const ePlayerCityTarget& target,
-                          const std::string& tip) {
+                          const std::string& tip,
+                          const int frames) {
     for(const auto& t : mTips) {
         if(t.fText == tip && t.fTarget == target) return;
     }
@@ -1152,10 +1260,10 @@ void eGameWidget::showTip(const ePlayerCityTarget& target,
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
-    etip.fLastFrame = mFrame + 200;
+    etip.fLastFrame = mFrame + frames;
     const auto etipPtr = &etip;
-    msgb->setPressAction([etipPtr]() {
-        etipPtr->fLastFrame -= 200;
+    msgb->setPressAction([etipPtr, frames]() {
+        etipPtr->fLastFrame -= frames;
     });
     updateTipPositions();
 }
@@ -1200,9 +1308,266 @@ void eGameWidget::updateTipPositions() {
     }
 }
 
+void eGameWidget::replayMessage(const int i) {
+    if(i < 0 || i >= static_cast<int>(mMessageLog.size())) return;
+    auto ed = mMessageLog[i].fEd;
+    const auto msg = mMessageLog[i].fMsg;
+    // read-only: the choices it offered were made (or missed) back then
+    ed.fCA0 = nullptr;
+    ed.fA0 = nullptr;
+    ed.fA1 = nullptr;
+    ed.fA2 = nullptr;
+    ed.fCCA0.clear();
+    switch(ed.fType) {
+    case eMessageEventType::invasion:
+    case eMessageEventType::requestTributeGranted:
+    case eMessageEventType::generalRequestGranted:
+    case eMessageEventType::troopsRequest:
+        ed.fType = eMessageEventType::common;
+        break;
+    default:
+        break;
+    }
+    showMessageImpl(ed, msg, false, true, false);
+}
+
+void eGameWidget::debugFillMessageLog() {
+    const std::pair<const char*, const char*> samples[] = {
+        {"Promontory of Poseidon Complete", "All of the creatures of the sea are dancing today."},
+        {"Fire!", "A fire has broken out in the city."},
+        {"Hero Arrives", "A hero has answered your call."},
+        {"Request from Sparta", "Sparta asks for 16 amphorae of wine."},
+        {"Trade Route Opened", "Merchants from Corinth will now visit your city."},
+        {"Festival Held", "The people enjoyed the festival in honour of Zeus."}};
+    for(const auto& s : samples) {
+        auto& l = mMessageLog.emplace_back();
+        l.fEd.fDate = mBoard->date();
+        l.fEd.fPlayerName = window()->leader();
+        l.fMsg = eMessage{s.first, s.second};
+    }
+    mMessagesSeen = 2;
+}
+
+void eGameWidget::showMessageLog() {
+    const auto w = new eMessageLogWidget(window());
+    const auto close = [w]() {
+        w->deleteLater();
+    };
+    const int seenBefore = mMessagesSeen;
+    mMessagesSeen = static_cast<int>(mMessageLog.size());
+    w->initialize(this, seenBefore, close);
+    window()->execDialog(w, true, close, this);
+    w->align(eAlignment::center);
+    w->setX(w->x() - mGm->width()/2);
+}
+
+namespace {
+std::string toastText(const std::string& key, const std::string& fallback) {
+    const auto& s = eLanguage::text(key);
+    return s.empty() ? fallback : s;
+}
+
+// About maxChars characters of s: whole sentences when they fit, else cut
+// at a space with an ellipsis. UTF-8 aware.
+std::string shortenText(std::string s, const int maxChars) {
+    for(auto& c : s) {
+        if(c == '\n' || c == '\r' || c == '\t') c = ' ';
+    }
+    std::string t;
+    for(const char c : s) {
+        if(c == ' ' && (t.empty() || t.back() == ' ')) continue;
+        t += c;
+    }
+    while(!t.empty() && t.back() == ' ') t.pop_back();
+    std::vector<size_t> starts;
+    for(size_t i = 0; i < t.size(); i++) {
+        if((static_cast<unsigned char>(t[i]) & 0xC0) != 0x80) starts.push_back(i);
+    }
+    if(static_cast<int>(starts.size()) <= maxChars) return t;
+    const size_t limit = starts[maxChars];
+    size_t cut = std::string::npos;
+    for(size_t i = starts[maxChars*2/5]; i < limit; i++) {
+        const char c = t[i];
+        if((c == '.' || c == '!' || c == '?') && i + 1 < t.size() && t[i + 1] == ' ') {
+            cut = i + 1;
+        }
+    }
+    if(cut != std::string::npos) return t.substr(0, cut);
+    size_t sp = t.rfind(' ', limit);
+    if(sp == std::string::npos || sp == 0) sp = limit;
+    return t.substr(0, sp) + "…";
+}
+}
+
+void eGameWidget::showToast(const eEventData& ed, const eMessage& msg,
+                            const eToastStyle& style, const int logId) {
+    const auto title = eMessageBox::sFormatTitle(ed, msg.fTitle);
+    std::string text = mCondensedText;
+    if(text == "n/a" || text == "N/A" || text == "\"\"") text.clear();
+    if(text.empty()) text = msg.fText;
+    text = shortenText(eMessageBox::sFormatText(ed, text), 110);
+
+    eAction goTo;
+    if(ed.fChar || ed.fTile) {
+        const auto ch = ed.fChar;
+        const auto tile = ed.fTile;
+        goTo = [this, ch, tile]() {
+            viewTile(ch ? ch->tile() : tile);
+        };
+    }
+    auto meta = ed.fDate.shortString() + "  ·  ";
+    meta += goTo ? toastText("toast_goto", "Click to go there") :
+                   toastText("toast_open", "Click to read");
+
+    const auto res = resolution();
+    const int mapW = width() - mGm->width();
+    const int w = std::min(static_cast<int>(310*res.multiplier()), mapW*2/5);
+
+    // a repeat (another fire) replaces the card instead of stacking up
+    for(const auto t : mToasts) {
+        if(t->key() == title && !t->leaving()) t->dismiss();
+    }
+    int live = 0;
+    for(const auto t : mToasts) {
+        if(!t->leaving()) live++;
+    }
+    for(const auto t : mToasts) {
+        if(live < 4) break;
+        if(!t->leaving()) {
+            t->dismiss();
+            live--;
+        }
+    }
+
+    const auto toast = new eMessageToast(window());
+    toast->setKey(title);
+    toast->initialize(style.fIcon,
+                      static_cast<eMessageToast::eTone>(style.fTone),
+                      title, text, meta, w);
+    toast->setPressAction([this, toast, goTo, logId]() {
+        toast->dismiss();
+        if(goTo) {
+            goTo();
+            return;
+        }
+        for(int i = 0; i < static_cast<int>(mMessageLog.size()); i++) {
+            if(mMessageLog[i].fId == logId) {
+                // not while the click is still being delivered to the card
+                window()->addSlot([this, i]() { replayMessage(i); });
+                break;
+            }
+        }
+    });
+    toast->setRightPressAction([toast]() { toast->dismiss(); });
+    addWidget(toast);
+    mToasts.push_back(toast);
+    layoutToasts();
+}
+
+void eGameWidget::layoutToasts() {
+    const auto res = resolution();
+    const int m = std::max(4, static_cast<int>(std::round(12*res.multiplier())));
+    const int right = width() - mGm->width() - m;
+    int y = (mTopBar ? mTopBar->height() : 0) + m;
+    for(const auto t : mToasts) {
+        t->setX(right - t->width());
+        t->setStackY(y);
+        if(!t->leaving()) y += t->height() + m*2/3;
+    }
+}
+
+void eGameWidget::debugShowToasts() {
+    const struct { const char* icon; int tone; const char* title; const char* text; } samples[] = {
+        {"fire", 1, "Fire!", "There is a fire in the city."},
+        {"population", 0, "Workers Needed", "The city needs more workers."},
+        {"amphora", 2, "Trade Opens Up", "Corinth is now eager to buy olive oil from your city."}};
+    for(const auto& s : samples) {
+        eEventData ed;
+        ed.fDate = mBoard->date();
+        eToastStyle st;
+        st.fIcon = s.icon;
+        st.fTone = s.tone;
+        mCondensedText = s.text;
+        auto& l = mMessageLog.emplace_back();
+        l.fEd = ed;
+        l.fMsg = eMessage{s.title, s.text};
+        l.fId = mNextMessageId++;
+        showToast(ed, l.fMsg, st, l.fId);
+        mCondensedText.clear();
+    }
+    // and a real early warning, through the event path
+    {
+        eEventData ed(mViewedCityId);
+        ed.fResourceType = eResourceType::oliveOil;
+        ed.fResourceCount = 18;
+        ed.fTime = 2;
+        mBoard->event(eEvent::shortageWarning, ed);
+    }
+    for(const auto t : mToasts) t->settle();
+}
+
+namespace {
+template <typename T>
+void showCentredDialog(eMainWindow* const win, eGameWidget* const gw,
+                       T* const w, const int panelW) {
+    win->execDialog(w, true, [w]() { w->deleteLater(); }, gw);
+    w->align(eAlignment::center);
+    w->setX(w->x() - panelW/2);
+}
+}
+
+void eGameWidget::showCityHistory() {
+    const auto city = mBoard->boardCityWithId(mViewedCityId);
+    if(!city) return;
+    const auto w = new eCityHistoryWidget(window());
+    w->initialize(city->history(), [w]() { w->deleteLater(); });
+    showCentredDialog(window(), this, w, mGm->width());
+}
+
+void eGameWidget::debugShowCityHistory() {
+    eCityHistory h;
+    const auto d = mBoard->date();
+    int year = d.year() - 10;
+    int month = static_cast<int>(d.month());
+    for(int i = 0; i <= 120; i++) {
+        const double t = i/120.0;
+        eHistorySample s;
+        s.fYear = year;
+        s.fMonth = month;
+        s.fPopulation = static_cast<int>(300 + 2600*t*t + 90*std::sin(i*0.4));
+        s.fDrachmas = static_cast<int>(4000 - 3000*std::sin(t*3.0) + 400*std::sin(i*0.9));
+        s.fFood = static_cast<int>(800 + 600*std::sin(i*0.52) + 900*t);
+        s.fPopularity = static_cast<int>(62 + 18*std::sin(i*0.2));
+        s.fUnrest = std::max(0, static_cast<int>(8 + 10*std::sin(i*0.33)));
+        s.fHealth = static_cast<int>(70 + 20*std::sin(i*0.15));
+        h.add(s);
+        if(++month > 11) {
+            month = 0;
+            if(++year == 0) year++;
+        }
+    }
+    const auto w = new eCityHistoryWidget(window());
+    w->initialize(h, [w]() { w->deleteLater(); }, true);
+    showCentredDialog(window(), this, w, mGm->width());
+}
+
+void eGameWidget::showTradeSummary() {
+    const auto w = new eTradeSummaryWidget(window());
+    w->initialize(*mBoard, mViewedCityId, [w]() { w->deleteLater(); });
+    showCentredDialog(window(), this, w, mGm->width());
+}
+
 void eGameWidget::showMessage(eEventData& ed,
                               const eMessage& msg,
                               const bool prepend) {
+    showMessageImpl(ed, msg, prepend, false, true);
+}
+
+void eGameWidget::showMessageImpl(eEventData& ed,
+                                  const eMessage& msg,
+                                  const bool prepend,
+                                  const bool replay,
+                                  const bool log) {
     const auto& target = ed.fTarget;
     const auto ppid = mBoard->personPlayer();
     if(target.isPlayerTarget()) {
@@ -1213,11 +1578,36 @@ void eGameWidget::showMessage(eEventData& ed,
         const auto pid = mBoard->cityIdToPlayerId(cid);
         if(pid != ppid) return;
     }
+    int logId = -1;
+    if(log) {
+        auto& l = mMessageLog.emplace_back();
+        l.fEd = ed;
+        l.fEd.fDate = mBoard->date();
+        l.fEd.fPlayerName = window()->leader();
+        l.fMsg = msg;
+        l.fId = logId = mNextMessageId++;
+        const size_t cap = 300;
+        if(mMessageLog.size() > cap) {
+            mMessageLog.erase(mMessageLog.begin());
+            mMessagesSeen = std::max(0, mMessagesSeen - 1);
+        }
+    }
+    // a minor event with nothing to decide: a card, the game keeps running
+    const bool choice = ed.fCA0 || ed.fA0 || ed.fA1 || ed.fA2 || !ed.fCCA0.empty();
+    const bool plain = ed.fType == eMessageEventType::common ||
+                       ed.fType == eMessageEventType::resourceGranted;
+    if(!replay && log && mToastStyle.fTone >= 0 && !choice && plain) {
+        ed.fDate = mBoard->date();
+        ed.fPlayerName = window()->leader();
+        showToast(ed, msg, mToastStyle, logId);
+        return;
+    }
     if(mMsgBox) {
         auto& smsg = prepend ? mSavedMsgs.emplace_front() :
                                mSavedMsgs.emplace_back();
         smsg.fEd = ed;
         smsg.fMsg = msg;
+        smsg.fReplay = replay;
         return;
     }
     const auto msgb = new eMessageBox(window());
@@ -1242,15 +1632,17 @@ void eGameWidget::showMessage(eEventData& ed,
             viewTile(tile);
         };
     }
-    ed.fDate = mBoard->date();
-    ed.fPlayerName = window()->leader();
+    if(!replay) {
+        ed.fDate = mBoard->date();
+        ed.fPlayerName = window()->leader();
+    }
 
     const auto close = [this]() {
         mMsgBox = nullptr;
         if(mSavedMsgs.empty()) return;
-        auto& msg = mSavedMsgs.front();
-        showMessage(msg.fEd, msg.fMsg);
+        auto msg = mSavedMsgs.front();
         mSavedMsgs.pop_front();
+        showMessageImpl(msg.fEd, msg.fMsg, false, msg.fReplay, false);
     };
 
     msgb->initialize(*mBoard, ed, a, close, msg);
@@ -1751,6 +2143,11 @@ bool eGameWidget::inPatrolBuildingHover(eBuilding* const b) {
 
 void eGameWidget::switchPause() {
     mPaused = !mPaused;
+    if(!mPaused) {
+        mLastFrameTime = std::chrono::high_resolution_clock::now();
+        mLastCameraTime = mLastFrameTime;
+        mSimAccumulatorMs = 0.0;
+    }
     if(mPaused && !mPausedLabel) {
         const auto str = eLanguage::zeusText(13, 2);
         const auto space = "     ";
@@ -1783,38 +2180,272 @@ void eGameWidget::updateSpeedDisplay() {
     if(mTopBar) mTopBar->updateSpeedControls();
 }
 
+void eGameWidget::showSpeedToast() {
+    if(!mBoard) return;
+    std::string msg;
+    if(mPaused) {
+        msg = eLanguage::text("speed_toast_paused");
+    } else {
+        int pct = 100;
+        switch(mSpeedId) {
+        case 0: pct = 20; break;
+        case 1: pct = 100; break;
+        case 2: pct = 250; break;
+        case 3: pct = 500; break;
+        case 4: pct = 1000; break;
+        case 5: pct = 5000; break;
+        }
+        msg = eLanguage::text("speed_toast");
+        eStringHelpers::replace(msg, "%1", std::to_string(pct));
+    }
+    showTip(ePlayerCityTarget(mBoard->personPlayer()), msg);
+}
+
+int eGameWidget::topBarHeight() const {
+    return mTopBar ? mTopBar->height() : 0;
+}
+
+void eGameWidget::toggleObjectivesTracker() {
+    if(!mObjectivesTracker) return;
+    mObjectivesTracker->toggleUserVisible();
+    if(mBoard) {
+        const bool vis = mObjectivesTracker->isUserVisible();
+        showTip(ePlayerCityTarget(mBoard->personPlayer()),
+                vis ? eLanguage::text("objectives_shown") :
+                      eLanguage::text("objectives_hidden"));
+    }
+}
+
+void eGameWidget::openInGameMenu() {
+    if(mMsgBox || !mBoard || mBoard->editorMode()) return;
+    mBoard->waitUntilFinished();
+    const auto menu = new eGameMainMenu(window());
+    menu->resize(width()/4, height()/2);
+    const auto w = window();
+    const auto resumeAct = [menu]() {
+        menu->deleteLater();
+    };
+    const auto saveAct = [this, w]() {
+        const auto fw = new eFileWidget(w);
+        const auto func = [w](const std::string& path) {
+            return w->saveGame(path);
+        };
+        const auto closeAct = [this, fw]() {
+            removeWidget(fw);
+            fw->deleteLater();
+        };
+        const auto dir = w->leaderSaveDir();
+        fw->intialize(eLanguage::zeusText(1, 4),
+                      dir, func, closeAct);
+        addWidget(fw);
+        fw->align(eAlignment::center);
+        w->execDialog(fw);
+    };
+    const auto loadAct = [this, w]() {
+        const auto fw = new eFileWidget(w);
+        const auto func = [w](const std::string& path) {
+            return w->loadGame(path);
+        };
+        const auto closeAct = [this, fw]() {
+            removeWidget(fw);
+            fw->deleteLater();
+        };
+        const auto dir = w->leaderSaveDir();
+        fw->intialize(eLanguage::zeusText(1, 3),
+                      dir, func, closeAct);
+        fw->setAcceptOnDoubleClick(true);
+        addWidget(fw);
+        fw->align(eAlignment::center);
+        w->execDialog(fw);
+    };
+    const auto exitAct = [w]() {
+        w->closeGame();
+    };
+    const auto controlsAct = [this, w]() {
+        const auto cm = new eControlsMenu(w->settings().fKeyBindings, w, [w](const eKeyBindings& b) {
+            w->setKeyBindings(b);
+        });
+        cm->initialize();
+        w->execDialog(cm);
+    };
+    menu->initialize(resumeAct, saveAct, loadAct, exitAct, controlsAct);
+    addWidget(menu);
+    menu->align(eAlignment::center);
+    w->execDialog(menu);
+}
+
+void eGameWidget::cloneHoveredBuilding() {
+    if(!mBoard || !mGm) return;
+    int tx, ty;
+    pixToId(mHoverX, mHoverY, tx, ty);
+    const auto tile = mBoard->tile(tx, ty);
+    if(!tile) return;
+
+    eBuildingMode mode = eBuildingMode::none;
+    eBuildingType type = eBuildingType::none;
+    if(const auto b = tile->underBuilding()) {
+        type = b->type();
+        mode = eBuildingModeHelpers::toBuildingMode(type);
+    }
+    if(mode == eBuildingMode::none && tile->hasAvenue()) {
+        mode = eBuildingMode::avenue;
+        type = eBuildingType::avenue;
+    } else if(mode == eBuildingMode::none && tile->hasRoad()) {
+        mode = eBuildingMode::road;
+        type = eBuildingType::road;
+    }
+    if(mode == eBuildingMode::none) return;
+
+    const ePlayerCityTarget target(mBoard->personPlayer());
+    const auto cid = mViewedCityId;
+    // only what the build panel would offer here
+    bool allowed = mEditorMode || mBoard->supportsBuilding(cid, mode);
+    if(mode == eBuildingMode::palace) allowed = allowed && !mBoard->hasPalace(cid);
+    if(mode == eBuildingMode::stadium) allowed = allowed && !mBoard->hasStadium(cid);
+    if(mode == eBuildingMode::museum) allowed = allowed && !mBoard->hasMuseum(cid);
+    if(eBuilding::sSanctuaryBuilding(type)) allowed = false;
+    const auto name = eBuilding::sNameForBuilding(type);
+    if(!allowed) {
+        auto t = eLanguage::text("copy_unavailable");
+        if(t.empty()) t = "Can't build another";
+        showTip(target, t + ": " + name, 50);
+        return;
+    }
+    mGm->setMode(mode);
+    auto t = eLanguage::text("copy_picked");
+    if(t.empty()) t = "Building";
+    showTip(target, t + ": " + name, 40);
+}
+
+void eGameWidget::toggleQuickDemolish() {
+    if(!mGm) return;
+    if(mGm->mode() == eBuildingMode::erase) {
+        mGm->setMode(eBuildingMode::none);
+    } else {
+        mGm->setMode(eBuildingMode::erase);
+    }
+}
+
+void eGameWidget::quickSaveGame() {
+    if(!mBoard || mBoard->editorMode()) return;
+    const auto w = window();
+    if(!w) return;
+    const auto dir = w->leaderSaveDir();
+    const std::string path = dir + "quicksave.ez";
+    if(w->saveGame(path)) {
+        showTip(ePlayerCityTarget(mBoard->personPlayer()), eLanguage::text("game_saved"));
+    }
+}
+
+bool eGameWidget::hasModalDialog() const {
+    if(mLocked || mMsgBox || mInfoWidget) return true;
+    if(mBuyCityWidget && mBuyCityWidget->visible()) return true;
+    if(mPatrolBuilding) return true;
+    for(const auto* c : children()) {
+        if(!c || !c->visible()) continue;
+        if(c == mGm || c == mAm || c == mTopBar || c == mTem ||
+           c == mObjectivesTracker || c == mBuyCityWidget || c == mPausedLabel ||
+           c == mHouseCard) {
+            continue;
+        }
+        if(dynamic_cast<const eMessageToast*>(c)) continue;
+        bool isToast = false;
+        for(const auto* t : mToasts) {
+            if(c == t) { isToast = true; break; }
+        }
+        if(isToast) continue;
+        bool isTip = false;
+        for(const auto& tip : mTips) {
+            if(c == tip.fWid) { isTip = true; break; }
+        }
+        if(isTip) continue;
+        bool isEditor = false;
+        for(const auto* ew : mEditorWidgets) {
+            if(c == ew) { isEditor = true; break; }
+        }
+        if(isEditor) continue;
+        return true;
+    }
+    return false;
+}
+
+void eGameWidget::updateTimedAutosave(const double ms) {
+    if(!mBoard || mBoard->editorMode()) return;
+    const auto w = window();
+    const auto& setts = w->settings();
+    if(setts.fAutosaveMinutes <= 0) return;
+    // Only time spent actually playing counts, as for the game clock.
+    if(!isSimulationRunning()) return;
+    mAutosaveMs += ms;
+    if(mAutosaveMs < setts.fAutosaveMinutes*60000.0) return;
+    mAutosaveMs = 0.0;
+    timedAutosave(setts.fAutosaveSlots);
+}
+
+void eGameWidget::timedAutosave(const int slots) {
+    const auto w = window();
+    if(eMainWindow::sSavingDisabled()) return;
+    const auto dir = w->leaderSaveDir();
+    const auto slot = [&dir](const int i) {
+        return dir + "autosave " + std::to_string(i) + ".ez";
+    };
+    // Shift older saves down one slot ("autosave 1.ez" is the newest).
+    std::error_code ec;
+    std::filesystem::remove(slot(slots), ec);
+    for(int i = slots - 1; i >= 1; i--) {
+        if(std::filesystem::exists(slot(i), ec)) {
+            std::filesystem::rename(slot(i), slot(i + 1), ec);
+        }
+    }
+    mBoard->waitUntilFinished();
+    w->saveGame(slot(1));
+}
+
 bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
     if(mLocked) return true;
     const auto k = e.key();
-    if(k == SDL_Scancode::SDL_SCANCODE_KP_PLUS ||
-       k == SDL_Scancode::SDL_SCANCODE_RIGHTBRACKET) {
+    const auto& bindings = window()->settings().fKeyBindings;
+
+    if(k == bindings.fSpeedUp || k == SDL_Scancode::SDL_SCANCODE_KP_PLUS) {
         mSpeedId = std::clamp(mSpeedId + 1, 0, sMaxSpeedId);
         mSpeed = sSpeeds[mSpeedId];
         updateSpeedDisplay();
-    } else if(k == SDL_Scancode::SDL_SCANCODE_KP_MINUS ||
-              k == SDL_Scancode::SDL_SCANCODE_LEFTBRACKET) {
+        showSpeedToast();
+    } else if(k == bindings.fSpeedDown || k == SDL_Scancode::SDL_SCANCODE_KP_MINUS) {
         mSpeedId = std::clamp(mSpeedId - 1, 0, sMaxSpeedId);
         mSpeed = sSpeeds[mSpeedId];
         updateSpeedDisplay();
-    } else if(k == SDL_Scancode::SDL_SCANCODE_R) {
+        showSpeedToast();
+    } else if(k == bindings.fRotate) {
         mRotate = !mRotate;
         mRotateFrame = (mRotateFrame/gRotateFrames + 1)*gRotateFrames;
         mRotateId++;
         if(mRotateId > 3) mRotateId = 0;
-    } else if(k == SDL_Scancode::SDL_SCANCODE_P) {
+    } else if(k == bindings.fPause || k == SDL_Scancode::SDL_SCANCODE_P) {
         switchPause();
+    } else if(e.ctrlPressed() && k == SDL_Scancode::SDL_SCANCODE_Z) {
+        undoLastBuild();
+    } else if(k == bindings.fClone) {
+        cloneHoveredBuilding();
+    } else if(k == bindings.fDemolish || k == SDL_Scancode::SDL_SCANCODE_DELETE) {
+        toggleQuickDemolish();
+    } else if(k == bindings.fQuickSave || (e.ctrlPressed() && k == SDL_Scancode::SDL_SCANCODE_S)) {
+        quickSaveGame();
+    } else if(k == bindings.fObjectives) {
+        toggleObjectivesTracker();
     } else if(k == SDL_Scancode::SDL_SCANCODE_LEFT ||
-              k == SDL_Scancode::SDL_SCANCODE_A) {
-        setDX(mDX + 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_RIGHT ||
-              k == SDL_Scancode::SDL_SCANCODE_D) {
-        setDX(mDX - 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_UP ||
-              k == SDL_Scancode::SDL_SCANCODE_W) {
-        setDY(mDY + 35);
-    } else if(k == SDL_Scancode::SDL_SCANCODE_DOWN ||
-              k == SDL_Scancode::SDL_SCANCODE_S) {
-        setDY(mDY - 35);
+              k == SDL_Scancode::SDL_SCANCODE_A ||
+              k == SDL_Scancode::SDL_SCANCODE_RIGHT ||
+              k == SDL_Scancode::SDL_SCANCODE_D ||
+              k == SDL_Scancode::SDL_SCANCODE_UP ||
+              k == SDL_Scancode::SDL_SCANCODE_W ||
+              k == SDL_Scancode::SDL_SCANCODE_DOWN ||
+              k == SDL_Scancode::SDL_SCANCODE_S ||
+              k == bindings.fMoveUp ||
+              k == bindings.fMoveDown ||
+              k == bindings.fMoveLeft ||
+              k == bindings.fMoveRight) {
+        return true;
     } else if(k == SDL_Scancode::SDL_SCANCODE_F1) {
         if(e.ctrlPressed()) {
             setBookmark(1);
@@ -1839,57 +2470,76 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
         } else {
             viewBookmark(4);
         }
-    } else if(k == SDL_Scancode::SDL_SCANCODE_F5) {
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F5 && bindings.fQuickSave != SDL_SCANCODE_F5) {
         window()->setFullscreen(!window()->settings().fFullscreen);
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F6) {
+        window()->setResolution(eResolution(800, 600));
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F7) {
+        window()->setResolution(eResolution(1024, 768));
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F8) {
+        window()->setResolution(eResolution(1920, 1080));
+    } else if(k == SDL_Scancode::SDL_SCANCODE_F9) {
+        eTerrainHD::sEnabled = !eTerrainHD::sEnabled;
+        if(mBoard) showTip(ePlayerCityTarget(mBoard->personPlayer()),
+                           eTerrainHD::sEnabled ? eLanguage::text("terrain_remastered_toggle") :
+                                                  eLanguage::text("terrain_original_toggle"));
+
+    } else if(k == SDL_Scancode::SDL_SCANCODE_1 || k == SDL_Scancode::SDL_SCANCODE_KP_1) {
+        toggleViewMode(eViewMode::water, "overlay_water");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_2 || k == SDL_Scancode::SDL_SCANCODE_KP_2) {
+        toggleViewMode(eViewMode::supplies, "overlay_supplies");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_3 || k == SDL_Scancode::SDL_SCANCODE_KP_3) {
+        toggleViewMode(eViewMode::hygiene, "overlay_hygiene");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_4 || k == SDL_Scancode::SDL_SCANCODE_KP_4) {
+        toggleViewMode(eViewMode::hazards, "overlay_hazards");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_5 || k == SDL_Scancode::SDL_SCANCODE_KP_5) {
+        toggleViewMode(eViewMode::appeal, "overlay_appeal");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_6 || k == SDL_Scancode::SDL_SCANCODE_KP_6) {
+        toggleViewMode(eViewMode::taxes, "overlay_taxes");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_7 || k == SDL_Scancode::SDL_SCANCODE_KP_7) {
+        toggleViewMode(eViewMode::unrest, "overlay_unrest");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_8 || k == SDL_Scancode::SDL_SCANCODE_KP_8) {
+        toggleViewMode(eViewMode::security, "overlay_security");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_9 || k == SDL_Scancode::SDL_SCANCODE_KP_9) {
+        toggleViewMode(eViewMode::roads, "overlay_roads");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_TAB) {
+        toggleViewMode(eViewMode::problems, "overlay_problems");
+    } else if(k == SDL_Scancode::SDL_SCANCODE_0 || k == SDL_Scancode::SDL_SCANCODE_KP_0 ||
+              k == SDL_Scancode::SDL_SCANCODE_GRAVE) {
+        resetViewMode();
     } else if(k == SDL_Scancode::SDL_SCANCODE_ESCAPE) {
-        if(!mMsgBox && !mBoard->editorMode()) {
-            mBoard->waitUntilFinished();
-            const auto menu = new eGameMainMenu(window());
-            menu->resize(width()/4, height()/2);
-            const auto w = window();
-            const auto resumeAct = [menu]() {
-                menu->deleteLater();
-            };
-            const auto saveAct = [this, w]() {
-                const auto fw = new eFileWidget(w);
-                const auto func = [w](const std::string& path) {
-                    return w->saveGame(path);
-                };
-                const auto closeAct = [this, fw]() {
-                    removeWidget(fw);
-                    fw->deleteLater();
-                };
-                const auto dir = w->leaderSaveDir();
-                fw->intialize(eLanguage::zeusText(1, 4),
-                              dir, func, closeAct);
-                addWidget(fw);
-                fw->align(eAlignment::center);
-                w->execDialog(fw);
-            };
-            const auto loadAct = [this, w]() {
-                const auto fw = new eFileWidget(w);
-                const auto func = [w](const std::string& path) {
-                    return w->loadGame(path);
-                };
-                const auto closeAct = [this, fw]() {
-                    removeWidget(fw);
-                    fw->deleteLater();
-                };
-                const auto dir = w->leaderSaveDir();
-                fw->intialize(eLanguage::zeusText(1, 3),
-                              dir, func, closeAct);
-                addWidget(fw);
-                fw->align(eAlignment::center);
-                w->execDialog(fw);
-            };
-            const auto exitAct = [w]() {
-                w->closeGame();
-            };
-            menu->initialize(resumeAct, saveAct, loadAct, exitAct);
-            addWidget(menu);
-            menu->align(eAlignment::center);
-            w->execDialog(menu);
+        if(mInfoWidget) {
+            mInfoWidget->deleteLater();
+            mInfoWidget = nullptr;
+            return true;
         }
+        if(mGm && mGm->mode() != eBuildingMode::none) {
+            mGm->clearMode();
+            return true;
+        }
+        if(mPatrolBuilding) {
+            setPatrolBuilding(nullptr);
+            return true;
+        }
+        if(mViewMode != eViewMode::defaultView) {
+            resetViewMode();
+            return true;
+        }
+        if(mBoard) {
+            bool cleared = false;
+            if(!mBoard->selectedSoldiers().empty()) {
+                mBoard->clearBannerSelection();
+                cleared = true;
+            }
+            if(!mBoard->selectedTriremes().empty()) {
+                mBoard->clearTriremeSelection();
+                cleared = true;
+            }
+            if(cleared) {
+                return true;
+            }
+        }
+        openInGameMenu();
     }
     return true;
 }
@@ -1907,6 +2557,8 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
     case eMouseButton::middle:
         mLastX = e.x();
         mLastY = e.y();
+        mMiddlePressX = e.x();
+        mMiddlePressY = e.y();
         return true;
     case eMouseButton::left: {
         if(mInfoWidget) return true;
@@ -2027,7 +2679,165 @@ void squareTiles(eGameBoard* const board, const int bSize,
     }
 }
 
+void eGameWidget::debugHoverHouse() {
+    // the inhabited common house nearest the middle of the map view that
+    // still has a level to go
+    const int mapW = width() - mGm->width();
+    const int step = std::max(8, height()/60);
+    int best = -1;
+    int bestX = 0;
+    int bestY = 0;
+    for(int y = height()/6; y < height()*5/6; y += step) {
+        for(int x = mapW/8; x < mapW*7/8; x += step) {
+            int tx, ty;
+            pixToId(x, y, tx, ty);
+            const auto t = mBoard->tile(tx, ty);
+            const auto b = t ? t->underBuilding() : nullptr;
+            if(!b || b->type() != eBuildingType::commonHouse) continue;
+            const auto h = static_cast<eHouseBase*>(b);
+            if(h->people() <= 0 || h->level() >= 6) continue;
+            const int d = std::abs(x - mapW/2) + std::abs(y - height()/2);
+            if(best < 0 || d < best) {
+                best = d;
+                bestX = x;
+                bestY = y;
+            }
+        }
+    }
+    if(best < 0) return;
+    mMouseOnMap = true;
+    mHoverX = bestX;
+    mHoverY = bestY;
+    mCardHouse = nullptr;
+    mCardSince = -100;
+    mHouseCard->setInstant(true);
+    updateHouseCard();
+    mCardSince = -100;
+    updateHouseCard();
+}
+
+void eGameWidget::debugPlacePreview(const bool road) {
+    const int mapW = width() - mGm->width();
+    const int step = std::max(8, height()/80);
+    const auto cid = mViewedCityId;
+    const auto pid = mBoard->personPlayer();
+    int best = -1;
+    int bestX = 0, bestY = 0, bestTX = 0, bestTY = 0;
+    for(int y = height()/5; y < height()*4/5; y += step) {
+        for(int x = mapW/6; x < mapW*5/6; x += step) {
+            int tx, ty;
+            pixToId(x, y, tx, ty);
+            if(road) {
+                // a free straight run of 8 tiles
+                bool ok = true;
+                for(int i = 0; i < 8 && ok; i++) {
+                    ok = mBoard->canBuild(tx + i, ty, 1, 1, false, cid, pid);
+                }
+                if(!ok) continue;
+            } else {
+                if(!mBoard->canBuild(tx, ty, 2, 2, false, cid, pid)) continue;
+                int minX, minY, maxX, maxY;
+                eGameBoard::sBuildTiles(minX, minY, maxX, maxY, tx, ty, 2, 2);
+                bool roadNext = false;
+                for(int i = minX; i < maxX; i++) {
+                    for(const int j : {minY - 1, maxY}) {
+                        const auto t = mBoard->tile(i, j);
+                        if(t && t->hasRoad()) roadNext = true;
+                    }
+                }
+                for(int j = minY; j < maxY; j++) {
+                    for(const int i : {minX - 1, maxX}) {
+                        const auto t = mBoard->tile(i, j);
+                        if(t && t->hasRoad()) roadNext = true;
+                    }
+                }
+                if(!roadNext) continue;
+            }
+            const int d = std::abs(x - mapW/2) + std::abs(y - height()/2);
+            if(best < 0 || d < best) {
+                best = d;
+                bestX = x;
+                bestY = y;
+                bestTX = tx;
+                bestTY = ty;
+            }
+        }
+    }
+    if(best < 0) return;
+    mMouseOnMap = true;
+    mHoverX = bestX;
+    mHoverY = bestY;
+    if(road) {
+        mGm->setMode(eBuildingMode::road);
+        mPressedTX = bestTX + 7;
+        mPressedTY = bestTY;
+        mHoverTX = bestTX;
+        mHoverTY = bestTY;
+        mLeftPressed = true;
+        mMovedSincePress = true;
+    } else {
+        mGm->setMode(eBuildingMode::fountain);
+        mHoverTX = bestTX;
+        mHoverTY = bestTY;
+    }
+}
+
+bool eGameWidget::mouseLeaveEvent(const eMouseEvent& e) {
+    (void)e;
+    mMouseOnMap = false;
+    return true;
+}
+
+void eGameWidget::updateHouseCard() {
+    if(!mHouseCard) return;
+    const auto hide = [this]() {
+        mCardHouse = nullptr;
+        if(mHouseCard->visible()) mHouseCard->hide();
+    };
+    const int mapW = width() - mGm->width();
+    int bx, by;
+    const Uint32 buttons = SDL_GetMouseState(&bx, &by);
+    if(!mMouseOnMap || mLocked || mEditorMode || mTem->visible() ||
+       mGm->mode() != eBuildingMode::none || buttons != 0 ||
+       mHoverX < 0 || mHoverX >= mapW) {
+        return hide();
+    }
+    int tx, ty;
+    pixToId(mHoverX, mHoverY, tx, ty);
+    const auto tile = mBoard->tile(tx, ty);
+    const auto b = tile ? tile->underBuilding() : nullptr;
+    const bool house = b && (b->type() == eBuildingType::commonHouse ||
+                             b->type() == eBuildingType::eliteHousing);
+    if(!house || b->cityId() != mViewedCityId) return hide();
+    const double now = ePanel::time();
+    if(b != mCardHouse) {
+        mCardHouse = b;
+        mCardSince = now;
+        if(mHouseCard->visible()) mHouseCard->hide();
+    }
+    if(now - mCardSince < 0.35) return;
+    const auto hb = static_cast<eHouseBase*>(b);
+    if(!mHouseCard->setHouse(hb)) {
+        if(mHouseCard->visible()) mHouseCard->hide();
+        return;
+    }
+    if(!mHouseCard->visible()) {
+        mHouseCard->restart();
+        mHouseCard->show();
+    }
+    const double m = resolution().multiplier();
+    const int off = static_cast<int>(std::round(18*m));
+    int x = mHoverX + off;
+    if(x + mHouseCard->width() > mapW - off/2) x = mHoverX - off - mHouseCard->width();
+    x = std::max(off/2, x);
+    int y = mHoverY + off;
+    const int top = (mTopBar ? mTopBar->height() : 0) + off/2;
+    y = std::clamp(y, top, std::max(top, height() - mHouseCard->height() - off/2));
+    mHouseCard->move(x, y);
+}
+
 bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
+    mMouseOnMap = true;
     mHoverTiles.clear();
     if(mTem->visible()) {
         const auto btype = mTem->brushType();
@@ -2041,8 +2851,9 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
     if(mLocked) return true;
     mMovedSincePress = true;
     if(static_cast<bool>(e.buttons() & eMouseButton::middle)) {
-        const int dx = e.x() - mLastX;
-        const int dy = e.y() - mLastY;
+        const double scale = mZoomScale > 0.0 ? mZoomScale : 1.0;
+        const int dx = std::round((e.x() - mLastX) / scale);
+        const int dy = std::round((e.y() - mLastY) / scale);
         setDX(mDX + dx);
         setDY(mDY + dy);
         updateMinimap();
@@ -2072,16 +2883,88 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
     return true;
 }
 
+namespace {
+    // Undo stays available this long after building (in game time),
+    // and never for less than sUndoMinRealSeconds.
+    const int sUndoGameDays = 15;
+    const int sUndoMinRealSeconds = 5;
+}
+
+bool eGameWidget::buildMouseReleaseRecorded() {
+    const auto ppid = mBoard->personPlayer();
+    const int before = mBoard->drachmas(ppid);
+    mBoard->startRecordingBuilt();
+    const bool r = buildMouseRelease();
+    int erased = 0;
+    const auto built = mBoard->stopRecordingBuilt(erased);
+    const int spent = before - mBoard->drachmas(ppid);
+    if(!built.empty() && erased == 0) {
+        eUndoEntry u;
+        for(const auto b : built) u.fBuildings.emplace_back(b);
+        u.fPlayer = ppid;
+        u.fRefund = std::max(0, spent);
+        u.fGameTime = mBoard->totalTime();
+        u.fRealTime = std::chrono::steady_clock::now();
+        mUndo = std::move(u);
+    } else if(!built.empty() || erased > 0 || spent != 0) {
+        // Anything else that changed the city replaces the undoable action.
+        clearUndo();
+    }
+    return r;
+}
+
+bool eGameWidget::undoAvailable() const {
+    if(!mUndo || !mBoard) return false;
+    const int gameTime = mBoard->totalTime() - mUndo->fGameTime;
+    const auto realTime = std::chrono::steady_clock::now() - mUndo->fRealTime;
+    const bool inTime = gameTime <= sUndoGameDays*eNumbers::sDayLength ||
+                        realTime <= std::chrono::seconds(sUndoMinRealSeconds);
+    if(!inTime) return false;
+    for(const auto& b : mUndo->fBuildings) {
+        if(b) return true;
+    }
+    return false;
+}
+
+void eGameWidget::undoLastBuild() {
+    if(!undoAvailable()) return clearUndo();
+    eBuildingsToErase eraser;
+    for(const auto& b : mUndo->fBuildings) {
+        if(b && !b->isOnFire()) eraser.addBuilding(b.get());
+    }
+    eraser.erase(true);
+    if(mUndo->fRefund > 0 && !mEditorMode) {
+        mBoard->incDrachmas(mUndo->fPlayer, mUndo->fRefund,
+                            eFinanceTarget::construction);
+    }
+    mBoard->scheduleTerrainUpdate();
+    clearUndo();
+}
+
+void eGameWidget::clearUndo() {
+    mUndo.reset();
+    if(mGm) mGm->setUndoEnabled(false);
+}
+
 bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
     const auto pressedButtons = mPressedButtons;
     mPressedButtons = e.buttons();
     if(mLocked) return true;
     switch(e.button()) {
+    case eMouseButton::middle: {
+        const int slop = std::max(4, static_cast<int>(4*resolution().multiplier()));
+        if(std::abs(e.x() - mMiddlePressX) <= slop &&
+           std::abs(e.y() - mMiddlePressY) <= slop) {
+            cloneHoveredBuilding();
+        }
+        mMiddlePressX = mMiddlePressY = -1000;
+        return true;
+    }
     case eMouseButton::left: {
         mBoard->clearBannerSelection();
         mBoard->clearTriremeSelection();
         mLeftPressed = false;
-        const bool r = buildMouseRelease();
+        const bool r = buildMouseReleaseRecorded();
         if(!r && mGm->mode() == eBuildingMode::none) {
             if(mMovedSincePress) {
                 const auto selected = selectedTiles();
@@ -2158,52 +3041,97 @@ bool eGameWidget::mouseReleaseEvent(const eMouseEvent& e) {
 
 bool eGameWidget::mouseWheelEvent(const eMouseWheelEvent& e) {
     if(mLocked) return true;
-    const bool wheel = std::abs(mWheel) > 3;
-    if(!wheel) {
-        mWheel += e.dy();
+    if(e.dy() == 0) return true;
+
+    // Reset accumulator on direction change
+    if((mWheel < 0 && e.dy() > 0) || (mWheel > 0 && e.dy() < 0)) {
+        mWheel = 0;
+    }
+    mWheel += e.dy();
+
+    const auto now = std::chrono::steady_clock::now();
+    const double elapsedMs = (mLastWheelTime.time_since_epoch().count() == 0) ?
+        1000.0 : std::chrono::duration<double, std::milli>(now - mLastWheelTime).count();
+
+    // 1 physical mouse notch (>40ms) triggers immediately on that very first notch!
+    // Rapid trackpad scroll bursts (<40ms) accumulate to threshold 2 to prevent runaway zoom.
+    const int threshold = (elapsedMs > 40.0) ? 1 : 2;
+    if(std::abs(mWheel) < threshold) return true;
+
+    const int steps = (mWheel > 0 ? 1 : -1);
+    mWheel = 0;
+    mLastWheelTime = now;
+
+    if(!mZoomAnimating) {
+        mZoomIndex = currentZoomIndex();
+    }
+    const int maxZoom = static_cast<int>(sZoomSteps.size()) - 1;
+    const int next = std::clamp(mZoomIndex + steps, 0, maxZoom);
+    if(next == mZoomIndex && std::abs(mZoomScale - sZoomSteps[next].scale) < 0.001) {
         return true;
     }
-    mWheel = 0;
-    const auto& sett = window()->settings();
-    std::vector<eTileSize> sizes;
-    int currSize = 0;
-    if(sett.fTinyTextures) {
-        sizes.push_back(eTileSize::s15);
-        if(mTileSize == eTileSize::s15) {
-            currSize = sizes.size() - 1;
-        }
-    }
-    if(sett.fSmallTextures) {
-        sizes.push_back(eTileSize::s30);
-        if(mTileSize == eTileSize::s30) {
-            currSize = sizes.size() - 1;
-        }
-    }
-    if(sett.fMediumTextures) {
-        sizes.push_back(eTileSize::s45);
-        if(mTileSize == eTileSize::s45) {
-            currSize = sizes.size() - 1;
-        }
-    }
-    if(sett.fLargeTextures) {
-        sizes.push_back(eTileSize::s60);
-        if(mTileSize == eTileSize::s60) {
-            currSize = sizes.size() - 1;
-        }
-    }
-    const int sizesC = sizes.size();
-    if(e.dy() > 0) {
-        const int newSize = currSize + 1;
-        if(newSize < sizesC) {
-            setTileSize(sizes[newSize]);
-        }
+    mZoomIndex = next;
+    const auto& target = sZoomSteps[next];
+    mTargetZoomScale = target.scale;
+
+    // Anchor center: if cursor is over the main board, zoom into that point;
+    // if over UI side/top bars, zoom into board center.
+    const double boardMaxX = mGm ? static_cast<double>(width() - mGm->width()) : static_cast<double>(width());
+    const double topBarH = mTopBar ? static_cast<double>(mTopBar->height()) : 0.0;
+    if(e.x() >= 0 && e.x() < boardMaxX && e.y() >= topBarH && e.y() < height()) {
+        mZoomAnchorX = e.x();
+        mZoomAnchorY = e.y();
     } else {
-        const int newSize = currSize - 1;
-        if(newSize >= 0) {
-            setTileSize(sizes[newSize]);
-        }
+        mZoomAnchorX = static_cast<int>(boardMaxX * 0.5);
+        mZoomAnchorY = height() / 2;
     }
+
+    const double curScale = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    mZoomMapX = (mZoomAnchorX / curScale - mDX) / static_cast<double>(mTileW);
+    mZoomMapY = (mZoomAnchorY / curScale - mDY) / static_cast<double>(mTileH);
+
+    if(mZoomInstant) {
+        mZoomAnimating = false;
+        mZoomScale = mTargetZoomScale;
+        const double targetDX = mZoomAnchorX / mZoomScale - mZoomMapX * mTileW;
+        const double targetDY = mZoomAnchorY / mZoomScale - mZoomMapY * mTileH;
+        mPreciseDX = targetDX;
+        mPreciseDY = targetDY;
+        setDX(static_cast<int>(std::round(targetDX)));
+        setDY(static_cast<int>(std::round(targetDY)));
+        updateViewBoxSize();
+    } else {
+        mZoomAnimating = true;
+    }
+
     return true;
+}
+
+void eGameWidget::updateZoomAnimation(const double dt) {
+    if(!mZoomAnimating) return;
+
+    const double diff = mTargetZoomScale - mZoomScale;
+    if(std::abs(diff) < 0.001) {
+        mZoomScale = mTargetZoomScale;
+        mZoomAnimating = false;
+    } else {
+        // Fast, snappy, buttery smooth ease-out (reaches 95% in ~120ms)
+        const double actualDt = (dt > 0.0) ? dt : 0.016;
+        const double blend = 1.0 - std::exp(-22.0 * actualDt);
+        mZoomScale += diff * blend;
+    }
+
+    const double targetDX = mZoomAnchorX / mZoomScale - mZoomMapX * mTileW;
+    const double targetDY = mZoomAnchorY / mZoomScale - mZoomMapY * mTileH;
+    mPreciseDX = targetDX;
+    mPreciseDY = targetDY;
+    setDX(static_cast<int>(std::round(targetDX)));
+    setDY(static_cast<int>(std::round(targetDY)));
+    updateViewBoxSize();
+
+    if(mHoverX >= 0 && mHoverY >= 0) {
+        pixToId(mHoverX, mHoverY, mHoverTX, mHoverTY);
+    }
 }
 
 void eGameWidget::renderTargetsReset() {
@@ -2213,7 +3141,9 @@ void eGameWidget::renderTargetsReset() {
 
 void eGameWidget::showGoals() {
     const auto w = window();
+    if(!w) return;
     const auto c = w->campaign();
+    if(!c) return;
 
     const auto e = new eEpisodeIntroductionWidget(w);
     const auto proceedA = [e]() {
@@ -2237,8 +3167,13 @@ void eGameWidget::setDX(const int dx) {
     const int oldDX = mDX;
     mDX = dx;
     clampViewBox();
+    if(std::abs(mPreciseDX - mDX) > 1.5) {
+        mPreciseDX = mDX;
+        mPanVX = 0.0;
+    }
     updateMinimap();
-    mPressedX += mDX - oldDX;
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    mPressedX += std::round((mDX - oldDX) * s);
     mUpdateViewedTileScheduled = true;
 }
 
@@ -2246,8 +3181,13 @@ void eGameWidget::setDY(const int dy) {
     const int oldDY = mDY;
     mDY = dy;
     clampViewBox();
+    if(std::abs(mPreciseDY - mDY) > 1.5) {
+        mPreciseDY = mDY;
+        mPanVY = 0.0;
+    }
     updateMinimap();
-    mPressedY += mDY - oldDY;
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    mPressedY += std::round((mDY - oldDY) * s);
     mUpdateViewedTileScheduled = true;
 }
 
@@ -2255,13 +3195,14 @@ void eGameWidget::clampViewBox() {
     if(mTem->visible()) return;
     const auto dir = mBoard->direction();
     const int w = mBoard->rotatedWidth();
-    const int ww = width() - mGm->width();
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    const int ww = std::round((width() - mGm->width()) / s);
     mDX = std::min(0, mDX);
     const int winc = dir == eWorldDirection::W ? mTileW/2 : 0;
     mDX = std::max(-w*mTileW + ww + mTileW/2 + winc, mDX);
 
     const int h = mBoard->rotatedHeight();
-    const int hh = height();
+    const int hh = std::round(height() / s);
     const int einc = dir == eWorldDirection::E ? mTileH/2 : 0;
     const int dt = mTopMinAltitude < 0 ? mTopMinAltitude : 0;
     mDY = std::min(-mTileH/2 + 2*einc + dt*mTileH, mDY);
@@ -2415,3 +3356,155 @@ void eGameWidget::openDialog(eWidget* const d) {
 void eGameWidget::updateRequestButtons() {
     mGm->updateRequestButtons();
 }
+
+void eGameWidget::zoomSteps(const int steps, const int x, const int y) {
+    if(steps == 0) return;
+    const int maxZoom = static_cast<int>(sZoomSteps.size()) - 1;
+    mZoomIndex = std::clamp(currentZoomIndex() + steps, 0, maxZoom);
+    mTargetZoomScale = sZoomSteps[mZoomIndex].scale;
+    mZoomScale = mTargetZoomScale;
+    mZoomAnimating = false;
+
+    mZoomAnchorX = (x >= 0 ? x : width() / 2);
+    mZoomAnchorY = (y >= 0 ? y : height() / 2);
+    const double curScale = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    mZoomMapX = (mZoomAnchorX / curScale - mDX) / static_cast<double>(mTileW);
+    mZoomMapY = (mZoomAnchorY / curScale - mDY) / static_cast<double>(mTileH);
+
+    const double targetDX = mZoomAnchorX / mZoomScale - mZoomMapX * mTileW;
+    const double targetDY = mZoomAnchorY / mZoomScale - mZoomMapY * mTileH;
+    mPreciseDX = targetDX;
+    mPreciseDY = targetDY;
+    setDX(static_cast<int>(std::round(targetDX)));
+    setDY(static_cast<int>(std::round(targetDY)));
+    updateViewBoxSize();
+}
+
+void eGameWidget::updateSmoothCamera(const double dt) {
+    if(mLocked || mMsgBox || (mTem && mTem->visible())) {
+        mPanVX = 0.0;
+        mPanVY = 0.0;
+        return;
+    }
+
+    int mouseButtons = SDL_GetMouseState(nullptr, nullptr);
+    if(mouseButtons & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+        mPanVX = 0.0;
+        mPanVY = 0.0;
+        return;
+    }
+
+    const auto now = std::chrono::high_resolution_clock::now();
+    double actualDt = dt;
+    if(actualDt <= 0.0) {
+        if(mLastCameraTime.time_since_epoch().count() == 0) {
+            mLastCameraTime = now;
+            actualDt = 0.016;
+        } else {
+            actualDt = std::chrono::duration<double>(now - mLastCameraTime).count();
+            mLastCameraTime = now;
+        }
+    } else {
+        mLastCameraTime = now;
+    }
+    actualDt = std::clamp(actualDt, 0.001, 0.1);
+
+    double dirX = 0.0;
+    double dirY = 0.0;
+
+    const Uint8* kState = SDL_GetKeyboardState(nullptr);
+    const bool hasKeyFocus = (window() && SDL_GetKeyboardFocus() == window()->window());
+    bool turbo = false;
+
+    if(kState && hasKeyFocus) {
+        const auto& kb = window()->settings().fKeyBindings;
+        if(kState[kb.fMoveLeft] || kState[SDL_SCANCODE_LEFT]) {
+            dirX += 1.0;
+        }
+        if(kState[kb.fMoveRight] || kState[SDL_SCANCODE_RIGHT]) {
+            dirX -= 1.0;
+        }
+        if(kState[kb.fMoveUp] || kState[SDL_SCANCODE_UP]) {
+            dirY += 1.0;
+        }
+        if(kState[kb.fMoveDown] || kState[SDL_SCANCODE_DOWN]) {
+            dirY -= 1.0;
+        }
+        if(kState[SDL_SCANCODE_LSHIFT] || kState[SDL_SCANCODE_RSHIFT]) {
+            turbo = true;
+        }
+    }
+
+    const bool hasMouseFocus = (window() && SDL_GetMouseFocus() == window()->window());
+    if(hasMouseFocus) {
+        if(mHoverX == 0) {
+            dirX += 1.0;
+        } else if(mHoverX >= width() - 1) {
+            dirX -= 1.0;
+        }
+        if(mHoverY == 0) {
+            dirY += 1.0;
+        } else if(mHoverY >= height() - 1) {
+            dirY -= 1.0;
+        }
+    }
+
+    dirX = std::clamp(dirX, -1.0, 1.0);
+    dirY = std::clamp(dirY, -1.0, 1.0);
+
+    if(dirX != 0.0 && dirY != 0.0) {
+        dirX *= 0.70710678;
+        dirY *= 0.70710678;
+    }
+
+    const double zoomFactor = (mZoomScale > 0.0 ? mZoomScale : 1.0);
+    const double baseSpeed = (turbo ? 2200.0 : 1040.0);
+    const double speed = baseSpeed / zoomFactor;
+
+    const double targetVX = dirX * speed;
+    const double targetVY = dirY * speed;
+
+    const double accelBlend = 1.0 - std::exp(-12.0 * actualDt);
+    const double decayBlend = std::exp(-8.6 * actualDt);
+
+    if(dirX != 0.0) {
+        mPanVX += (targetVX - mPanVX) * accelBlend;
+    } else {
+        mPanVX *= decayBlend;
+        if(std::abs(mPanVX) < 2.0) mPanVX = 0.0;
+    }
+
+    if(dirY != 0.0) {
+        mPanVY += (targetVY - mPanVY) * accelBlend;
+    } else {
+        mPanVY *= decayBlend;
+        if(std::abs(mPanVY) < 2.0) mPanVY = 0.0;
+    }
+
+    if(mPanVX != 0.0 || mPanVY != 0.0) {
+        mPreciseDX += mPanVX * actualDt;
+        mPreciseDY += mPanVY * actualDt;
+
+        const int newDX = static_cast<int>(std::round(mPreciseDX));
+        const int newDY = static_cast<int>(std::round(mPreciseDY));
+
+        if(newDX != mDX) {
+            const int prevDX = mDX;
+            setDX(newDX);
+            if(mDX == prevDX || (mPanVX > 0.0 && mDX < newDX) || (mPanVX < 0.0 && mDX > newDX)) {
+                mPreciseDX = mDX;
+                mPanVX = 0.0;
+            }
+        }
+
+        if(newDY != mDY) {
+            const int prevDY = mDY;
+            setDY(newDY);
+            if(mDY == prevDY || (mPanVY > 0.0 && mDY < newDY) || (mPanVY < 0.0 && mDY > newDY)) {
+                mPreciseDY = mDY;
+                mPanVY = 0.0;
+            }
+        }
+    }
+}
+

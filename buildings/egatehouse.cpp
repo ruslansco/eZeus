@@ -11,6 +11,7 @@ eGatehouse::eGatehouse(eGameBoard& board, const bool r,
               r ? 2 : 5, r ? 5 : 2, cid),
     mRotated(r) {
     eGameTextures::loadGatehouseAndTower();
+    eGameTextures::loadRemastered("gate_tower", 2);
     setEnabled(true);
 }
 
@@ -58,6 +59,9 @@ eGatehouse::getTextureSides(const eTileSize size) const {
                             dir == eWorldDirection::W;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    if(const auto hd = blds.remastered("gate_tower")) {       // Roman gate towers, art/gate_tower
+        return (*hd)[static_cast<int>(dir)][0];
+    }
     const auto& coll = mRotated != rotatedDir ? blds.fGatehouseH :
                                                 blds.fGatehouseW;
     return coll.getTexture(0);

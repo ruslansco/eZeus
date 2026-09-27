@@ -3,6 +3,8 @@
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
 
+#include <algorithm>
+
 eTempleBuilding::eTempleBuilding(eGameBoard& board,
                                  const eCityId cid) :
     eSanctBuilding({{2, 2, 0}, {1, 1, 0}, {2, 2, 0}}, board,
@@ -24,6 +26,10 @@ eTempleBuilding::getTexture(const eTileSize size) const {
     const auto& blds = eGameTextures::buildings()[sizeId];
     const int id = p - 1;
     const int dirId = rotatedId();
+    // Remastered temple: row = sprite id, column = construction stage (3: Atlantean finish).
+    eGameTextures::loadSanctuaryHD();
+    const int hdCol = atlantean() && id == 2 ? 3 : std::clamp(id, 0, 2);
+    if(const auto& hd = blds.fSanctuaryHD[dirId][hdCol]) return hd;
     if(atlantean() && id == 2) {
         eGameTextures::loadPoseidonSanctuary();
         const auto& coll = blds.fPoseidonSanctuary;
@@ -47,6 +53,10 @@ std::vector<eOverlay> eTempleBuilding::getOverlays(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
     const int tt = textureTime();
+    eGameTextures::loadSanctuaryHD();
+    // Remastered temples contain their own entry braziers. The old glow overlay
+    // was positioned for the lower legacy roof and floats across the new columns.
+    if(blds.fSanctuaryHD[dirId][atlantean()?3:2]) return {};
     eOverlay o;
     if(dirId == 0) {
         o.fX = -0.45;

@@ -1956,6 +1956,7 @@ bool eGameBoard::unregisterSoldier(eSoldier* const c) {
 
 void eGameBoard::registerBuilding(eBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return;
+    if(mRecordingBuilt) mRecordedBuilt.push_back(b);
     mAllBuildings.push_back(b);
     const auto bt = b->type();
     if(eBuilding::sTimedBuilding(bt)) {
@@ -1970,6 +1971,7 @@ void eGameBoard::registerBuilding(eBuilding* const b) {
 
 bool eGameBoard::unregisterBuilding(eBuilding* const b) {
     if(!mRegisterBuildingsEnabled) return false;
+    if(mRecordingBuilt) eVectorHelpers::remove(mRecordedBuilt, b);
     eVectorHelpers::remove(mAllBuildings, b);
     const auto cid = b->cityId();
     const auto city = boardCityWithId(cid);
@@ -1978,6 +1980,29 @@ bool eGameBoard::unregisterBuilding(eBuilding* const b) {
     eVectorHelpers::remove(mTimedBuildings, b);
     scheduleAppealMapUpdate(cid);
     return true;
+}
+
+void eGameBoard::buildingErased(eBuilding* const b) {
+    if(!mRecordingBuilt) return;
+    if(eVectorHelpers::contains(mRecordedBuilt, b)) {
+        eVectorHelpers::remove(mRecordedBuilt, b);
+    } else {
+        mRecordedErased++;
+    }
+}
+
+void eGameBoard::startRecordingBuilt() {
+    mRecordingBuilt = true;
+    mRecordedBuilt.clear();
+    mRecordedErased = 0;
+}
+
+std::vector<eBuilding*> eGameBoard::stopRecordingBuilt(int& erased) {
+    mRecordingBuilt = false;
+    erased = mRecordedErased;
+    std::vector<eBuilding*> r;
+    std::swap(r, mRecordedBuilt);
+    return r;
 }
 
 bool eGameBoard::unregisterCommonHouse(eSmallHouse* const ch) {

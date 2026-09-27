@@ -216,6 +216,7 @@ public:
     static void loadMint();
     static void loadFoundry();
     static void loadRefinery();
+    static void loadWarehouseHD();
     static void loadArtisansGuild();
     static void loadOlivePress();
     static void loadWinery();
@@ -241,6 +242,8 @@ public:
     static void loadShortObelisk();
     static void loadBirdBath();
     static void loadBaths();
+    // Remastered atlas of an n x n building by asset id, for every tile size.
+    static void loadRemastered(const std::string& id, const int n);
     static void loadShellGarden();
     static void loadOrrery();
     static void loadDolphinSculpture();
@@ -330,6 +333,9 @@ public:
     static void loadElephant();
 
     static void loadZeusSanctuary();
+    static void loadSanctuaryHD();
+    static void loadGodStatuesHD();
+    static void loadGodStatueAnimationHD(int god, int sizeId);
     static void loadPoseidonSanctuary();
     static void loadPoseidonHerosHall();
 

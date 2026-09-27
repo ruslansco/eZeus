@@ -9,6 +9,8 @@ struct eDirectionTexture {
     bool fTotalUpdateScheduled = true;
     bool fUpdateScheduled = false;
     std::shared_ptr<eTexture> fTexture;
+    // CPU copy of fTexture (SDL_PIXELFORMAT_RGBA8888), uploaded in one call.
+    std::vector<Uint32> fPixels;
     std::vector<eTile*> fTilesToUpdate;
 };
 
@@ -32,6 +34,10 @@ public:
 
     void setViewBoxSize(const double fx, const double fy);
 
+    // Pixels per tile column (2 by default; the panel's Map tab uses more).
+    void setTileDim(const int d);
+    int tileDim() const { return mTDim; }
+
     void scheduleUpdate();
     void scheduleTotalUpdate();
     void scheduleTilesUpdate(const std::vector<eTile*>& tiles);
@@ -42,7 +48,7 @@ protected:
 
     void paintEvent(ePainter& p) override;
 private:
-    void updateTexture(const eCityId cid, const bool useTexture);
+    void updateTexture(const eCityId cid);
     void viewRelPix(const int pixX, const int pixY);
     void viewAbsPix(const int px, const int py);
 

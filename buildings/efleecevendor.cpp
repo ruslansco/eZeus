@@ -11,4 +11,5 @@ eFleeceVendor::eFleeceVendor(eGameBoard& board,
             -0.50, -2.42, &eBuildingTextures::fFleeceVendorOverlay2,
             eBuildingType::fleeceVendor, 2, 2, 4, cid) {
     eGameTextures::loadFleeceVendor();
+    setHD("fleece_vendor");
 }

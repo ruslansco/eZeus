@@ -11,6 +11,7 @@ eArmsVendor::eArmsVendor(eGameBoard& board,
             0.14, -2.39, &eBuildingTextures::fArmsVendorOverlay2,
             eBuildingType::armsVendor, 2, 2, 4, cid) {
     eGameTextures::loadArmsVendor();
+    setHD("arms_vendor");
     setResMult(1);
     setMaxRes(8);
 }

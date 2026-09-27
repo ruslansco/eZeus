@@ -1,4 +1,4 @@
-﻿#ifndef EGAMEMENU_H
+#ifndef EGAMEMENU_H
 #define EGAMEMENU_H
 
 #include "egamemenubase.h"
@@ -53,12 +53,14 @@ public:
     int tradeCityId() const { return mTradeCityId; }
     eBuildingMode mode() const { return mMode; }
     void clearMode() { mMode = eBuildingMode::none; }
+    void setMode(const eBuildingMode mode);
 
     void setGameWidget(eGameWidget* const gw);
 
     eMiniMap* miniMap() const;
 
     void pushEvent(const eEvent e, const eEventData& ed);
+    void tickEvents();
 
     using eViewTileHandler = std::function<void(eTile*)>;
     void setViewTileHandler(const eViewTileHandler& h);
@@ -72,6 +74,8 @@ public:
                          const std::vector<eSPR>& cs);
 
     void setModeChangedAction(const eAction& func);
+    void setUndoAction(const eAction& func);
+    void setUndoEnabled(const bool e);
 
     void updateRequestButtons();
 
@@ -82,8 +86,14 @@ public:
     void setShowAllPossibleBuildings(const bool b);
 protected:
     bool mousePressEvent(const eMouseEvent& e);
+    void paintEvent(ePainter& p) override;
+    void categoryChanged(const int i) override;
 private:
-    void setMode(const eBuildingMode mode);
+    // Map tab: the minimap fills the content card (and back).
+    void setMapMode(const bool m);
+    // Panel geometry, in the 1/mult units the original art was laid out in.
+    float u(const double v) const { return static_cast<float>(v*mMult); }
+
     using eButtonsDataVec = std::vector<eSubButtonData>;
     eWidget* createSubButtons(const int resoltuionMult,
                               const eButtonsDataVec& buttons);
@@ -143,8 +153,26 @@ private:
     std::vector<eSubButton*> mSubButtons;
 
     eAction mModeChangeAct;
+    eButton* mUndoButton = nullptr;
 
     bool mShowAllPossibleBuildings = false;
+
+    int mMult = 2;
+    int mTitleH = 0;
+    class ePanelTabs* mTabs = nullptr;
+    class ePanelVeil* mVeil = nullptr;
+    bool mMapMode = false;
+    eWidget* mMapHome = nullptr;      // the overview page that normally holds the minimap
+    SDL_Rect mMapHomeRect{0, 0, 0, 0};
+    eWidget* mPageBeforeMap = nullptr;
+    eWidget* mLastPage = nullptr;
+    double mRailY = -1;
+    double mRailLast = -1;
+    SDL_Texture* mCalmTex = nullptr;   // "all is calm" under an empty event list
+    int mCalmW = 0;
+    int mCalmH = 0;
+    struct eKeyText { SDL_Texture* fTex; int fW; int fH; };
+    std::vector<eKeyText> mKeyTex;    // map colour key labels
 };
 
 #endif // EGAMEMENU_H

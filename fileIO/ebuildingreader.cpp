@@ -1,4 +1,5 @@
 #include "ebuildingreader.h"
+#include <iostream>
 
 #include "buildings/allbuildings.h"
 #include "engine/egameboard.h"
@@ -15,7 +16,15 @@ stdsptr<eBuilding> createVendor(eGameBoard& board,
     src.addPostFunc([aid, sid, v]() {
         const auto& board = v->getBoard();
         const auto a = board.buildingWithIOID(aid);
+        if(!a) {
+            std::cerr << "Warning: Agora with aid=" << aid << " not found for vendor!" << std::endl;
+            return;
+        }
         const auto aa = a->template ref<eAgoraBase>();
+        if(!aa) {
+            std::cerr << "Warning: Building with aid=" << aid << " is not an Agora!" << std::endl;
+            return;
+        }
         v->setAgora(aa);
         aa->setBuilding(sid, v);
     });
@@ -26,7 +35,9 @@ void readSanctBuildingMonument(
         eGameBoard& board, eReadStream& src,
         const stdsptr<eSanctBuilding>& ts) {
     src.readBuilding(&board, [ts](eBuilding* const bb) {
-        const auto ss = static_cast<eMonument*>(bb);
+        if(!bb) return;
+        const auto ss = dynamic_cast<eMonument*>(bb);
+        if(!ss) return;
         ts->setMonument(ss);
         ss->registerElement(ts);
     });

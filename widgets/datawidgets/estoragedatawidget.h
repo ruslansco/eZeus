@@ -15,6 +15,9 @@ public:
 
     void initialize();
 protected:
+    void openMoreInfoWiget() override;
+public:
+protected:
     void paintEvent(ePainter& p);
 private:
     eWidget* sdwColumn(const eUIScale uiScale,

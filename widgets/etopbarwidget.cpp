@@ -1,4 +1,5 @@
 #include "etopbarwidget.h"
+#include "epanelstyle.h"
 
 #include <cmath>
 
@@ -48,6 +49,11 @@ void eSpeedControlWidget::initialize(int mult) {
     // Button 4: Very Fast  >>>>
     mBtnRegions[4] = {x, static_cast<int>(triW * 2.8)};
     x += static_cast<int>(triW * 2.8) + gap;
+
+    // Speed text readout
+    const int textW = static_cast<int>(26 * mult);
+    mSpeedTextRegion = {x, textW};
+    x += textW + gap;
 
     setWidth(x);
     setHeight(sz + 4 * mult);
@@ -144,6 +150,22 @@ void eSpeedControlWidget::paintEvent(ePainter& p) {
     drawTriangles(p, mBtnRegions[2].x, cy, sz, 2, colorForBtn(2));
     drawTriangles(p, mBtnRegions[3].x, cy, sz, 3, colorForBtn(3));
     drawTriangles(p, mBtnRegions[4].x, cy, sz, 4, colorForBtn(4));
+
+    // Draw current speed readout text
+    std::string speedStr;
+    switch(mState) {
+    case eSpeedState::paused: speedStr = "PAUSED"; break;
+    case eSpeedState::slow:   speedStr = "20%";    break;
+    case eSpeedState::normal: speedStr = "100%";   break;
+    case eSpeedState::fast:   speedStr = "500%";   break;
+    case eSpeedState::vfast:  speedStr = "MAX";    break;
+    }
+
+    auto font = eFonts::defaultFont(resolution().verySmallFontSize());
+    p.setFont(font);
+    const int textY = (height() - resolution().verySmallFontSize()) / 2;
+    p.drawText(mSpeedTextRegion.x + 2 * mMult, textY, speedStr,
+               mState == eSpeedState::paused ? eFontColor::yellow : eFontColor::light);
 }
 
 bool eSpeedControlWidget::mousePressEvent(const eMouseEvent& e) {
@@ -329,6 +351,7 @@ void eTopBarWidget::setBoard(eGameBoard* const board) {
 
 void eTopBarWidget::setGameWidget(eGameWidget* const gw) {
     mGW = gw;
+    updateSpeedControls();
 }
 
 void eTopBarWidget::paintEvent(ePainter& p) {
@@ -356,18 +379,26 @@ void eTopBarWidget::paintEvent(ePainter& p) {
         mDateLabel->setText(mBoard->date().shortString());
         mDateLabel->setEnabled(mBoard->editorMode());
 
-        int iRes;
-        int mult;
-        iResAndMult(iRes, mult);
-        const auto& intrfc = eGameTextures::interface()[iRes];
-        const auto& tex = intrfc.fGameTopBar;
-        const int texWidth = tex->width();
-        const auto& rend = p.renderer();
-        bool flip = false;
-        for(int x = width() - texWidth; x > -texWidth; x -= texWidth) {
-            tex->render(rend, x, 0, flip);
-            flip = !flip;
+        // lapis strip with a gold hairline, matching the side panel
+        const auto rend = p.renderer();
+        const float x0 = p.x(), y0 = p.y(), w = width(), h = height();
+        if(const auto t = ePanel::lapis(rend)) {
+            int tw = 0;
+            int th = 0;
+            SDL_QueryTexture(t, nullptr, nullptr, &tw, &th);
+            for(int x = 0; x < w; x += tw) {
+                const int cw = std::min<int>(tw, w - x);
+                const SDL_Rect src{0, 0, cw, std::min<int>(th, h)};
+                const SDL_Rect dst{static_cast<int>(x0) + x, static_cast<int>(y0), cw, std::min<int>(th, h)};
+                SDL_RenderCopy(rend, t, &src, &dst);
+            }
         }
+        ePanel::gradient(rend, SDL_FRect{x0, y0, w, h}, SDL_Color{4, 8, 20, 110}, SDL_Color{2, 4, 12, 170});
+        ePanel::gradient(rend, SDL_FRect{x0, y0, w, h*.45f}, SDL_Color{140, 180, 240, 22}, SDL_Color{140, 180, 240, 0});
+        const float hair = std::max(1.f, h/28.f);
+        ePanel::gradient(rend, SDL_FRect{x0, y0 + h - hair, w, hair}, SDL_Color{236, 192, 96, 255},
+                         SDL_Color{168, 120, 40, 255});
+        ePanel::gradient(rend, SDL_FRect{x0, y0 + h, w, h*.35f}, SDL_Color{0, 0, 0, 110}, SDL_Color{0, 0, 0, 0});
     } else {
         mDateLabel->setEnabled(false);
     }

@@ -2,6 +2,7 @@
 
 #include "characters/ebronzeminer.h"
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
 
 eFoundry::eFoundry(eGameBoard& board, const eCityId cid) :
     eResourceCollectBuilding(board,
@@ -16,3 +17,5 @@ eFoundry::eFoundry(eGameBoard& board, const eCityId cid) :
     eGameTextures::loadFoundry();
     setRawCountCollect(4);
 }
+std::shared_ptr<eTexture> eFoundry::getTexture(const eTileSize size) const {const auto& t=eGameTextures::buildings()[static_cast<int>(size)];const auto& f=t.fFoundryHD[static_cast<int>(getBoard().direction())];if(!f[0])return eResourceCollectBuilding::getTexture(size);return f[enabled()&&rawCount()>0?hdAnimFrame():8];}
+std::vector<eOverlay> eFoundry::getOverlays(const eTileSize size) const {const auto& t=eGameTextures::buildings()[static_cast<int>(size)];if(t.fFoundryHD[0][0])return {};return eResourceCollectBuilding::getOverlays(size);}
