@@ -1,0 +1,21 @@
+{
+  "asset": "good_orichalc",
+  "file": "good_orichalc.glb",
+  "bytes": 33044,
+  "vertices": 608,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.14000000059604645,
+      -0.24949757754802704,
+      -0.006000000052154064
+    ],
+    [
+      0.5772724151611328,
+      0.3678377866744995,
+      0.12000000476837158
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

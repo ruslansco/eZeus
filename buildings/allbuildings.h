@@ -82,6 +82,7 @@
 #include "buildings/epark.h"
 #include "buildings/ecolumn.h"
 #include "buildings/eavenue.h"
+#include "buildings/eboulevard.h"
 
 #include "buildings/eanimalbuilding.h"
 

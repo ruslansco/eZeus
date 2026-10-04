@@ -1,0 +1,81 @@
+{
+  "revision": "living_atlas_v1",
+  "generator": "tools/build_world_atlas.py",
+  "scope": "Cosmetic 3D regional atlas; normalized native city coordinates unchanged.",
+  "channels": "R procedural relief / 3.6; G shore proximity; B coast coverage; A ecology",
+  "projection": "Native UV to curved regional globe patch. Relief is artistic, not a geographic DEM.",
+  "maps": {
+    "greece": {
+      "file": "greece.png",
+      "source": "Textures/Zeus_Data_Images/Zeus_MapOfGreece08.JPG",
+      "source_sha256": "8b2d2a28457fc85b1e06454daa6f713d5f07c5075f052fed8879e2df7a808749",
+      "sha256": "000cf0583d645af5073683a3182239abdf25aca31dcb41c26b42dd2f6622cbfe",
+      "width": 896,
+      "height": 789,
+      "aspect": 1.1356147021546261,
+      "land_fraction": 0.41079067083107007,
+      "height_scale": 3.6,
+      "rights_status": "needs_evidence"
+    },
+    "poseidon1": {
+      "file": "poseidon1.png",
+      "source": "Textures/Zeus_Data_Images/Poseidon_map01.jpg",
+      "source_sha256": "ba37846539ebb317dda52721316a3de4b49795d6a5c136d898fc80fd583e9532",
+      "sha256": "b64b53f42e1fb3c1d6632f123293e8883349350b78a56a351664a8c42f4bb73f",
+      "width": 896,
+      "height": 789,
+      "aspect": 1.1356147021546261,
+      "land_fraction": 0.40341667798298025,
+      "height_scale": 3.6,
+      "rights_status": "needs_evidence"
+    },
+    "poseidon2": {
+      "file": "poseidon2.png",
+      "source": "Textures/Zeus_Data_Images/Poseidon_map02.jpg",
+      "source_sha256": "9dd85ac86b67ac495ec570be5ef10adb1e20da7a0ebf8fbcc47a224aa15dcb20",
+      "sha256": "aff35dfa0832fdf16edacb21a42f55364dab7a423138782891995e5f018dc004",
+      "width": 896,
+      "height": 789,
+      "aspect": 1.1356147021546261,
+      "land_fraction": 0.551586830074235,
+      "height_scale": 3.6,
+      "rights_status": "needs_evidence"
+    },
+    "poseidon3": {
+      "file": "poseidon3.png",
+      "source": "Textures/Zeus_Data_Images/Poseidon_map03.jpg",
+      "source_sha256": "0262ab6b052a538e38aa472e8ce8dbc37935ab29fdb30890523a41705e2729b7",
+      "sha256": "80b08f6b01585dcbbdb2727f973e37de5039c5ddbd6782a75d238902d68f42c9",
+      "width": 896,
+      "height": 789,
+      "aspect": 1.1356147021546261,
+      "land_fraction": 0.3782407093065363,
+      "height_scale": 3.6,
+      "rights_status": "needs_evidence"
+    },
+    "poseidon4": {
+      "file": "poseidon4.png",
+      "source": "Textures/Zeus_Data_Images/Poseidon_map04.jpg",
+      "source_sha256": "fdbe49b5049c3891d6be99e8ba91dcd861c0c3192c41d361ce9f000d32519174",
+      "sha256": "4eb8af583525a07835b2bc709f8cac4ebfdce4a259938bd6f2e89e819b767e53",
+      "width": 896,
+      "height": 789,
+      "aspect": 1.1356147021546261,
+      "land_fraction": 0.7754899963787797,
+      "height_scale": 3.6,
+      "rights_status": "needs_evidence"
+    }
+  },
+  "budgets": {
+    "terrain_grid": [
+      256,
+      226
+    ],
+    "clouds": 12,
+    "trees": 1600,
+    "decorative_ships": 7,
+    "mesh_instances_max": 100,
+    "triangles_max": 220000
+  },
+  "release_status": "Development art; retained source plate rights need evidence."
+}

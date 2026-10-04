@@ -1976,6 +1976,13 @@ void eGameTextures::loadGodStatuesHD() {
     });
 }
 
+void eGameTextures::loadGodMonumentsHD() {
+    loadTexture([](const int i) {
+        auto& c = sBuildingTextures[i];
+        c.loadGodMonumentsHD();
+    });
+}
+
 void eGameTextures::loadGodStatueAnimationHD(int god, int sizeId) {
     if(sizeId < 0 || sizeId >= static_cast<int>(sBuildingTextures.size())) return;
     sBuildingTextures[sizeId].loadGodStatueAnimationHD(god);

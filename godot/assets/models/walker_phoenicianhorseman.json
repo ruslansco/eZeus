@@ -1,0 +1,85 @@
+{
+  "asset": "walker_phoenicianhorseman",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_phoenicianhorseman.glb",
+  "bytes": 18545812,
+  "vertices": 32945,
+  "surfaces": 3,
+  "source_surfaces": 22,
+  "bounds_blender": [
+    [
+      -0.2401464432477951,
+      -0.5766094326972961,
+      -0.006734237540513277
+    ],
+    [
+      0.2400684654712677,
+      0.5998237729072571,
+      1.2674232721328735
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Phoenician horseman",
+        "sex": "male",
+        "profile": {
+          "age": 36,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 1.052,
+          "cheek": 1.024,
+          "nose": 0.0056,
+          "chin": 0.0017,
+          "eye": 1.023,
+          "hair": [
+            [
+              0.01,
+              0.008,
+              0.006
+            ],
+            [
+              0.035,
+              0.025,
+              0.018
+            ]
+          ],
+          "hair_length": 0.012,
+          "beard_length": 0.03,
+          "grey": 0.05,
+          "seed": 93015
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "be3d9272a2211a519ca2ac1d7195852eac81009427454d60a3e586b560db3233",
+        "clavi_srgb": [
+          0.4,
+          0.08,
+          0.3
+        ]
+      }
+    ],
+    "vertex_budget": 45000,
+    "allocation_target": 32000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 165,
+    "targets_after": 110,
+    "uv_attributes_removed": 0
+  }
+}

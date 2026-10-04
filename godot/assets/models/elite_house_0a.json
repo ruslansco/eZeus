@@ -1,0 +1,28 @@
+{
+  "asset": "elite_house_0a",
+  "source": "art/elite_house_0a/build_sprites.py",
+  "file": "elite_house_0a.glb",
+  "bytes": 7013052,
+  "vertices": 34217,
+  "surfaces": 3,
+  "source_surfaces": 33,
+  "bounds_blender": [
+    [
+      -1.988080382347107,
+      -1.9983500242233276,
+      -0.0580160953104496
+    ],
+    [
+      1.988080382347107,
+      1.9880162477493286,
+      1.3095133304595947
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

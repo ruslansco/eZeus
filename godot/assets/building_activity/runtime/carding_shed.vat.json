@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 111,
+ "parts": {
+  "carding_shed_4": {
+   "row": 0,
+   "rows": 1,
+   "poses": 6,
+   "vertices": 154,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.0001176595687866211
+  },
+  "carding_shed_5": {
+   "row": 6,
+   "rows": 7,
+   "poses": 9,
+   "vertices": 7058,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "carding_shed_22": {
+   "row": 69,
+   "rows": 7,
+   "poses": 6,
+   "vertices": 6427,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.00024402141571044922
+  }
+ },
+ "source": {
+  "file": "carding_shed.glb",
+  "bytes": 1805932,
+  "mtime": 1790834050
+ }
+}

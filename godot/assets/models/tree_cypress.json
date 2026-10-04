@@ -1,0 +1,33 @@
+{
+  "asset": "tree_cypress",
+  "source": "art/terrain/build_trees.py",
+  "file": "tree_cypress.glb",
+  "bytes": 130204,
+  "vertices": 1102,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.271762490272522,
+      -0.2604605257511139,
+      0.0
+    ],
+    [
+      0.27091002464294434,
+      0.25077879428863525,
+      1.6908971071243286
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "source_surfaces": 2,
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 0,
+    "targets_after": 0,
+    "uv_attributes_removed": 0
+  }
+}

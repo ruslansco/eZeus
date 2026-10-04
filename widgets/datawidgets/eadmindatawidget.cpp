@@ -10,6 +10,7 @@
 #include "eviewmodebutton.h"
 
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 #include "widgets/emultilinelabel.h"
 #include "widgets/moreinfo/ecityfinanceswidget.h"
 
@@ -51,16 +52,15 @@ void eAdminDataWidget::initialize() {
         w->setNoPadding();
         const auto downButton = new eDownButton(window());
         downButton->setPressAction([this]() {
+            // In order of the rates (engine/ecitydata): the enum's veryLow is 7%, low 3%.
             if(mTaxRate == eTaxRate::none) return;
-            const int wr = static_cast<int>(mTaxRate) - 1;
-            setTaxRate(static_cast<eTaxRate>(wr));
+            setTaxRate(eCityData::stepTaxRate(mTaxRate, -1));
         });
         w->addWidget(downButton);
         const auto upButton = new eUpButton(window());
         upButton->setPressAction([this]() {
             if(mTaxRate == eTaxRate::outrageous) return;
-            const int wr = static_cast<int>(mTaxRate) + 1;
-            setTaxRate(static_cast<eTaxRate>(wr));
+            setTaxRate(eCityData::stepTaxRate(mTaxRate, 1));
         });
         w->addWidget(upButton);
         w->stackHorizontally();

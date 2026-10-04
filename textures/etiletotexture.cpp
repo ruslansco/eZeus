@@ -71,6 +71,13 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
     case eBuildingType::templeHermes:
     case eBuildingType::templePoseidon:
     case eBuildingType::templeZeus: {
+        if(!tile->walkableElev()) {
+            eGameTextures::loadSanctuaryHD();
+            const int pId = seed % 6;
+            if(blds.fSanctuaryPavingHD[pId]) return blds.fSanctuaryPavingHD[pId];
+            const auto& coll = blds.fSanctuarySpace;
+            return coll.getTexture(seed % coll.size());
+        }
         const auto& coll = textures.fSanctuaryStairs;
         int texId = seed % coll.size();
         if(dir == eWorldDirection::N) {
@@ -167,14 +174,20 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
     case eBuildingType::templeTile: {
         const auto b = tile->underBuilding();
         const auto bt = static_cast<eTempleTileBuilding*>(b);
-        const bool f = bt->finished();
-        if(f) return bt->getTileTexture(tileSize);
+        if(bt) {
+            const auto tex = bt->getTileTexture(tileSize);
+            if(tex) return tex;
+        }
         [[fallthrough]];
     }
+    case eBuildingType::placeholder:
     case eBuildingType::temple:
     case eBuildingType::templeStatue:
     case eBuildingType::templeMonument:
     case eBuildingType::templeAltar: {
+        eGameTextures::loadSanctuaryHD();
+        const int pId = seed % 6;
+        if(blds.fSanctuaryPavingHD[pId]) return blds.fSanctuaryPavingHD[pId];
         const auto& coll = blds.fSanctuarySpace;
         return coll.getTexture(seed % coll.size());
     } break;
@@ -335,35 +348,11 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
             const int tla = tl ? tl->doubleAltitude() : da;
             const int ta = t ? t->doubleAltitude() : da;
 
-            const bool canBe2A = da % 2 == 1 && (tx + ty) % 2;
-            const bool canBe2B = da % 2 == 0 && (tx + ty) % 2;
-            if(canBe2A || canBe2B) {
-//                const bool trw = tr ? tr->walkableElev() : false;
-//                const bool rw = r ? r->walkableElev() : false;
-                const bool brw = br ? br->walkableElev() : false;
-                const bool bw = b ? b->walkableElev() : false;
-                const bool blw = bl ? bl->walkableElev() : false;
-//                const bool lw = l ? l->walkableElev() : false;
-//                const bool tlw = tl ? tl->walkableElev() : false;
-//                const bool tw = t ? t->walkableElev() : false;
-
-                int relId = 0;
-                if(canBe2B && bra == da && !brw && bla == da + 1 && !blw && ba == da + 1 && !bw) {
-                    relId = 1;
-                } else if(canBe2A && bra == da - 1 && !brw && bla == da && !blw && ba == da - 1 && !bw) {
-                    relId = 2;
-                } else if(canBe2A && bra == da && !brw && bla == da - 1 && !blw && ba == da - 1 && !bw) {
-                    relId = 3;
-                } else if(canBe2B && bra == da + 1 && !brw && bla == da && !blw && ba == da + 1 && !bw) {
-                    relId = 4;
-                }
-                const auto& elev = textures.fHalfElevation2;
-                if(relId) {
-                    drawDim = 2;
-                    const int segmentId = (tx/2 + ty/2) % 3;
-                    return elev.getTexture(segmentId*4 + relId - 1);
-                }
-            }
+            // Keep half-height slopes tile-local. The legacy 2x2 shortcut hides
+            // neighbours with different elevations (and can claim a road tile),
+            // leaving uncovered strips when transparent remastered cliffs are
+            // mixed with it. The single-tile variants below preserve each tile's
+            // own ground anchor and road/ramp selection.
             {
                 const auto& elev = textures.fElevation;
                 if(ta == da + 1 && la == da + 2) {
@@ -412,7 +401,7 @@ std::shared_ptr<eTexture> eTileToTexture::get(eTile* const tile,
         }
     }
 
-    if(hr || ut == eBuildingType::avenue) {
+    if(hr || ut == eBuildingType::avenue || ut == eBuildingType::boulevard) {
         const auto b = tile->underBuilding();
         return b->getTexture(tileSize);
     }

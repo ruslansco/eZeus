@@ -1,0 +1,86 @@
+{
+  "asset": "walker_amazonarcher",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_amazonarcher.glb",
+  "bytes": 10012344,
+  "vertices": 15211,
+  "surfaces": 3,
+  "source_surfaces": 19,
+  "bounds_blender": [
+    [
+      -0.2239569127559662,
+      -0.19292189180850983,
+      0.0005000103265047073
+    ],
+    [
+      0.1835392862558365,
+      0.6599999666213989,
+      0.9146886467933655
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Amazon archer",
+        "sex": "female",
+        "profile": {
+          "age": 22,
+          "soft_features": true,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ],
+          "jaw": 0.879,
+          "cheek": 0.943,
+          "nose": 0.0022,
+          "chin": 0.0053,
+          "eye": 0.977,
+          "hair": [
+            [
+              0.12,
+              0.05,
+              0.02
+            ],
+            [
+              0.3,
+              0.14,
+              0.05
+            ]
+          ],
+          "hair_length": 0.018,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 93004
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "dae75afb023919b8449b10679a4abb0af06bb5aae58fe87aedf16a07688e7bf3",
+        "clavi_srgb": [
+          0.4,
+          0.46,
+          0.24
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 207,
+    "targets_after": 113,
+    "uv_attributes_removed": 0
+  }
+}

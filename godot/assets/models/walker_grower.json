@@ -1,0 +1,85 @@
+{
+  "asset": "walker_grower",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_grower.glb",
+  "bytes": 5346792,
+  "vertices": 16006,
+  "surfaces": 3,
+  "source_surfaces": 16,
+  "bounds_blender": [
+    [
+      -0.17650800943374634,
+      -0.18213969469070435,
+      0.0004999544471502304
+    ],
+    [
+      0.19234322011470795,
+      0.18021810054779053,
+      0.886857271194458
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Grower",
+        "sex": "male",
+        "profile": {
+          "age": 29,
+          "jaw": 1.05,
+          "cheek": 1.03,
+          "nose": 0.006,
+          "chin": 0.002,
+          "eye": 1.0,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0.013,
+          "grey": 0.08,
+          "seed": 3128636873,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "f7274283e330be34e45b17eb16253c88ca1a941050b4f231be57cf90ddc0d6b1",
+        "clavi_srgb": [
+          0.23,
+          0.34,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 61,
+    "uv_attributes_removed": 0
+  }
+}

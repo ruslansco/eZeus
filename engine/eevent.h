@@ -414,7 +414,14 @@ enum class eEvent {
 
     // our own: something in storage (or the treasury) runs out soon;
     // fResourceType (drachmas for the treasury), fTime = months left
-    shortageWarning
+    shortageWarning,
+    // our own: fire or collapse risk, or unrest turning serious; fTime is
+    // the kind (0 fire, 1 collapse, 2 unrest), fResourceCount how many
+    // buildings (or the unrest %), fReason the worst building's name
+    riskWarning,
+    // our own: a month has ended; the card compares the city history's
+    // last two samples (eBoardCity::recordHistory)
+    monthlySummary
 };
 
 #endif // EEVENT_H

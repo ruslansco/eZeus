@@ -1,0 +1,28 @@
+{
+  "asset": "college",
+  "source": "art/college/build_sprites.py",
+  "file": "college.glb",
+  "bytes": 8636020,
+  "vertices": 34779,
+  "surfaces": 3,
+  "source_surfaces": 34,
+  "bounds_blender": [
+    [
+      -1.496999979019165,
+      -1.496999979019165,
+      0.0
+    ],
+    [
+      1.5,
+      1.5,
+      1.7891391515731812
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

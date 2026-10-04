@@ -8,6 +8,7 @@
 
 std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
                                                    const std::string& path) {
+    if(!r && eGameDir::embedded()) return std::make_shared<eTexture>();
     // 1. Direct match: e.g. "Textures/45/interfaceNewParts_0.png", "Textures/Zeus_Title.png"
     //    A "<name>@2x.png" sibling holds the same sheet at double pixel density
     //    (sharper when zoomed in); it takes precedence over the plain file.

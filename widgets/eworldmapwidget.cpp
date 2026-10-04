@@ -190,7 +190,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
             nameTex = std::make_shared<eTexture>();
             const auto res = resolution();
             const int fontSize = res.smallFontSize();
-            const auto font = eFonts::defaultFont(fontSize);
+            const auto font = eFonts::displayFont(fontSize);
             nameTex->loadText(renderer(), name, eFontColor::region, *font);
             mNames[name] = nameTex;
         } else {
@@ -359,7 +359,7 @@ void eWorldMapWidget::paintEvent(ePainter& p) {
                 nameTex = std::make_shared<eTexture>();
                 const auto res = resolution();
                 const int fontSize = res.smallFontSize();
-                const auto font = eFonts::defaultFont(fontSize);
+                const auto font = eFonts::displayFont(fontSize);
                 nameTex->loadText(renderer(), name, eFontColor::light, *font);
                 mNames[name] = nameTex;
             } else {

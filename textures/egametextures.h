@@ -335,6 +335,7 @@ public:
     static void loadZeusSanctuary();
     static void loadSanctuaryHD();
     static void loadGodStatuesHD();
+    static void loadGodMonumentsHD();
     static void loadGodStatueAnimationHD(int god, int sizeId);
     static void loadPoseidonSanctuary();
     static void loadPoseidonHerosHall();

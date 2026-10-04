@@ -247,7 +247,11 @@ enum class eBuildingType {
     pyramidMuseum,
 
     hippodromePiece,
-    crosswalk
+    crosswalk,
+
+    // Building types are serialized by numeric value in .ez saves. Append new
+    // types here so older saves keep their existing building IDs.
+    boulevard
 };
 
 struct eTextureSpace {

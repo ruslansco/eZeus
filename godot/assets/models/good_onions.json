@@ -1,0 +1,21 @@
+{
+  "asset": "good_onions",
+  "file": "good_onions.glb",
+  "bytes": 259244,
+  "vertices": 3728,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -2.518357276916504,
+      -1.9161453247070312,
+      -2.671978235244751
+    ],
+    [
+      11.062202453613281,
+      10.669038772583008,
+      1.6264948844909668
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

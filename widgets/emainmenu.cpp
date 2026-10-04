@@ -1,3 +1,4 @@
+#include "efonts.h"
 #include "emainmenu.h"
 
 #include "elanguage.h"
@@ -128,7 +129,7 @@ void eMainMenu::initialize(const eAction& newGameA,
     add(eLanguage::zeusText(1, 5), quitA, eKind::quit);
     mLeaderA = leaderA;
 
-    for(int i = 1; i <= 8; i++) {
+    for(int i = 1; i <= 10; i++) {
         const auto t = eLanguage::text("menu_tip_" + std::to_string(i));
         if(!t.empty()) mTips.push_back(t);
     }
@@ -213,7 +214,7 @@ SDL_Texture* eMainMenu::renderFace(SDL_Renderer* const r, const eItem& it,
 
     // label (and the save line of the hero tablet)
     const double titlePt = (it.fHero ? 30 : 26)*s;
-    const auto font = eFonts::defaultFont(static_cast<int>(std::round(titlePt)));
+    const auto font = eFonts::displayFont(static_cast<int>(std::round(titlePt)));
     int tw = 0, th = 0;
     const auto title = makeText(r, font, it.fText, hover ? kGold : kIvory, tw, th);
     int sw = 0, sh = 0;
@@ -282,8 +283,8 @@ SDL_Texture* eMainMenu::renderChip(SDL_Renderer* const r, const bool hover,
     const float i1 = static_cast<float>(3*s);
     frameRect(r, i1, i1, w - 2*i1, h - 2*i1, static_cast<float>(std::max(1.0, 1.5*s)), gold);
 
-    const auto lfont = eFonts::defaultFont(static_cast<int>(std::round(15*s)));
-    const auto nfont = eFonts::defaultFont(static_cast<int>(std::round(25*s)));
+    const auto lfont = eFonts::labelFont(static_cast<int>(std::round(15*s)));
+    const auto nfont = eFonts::displayFont(static_cast<int>(std::round(25*s)));
     const std::string leader = window()->leader().empty() ? "-" : window()->leader();
     int lw, lh, nw, nh;
     const auto l = makeText(r, lfont, tr("leader", "Leader"), kGoldDim, lw, lh);
@@ -310,12 +311,12 @@ void eMainMenu::buildTextures(SDL_Renderer* const r) {
         it.fFace[1] = renderFace(r, it, true, it.fFaceW, it.fFaceH);
     }
     {
-        const auto nfont = eFonts::defaultFont(static_cast<int>(std::round(25*u*ss)));
+        const auto nfont = eFonts::displayFont(static_cast<int>(std::round(25*u*ss)));
         int nw = 0, nh = 0;
         const std::string leader = window()->leader().empty() ? "-" : window()->leader();
-        if(nfont) TTF_SizeUTF8(nfont, leader.c_str(), &nw, &nh);
+        if(nfont) TTF_SizeUTF8(eFonts::forText(nfont, leader), leader.c_str(), &nw, &nh);
         int lw = 0, lh = 0;
-        const auto lfont = eFonts::defaultFont(static_cast<int>(std::round(15*u*ss)));
+        const auto lfont = eFonts::labelFont(static_cast<int>(std::round(15*u*ss)));
         if(lfont) TTF_SizeUTF8(lfont, tr("leader", "Leader").c_str(), &lw, &lh);
         mChipH = static_cast<int>(std::round(72*u*ss));
         mChipW = std::max(static_cast<int>(std::round(210*u*ss)),

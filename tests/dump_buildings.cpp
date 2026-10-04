@@ -26,6 +26,8 @@
 #include "buildings/etaxoffice.h"
 #include "buildings/etimbermill.h"
 #include "buildings/etower.h"
+#include "buildings/ewheatfarm.h"
+#include "buildings/ecorral.h"
 #include "buildings/etradepost.h"
 #include "buildings/eurchinquay.h"
 #include "buildings/ewarehouse.h"
@@ -91,6 +93,8 @@ int main(int argc, char** argv) {
         {"watch_post", [&] { return std::make_shared<eWatchpost>(board, c); }},
         {"winery", [&] { return std::make_shared<eWinery>(board, c); }},
         {"tower", [&] { return std::make_shared<eTower>(board, c); }},
+        {"wheat_farm", [&] { return std::make_shared<eWheatFarm>(board, c); }},
+        {"corral", [&] { return std::make_shared<eCorral>(board, c); }},
     };
     const double W = 58, H = 30;
     const double ax = 240 - 2*W, ay = 400;       // footprint bounding-box bottom-left anchor

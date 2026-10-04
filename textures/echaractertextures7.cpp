@@ -71,6 +71,7 @@
 void eCharacterTextures::loadAtlanteanChariot() {
     if(fAtlanteanChariotLoaded) return;
     fAtlanteanChariotLoaded = true;
+    if(loadStatesHD({{"walk", &fAtlanteanChariot.fWalk}, {"fight", &fAtlanteanChariot.fFight}, {"die", &fAtlanteanChariot.fDie}}, fRenderer, fTileH, "atlanteanchariot")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eAtlanteanChariotSpriteData15,
                                  eAtlanteanChariotSpriteData30,
@@ -87,6 +88,7 @@ void eCharacterTextures::loadAtlanteanChariot() {
 void eCharacterTextures::loadAtlanteanArcher() {
     if(fAtlanteanArcherLoaded) return;
     fAtlanteanArcherLoaded = true;
+    if(loadPersonHD(fAtlanteanArcher, {{"fight", &fAtlanteanArcher.fFight}}, fRenderer, fTileH, "atlanteanarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eAtlanteanArcherSpriteData15,
                                  eAtlanteanArcherSpriteData30,
@@ -106,6 +108,7 @@ void eCharacterTextures::loadAtlanteanArcher() {
 void eCharacterTextures::loadAtlanteanHoplite() {
     if(fAtlanteanHopliteLoaded) return;
     fAtlanteanHopliteLoaded = true;
+    if(loadPersonHD(fAtlanteanHoplite, {{"fight", &fAtlanteanHoplite.fFight}}, fRenderer, fTileH, "atlanteanhoplite")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eAtlanteanHopliteSpriteData15,
                                  eAtlanteanHopliteSpriteData30,
@@ -125,6 +128,7 @@ void eCharacterTextures::loadAtlanteanHoplite() {
 void eCharacterTextures::loadEgyptianHoplite() {
     if(fEgyptianHopliteLoaded) return;
     fEgyptianHopliteLoaded = true;
+    if(loadPersonHD(fEgyptianHoplite, {{"fight", &fEgyptianHoplite.fFight}}, fRenderer, fTileH, "egyptianhoplite")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eEgyptianHopliteSpriteData15,
                                  eEgyptianHopliteSpriteData30,
@@ -144,6 +148,7 @@ void eCharacterTextures::loadEgyptianHoplite() {
 void eCharacterTextures::loadEgyptianChariot() {
     if(fEgyptianChariotLoaded) return;
     fEgyptianChariotLoaded = true;
+    if(loadStatesHD({{"walk", &fEgyptianChariot.fWalk}, {"fight", &fEgyptianChariot.fFight}, {"die", &fEgyptianChariot.fDie}}, fRenderer, fTileH, "egyptianchariot")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eEgyptianChariotSpriteData15,
                                  eEgyptianChariotSpriteData30,
@@ -160,6 +165,7 @@ void eCharacterTextures::loadEgyptianChariot() {
 void eCharacterTextures::loadEgyptianArcher() {
     if(fEgyptianArcherLoaded) return;
     fEgyptianArcherLoaded = true;
+    if(loadPersonHD(fEgyptianArcher, {{"fight", &fEgyptianArcher.fFight}}, fRenderer, fTileH, "egyptianarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eEgyptianArcherSpriteData15,
                                  eEgyptianArcherSpriteData30,
@@ -179,6 +185,7 @@ void eCharacterTextures::loadEgyptianArcher() {
 void eCharacterTextures::loadMayanHoplite() {
     if(fMayanHopliteLoaded) return;
     fMayanHopliteLoaded = true;
+    if(loadPersonHD(fMayanHoplite, {{"fight", &fMayanHoplite.fFight}}, fRenderer, fTileH, "mayanhoplite")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eMayanHopliteSpriteData15,
                                  eMayanHopliteSpriteData30,
@@ -198,6 +205,7 @@ void eCharacterTextures::loadMayanHoplite() {
 void eCharacterTextures::loadMayanArcher() {
     if(fMayanArcherLoaded) return;
     fMayanArcherLoaded = true;
+    if(loadPersonHD(fMayanArcher, {{"fight", &fMayanArcher.fFight}}, fRenderer, fTileH, "mayanarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eMayanArcherSpriteData15,
                                  eMayanArcherSpriteData30,
@@ -217,6 +225,7 @@ void eCharacterTextures::loadMayanArcher() {
 void eCharacterTextures::loadPhoenicianHorseman() {
     if(fPhoenicianHorsemanLoaded) return;
     fPhoenicianHorsemanLoaded = true;
+    if(loadPersonHD(fPhoenicianHorseman, {{"fight", &fPhoenicianHorseman.fFight}}, fRenderer, fTileH, "phoenicianhorseman")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  ePhoenicianHorsemanSpriteData15,
                                  ePhoenicianHorsemanSpriteData30,
@@ -236,6 +245,7 @@ void eCharacterTextures::loadPhoenicianHorseman() {
 void eCharacterTextures::loadPhoenicianArcher() {
     if(fPhoenicianArcherLoaded) return;
     fPhoenicianArcherLoaded = true;
+    if(loadPersonHD(fPhoenicianArcher, {{"fight", &fPhoenicianArcher.fFight}}, fRenderer, fTileH, "phoenicianarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  ePhoenicianArcherSpriteData15,
                                  ePhoenicianArcherSpriteData30,
@@ -255,6 +265,7 @@ void eCharacterTextures::loadPhoenicianArcher() {
 void eCharacterTextures::loadOceanidHoplite() {
     if(fOceanidHopliteLoaded) return;
     fOceanidHopliteLoaded = true;
+    if(loadPersonHD(fOceanidHoplite, {{"fight", &fOceanidHoplite.fFight}}, fRenderer, fTileH, "oceanidhoplite")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eOceanidHopliteSpriteData15,
                                  eOceanidHopliteSpriteData30,
@@ -274,6 +285,7 @@ void eCharacterTextures::loadOceanidHoplite() {
 void eCharacterTextures::loadOceanidSpearthrower() {
     if(fOceanidSpearthrowerLoaded) return;
     fOceanidSpearthrowerLoaded = true;
+    if(loadPersonHD(fOceanidSpearthrower, {{"fight", &fOceanidSpearthrower.fFight}}, fRenderer, fTileH, "oceanidspearthrower")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eOceanidSpearthrowerSpriteData15,
                                  eOceanidSpearthrowerSpriteData30,

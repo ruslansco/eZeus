@@ -1,0 +1,30 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 9,
+ "parts": {
+  "harbour_8": {
+   "row": 0,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 216,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004591941833496094
+  }
+ },
+ "source": {
+  "file": "harbour.glb",
+  "bytes": 682204,
+  "mtime": 1790834080
+ }
+}

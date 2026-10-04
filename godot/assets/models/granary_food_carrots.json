@@ -1,0 +1,21 @@
+{
+  "asset": "granary_food_carrots",
+  "file": "granary_food_carrots.glb",
+  "bytes": 47052,
+  "vertices": 735,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      0.1901015043258667,
+      -0.05352727323770523,
+      0.011999964714050293
+    ],
+    [
+      1.1763625144958496,
+      0.7663487195968628,
+      0.2207031548023224
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

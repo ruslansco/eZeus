@@ -21,14 +21,18 @@ eTempleBuilding::eTempleBuilding(
 std::shared_ptr<eTexture>
 eTempleBuilding::getTexture(const eTileSize size) const {
     const int p = progress();
-    if(p <= 0) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
-    const int id = p - 1;
     const int dirId = rotatedId();
-    // Remastered temple: row = sprite id, column = construction stage (3: Atlantean finish).
     eGameTextures::loadSanctuaryHD();
-    const int hdCol = atlantean() && id == 2 ? 3 : std::clamp(id, 0, 2);
+    if(p <= 0) {
+        if(const auto& hd = blds.fSanctuaryHD[dirId][0]) return hd;
+        return nullptr;
+    }
+    const int id = p - 1;
+    // Remastered temple: row = sprite id, column = construction stage:
+    // col 0 = foundations, col 1 = roof under construction, col 2 = Greek finished, col 3 = Atlantean finished.
+    const int hdCol = atlantean() && id == 2 ? 3 : std::clamp(id + 1, 1, 2);
     if(const auto& hd = blds.fSanctuaryHD[dirId][hdCol]) return hd;
     if(atlantean() && id == 2) {
         eGameTextures::loadPoseidonSanctuary();

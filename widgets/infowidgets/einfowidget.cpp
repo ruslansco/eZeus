@@ -23,6 +23,7 @@ void eInfoWidget::initialize(const std::string& title) {
     align(eAlignment::center);
 
     mTitleLabel = new eLabel(title, window());
+    mTitleLabel->setFontRole(eFontRole::display);
     mTitleLabel->fitContent();
     addWidget(mTitleLabel);
     mTitleLabel->align(eAlignment::top | eAlignment::hcenter);

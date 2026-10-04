@@ -1,0 +1,34 @@
+{
+  "asset": "animal_boar",
+  "source": "art/characters/animals/build_animal.py",
+  "file": "animal_boar.glb",
+  "bytes": 4981844,
+  "vertices": 10190,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.0880013182759285,
+      -0.29844462871551514,
+      -0.0017199525609612465
+    ],
+    [
+      0.08821816742420197,
+      0.40787726640701294,
+      0.4403321146965027
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "idle_mode": "static_authored_held_pose",
+  "source_surfaces": 6,
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 70,
+    "targets_after": 48,
+    "uv_attributes_removed": 0
+  }
+}

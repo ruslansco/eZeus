@@ -1,5 +1,7 @@
 #include "edatawidget.h"
 
+#include "engine/ecitydata.h"
+
 #include "eviewmodebutton.h"
 #include "widgets/ebasicbutton.h"
 #include "widgets/epanelwidgets.h"
@@ -97,11 +99,7 @@ void eDataWidget::setMoreInfoIcon(const std::string& icon, const std::string& to
 }
 
 int eDataWidget::sCoverageToText(const int c) {
-    if(c < 20) return 14; // terrible
-    if(c < 40) return 13; // poor
-    if(c < 60) return 12; // ok
-    if(c < 80) return 11; // not bad
-    return 10; // good
+    return eCityData::coverageText(c);
 }
 
 eCityId eDataWidget::viewedCity() {
@@ -114,4 +112,16 @@ eCityId eDataWidget::viewedCity() {
         setLastPersonCityId(cid);
     }
     return cid;
+}
+
+void eDataWidget::addFooterPill(const std::string& text, const eAction& a) {
+    const auto frame = mMoreInfo->parent();
+    if(!frame) return;
+    const int pp = spacing();
+    const auto b = new ePanelPillButton(window(), text);
+    const int h = mMoreInfo->height();
+    b->resize(frame->width() - mMoreInfo->width() - 4*pp, h);
+    frame->addWidget(b);
+    b->move(pp + pp/2, mMoreInfo->y());
+    b->setPressAction(a);
 }

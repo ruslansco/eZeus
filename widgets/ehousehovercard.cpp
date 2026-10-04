@@ -2,6 +2,7 @@
 
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
+#include "buildings/ehouseneeds.h"
 #include "engine/egameboard.h"
 #include "epanelstyle.h"
 #include "efonts.h"
@@ -23,69 +24,6 @@ std::string tr(const std::string& key, const std::string& fallback) {
 SDL_Color alpha(SDL_Color c, const double a) {
     c.a = static_cast<Uint8>(std::round(c.a*std::clamp(a, 0.0, 1.0)));
     return c;
-}
-
-// What a house needs to stand at a level: everything asked by that level
-// and the ones below (eSmallHouse / eEliteHousing::updateLevel).
-struct eNeeds {
-    bool fFood = false;
-    bool fWater = false;
-    bool fFleece = false;
-    bool fOil = false;
-    bool fArms = false;
-    bool fWine = false;
-    bool fHorse = false;
-    int fVenues = 0;
-    double fAppeal = -1;  // must be above
-};
-
-eNeeds commonNeeds(const int l) {
-    eNeeds n;
-    if(l >= 1) n.fFood = true;
-    if(l >= 2) { n.fWater = true; n.fVenues = 1; }
-    if(l >= 3) { n.fFleece = true; n.fAppeal = 2; }
-    if(l >= 4) n.fVenues = 2;
-    if(l >= 5) { n.fOil = true; n.fAppeal = 5; }
-    if(l >= 6) { n.fVenues = 3; n.fAppeal = 8; }
-    return n;
-}
-
-eNeeds eliteNeeds(const int l) {
-    eNeeds n;
-    if(l >= 1) {
-        n.fFood = n.fFleece = n.fOil = true;
-        n.fVenues = 3;
-        n.fAppeal = 5;
-    }
-    if(l >= 2) { n.fArms = true; n.fAppeal = 7; }
-    if(l >= 3) { n.fWine = true; n.fAppeal = 9; }
-    if(l >= 4) { n.fHorse = true; n.fVenues = 4; n.fAppeal = 10; }
-    return n;
-}
-
-struct eHas {
-    int fFood = 0;
-    int fWater = 0;
-    int fFleece = 0;
-    int fOil = 0;
-    int fArms = 0;
-    int fWine = 0;
-    int fHorse = 0;
-    int fVenues = 0;
-    double fAppeal = 0;
-};
-
-bool met(const eNeeds& n, const eHas& h) {
-    if(n.fFood && h.fFood <= 0) return false;
-    if(n.fWater && h.fWater <= 0) return false;
-    if(n.fFleece && h.fFleece <= 0) return false;
-    if(n.fOil && h.fOil <= 0) return false;
-    if(n.fArms && h.fArms <= 0) return false;
-    if(n.fWine && h.fWine <= 0) return false;
-    if(n.fHorse && h.fHorse <= 0) return false;
-    if(h.fVenues < n.fVenues) return false;
-    if(n.fAppeal >= 0 && !(h.fAppeal > n.fAppeal)) return false;
-    return true;
 }
 
 std::string oneDecimal(const double v) {
@@ -113,15 +51,17 @@ void eHouseHoverCard::clear() {
 
 eHouseHoverCard::eText& eHouseHoverCard::addText(
         const std::string& text, const int fontPx,
-        const SDL_Color c, const int x, const int y) {
+        const SDL_Color c, const int x, const int y,
+        const eFontRole role) {
     auto& t = mTexts.emplace_back();
     t.fText = text;
     t.fFontPx = fontPx;
+    t.fRole = role;
     t.fColor = c;
     t.fX = x;
     t.fY = y;
-    if(const auto font = eFonts::defaultFont(fontPx)) {
-        TTF_SizeUTF8(font, text.c_str(), &t.fW, &t.fH);
+    if(const auto font = eFonts::font(role, fontPx)) {
+        TTF_SizeUTF8(eFonts::forText(font, text), text.c_str(), &t.fW, &t.fH);
     }
     return t;
 }
@@ -129,32 +69,14 @@ eHouseHoverCard::eText& eHouseHoverCard::addText(
 bool eHouseHoverCard::setHouse(eHouseBase* const h) {
     if(!h || h->people() <= 0) return false;
     const bool elite = h->type() == eBuildingType::eliteHousing;
-    const auto sh = elite ? nullptr : static_cast<eSmallHouse*>(h);
-    const auto eh = elite ? static_cast<eEliteHousing*>(h) : nullptr;
     const int maxL = elite ? 4 : 6;
     const int level = std::clamp(h->level(), 0, maxL);
 
-    eHas has;
-    has.fFood = h->food();
-    has.fFleece = h->fleece();
-    has.fOil = h->oil();
-    if(sh) has.fWater = sh->water();
-    if(eh) {
-        has.fArms = eh->arms();
-        has.fWine = eh->wine();
-        has.fHorse = eh->horses();
-    }
-    has.fVenues = (h->philosophersInventors() > 0) + (h->actorsAstronomers() > 0) +
-                  (h->athletesScholars() > 0) + (h->competitorsCurators() > 0);
-    has.fAppeal = h->appeal();
-
+    const auto has = eHouseNeeds::has(h);
     const auto needs = [elite](const int l) {
-        return elite ? eliteNeeds(l) : commonNeeds(l);
+        return eHouseNeeds::needs(elite, l);
     };
-    int supported = 0;
-    for(int l = 1; l <= maxL; l++) {
-        if(met(needs(l), has)) supported = l;
-    }
+    const int supported = eHouseNeeds::supportedLevel(h);
 
     // what to list: the next level's needs, or the current one's if it slips
     int tone = 0;
@@ -211,7 +133,8 @@ bool eHouseHoverCard::setHouse(eHouseBase* const h) {
 
     int y = pad;
     {
-        auto& t = addText(name(level), titleF, SDL_Color{255, 222, 140, 255}, pad, y);
+        auto& t = addText(name(level), titleF, SDL_Color{255, 222, 140, 255}, pad, y,
+                          eFontRole::display);
         wMax = std::max(wMax, t.fW + 2*pad);
         y += t.fH;
     }
@@ -348,7 +271,7 @@ bool eHouseHoverCard::setHouse(eHouseBase* const h) {
                     const auto word = l.fNote.substr(i, j - i);
                     const auto tryRow = rows.back().empty() ? word : rows.back() + " " + word;
                     int tw = 0, th = 0;
-                    if(font) TTF_SizeUTF8(font, tryRow.c_str(), &tw, &th);
+                    if(font) TTF_SizeUTF8(eFonts::forText(font, tryRow), tryRow.c_str(), &tw, &th);
                     if(tw > maxW && !rows.back().empty()) rows.push_back(word);
                     else rows.back() = tryRow;
                     i = j + 1;
@@ -434,7 +357,7 @@ void eHouseHoverCard::paintEvent(ePainter& p) {
     for(auto& t : mTexts) {
         if(!t.fTex) {
             int tw, th;
-            t.fTex = eMenu3D::makeText(r, eFonts::defaultFont(t.fFontPx), t.fText,
+            t.fTex = eMenu3D::makeText(r, eFonts::font(t.fRole, t.fFontPx), t.fText,
                                        SDL_Color{255, 255, 255, 255}, tw, th);
             t.fW = tw;
             t.fH = th;

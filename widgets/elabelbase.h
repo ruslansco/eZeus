@@ -15,6 +15,9 @@ public:
 
     bool setFont(const eFont& font);
     bool setFontSize(const int s);
+    // the face for the size setters; setHugeFontSize picks display
+    bool setFontRole(const eFontRole role);
+    eFontRole fontRole() const { return mFontRole; }
     std::string text() const { return mText; }
     bool setText(const std::string& text);
     bool setTexture(const std::shared_ptr<eTexture>& tex);
@@ -49,6 +52,8 @@ private:
     int mWidth = 0;
     eMainWindow* const mWindow;
     TTF_Font* mFont = nullptr;
+    eFontRole mFontRole = eFontRole::body;
+    int mFontPx = 0;
     std::string mText;
     std::shared_ptr<eTexture> mTexture;
     bool mUpdateTextTextureFailed = false;

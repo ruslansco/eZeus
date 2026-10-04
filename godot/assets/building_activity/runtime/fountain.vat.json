@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 360,
+ "parts": {
+  "fountain_13": {
+   "row": 0,
+   "rows": 20,
+   "poses": 9,
+   "vertices": 20286,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004782676696777344
+  },
+  "fountain_14": {
+   "row": 180,
+   "rows": 20,
+   "poses": 9,
+   "vertices": 20110,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048792362213134766
+  }
+ },
+ "source": {
+  "file": "fountain.glb",
+  "bytes": 6109340,
+  "mtime": 1790833814
+ }
+}

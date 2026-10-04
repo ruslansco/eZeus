@@ -63,6 +63,7 @@ bool eBuilding::sWalkableBuilding(const eBuildingType t) {
     if(t == eBuildingType::vine) return true;
     if(t == eBuildingType::park) return true;
     if(t == eBuildingType::avenue) return true;
+    if(t == eBuildingType::boulevard) return true;
     if(t == eBuildingType::oliveTree) return true;
     if(t == eBuildingType::orangeTree) return true;
     if(t == eBuildingType::sheep) return true;
@@ -91,6 +92,7 @@ bool eBuilding::sFlatBuilding(const eBuildingType bt) {
            bt == eBuildingType::vine ||
            bt == eBuildingType::park ||
            bt == eBuildingType::avenue ||
+           bt == eBuildingType::boulevard ||
            bt == eBuildingType::oliveTree ||
            bt == eBuildingType::orangeTree ||
            bt == eBuildingType::cattle ||
@@ -221,6 +223,7 @@ bool eBuilding::sAttackable(const eBuildingType bt) {
     if(bt == eBuildingType::placeholder) return false;
     if(bt == eBuildingType::park) return false;
     if(bt == eBuildingType::avenue) return false;
+    if(bt == eBuildingType::boulevard) return false;
     if(bt == eBuildingType::palaceTile) return false;
     if(bt == eBuildingType::godMonumentTile) return false;
     if(bt == eBuildingType::bridge) return false;
@@ -725,6 +728,9 @@ std::string eBuilding::sNameForBuilding(const eBuildingType type) {
         break;
     case eBuildingType::avenue:
         string = 118;
+        break;
+    case eBuildingType::boulevard:
+        string = 126;
         break;
 
     case eBuildingType::bench:
@@ -1896,6 +1902,9 @@ void eBuilding::sInfoText(eBuilding* const b,
         break;
     case eBuildingType::avenue:
         group = 135;
+        break;
+    case eBuildingType::boulevard:
+        group = 136;
         break;
     case eBuildingType::bench:
         group = 137;

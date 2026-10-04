@@ -9,6 +9,7 @@
 #include "egamedir.h"
 #include "egeometrybatch.h"
 #include "engine/etilebase.h"
+#include "widgets/eweather.h"
 
 bool eTerrainHD::sEnabled = true;
 bool eTerrainHD::sAlphaDirty = false;
@@ -452,7 +453,8 @@ void eTerrainHD::drawForest(SDL_Renderer* const r,
     const SDL_Rect src{legacy.x(), legacy.y(), legacy.width(), legacy.height()};
     const SDL_Rect dst{sx, sy, legacy.width(), legacy.height()};
     SDL_SetTextureColorMod(trees->tex(), mod.r, mod.g, mod.b);
-    trees->render(r, src, dst);
+    const float lean = eWeather::treeLean(sx, sy)*mTileW/30.f;
+    trees->renderLeaning(r, src, dst, lean);
     SDL_SetTextureColorMod(trees->tex(), 255, 255, 255);
 }
 

@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_statue_zeus",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_statue_zeus.glb",
+  "bytes": 7186916,
+  "vertices": 31824,
+  "surfaces": 2,
+  "source_surfaces": 4,
+  "bounds_blender": [
+    [
+      -0.7535375952720642,
+      -0.5,
+      0.0
+    ],
+    [
+      1.148998737335205,
+      0.5795986652374268,
+      4.478342056274414
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

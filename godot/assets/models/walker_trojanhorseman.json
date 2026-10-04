@@ -1,0 +1,85 @@
+{
+  "asset": "walker_trojanhorseman",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_trojanhorseman.glb",
+  "bytes": 18426892,
+  "vertices": 33063,
+  "surfaces": 3,
+  "source_surfaces": 25,
+  "bounds_blender": [
+    [
+      -0.2401464432477951,
+      -0.5766094326972961,
+      -0.006734237540513277
+    ],
+    [
+      0.24008800089359283,
+      0.5998237729072571,
+      1.3693240880966187
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Trojan horseman",
+        "sex": "male",
+        "profile": {
+          "age": 37,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 1.077,
+          "cheek": 0.958,
+          "nose": 0.0007,
+          "chin": 0.006,
+          "eye": 1.03,
+          "hair": [
+            [
+              0.02,
+              0.015,
+              0.01
+            ],
+            [
+              0.07,
+              0.045,
+              0.025
+            ]
+          ],
+          "hair_length": 0.012,
+          "beard_length": 0.024,
+          "grey": 0.05,
+          "seed": 93007
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "83bffd30059c4ffd953228d2c060ab8ab04792deaecb82301bf637fa40c26ad2",
+        "clavi_srgb": [
+          0.2,
+          0.36,
+          0.24
+        ]
+      }
+    ],
+    "vertex_budget": 45000,
+    "allocation_target": 32000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 165,
+    "targets_after": 110,
+    "uv_attributes_removed": 0
+  }
+}

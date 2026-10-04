@@ -1,0 +1,34 @@
+{
+  "asset": "walker_calydonianboar",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_calydonianboar.glb",
+  "bytes": 21204744,
+  "vertices": 21883,
+  "surfaces": 2,
+  "source_surfaces": 8,
+  "bounds_blender": [
+    [
+      -0.176002636551857,
+      -0.5968892574310303,
+      -0.003439905121922493
+    ],
+    [
+      0.176121324300766,
+      0.8326569199562073,
+      0.8806642293930054
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 160,
+    "targets_after": 109,
+    "uv_attributes_removed": 0
+  }
+}

@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 360,
+ "parts": {
+  "gymnasium_0": {
+   "row": 0,
+   "rows": 21,
+   "poses": 9,
+   "vertices": 21138,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00047969818115234375
+  },
+  "gymnasium_1": {
+   "row": 189,
+   "rows": 19,
+   "poses": 9,
+   "vertices": 19101,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004875659942626953
+  }
+ },
+ "source": {
+  "file": "gymnasium.glb",
+  "bytes": 6840068,
+  "mtime": 1790833874
+ }
+}

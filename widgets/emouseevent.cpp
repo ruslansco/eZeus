@@ -48,8 +48,8 @@ eMouseWheelEvent eMouseWheelEvent::withPosition(const int x, const int y) const 
 eKeyPressEvent::eKeyPressEvent(const int x, const int y,
                                const bool shift, const bool ctrl,
                                const eMouseButton buttons,
-                               const SDL_Scancode key) :
-    eMouseEvent(x, y, shift, ctrl, buttons), mKey(key) {
+                               const SDL_Scancode key, const bool repeat) :
+    eMouseEvent(x, y, shift, ctrl, buttons), mKey(key), mRepeat(repeat) {
 
 }
 

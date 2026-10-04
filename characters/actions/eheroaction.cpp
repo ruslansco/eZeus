@@ -63,6 +63,10 @@ void eHeroAction::increment(const int by) {
     }
     if(mStage == eHeroActionStage::hunt) {
         lookForMonsterFight();
+        if(mLookForMonsterWait >= 0 && mStage == eHeroActionStage::hunt) {
+            mLookForMonsterWait -= by;
+            if(mLookForMonsterWait < 0) lookForMonster();
+        }
     }
     eActionWithComeback::increment(by);
 }
@@ -226,7 +230,10 @@ bool eHeroAction::fightMonster(eMonster* const m) {
     const vec2d mpos{m->absX(), m->absY()};
     const vec2d posdif = mpos - cpos;
     const double dist = posdif.length();
-    const double range = ranged ? 5. : 1.;
+    // The hunt's path stops on a tile next to the monster's, so a melee hero stands up to a tile and a half (a diagonal neighbour is
+    // 1.41 tiles away, more when the monster is not at the middle of its tile) from it: a range of 1 left him standing there, unable
+    // to fight, while his finished hunt began another and another (a path search every tick, without end).
+    const double range = ranged ? 5. : 2.;
     if(dist > range) return false;
     const auto angle = posdif.angle();
     const auto o = sAngleOrientation(angle);
@@ -267,9 +274,19 @@ bool eHeroAction::fightMonster(eMonster* const m) {
     return true;
 }
 
+void eHeroAction::huntEnded() {
+    const int now = board().totalTime();
+    if(mHuntStarted >= 0 && now - mHuntStarted < 100) {
+        mLookForMonsterWait = 600;
+    } else {
+        lookForMonster();
+    }
+}
+
 void eHeroAction::huntMonster(eMonster* const m, const bool second) {
     const auto mt = m->tile();
     if(!mt) return;
+    if(second) mHuntStarted = board().totalTime();
     const auto mtype = m->type();
 
     const auto c = character();

@@ -49,17 +49,17 @@ public:
     using eWidget::eWidget;
 
     enum class eSpeedState {
-        paused, slow, normal, fast, vfast
+        paused, normal, fast, vfast, max
     };
 
     void initialize(int mult);
     void setState(eSpeedState state);
 
     void setPauseAction(const eAction& a) { mPauseAction = a; }
-    void setSlowAction(const eAction& a) { mSlowAction = a; }
     void setNormalAction(const eAction& a) { mNormalAction = a; }
     void setFastAction(const eAction& a) { mFastAction = a; }
     void setVFastAction(const eAction& a) { mVFastAction = a; }
+    void setMaxAction(const eAction& a) { mMaxAction = a; }
 protected:
     void paintEvent(ePainter& p);
     bool mousePressEvent(const eMouseEvent& e);
@@ -84,10 +84,10 @@ private:
     BtnRegion mSpeedTextRegion{0, 0};
 
     eAction mPauseAction;
-    eAction mSlowAction;
     eAction mNormalAction;
     eAction mFastAction;
     eAction mVFastAction;
+    eAction mMaxAction;
 };
 
 class eTopBarWidget : public eWidget {

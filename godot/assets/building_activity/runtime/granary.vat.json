@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 323,
+ "parts": {
+  "granary_5": {
+   "row": 0,
+   "rows": 20,
+   "poses": 9,
+   "vertices": 20128,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "granary_22": {
+   "row": 180,
+   "rows": 15,
+   "poses": 9,
+   "vertices": 15065,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "granary_37": {
+   "row": 315,
+   "rows": 1,
+   "poses": 8,
+   "vertices": 48,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 7
+   },
+   "max_error": 6.9141387939453125e-06
+  }
+ },
+ "source": {
+  "file": "granary.glb",
+  "bytes": 6640080,
+  "mtime": 1790833891
+ }
+}

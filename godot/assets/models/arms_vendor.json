@@ -1,0 +1,28 @@
+{
+  "asset": "arms_vendor",
+  "source": "art/agora/build_stall.py",
+  "file": "arms_vendor.glb",
+  "bytes": 5240392,
+  "vertices": 24741,
+  "surfaces": 3,
+  "source_surfaces": 25,
+  "bounds_blender": [
+    [
+      -0.996999979019165,
+      -0.996999979019165,
+      0.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.1200000047683716
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

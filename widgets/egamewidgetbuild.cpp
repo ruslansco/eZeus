@@ -24,6 +24,9 @@
 #include "spawners/elandslidepoint.h"
 
 #include "ebuildingstoerase.h"
+#include "engine/eagoraplacement.h"
+#include "engine/eshoreplacement.h"
+#include "engine/ebuildplacement.h"
 
 #include "elanguage.h"
 #include "estringhelpers.h"
@@ -31,324 +34,18 @@
 
 #include <algorithm>
 
-bool agoraRoadTile(eTile* const t) {
-    if(!t) return false;
-    if(!t->hasRoad()) return false;
-    const auto ub = t->underBuilding();
-    if(!ub) return false;
-    const auto r = static_cast<eRoad*>(ub);
-    return !r->underAgora();
-}
-
-std::vector<eTile*> eGameWidget::agoraBuildPlaceBR(
-        eTile* const tile, const eCityId cid,
-        const ePlayerId pid) const {
-    if(!agoraRoadTile(tile)) return {};
-    const auto tr1 = tile->topRight<eTile>();
-    if(!agoraRoadTile(tr1)) return {};
-    const auto tr2 = tr1->topRight<eTile>();
-    if(!agoraRoadTile(tr2)) return {};
-    const auto tr3 = tr2->topRight<eTile>();
-    if(!agoraRoadTile(tr3)) return {};
-    const auto tr4 = tr3->topRight<eTile>();
-    if(!agoraRoadTile(tr4)) return {};
-    const auto tr5 = tr4->topRight<eTile>();
-    if(!agoraRoadTile(tr5)) return {};
-    std::vector<eTile*> brLobeTiles;
-    brLobeTiles.push_back(tr5);
-    brLobeTiles.push_back(tr4);
-    brLobeTiles.push_back(tr3);
-    brLobeTiles.push_back(tr2);
-    brLobeTiles.push_back(tr1);
-    brLobeTiles.push_back(tile);
-    bool brLobe = true;
-    {
-        const int iMin = tile->x() + 1;
-        const int iMax = iMin + 2;
-        const int jMin = tile->y() - 5;
-        const int jMax = jMin + 6;
-        for(int i = iMin; i < iMax && brLobe; i++) {
-            for(int j = jMin; j < jMax && brLobe; j++) {
-                const auto t = mBoard->tile(i, j);
-                brLobeTiles.push_back(t);
-                const bool cb = mBoard->canBuild(i, j, 1, 1, mEditorMode, cid, pid);
-                if(!cb) {
-                    brLobe = false;
-                    break;
-                }
-            }
-        }
-    }
-    if(!brLobe) return {};
-    return brLobeTiles;
-}
-
-std::vector<eTile*> eGameWidget::agoraBuildPlaceTL(
-        eTile* const tile, const eCityId cid,
-        const ePlayerId pid) const {
-    if(!agoraRoadTile(tile)) return {};
-    const auto tr1 = tile->topRight<eTile>();
-    if(!agoraRoadTile(tr1)) return {};
-    const auto tr2 = tr1->topRight<eTile>();
-    if(!agoraRoadTile(tr2)) return {};
-    const auto tr3 = tr2->topRight<eTile>();
-    if(!agoraRoadTile(tr3)) return {};
-    const auto tr4 = tr3->topRight<eTile>();
-    if(!agoraRoadTile(tr4)) return {};
-    const auto tr5 = tr4->topRight<eTile>();
-    if(!agoraRoadTile(tr5)) return {};
-    std::vector<eTile*> tlLobeTiles;
-    tlLobeTiles.push_back(tr5);
-    tlLobeTiles.push_back(tr4);
-    tlLobeTiles.push_back(tr3);
-    tlLobeTiles.push_back(tr2);
-    tlLobeTiles.push_back(tr1);
-    tlLobeTiles.push_back(tile);
-    bool tlLobe = true;
-    {
-        const int iMin = tile->x() - 3;
-        const int iMax = iMin + 2;
-        const int jMin = tile->y() - 5;
-        const int jMax = jMin + 6;
-        for(int i = iMax; i > iMin && tlLobe; i--) {
-            for(int j = jMin; j < jMax && tlLobe; j++) {
-                const auto t = mBoard->tile(i, j);
-                tlLobeTiles.push_back(t);
-                const bool cb = mBoard->canBuild(i, j, 1, 1, mEditorMode, cid, pid);
-                if(!cb) {
-                    tlLobe = false;
-                    break;
-                }
-            }
-        }
-    }
-    if(!tlLobe) return {};
-    return tlLobeTiles;
-}
-
-std::vector<eTile*> eGameWidget::agoraBuildPlaceBL(
-        eTile* const tile, const eCityId cid,
-        const ePlayerId pid) const {
-    if(!agoraRoadTile(tile)) return {};
-    const auto tl1 = tile->topLeft<eTile>();
-    if(!agoraRoadTile(tl1)) return {};
-    const auto tl2 = tl1->topLeft<eTile>();
-    if(!agoraRoadTile(tl2)) return {};
-    const auto tl3 = tl2->topLeft<eTile>();
-    if(!agoraRoadTile(tl3)) return {};
-    const auto tl4 = tl3->topLeft<eTile>();
-    if(!agoraRoadTile(tl4)) return {};
-    const auto tl5 = tl4->topLeft<eTile>();
-    if(!agoraRoadTile(tl5)) return {};
-    std::vector<eTile*> blLobeTiles;
-    blLobeTiles.push_back(tl5);
-    blLobeTiles.push_back(tl4);
-    blLobeTiles.push_back(tl3);
-    blLobeTiles.push_back(tl2);
-    blLobeTiles.push_back(tl1);
-    blLobeTiles.push_back(tile);
-    bool blLobe = true;
-    {
-        const int iMin = tile->x() - 5;
-        const int iMax = iMin + 6;
-        const int jMin = tile->y() + 1;
-        const int jMax = jMin + 2;
-        for(int j = jMin; j < jMax && blLobe; j++) {
-            for(int i = iMin; i < iMax && blLobe; i++) {
-                const auto t = mBoard->tile(i, j);
-                blLobeTiles.push_back(t);
-                const bool cb = mBoard->canBuild(i, j, 1, 1, mEditorMode, cid, pid);
-                if(!cb) {
-                    blLobe = false;
-                    break;
-                }
-            }
-        }
-    }
-    if(!blLobe) return {};
-    return blLobeTiles;
-}
-
-std::vector<eTile*> eGameWidget::agoraBuildPlaceTR(
-        eTile* const tile, const eCityId cid,
-        const ePlayerId pid) const {
-    if(!agoraRoadTile(tile)) return {};
-    const auto tl1 = tile->topLeft<eTile>();
-    if(!agoraRoadTile(tl1)) return {};
-    const auto tl2 = tl1->topLeft<eTile>();
-    if(!agoraRoadTile(tl2)) return {};
-    const auto tl3 = tl2->topLeft<eTile>();
-    if(!agoraRoadTile(tl3)) return {};
-    const auto tl4 = tl3->topLeft<eTile>();
-    if(!agoraRoadTile(tl4)) return {};
-    const auto tl5 = tl4->topLeft<eTile>();
-    if(!agoraRoadTile(tl5)) return {};
-    std::vector<eTile*> trLobeTiles;
-    trLobeTiles.push_back(tl5);
-    trLobeTiles.push_back(tl4);
-    trLobeTiles.push_back(tl3);
-    trLobeTiles.push_back(tl2);
-    trLobeTiles.push_back(tl1);
-    trLobeTiles.push_back(tile);
-    bool trLobe = true;
-    {
-        const int iMin = tile->x() - 5;
-        const int iMax = iMin + 6;
-        const int jMin = tile->y() - 3;
-        const int jMax = jMin + 2;
-        for(int j = jMax; j > jMin && trLobe; j--) {
-            for(int i = iMin; i < iMax && trLobe; i++) {
-                const auto t = mBoard->tile(i, j);
-                trLobeTiles.push_back(t);
-                const bool cb = mBoard->canBuild(i, j, 1, 1, mEditorMode, cid, pid);
-                if(!cb) {
-                    trLobe = false;
-                    break;
-                }
-            }
-        }
-    }
-    if(!trLobe) return {};
-    return trLobeTiles;
-}
-
 std::vector<eTile*> eGameWidget::agoraBuildPlaceIter(
         eTile* const tile, const bool grand,
         eAgoraOrientation& bt, const eCityId cid,
         const ePlayerId pid) const {
-    if(!tile) return {};
-    {
-        const int xMin = tile->x() - 2;
-        const int xMax = xMin + 3;
-        const int yMin = tile->y() + 2;
-        const int yMax = yMin + 3;
-        for(int x = xMin; x < xMax; x++) {
-            for(int y = yMin; y < yMax; y++) {
-                const auto t = mBoard->tile(x, y);
-                if(!t) continue;
-                const auto r = agoraBuildPlaceBR(t, cid, pid);
-                if(r.empty()) continue;
-                bt = eAgoraOrientation::bottomRight;
-                if(grand) {
-                    const auto rr = agoraBuildPlaceTL(t, cid, pid);
-                    if(rr.empty()) continue;
-                    std::vector<eTile*> rrr;
-                    rrr.reserve(r.size() + rr.size());
-                    rrr.insert(rrr.end(), rr.begin(), rr.end());
-                    rrr.insert(rrr.end(), r.begin(), r.end());
-                    return rrr;
-                }
-                return r;
-            }
-        }
-    }
-    {
-        const int xMin = tile->x();
-        const int xMax = xMin + 3;
-        const int yMin = tile->y() + 2;
-        const int yMax = yMin + 3;
-        for(int x = xMin; x < xMax; x++) {
-            for(int y = yMin; y < yMax; y++) {
-                const auto t = mBoard->tile(x, y);
-                if(!t) continue;
-                const auto r = agoraBuildPlaceTL(t, cid, pid);
-                if(r.empty()) continue;
-
-                if(grand) {
-                    bt = eAgoraOrientation::bottomRight;
-                    const auto rr = agoraBuildPlaceBR(t, cid, pid);
-                    if(rr.empty()) continue;
-                    std::vector<eTile*> rrr;
-                    rrr.reserve(r.size() + rr.size());
-                    rrr.insert(rrr.end(), r.begin(), r.end());
-                    rrr.insert(rrr.end(), rr.begin(), rr.end());
-                    return rrr;
-                } else {
-                    bt = eAgoraOrientation::topLeft;
-                }
-                return r;
-            }
-        }
-    }
-    {
-        const int xMin = tile->x() + 2;
-        const int xMax = xMin + 3;
-        const int yMin = tile->y() - 2;
-        const int yMax = yMin + 3;
-        for(int x = xMin; x < xMax; x++) {
-            for(int y = yMin; y < yMax; y++) {
-                const auto t = mBoard->tile(x, y);
-                if(!t) continue;
-                const auto r = agoraBuildPlaceBL(t, cid, pid);
-                if(r.empty()) continue;
-                bt = eAgoraOrientation::bottomLeft;
-                if(grand) {
-                    const auto rr = agoraBuildPlaceTR(t, cid, pid);
-                    if(rr.empty()) continue;
-                    std::vector<eTile*> rrr;
-                    rrr.reserve(r.size() + rr.size());
-                    rrr.insert(rrr.end(), rr.begin(), rr.end());
-                    rrr.insert(rrr.end(), r.begin(), r.end());
-                    return rrr;
-                }
-                return r;
-            }
-        }
-    }
-    {
-        const int xMin = tile->x() + 2;
-        const int xMax = xMin + 3;
-        const int yMin = tile->y();
-        const int yMax = yMin + 3;
-        for(int x = xMin; x < xMax; x++) {
-            for(int y = yMin; y < yMax; y++) {
-                const auto t = mBoard->tile(x, y);
-                if(!t) continue;
-                const auto r = agoraBuildPlaceTR(t, cid, pid);
-                if(r.empty()) continue;
-                if(grand) {
-                    bt = eAgoraOrientation::bottomLeft;
-                    const auto rr = agoraBuildPlaceBL(t, cid, pid);
-                    if(rr.empty()) continue;
-                    std::vector<eTile*> rrr;
-                    rrr.reserve(r.size() + rr.size());
-                    rrr.insert(rrr.end(), r.begin(), r.end());
-                    rrr.insert(rrr.end(), rr.begin(), rr.end());
-                    return rrr;
-                } else {
-                    bt = eAgoraOrientation::topRight;
-                }
-                return r;
-            }
-        }
-    }
-    return {};
+    return eAgoraPlacement::find(*mBoard, tile, grand, bt, cid, pid, mEditorMode);
 }
 
 template <class T>
 bool buildVendor(eGameBoard& brd, const int tx, const int ty,
                  const eResourceType resType, const eCityId cid) {
-    const auto t = brd.tile(tx, ty);
-    if(!t) return false;
-    const auto b = t->underBuilding();
-    if(!b) return false;
-    const auto bt = b->type();
-    if(bt != eBuildingType::agoraSpace) return false;
-    const auto space = static_cast<eAgoraSpace*>(b);
-    const auto ct = space->centerTile();
-    if(!ct) return false;
-    if(ct->x() != tx || ct->y() != ty) return false;
-    const auto agora = space->agora();
-    if(agora->vendor(resType)) return false;
-    const auto agoraP = agora->ref<eAgoraBase>();
-    const auto fv = e::make_shared<T>(brd, cid);
-    fv->setAgora(agoraP);
-    agora->setBuilding(space, fv);
-    const auto ppid = brd.personPlayer();
-    const auto diff = brd.difficulty(ppid);
-    const int cost = eDifficultyHelpers::buildingCost(diff, fv->type());
-    brd.incDrachmas(ppid, -cost, eFinanceTarget::construction);
-    return true;
+    return eAgoraPlacement::placeVendor(brd, tx, ty, resType, cid,
+        [](eGameBoard& b, const eCityId c) -> stdsptr<eVendor> { return e::make_shared<T>(b, c); });
 }
 
 eGameWidget::eApply eGameWidget::editFunc() {
@@ -651,102 +348,16 @@ bool eGameWidget::buildMouseRelease() {
             };
             showQuestion(title, text, acceptA);
         } break;
-        case eBuildingMode::commonAgora: {
-            const auto t = mBoard->tile(mHoverTX, mHoverTY);
-            if(!t) return false;
-            eAgoraOrientation bt;
-            const auto p = agoraBuildPlaceIter(t, false, bt, cid, pid);
-            if(p.empty()) return false;
-            const auto b = e::make_shared<eCommonAgora>(bt, *mBoard, mViewedCityId);
-            r = true;
-            int x = __INT_MAX__;
-            int y = __INT_MAX__;
-            int w;
-            int h;
-            int ri = 0;
-            for(const auto t : p) {
-                const int tx = t->x();
-                const int ty = t->y();
-                if(tx < x) x = tx;
-                if(ty < y) y = ty;
-                if(t->hasRoad()) {
-                    const auto bb = t->underBuilding();
-                    const auto r = static_cast<eRoad*>(bb);
-                    r->setUnderAgora(b.get());
-                    if(ri++ == 3) b->setCenterTile(t);
-                } else {
-                    b->addUnderBuilding(t);
-                }
-            }
-            switch(bt) {
-            case eAgoraOrientation::bottomLeft:
-            case eAgoraOrientation::topRight:
-                w = 6;
-                h = 3;
-                break;
-            case eAgoraOrientation::bottomRight:
-            case eAgoraOrientation::topLeft:
-                w = 3;
-                h = 6;
-                break;
-            }
-
-            b->setTileRect(SDL_Rect{x, y, w, h});
-
-            b->fillSpaces();
-
-            if(!mEditorMode) {
-                const auto diff = mBoard->difficulty(ppid);
-                const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
-                mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
-            }
-
-            showTip(cid, eLanguage::zeusText(19, 228)); // add vendors
-        } break;
+        case eBuildingMode::commonAgora:
         case eBuildingMode::grandAgora: {
+            const bool grand = mode == eBuildingMode::grandAgora;
             const auto t = mBoard->tile(mHoverTX, mHoverTY);
             if(!t) return false;
             eAgoraOrientation bt;
-            const auto p = agoraBuildPlaceIter(t, true, bt, cid, pid);
+            const auto p = eAgoraPlacement::find(*mBoard, t, grand, bt, cid, pid, mEditorMode);
             if(p.empty()) return false;
-            const auto b = e::make_shared<eGrandAgora>(bt, *mBoard, mViewedCityId);
+            const auto b = eAgoraPlacement::build(*mBoard, p, grand, bt, mViewedCityId);
             r = true;
-            int x = __INT_MAX__;
-            int y = __INT_MAX__;
-            int w;
-            int h;
-            int ri = 0;
-            for(const auto t : p) {
-                const int tx = t->x();
-                const int ty = t->y();
-                if(tx < x) x = tx;
-                if(ty < y) y = ty;
-                if(t->hasRoad()) {
-                    const auto bb = t->underBuilding();
-                    const auto r = static_cast<eRoad*>(bb);
-                    r->setUnderAgora(b.get());
-                    if(ri++ == 3) b->setCenterTile(t);
-                } else {
-                    b->addUnderBuilding(t);
-                }
-            }
-            switch(bt) {
-            case eAgoraOrientation::bottomLeft:
-            case eAgoraOrientation::topRight:
-                w = 6;
-                h = 5;
-                break;
-            case eAgoraOrientation::bottomRight:
-            case eAgoraOrientation::topLeft:
-                w = 5;
-                h = 6;
-                break;
-            }
-
-            b->setTileRect(SDL_Rect{x, y, w, h});
-
-            b->fillSpaces();
-
             if(!mEditorMode) {
                 const auto diff = mBoard->difficulty(ppid);
                 const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
@@ -780,13 +391,7 @@ bool eGameWidget::buildMouseRelease() {
             }
         } break;
         case eBuildingMode::roadblock: {
-            const auto t = mBoard->tile(mHoverTX, mHoverTY);
-            if(t && t->hasRoad() && !t->hasBridge()) {
-                const auto b = t->underBuilding();
-                const auto r = static_cast<eRoad*>(b);
-                const bool rb = r->isRoadblock();
-                if(!rb) r->setRoadblock(true);
-            }
+            eBuildPlacement::placeRoadblock(mBoard->tile(mHoverTX, mHoverTY));
         } break;
         case eBuildingMode::bridge: {
             const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
@@ -795,22 +400,7 @@ bool eGameWidget::buildMouseRelease() {
             bool rotated;
             bool r = bridgeTiles(startTile, eTerrain::water, path, rotated);
             if(!r) r = bridgeTiles(startTile, eTerrain::quake, path, rotated);
-            if(r) {
-                for(const auto t : path) {
-                    const auto b = e::make_shared<eRoad>(*mBoard, mViewedCityId);
-                    b->setCenterTile(t);
-                    b->setTileRect({t->x(), t->y(), 1, 1});
-                    t->setUnderBuilding(b);
-                    b->addUnderBuilding(t);
-                }
-
-                if(!mEditorMode) {
-                    const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
-                                         diff, eBuildingType::bridge);
-                    mBoard->incDrachmas(ppid, -path.size()*cost, eFinanceTarget::construction);
-                }
-            }
+            if(r) eBuildPlacement::buildBridge(*mBoard, path, mViewedCityId, ppid, mEditorMode);
         } break;
         case eBuildingMode::commonHousing: {
             if(mPressedTX == mHoverTX && mPressedTY == mHoverTY) {
@@ -937,32 +527,8 @@ bool eGameWidget::buildMouseRelease() {
         } break;
         case eBuildingMode::stadium: {
             if(mBoard->hasStadium(mViewedCityId)) return true;
-            int dx;
-            int dy;
-            int sw;
-            int sh;
-            if(mRotate) {
-                dx = 0;
-                dy = 5;
-                sw = 5;
-                sh = 10;
-            } else {
-                dx = 5;
-                dy = 0;
-                sw = 10;
-                sh = 5;
-            }
-            const auto t1 = mBoard->tile(mHoverTX, mHoverTY);
-            if(!t1) return true;
-            const bool cb1 = mBoard->canBuild(t1->x(), t1->y(), 5, 5, mEditorMode, cid, pid);
-            if(!cb1) return true;
-            const auto t2 = t1->tileRel<eTile>(dx, dy);
-            if(!t2) return true;
-            const bool cb2 = mBoard->canBuild(t2->x(), t2->y(), 5, 5, mEditorMode, cid, pid);
-            if(!cb2) return true;
-            r = mBoard->build(t1->x(), t1->y(), sw, sh, cid, pid, mEditorMode, [&]() {
-                return e::make_shared<eStadium>(*mBoard, mRotate, mViewedCityId);
-            });
+            if(!eBuildPlacement::canBuildStadium(*mBoard, mHoverTX, mHoverTY, mRotate, cid, pid, mEditorMode)) return true;
+            r = eBuildPlacement::buildStadium(*mBoard, mHoverTX, mHoverTY, mRotate, mViewedCityId, pid, mEditorMode);
             mGm->clearMode();
 
             if(!mBoard->hasBuilding(mViewedCityId, eBuildingType::gymnasium)) {
@@ -975,76 +541,8 @@ bool eGameWidget::buildMouseRelease() {
                 showTip(cid, eLanguage::zeusText(19, 33)); // too close to enemy
                 return true;
             }
-            const int tx = mHoverTX;
-            const int ty = mHoverTY;
-            int dx;
-            int dy;
-            int sw;
-            int sh;
-            const int tminX = tx - 2;
-            const int tminY = ty - 3;
-            int tmaxX;
-            int tmaxY;
-            const auto forAllTiles = [&](const std::function<void(int, int)>& prc) {
-                const SDL_Rect rect{tminX + 1, tminY + 1, sw, sh};
-                for(int x = tminX; x < tmaxX; x++) {
-                    for(int y = tminY; y < tmaxY; y++) {
-                        const SDL_Point pt{x, y};
-                        const bool r = SDL_PointInRect(&pt, &rect);
-                        if(r) continue;
-                        const bool cb = mBoard->canBuild(x, y, 1, 1, mEditorMode, cid, pid);
-                        if(!cb) return false;
-                        if(prc) prc(x, y);
-                    }
-                }
-                return true;
-            };
-            if(mRotate) {
-                dx = 0;
-                dy = 4;
-                sw = 4;
-                sh = 8;
-                tmaxX = tminX + 6;
-                tmaxY = tminY + 9;
-            } else {
-                dx = 4;
-                dy = 0;
-                sw = 8;
-                sh = 4;
-                tmaxX = tminX + 9;
-                tmaxY = tminY + 6;
-            }
-            const bool cb0 = forAllTiles(nullptr);
-            if(!cb0) return true;
-            const auto t1 = mBoard->tile(tx, ty);
-            if(!t1) return true;
-            const bool cb1 = mBoard->canBuild(t1->x(), t1->y(), 4, 4, mEditorMode, cid, pid);
-            if(!cb1) return true;
-            const auto t2 = t1->tileRel<eTile>(dx, dy);
-            if(!t2) return true;
-            const bool cb2 = mBoard->canBuild(t2->x(), t2->y(), 4, 4, mEditorMode, cid, pid);
-            if(!cb2) return true;
-            const auto s = e::make_shared<ePalace>(*mBoard, mRotate, mViewedCityId);
-            forAllTiles([&](const int x, const int y) {
-                mBoard->build(x, y, 1, 1, cid, pid, mEditorMode, [&]() {
-                    bool other = x == tminX && y == tminY;
-                    if(!other) {
-                        if(mRotate) {
-                            other = x == tmaxX - 1 && y == tminY;
-                        } else {
-                            other = x == tminX && y == tmaxY - 1;
-                        }
-                    }
-                    const auto t = e::make_shared<ePalaceTile>(
-                                       *mBoard, other, mViewedCityId);
-                    t->setPalace(s.get());
-                    s->addTile(t.get());
-                    return t;
-                });
-            });
-            r = mBoard->build(tx, ty, sw, sh, cid, pid, mEditorMode, [&]() {
-                return s;
-            });
+            if(!eBuildPlacement::canBuildPalace(*mBoard, mHoverTX, mHoverTY, mRotate, cid, pid, mEditorMode)) return true;
+            r = eBuildPlacement::buildPalace(*mBoard, mHoverTX, mHoverTY, mRotate, mViewedCityId, pid, mEditorMode);
 
             mGm->clearMode();
         } break;
@@ -1148,62 +646,14 @@ bool eGameWidget::buildMouseRelease() {
         } break;
 
 
-        case eBuildingMode::urchinQuay: {
-            eDiagonalOrientation o;
-            const bool c = canBuildFishery(mHoverTX, mHoverTY, o);
-            if(c) {
-                r = true;
-                const auto b = e::make_shared<eUrchinQuay>(*mBoard, o, mViewedCityId);
-                const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                b->setCenterTile(tile);
-
-                const int minY = mHoverTY - 1;
-                b->setTileRect({mHoverTX, minY, 2, 2});
-                for(int x = mHoverTX; x < mHoverTX + 2; x++) {
-                    for(int y = minY; y < minY + 2; y++) {
-                        const auto t = mBoard->tile(x, y);
-                        if(t) {
-                            t->setUnderBuilding(b);
-                            b->addUnderBuilding(t);
-                        }
-                    }
-                }
-
-                if(!mEditorMode) {
-                    const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
-                                         diff, eBuildingType::urchinQuay);
-                    mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
-                }
-            }
-        } break;
+        case eBuildingMode::urchinQuay:
         case eBuildingMode::fishery: {
             eDiagonalOrientation o;
             const bool c = canBuildFishery(mHoverTX, mHoverTY, o);
             if(c) {
                 r = true;
-                const auto b = e::make_shared<eFishery>(*mBoard, o, mViewedCityId);
-                const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                b->setCenterTile(tile);
-
-                const int minY = mHoverTY - 1;
-                b->setTileRect({mHoverTX, minY, 2, 2});
-                for(int x = mHoverTX; x < mHoverTX + 2; x++) {
-                    for(int y = minY; y < minY + 2; y++) {
-                        const auto t = mBoard->tile(x, y);
-                        if(t) {
-                            t->setUnderBuilding(b);
-                            b->addUnderBuilding(t);
-                        }
-                    }
-                }
-
-                if(!mEditorMode) {
-                    const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
-                                         diff, eBuildingType::fishery);
-                    mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
-                }
+                const auto type = mode == eBuildingMode::urchinQuay ? eBuildingType::urchinQuay : eBuildingType::fishery;
+                eBuildPlacement::placeShoreBuilding(*mBoard, type, mHoverTX, mHoverTY, o, mViewedCityId, ppid, mEditorMode);
             }
         } break;
         case eBuildingMode::triremeWharf: {
@@ -1211,44 +661,8 @@ bool eGameWidget::buildMouseRelease() {
             const bool c = canBuildTriremeWharf(mHoverTX, mHoverTY, o);
             if(c) {
                 r = true;
-                const int minX = mHoverTX - 1;
-                const int minY = mHoverTY - 1;
-
-                bool accessToSea = false;
-                for(int x = minX; x < minX + 3; x++) {
-                    for(int y = minY; y < minY + 3; y++) {
-                        const auto t = mBoard->tile(x, y);
-                        if(!t) continue;
-                        if(t->hasWater()) {
-                            accessToSea = waterTileHasAccessToSea(x, y);
-                            x += 3;
-                            break;
-                        }
-                    }
-                }
-
-                if(accessToSea) {
-                    const auto b = e::make_shared<eTriremeWharf>(*mBoard, o, mViewedCityId);
-                    const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                    b->setCenterTile(tile);
-
-                    b->setTileRect({minX, minY, 3, 3});
-                    for(int x = minX; x < minX + 3; x++) {
-                        for(int y = minY; y < minY + 3; y++) {
-                            const auto t = mBoard->tile(x, y);
-                            if(t) {
-                                t->setUnderBuilding(b);
-                                b->addUnderBuilding(t);
-                            }
-                        }
-                    }
-
-                    if(!mEditorMode) {
-                        const auto diff = mBoard->difficulty(ppid);
-                        const int cost = eDifficultyHelpers::buildingCost(
-                                             diff, eBuildingType::triremeWharf);
-                        mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
-                    }
+                if(eBuildPlacement::triremeWharfSeaAccess(*mBoard, mHoverTX, mHoverTY, mViewedCityId)) {
+                    eBuildPlacement::placeShoreBuilding(*mBoard, eBuildingType::triremeWharf, mHoverTX, mHoverTY, o, mViewedCityId, ppid, mEditorMode);
                 } else {
                     showTip(cid, eLanguage::zeusText(19, 25));
                 }
@@ -1261,65 +675,11 @@ bool eGameWidget::buildMouseRelease() {
             const bool c = canBuildPier(mHoverTX, mHoverTY, o, cid, pid, mEditorMode);
             if(c) {
                 r = true;
-                const int minX = mHoverTX;
-                const int minY = mHoverTY - 1;
-
-                bool accessToSea = false;
-                for(int x = minX; x < minX + 2; x++) {
-                    for(int y = minY; y < minY + 2; y++) {
-                        const auto t = mBoard->tile(x, y);
-                        if(!t) continue;
-                        if(t->hasWater()) {
-                            accessToSea = waterTileHasAccessToSea(x, y);
-                            x += 2;
-                            break;
-                        }
-                    }
-                }
-
-                if(accessToSea) {
-                    const auto b = e::make_shared<ePier>(*mBoard, o, mViewedCityId);
-                    const auto tile = mBoard->tile(mHoverTX, mHoverTY);
-                    b->setCenterTile(tile);
-
-                    b->setTileRect({mHoverTX, minY, 2, 2});
-                    for(int x = minX; x < minX + 2; x++) {
-                        for(int y = minY; y < minY + 2; y++) {
-                            const auto t = mBoard->tile(x, y);
-                            if(t) {
-                                t->setUnderBuilding(b);
-                                b->addUnderBuilding(t);
-                            }
-                        }
-                    }
-                    int tx = mHoverTX;
-                    int ty = mHoverTY;
-
-                    switch(o) {
-                    case eDiagonalOrientation::topRight: {
-                        ty += 3;
-                    } break;
-                    case eDiagonalOrientation::bottomRight: {
-                        tx -= 3;
-                    } break;
-                    case eDiagonalOrientation::bottomLeft: {
-                        ty -= 3;
-                    } break;
-                    default:
-                    case eDiagonalOrientation::topLeft: {
-                        tx += 3;
-                    } break;
-                    }
+                if(eShorePlacement::pierHasSeaAccess(*mBoard, mHoverTX, mHoverTY, mViewedCityId)) {
                     const int ctid = mGm->tradeCityId();
                     const auto& cts = wrld.cities();
                     const auto ct = cts[ctid];
-                    const auto tp = e::make_shared<eTradePost>(
-                                        *mBoard, *ct, mViewedCityId, eTradePostType::pier);
-                    tp->setOrientation(o);
-                    tp->setUnpackBuilding(b.get());
-                    mBoard->build(tx, ty, 4, 4, cid, pid, mEditorMode, [&]() { return tp; });
-                    b->setTradePost(tp.get());
-
+                    eShorePlacement::placePier(*mBoard, mHoverTX, mHoverTY, o, *ct, mViewedCityId, pid, mEditorMode);
                     mGm->clearMode();
                 } else {
                     showTip(cid, eLanguage::zeusText(19, 25));
@@ -1582,34 +942,8 @@ bool eGameWidget::buildMouseRelease() {
             }
         } break;
         case eBuildingMode::horseRanch: {
-            const int tx = mHoverTX;
-            const int ty = mHoverTY;
-            const bool cb1 = mBoard->canBuild(tx, ty, 3, 3, mEditorMode, cid, pid);
-            if(!cb1) return true;
-            int dx = 0;
-            int dy = 0;
-            if(mRotateId == 0) { // bottomRight
-                dx = 3;
-            } else if(mRotateId == 1) { // topRight
-                dy = -3;
-                dx = -1;
-            } else if(mRotateId == 2) { // topLeft
-                dx = -4;
-                dy = 1;
-            } else if(mRotateId == 3) { // bottomLeft
-                dy = 4;
-            }
-            const bool cb2 = mBoard->canBuild(tx + dx, ty + dy, 4, 4, mEditorMode, cid, pid);
-            if(!cb2) return true;
-            r = true;
-            const auto hr = e::make_shared<eHorseRanch>(*mBoard, mViewedCityId);
-            const auto hre = e::make_shared<eHorseRanchEnclosure>(*mBoard, mViewedCityId);
-            hre->setRanch(hr.get());
-            hr->setEnclosure(hre.get());
-            mBoard->build(tx, ty, 3, 3, cid, pid, mEditorMode,
-                  [hr]() { return hr; });
-            mBoard->build(tx + dx, ty + dy, 4, 4, cid, pid, mEditorMode,
-                  [hre]() { return hre; });
+            if(!eBuildPlacement::canBuildHorseRanch(*mBoard, mHoverTX, mHoverTY, mRotateId, cid, pid, mEditorMode)) return true;
+            r = eBuildPlacement::buildHorseRanch(*mBoard, mHoverTX, mHoverTY, mRotateId, mViewedCityId, pid, mEditorMode);
             showTip(cid, eLanguage::zeusText(19, 187));
             if(mBoard->supportsBuilding(mViewedCityId, eBuildingMode::wheatFarm) &&
                !mBoard->hasBuilding(mViewedCityId, eBuildingType::wheatFarm)) {
@@ -1740,23 +1074,15 @@ bool eGameWidget::buildMouseRelease() {
             }
             return true;
         } break;
-        case eBuildingMode::avenue: {
-            const int minX = std::min(mPressedTX, mHoverTX);
-            const int maxX = std::max(mPressedTX, mHoverTX);
-            const int minY = std::min(mPressedTY, mHoverTY);
-            const int maxY = std::max(mPressedTY, mHoverTY);
-            for(int x = minX; x <= maxX; x++) {
-                for(int y = minY; y <= maxY; y++) {
-                    const int d = mBoard->drachmas(ppid);
-                    if(!mEditorMode && d < -1000) break;
-                    const auto t = mBoard->tile(x, y);
-                    if(!t || !canBuildAvenue(t, cid, pid, mEditorMode)) continue;
-                    r = mBoard->build(x, y, 1, 1, cid, pid, mEditorMode,
-                          [this]() { return e::make_shared<eAvenue>(*mBoard, mViewedCityId); },
-                          false, true) || r;
-                }
-            }
-            mBoard->scheduleTerrainUpdate();
+        case eBuildingMode::avenue:
+        case eBuildingMode::boulevard: {
+            const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
+            if(!startTile) return false;
+            std::vector<eOrientation> path;
+            const bool hasPath = roadPath(path);
+            const bool boulevard = mode == eBuildingMode::boulevard;
+            const auto plan = eBuildPlacement::avenuePlan(startTile, path, hasPath);
+            r = eBuildPlacement::buildAvenue(*mBoard, plan, boulevard, cid, pid, mEditorMode) || r;
         } break;
 
 
@@ -1827,38 +1153,13 @@ bool eGameWidget::buildMouseRelease() {
         case eBuildingMode::hermesMonument:
         case eBuildingMode::poseidonMonument:
         case eBuildingMode::zeusMonument: {
-            const int tx = mHoverTX;
-            const int ty = mHoverTY;
-            const int tminX = tx - 1;
-            const int tminY = ty - 2;
-            const int tmaxX = tminX + 4;
-            const int tmaxY = tminY + 4;
-
-            const bool cb = mBoard->canBuild(tx, ty, 4, 4, mEditorMode, cid, pid);
-            if(!cb) return true;
+            if(!eBuildPlacement::canBuildGodMonument(*mBoard, mHoverTX, mHoverTY, cid, pid, mEditorMode)) return true;
 
             const auto am = eBuildingMode::aphroditeMonument;
             const int id = static_cast<int>(mode) -
                            static_cast<int>(am);
             const auto gt = static_cast<eGodType>(id);
-            const auto s = e::make_shared<eGodMonument>(
-                               gt, eGodQuestId::godQuest1, *mBoard, mViewedCityId);
-            const bool b = mBoard->build(tminX + 1, tminY + 2, 2, 2, cid, pid, mEditorMode, [&]() {
-                return s;
-            });
-            for(int x = tminX; x < tmaxX; x++) {
-                for(int y = tminY; y < tmaxY; y++) {
-                    const bool cb = mBoard->canBuild(x, y, 1, 1, mEditorMode, cid, pid);
-                    if(!cb) continue;
-                    mBoard->build(x, y, 1, 1, cid, pid, mEditorMode, [&]() {
-                        const auto t = e::make_shared<eGodMonumentTile>(
-                                           *mBoard, mViewedCityId);
-                        t->setMonument(s.get());
-                        s->addTile(t.get());
-                        return t;
-                    });
-                }
-            }
+            const bool b = eBuildPlacement::buildGodMonument(*mBoard, mHoverTX, mHoverTY, gt, cid, pid, mEditorMode);
             if(b) {
                 mBoard->built(mViewedCityId, eBuildingType::godMonument, id);
                 const bool ss = mBoard->supportsBuilding(mViewedCityId, mode);
@@ -1901,82 +1202,12 @@ bool eGameWidget::buildMouseRelease() {
             if(hid == -1) {
                 showTip(cid, eLanguage::zeusText(19, 257));
             } else {
-                r = mBoard->build(mHoverTX, mHoverTY, 4, 4, cid, pid, mEditorMode, [this, hid]() {
-                    const auto b = e::make_shared<eHippodromePiece>(*mBoard, mViewedCityId);
-                    b->setId(hid);
-                    return b;
-                });
-                if(r) {
-                    const auto c = mBoard->boardCityWithId(cid);
-                    c->updateHippodromes();
-                }
+                r = eBuildPlacement::buildHippodromePiece(*mBoard, mHoverTX, mHoverTY, hid, cid, pid, mEditorMode);
             }
         } break;
 
         case eBuildingMode::crosswalk: {
-            const auto b = mBoard->buildingAt(mHoverTX, mHoverTY);
-            if(b && b->type() == eBuildingType::hippodromePiece) {
-                for(int dx = -1; dx <= 1; dx++) {
-                    for(int dy = -1; dy <= 1; dy++) {
-                        if(dx == 0 && dy == 0) continue;
-                        const auto bb = mBoard->buildingAt(mHoverTX + dx, mHoverTY + dy);
-                        if(bb && bb->type() == eBuildingType::road) {
-                            const auto r = static_cast<eRoad*>(bb);
-                            if(r->aboveHippodrome() == b) return true;
-                        }
-                    }
-                }
-                const auto h = static_cast<eHippodromePiece*>(b);
-                int id = h->id();
-                if(id == 0) {
-                    id = 4;
-                } else if(id == 6) {
-                    id = 2;
-                } else if(id != 2 && id != 4) {
-                    return true;
-                }
-                h->setId(id);
-                const auto& r = h->tileRect();
-                const auto buildCrosswalk = [&](eTile* const t) {
-                    const auto b = e::make_shared<eRoad>(*mBoard, mViewedCityId);
-                    b->setCenterTile(t);
-                    b->setTileRect({t->x(), t->y(), 1, 1});
-                    t->setUnderBuilding(b);
-                    b->addUnderBuilding(t);
-                    b->setAboveHippodrome(h);
-                    return b.get();
-                };
-                if(id == 2) {
-                    int i = 0;
-                    for(int x = r.x; x < r.x + r.w; x++) {
-                        const auto t = mBoard->tile(x, mHoverTY);
-                        const auto r = buildCrosswalk(t);
-                        if(i == 1 || i == 2) {
-                            r->setCharacterAltitude(2);
-                        }
-                        i++;
-                    }
-                } else if(id == 4) {
-                    int i = 0;
-                    for(int y = r.y; y < r.y + r.h; y++) {
-                        const auto t = mBoard->tile(mHoverTX, y);
-                        const auto r = buildCrosswalk(t);
-                        if(i == 1 || i == 2) {
-                            r->setCharacterAltitude(2);
-                        }
-                        i++;
-                    }
-                } else {
-                    return true;
-                }
-
-                if(!mEditorMode) {
-                    const auto diff = mBoard->difficulty(ppid);
-                    const int cost = eDifficultyHelpers::buildingCost(
-                        diff, eBuildingType::crosswalk);
-                    mBoard->incDrachmas(ppid, -cost, eFinanceTarget::construction);
-                }
-            }
+            if(!eBuildPlacement::buildCrosswalk(*mBoard, mHoverTX, mHoverTY, mViewedCityId, ppid, mEditorMode)) return true;
         } break;
 
         case eBuildingMode::birdBath: {

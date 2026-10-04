@@ -33,6 +33,8 @@ protected:
     void showMoreInfoButton();
     // The corner button with another icon and tooltip (history, trade).
     void setMoreInfoIcon(const std::string& icon, const std::string& tooltip);
+    // A gold pill at the foot of the page, left of the corner button.
+    void addFooterPill(const std::string& text, const eAction& a);
 
     static int sCoverageToText(const int c);
 

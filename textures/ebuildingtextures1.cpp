@@ -134,6 +134,7 @@ void eBuildingTextures::loadPyramid() {
     for(int i = 1; i < 46; i++) {
         loader.load(1, i, fPyramid);
     }
+    replaceWithRemastered(fPyramid, "pyramid", "p1_");   // Roman marble and basalt blocks, art/pyramid
 }
 
 void eBuildingTextures::loadPyramid2() {
@@ -151,6 +152,7 @@ void eBuildingTextures::loadPyramid2() {
     for(int i = 1; i < 39; i++) {
         loader.load(1, i, fPyramid2);
     }
+    replaceWithRemastered(fPyramid2, "pyramid", "p2_");
 }
 
 void eBuildingTextures::loadPoseidonBridge() {

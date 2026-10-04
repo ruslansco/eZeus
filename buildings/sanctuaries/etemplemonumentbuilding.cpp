@@ -57,7 +57,9 @@ eTempleMonumentBuilding::getTexture(const eTileSize size) const {
     if(p <= 0) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    eGameTextures::loadGodMonumentsHD();
     if(p == 1) {
+        if(blds.fBlankMonumentHD) return blds.fBlankMonumentHD;
         return blds.fBlankMonument;
     }
     const auto coll = sGodMonumentTextureCollection(size, mGod);
@@ -98,6 +100,16 @@ eTempleMonumentBuilding::getTexture(const eTileSize size) const {
         } else { // if(mId == 3) {
             dirId = 0;
         }
+    }
+    // Remastered colossus: row in the order of eBuildingTextures::sStatueGods.
+    const eGodType order[14] = {eGodType::zeus, eGodType::poseidon, eGodType::hades, eGodType::demeter,
+                                eGodType::athena, eGodType::artemis, eGodType::apollo, eGodType::ares,
+                                eGodType::hephaestus, eGodType::aphrodite, eGodType::hermes,
+                                eGodType::dionysus, eGodType::hera, eGodType::atlas};
+    for(int row = 0; row < 14; ++row) {
+        if(order[row] != mGod) continue;
+        if(const auto& hd = blds.fGodMonumentsHD[row][dirId]) return hd;
+        break;
     }
     return coll->getTexture(dirId);
 }

@@ -1,0 +1,21 @@
+{
+  "asset": "good_carrots",
+  "file": "good_carrots.glb",
+  "bytes": 196724,
+  "vertices": 3056,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.23118118941783905,
+      -0.2394406497478485,
+      -0.10697971284389496
+    ],
+    [
+      0.1568029671907425,
+      0.3735169768333435,
+      0.6248842477798462
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

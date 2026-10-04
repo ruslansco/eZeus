@@ -1,0 +1,28 @@
+{
+  "asset": "chariot_factory",
+  "source": "art/chariot_factory/build_sprites.py",
+  "file": "chariot_factory.glb",
+  "bytes": 8085032,
+  "vertices": 34804,
+  "surfaces": 3,
+  "source_surfaces": 47,
+  "bounds_blender": [
+    [
+      -2.0199999809265137,
+      -1.9900000095367432,
+      -0.001999999862164259
+    ],
+    [
+      1.9900000095367432,
+      1.9900000095367432,
+      1.8000259399414062
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

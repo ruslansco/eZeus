@@ -51,20 +51,43 @@ void eTradeTypesWidget::setTrade(const ePlayerId pid,
 
         const auto name = eResourceTypeHelpers::typeName(t.fType);
         const auto nameLabel = new eLabel(name, window());
+        nameLabel->setNoPadding();
         nameLabel->setTinyFontSize();
         nameLabel->fitContent();
         w->addWidget(nameLabel);
         nameLabel->align(eAlignment::vcenter | eAlignment::left);
-        nameLabel->setX(iconLabel->x() + iconLabel->width());
+        nameLabel->setX(iconLabel->x() + iconLabel->width() + mult);
 
         const auto used = std::to_string(t.used(pid));
         const auto max = std::to_string(t.fMax);
         const auto str = used + "/" + max;
         const auto usedLabel = new eLabel(str, window());
+        usedLabel->setNoPadding();
         usedLabel->setTinyFontSize();
         usedLabel->fitContent();
         w->addWidget(usedLabel);
         usedLabel->align(eAlignment::vcenter | eAlignment::right);
+
+        // a long name ("Black Marble" at 720p) would run into the count:
+        // shorten it, whole name in the tooltip
+        const int gap = std::max(2, mult*2);
+        const int avail = usedLabel->x() - gap - nameLabel->x();
+        if(nameLabel->width() > avail) {
+            nameLabel->setTooltip(name);
+            std::string cut = name;
+            while(!cut.empty() && nameLabel->width() > avail) {
+                // one letter off (all of a UTF-8 sequence)
+                while(!cut.empty() && (static_cast<unsigned char>(cut.back()) & 0xC0) == 0x80) {
+                    cut.pop_back();
+                }
+                if(!cut.empty()) cut.pop_back();
+                while(!cut.empty() && cut.back() == ' ') cut.pop_back();
+                nameLabel->setText(cut + ".");
+                nameLabel->fitContent();
+            }
+            nameLabel->align(eAlignment::vcenter | eAlignment::left);
+            nameLabel->setX(iconLabel->x() + iconLabel->width() + mult);
+        }
 
         addWidget(w);
         w->setY(i*h);

@@ -1,0 +1,85 @@
+{
+  "asset": "walker_achilles",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_achilles.glb",
+  "bytes": 9197528,
+  "vertices": 15674,
+  "surfaces": 3,
+  "source_surfaces": 21,
+  "bounds_blender": [
+    [
+      -0.3495205342769623,
+      -0.2097618281841278,
+      0.0005600157892331481
+    ],
+    [
+      0.22699260711669922,
+      0.24214386940002441,
+      1.3328001499176025
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Achilles",
+        "sex": "male",
+        "profile": {
+          "age": 25,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ],
+          "jaw": 1.12,
+          "cheek": 1.0,
+          "nose": 0.004,
+          "chin": 0.007,
+          "eye": 1.0,
+          "hair": [
+            [
+              0.3,
+              0.2,
+              0.07
+            ],
+            [
+              0.62,
+              0.46,
+              0.18
+            ]
+          ],
+          "hair_length": 0.024,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 51101
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "855cd85d634814230b8f2569957cf264a3950e21c9662d6e829bc349e6657821",
+        "clavi_srgb": [
+          0.3,
+          0.04,
+          0.14
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 225,
+    "targets_after": 135,
+    "uv_attributes_removed": 0
+  }
+}

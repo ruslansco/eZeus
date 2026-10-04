@@ -177,6 +177,8 @@ eBuildingType eBuildingModeHelpers::toBuildingType(const eBuildingMode mode) {
         return eBuildingType::corinthianColumn;
     case eBuildingMode::avenue:
         return eBuildingType::avenue;
+    case eBuildingMode::boulevard:
+        return eBuildingType::boulevard;
 
     case eBuildingMode::populationMonument:
     case eBuildingMode::victoryMonument:

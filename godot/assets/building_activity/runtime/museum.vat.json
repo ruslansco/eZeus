@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 222,
+ "parts": {
+  "museum_0": {
+   "row": 0,
+   "rows": 12,
+   "poses": 9,
+   "vertices": 11380,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  },
+  "museum_1": {
+   "row": 108,
+   "rows": 19,
+   "poses": 6,
+   "vertices": 18955,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.00048804283142089844
+  }
+ },
+ "source": {
+  "file": "museum.glb",
+  "bytes": 6746044,
+  "mtime": 1790834025
+ }
+}

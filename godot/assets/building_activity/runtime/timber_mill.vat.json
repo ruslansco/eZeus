@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 114,
+ "parts": {
+  "timber_mill_9": {
+   "row": 0,
+   "rows": 6,
+   "poses": 9,
+   "vertices": 5916,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004875659942626953
+  },
+  "timber_mill_16": {
+   "row": 54,
+   "rows": 8,
+   "poses": 6,
+   "vertices": 7826,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_07": 1,
+    "work_02": 2,
+    "work_06": 2,
+    "work_03": 3,
+    "work_05": 3,
+    "work_04": 4,
+    "inactive": 5
+   },
+   "max_error": 0.0004876852035522461
+  },
+  "timber_mill_20": {
+   "row": 102,
+   "rows": 2,
+   "poses": 6,
+   "vertices": 1831,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_07": 1,
+    "work_02": 2,
+    "work_06": 2,
+    "work_03": 3,
+    "work_05": 3,
+    "work_04": 4,
+    "inactive": 5
+   },
+   "max_error": 0.0004876852035522461
+  }
+ },
+ "source": {
+  "file": "timber_mill.glb",
+  "bytes": 3193308,
+  "mtime": 1790834123
+ }
+}

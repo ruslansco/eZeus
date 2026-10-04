@@ -31,12 +31,20 @@ bool eLabelBase::setSmallFontSize() {
 
 bool eLabelBase::setHugeFontSize() {
     const int s = res().hugeFontSize();
+    mFontRole = eFontRole::display;
     return setFontSize(s);
 }
 
 bool eLabelBase::setFontSize(const int s) {
-    const auto font = eFonts::defaultFont(s);
+    mFontPx = s;
+    const auto font = eFonts::font(mFontRole, s);
     return setFont(font);
+}
+
+bool eLabelBase::setFontRole(const eFontRole role) {
+    mFontRole = role;
+    const int s = mFontPx > 0 ? mFontPx : res().largeFontSize();
+    return setFontSize(s);
 }
 
 bool eLabelBase::setFont(TTF_Font* const font) {

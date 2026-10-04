@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 306,
+ "parts": {
+  "observatory_0": {
+   "row": 0,
+   "rows": 3,
+   "poses": 9,
+   "vertices": 2391,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004863739013671875
+  },
+  "observatory_1": {
+   "row": 27,
+   "rows": 16,
+   "poses": 9,
+   "vertices": 15848,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "observatory_2": {
+   "row": 171,
+   "rows": 15,
+   "poses": 9,
+   "vertices": 14910,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  }
+ },
+ "source": {
+  "file": "observatory.glb",
+  "bytes": 5806164,
+  "mtime": 1790833917
+ }
+}

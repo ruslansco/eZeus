@@ -1,0 +1,85 @@
+{
+  "asset": "walker_sick",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_sick.glb",
+  "bytes": 5312384,
+  "vertices": 15959,
+  "surfaces": 3,
+  "source_surfaces": 17,
+  "bounds_blender": [
+    [
+      -0.18013137578964233,
+      -0.19100943207740784,
+      -4.4971704483032227e-05
+    ],
+    [
+      0.18897345662117004,
+      0.25487208366394043,
+      0.8330036401748657
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Sick",
+        "sex": "male",
+        "profile": {
+          "age": 56,
+          "jaw": 1.0899999999999999,
+          "cheek": 1.03,
+          "nose": 0.002,
+          "chin": 0.003,
+          "eye": 0.97,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0.013,
+          "grey": 0.08,
+          "seed": 1983423296,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "b7563fa5e14dcc3f6661dc21827f606324d803c2fef9d445b755654790884887",
+        "clavi_srgb": [
+          0.45,
+          0.28,
+          0.2
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 61,
+    "uv_attributes_removed": 0
+  }
+}

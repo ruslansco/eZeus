@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eqh7j"]
+albedo_color = Color(0.44313726, 0.7607843, 0.7411765, 1)
+metallic = 0.6
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_1ge1x"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_d1ncy"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_i7bax"]
+
+[node name="Orichalcum" type="Node3D" unique_id=608531765]
+
+[node name="@MeshInstance3D@166" type="MeshInstance3D" parent="." unique_id=1809505686]
+transform = Transform3D(0.46951085, 0, 0.16632937, 0, 0.25, 0, -0.099797614, 0, 0.7825181, -0.26, 0.15, 0)
+material_override = SubResource("StandardMaterial3D_eqh7j")
+mesh = SubResource("BoxMesh_1ge1x")
+
+[node name="@MeshInstance3D@167" type="MeshInstance3D" parent="." unique_id=665930123]
+transform = Transform3D(0.46951085, 0, 0.16632937, 0, 0.25, 0, -0.099797614, 0, 0.7825181, 0.26, 0.15, 0)
+material_override = SubResource("StandardMaterial3D_eqh7j")
+mesh = SubResource("BoxMesh_d1ncy")
+
+[node name="@MeshInstance3D@168" type="MeshInstance3D" parent="." unique_id=1411708622]
+transform = Transform3D(0.46951085, 0, 0.16632937, 0, 0.25, 0, -0.099797614, 0, 0.7825181, -0.26, 0.43, 0)
+material_override = SubResource("StandardMaterial3D_eqh7j")
+mesh = SubResource("BoxMesh_i7bax")

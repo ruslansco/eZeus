@@ -1,0 +1,21 @@
+{
+  "asset": "granary_food_oranges",
+  "file": "granary_food_oranges.glb",
+  "bytes": 42764,
+  "vertices": 471,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      0.1901015043258667,
+      0.019614756107330322,
+      0.011999964714050293
+    ],
+    [
+      1.1763625144958496,
+      0.7663487195968628,
+      0.25202882289886475
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

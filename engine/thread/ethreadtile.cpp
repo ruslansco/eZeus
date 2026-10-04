@@ -37,7 +37,8 @@ void eThreadTile::load(eTile* const src) {
 }
 
 bool eThreadTile::hasRoad() const {
-    return mUnderBuilding.type() == eBuildingType::road;
+    const auto t = mUnderBuilding.type();
+    return t == eBuildingType::road || t == eBuildingType::avenue || t == eBuildingType::boulevard;
 }
 
 bool eThreadTile::hasCharacter(const eHasChar& func) const {

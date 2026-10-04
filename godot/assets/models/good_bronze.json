@@ -1,0 +1,21 @@
+{
+  "asset": "good_bronze",
+  "file": "good_bronze.glb",
+  "bytes": 97532,
+  "vertices": 672,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.1495625376701355,
+      -0.14126300811767578,
+      -0.013000000268220901
+    ],
+    [
+      0.37973451614379883,
+      0.39159178733825684,
+      0.10899999737739563
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

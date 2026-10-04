@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 342,
+ "parts": {
+  "foundry_4": {
+   "row": 0,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 16526,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004864931106567383
+  },
+  "foundry_6": {
+   "row": 153,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 16666,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "foundry_10": {
+   "row": 306,
+   "rows": 4,
+   "poses": 9,
+   "vertices": 3772,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0002440810203552246
+  }
+ },
+ "source": {
+  "file": "foundry.glb",
+  "bytes": 7046928,
+  "mtime": 1790834149
+ }
+}

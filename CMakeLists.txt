@@ -104,6 +104,8 @@ add_executable(eZeus
     buildings/eavailablebuildings.h
     buildings/eavenue.cpp
     buildings/eavenue.h
+    buildings/eboulevard.cpp
+    buildings/eboulevard.h
     buildings/ebibliotheke.cpp
     buildings/ebibliotheke.h
     buildings/eblackmarbleworkshop.cpp
@@ -182,6 +184,8 @@ add_executable(eZeus
     buildings/ehospital.cpp
     buildings/ehospital.h
     buildings/ehousebase.cpp
+    buildings/ehouseneeds.cpp
+    buildings/ehouseneeds.h
     buildings/ehousebase.h
     buildings/ehuntinglodge.cpp
     buildings/ehuntinglodge.h
@@ -2844,10 +2848,18 @@ add_executable(eZeus
     widgets/emessagetoast.h
     widgets/ehousehovercard.cpp
     widgets/ehousehovercard.h
+    widgets/eshortcutsheet.cpp
+    widgets/eshortcutsheet.h
+    widgets/etipbanner.cpp
+    widgets/etipbanner.h
+    widgets/eweather.cpp
+    widgets/eweather.h
     widgets/ecityhistorywidget.cpp
     widgets/ecityhistorywidget.h
     widgets/etradesummarywidget.cpp
     widgets/etradesummarywidget.h
+    widgets/ecityadvisorwidget.cpp
+    widgets/ecityadvisorwidget.h
     widgets/epanelstyle.h
     widgets/epanelwidgets.cpp
     widgets/epanelwidgets.h
@@ -3394,6 +3406,8 @@ target_include_directories(eZeus PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_sources(eZeus PRIVATE presentation/e3dbridge.cpp presentation/e3dbridge.h)
+
 include(GNUInstallDirs)
 install(TARGETS eZeus
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -3420,3 +3434,23 @@ target_link_libraries(eZeus PRIVATE SDL2::SDL2)
 target_link_libraries(eZeus PRIVATE SDL2_ttf::SDL2_ttf)
 target_link_libraries(eZeus PRIVATE SDL2_image::SDL2_image)
 target_link_libraries(eZeus PRIVATE SDL2_mixer::SDL2_mixer)
+
+# The headless simulation and legacy view share exactly the same stepping order.
+target_sources(eZeus PRIVATE engine/esimulationstep.cpp engine/estatedigest.cpp engine/eagoraplacement.cpp engine/eadventurelist.cpp engine/eshoreplacement.cpp engine/ebuildplacement.cpp engine/ecitydata.cpp engine/ebuildinginfotext.cpp engine/echaracterinfotext.cpp engine/etradepartners.cpp)
+option(EZEUS_BUILD_GODOT_EXTENSION "Embed the existing simulation in Godot" OFF)
+if(EZEUS_BUILD_GODOT_EXTENSION)
+    set(GODOTCPP_API_VERSION "4.6" CACHE STRING "" FORCE)
+    set(GODOTCPP_BUILD_PROFILE "${CMAKE_CURRENT_SOURCE_DIR}/presentation/godot/build_profile.json" CACHE PATH "" FORCE)
+    set(GODOTCPP_TARGET "template_release" CACHE STRING "" FORCE)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../tools/godot-cpp" godot-cpp EXCLUDE_FROM_ALL)
+    get_target_property(EZEUS_SOURCES eZeus SOURCES)
+    list(FILTER EZEUS_SOURCES INCLUDE REGEX "\\.cpp$")
+    list(FILTER EZEUS_SOURCES EXCLUDE REGEX "^main\\.cpp$")
+    add_library(ezeus_godot SHARED ${EZEUS_SOURCES}
+        presentation/esimulationservice.cpp presentation/godot/register_types.cpp)
+    target_include_directories(ezeus_godot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    get_target_property(EZEUS_SDL_INCLUDE SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
+    target_include_directories(ezeus_godot SYSTEM PRIVATE ${EZEUS_SDL_INCLUDE})
+    target_link_libraries(ezeus_godot PRIVATE godot::cpp "${CMAKE_CURRENT_SOURCE_DIR}/godot/bin/libSDL2-2.0.0.dylib" SDL2_ttf::SDL2_ttf SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer)
+    set_target_properties(ezeus_godot PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/godot/bin")
+endif()

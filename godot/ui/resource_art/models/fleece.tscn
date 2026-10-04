@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_md44t"]
+albedo_color = Color(0.9490196, 0.9019608, 0.79607844, 1)
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_sh8bx"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_ljfaw"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_354oy"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_mssud"]
+radial_segments = 16
+rings = 8
+
+[node name="Fleece" type="Node3D" unique_id=1479721044]
+
+[node name="@MeshInstance3D@139" type="MeshInstance3D" parent="." unique_id=53014200]
+transform = Transform3D(0.6, 0, 0, 0, 0.52, 0, 0, 0, 0.6, -0.25, 0.23, 0)
+material_override = SubResource("StandardMaterial3D_md44t")
+mesh = SubResource("SphereMesh_sh8bx")
+
+[node name="@MeshInstance3D@140" type="MeshInstance3D" parent="." unique_id=1900951902]
+transform = Transform3D(0.6, 0, 0, 0, 0.52, 0, 0, 0, 0.6, 0.25, 0.23, 0)
+material_override = SubResource("StandardMaterial3D_md44t")
+mesh = SubResource("SphereMesh_ljfaw")
+
+[node name="@MeshInstance3D@141" type="MeshInstance3D" parent="." unique_id=435773822]
+transform = Transform3D(0.6, 0, 0, 0, 0.52, 0, 0, 0, 0.6, 0, 0.45, 0)
+material_override = SubResource("StandardMaterial3D_md44t")
+mesh = SubResource("SphereMesh_354oy")
+
+[node name="@MeshInstance3D@142" type="MeshInstance3D" parent="." unique_id=1144709163]
+transform = Transform3D(0.6, 0, 0, 0, 0.52, 0, 0, 0, 0.6, 0, 0.23, 0.25)
+material_override = SubResource("StandardMaterial3D_md44t")
+mesh = SubResource("SphereMesh_mssud")

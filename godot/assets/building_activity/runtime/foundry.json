@@ -1,0 +1,38 @@
+{
+  "asset": "foundry",
+  "source": "art/foundry/build_sprites.py",
+  "file": "foundry.glb",
+  "bytes": 7046928,
+  "vertices": 31057,
+  "surfaces": 6,
+  "source_surfaces": 51,
+  "bounds_blender": [
+    [
+      -0.9900000095367432,
+      -0.9900000095367432,
+      -0.001999999862164259
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      1.705392837524414
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 61,
+    "allocation_target": 35000,
+    "base_sha256": "e9a3351e64bf94a74121f642aa7d64e523dbbe464dd298c07f4f32f14f520f55",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

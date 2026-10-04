@@ -69,14 +69,16 @@ public:
     eKeyPressEvent(const int x, const int y,
                    const bool shift, const bool ctrl,
                    const eMouseButton buttons,
-                   const SDL_Scancode key);
+                   const SDL_Scancode key, const bool repeat = false);
 
     eKeyPressEvent translated(const int x, const int y) const;
     eKeyPressEvent withPosition(const int x, const int y) const;
 
     SDL_Scancode key() const { return mKey; }
+    bool repeat() const { return mRepeat; }
 private:
     SDL_Scancode mKey;
+    bool mRepeat;
 };
 
 #endif // EMOUSEEVENT_H

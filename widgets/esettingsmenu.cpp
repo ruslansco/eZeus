@@ -248,6 +248,7 @@ void eSettingsMenu::initialize(const eApplyAction &settingsA,
           [this](const eKeyBindings &b) { mSettings.fKeyBindings = b; });
       cm->initialize();
       window()->execDialog(cm);
+      cm->align(eAlignment::center);
     });
     left->addWidget(controlsBtn);
   }
@@ -278,6 +279,44 @@ void eSettingsMenu::initialize(const eApplyAction &settingsA,
       buttons->push_back(b);
       right->addWidget(b);
     }
+
+    // --- game ---------------------------------------------------------------
+    const int rows = (static_cast<int>(ress.size()) + cols - 1) / cols;
+    int gy = ry + rows * (bh + U(10)) + U(20);
+    gy = heading(right, tr("menu_game", "Game"), gy);
+    const auto check = [&](const bool checked, const eCheckAction &a,
+                           const std::string &text) {
+      const auto w = new eWidget(window());
+      w->setNoPadding();
+      const auto b = new eCheckBox(window());
+      b->setNoPadding();
+      b->setChecked(checked);
+      b->setCheckAction(a);
+      b->fitContent();
+      const auto l = new eLabel(window());
+      l->setNoPadding();
+      l->setSmallFontSize();
+      l->setText(text);
+      l->fitContent();
+      w->addWidget(b);
+      w->addWidget(l);
+      l->setX(b->width() + p);
+      w->fitContent();
+      right->addWidget(w);
+      w->move(0, gy);
+      gy += w->height() + U(8);
+    };
+    check(
+        mSettings.fMonthlySummary,
+        [this](const bool c) { mSettings.fMonthlySummary = c; },
+        tr("menu_monthly_summary", "Monthly summary card"));
+    check(
+        mSettings.fWeather, [this](const bool c) { mSettings.fWeather = c; },
+        tr("menu_weather", "Seasons and weather"));
+    check(
+        mSettings.fClassicFont,
+        [this](const bool c) { mSettings.fClassicFont = c; },
+        tr("menu_classic_font", "Classic font for all text"));
   }
 
   // --- action bar

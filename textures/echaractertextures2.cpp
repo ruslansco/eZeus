@@ -35,6 +35,7 @@ void eCharacterTextures::loadJason() {
                                  eJasonSpriteData45,
                                  eJasonSpriteData60);
     fJasonLoaded = true;
+    if(loadStatesHD({{"walk", &fJason.fWalk}, {"fight", &fJason.fFight}, {"die", &fJason.fDie}}, fRenderer, fTileH, "jason")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "jason", sds,
                          &eZeus_jasonOffset, fRenderer);
 
@@ -51,6 +52,7 @@ void eCharacterTextures::loadOdysseus() {
                                  eOdysseusSpriteData45,
                                  eOdysseusSpriteData60);
     fOdysseusLoaded = true;
+    if(loadStatesHD({{"walk", &fOdysseus.fWalk}, {"fight", &fOdysseus.fFight}, {"die", &fOdysseus.fDie}}, fRenderer, fTileH, "odysseus")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "odysseus", sds,
                          &eZeus_odysseusOffset, fRenderer);
 
@@ -67,6 +69,7 @@ void eCharacterTextures::loadPerseus() {
                                  ePerseusSpriteData45,
                                  ePerseusSpriteData60);
     fPerseusLoaded = true;
+    if(loadStatesHD({{"walk", &fPerseus.fWalk}, {"fight", &fPerseus.fFight}, {"die", &fPerseus.fDie}}, fRenderer, fTileH, "perseus")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "perseus", sds,
                          &eZeus_perseusOffset, fRenderer);
 
@@ -83,6 +86,7 @@ void eCharacterTextures::loadTheseus() {
                                  eTheseusSpriteData45,
                                  eTheseusSpriteData60);
     fTheseusLoaded = true;
+    if(loadStatesHD({{"walk", &fTheseus.fWalk}, {"fight", &fTheseus.fFight}, {"die", &fTheseus.fDie}}, fRenderer, fTileH, "theseus")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "theseus", sds,
                          &eZeus_theseusOffset, fRenderer);
 

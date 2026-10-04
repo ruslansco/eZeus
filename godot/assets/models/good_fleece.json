@@ -1,0 +1,21 @@
+{
+  "asset": "good_fleece",
+  "file": "good_fleece.glb",
+  "bytes": 176420,
+  "vertices": 2408,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -5.714285850524902,
+      -3.5714282989501953,
+      -7.920299053192139
+    ],
+    [
+      13.494206428527832,
+      14.387063980102539,
+      1.0676045417785645
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

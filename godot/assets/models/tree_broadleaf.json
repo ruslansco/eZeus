@@ -1,0 +1,33 @@
+{
+  "asset": "tree_broadleaf",
+  "source": "art/terrain/build_trees.py",
+  "file": "tree_broadleaf.glb",
+  "bytes": 105848,
+  "vertices": 882,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.691186785697937,
+      -0.5681373476982117,
+      -0.00014002724492456764
+    ],
+    [
+      0.5954068303108215,
+      0.6935359835624695,
+      1.8061480522155762
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "source_surfaces": 2,
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 0,
+    "targets_after": 0,
+    "uv_attributes_removed": 0
+  }
+}

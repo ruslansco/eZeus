@@ -1,0 +1,86 @@
+{
+  "asset": "walker_medusa",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_medusa.glb",
+  "bytes": 12590508,
+  "vertices": 15436,
+  "surfaces": 3,
+  "source_surfaces": 24,
+  "bounds_blender": [
+    [
+      -0.3583310842514038,
+      -0.3104580342769623,
+      0.0008000165107659996
+    ],
+    [
+      0.3079070448875427,
+      1.055999994277954,
+      1.4060403108596802
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Medusa",
+        "sex": "female",
+        "profile": {
+          "age": 30,
+          "soft_features": true,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 0.9,
+          "cheek": 0.96,
+          "nose": 0.002,
+          "chin": 0.0,
+          "eye": 1.03,
+          "hair": [
+            [
+              0.1,
+              0.18,
+              0.06
+            ],
+            [
+              0.2,
+              0.3,
+              0.1
+            ]
+          ],
+          "hair_length": 0.01,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 71606
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "6fe539500d366f1f80642f342b8720510a89b17a405f13fa859667082841997c",
+        "clavi_srgb": [
+          0.4,
+          0.1,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 264,
+    "targets_after": 179,
+    "uv_attributes_removed": 0
+  }
+}

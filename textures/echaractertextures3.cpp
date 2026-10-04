@@ -35,6 +35,7 @@ void eCharacterTextures::loadAchilles() {
                                  eAchillesSpriteData45,
                                  eAchillesSpriteData60);
     fAchillesLoaded = true;
+    if(loadStatesHD({{"walk", &fAchilles.fWalk}, {"fight", &fAchilles.fFight}, {"die", &fAchilles.fDie}}, fRenderer, fTileH, "achilles")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "achilles", sds,
                          &eZeus_achillesOffset, fRenderer);
 
@@ -51,6 +52,7 @@ void eCharacterTextures::loadAtalanta() {
                                  eAtalantaSpriteData45,
                                  eAtalantaSpriteData60);
     fAtalantaLoaded = true;
+    if(loadStatesHD({{"walk", &fAtalanta.fWalk}, {"fight", &fAtalanta.fFight}, {"die", &fAtalanta.fDie}}, fRenderer, fTileH, "atalanta")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "atalanta", sds,
                          &ePoseidon_AtalantaOffset, fRenderer);
 
@@ -67,6 +69,7 @@ void eCharacterTextures::loadBellerophon() {
                                  eBellerophonSpriteData45,
                                  eBellerophonSpriteData60);
     fBellerophonLoaded = true;
+    if(loadStatesHD({{"walk", &fBellerophon.fWalk}, {"fight", &fBellerophon.fFight}, {"die", &fBellerophon.fDie}}, fRenderer, fTileH, "bellerophon")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "bellerophon", sds,
                          &ePoseidon_BellerophonOffset, fRenderer);
 
@@ -83,6 +86,7 @@ void eCharacterTextures::loadHeracles() {
                                  eHeraclesSpriteData45,
                                  eHeraclesSpriteData60);
     fHeraclesLoaded = true;
+    if(loadStatesHD({{"walk", &fHercules.fWalk}, {"fight", &fHercules.fFight}, {"die", &fHercules.fDie}}, fRenderer, fTileH, "hercules")) return;   // art/characters/people/people5.py
     eSpriteLoader loader(fTileH, "heracles", sds,
                          &eZeus_heraclesOffset, fRenderer);
 

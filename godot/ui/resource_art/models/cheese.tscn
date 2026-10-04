@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fc6ol"]
+albedo_color = Color(0.92941177, 0.76862746, 0.36862746, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_f7h83"]
+height = 0.3
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nxtkq"]
+albedo_color = Color(0.7058824, 0.53333336, 0.22352941, 1)
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_1f4fh"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_s20qw"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_6f5hu"]
+radial_segments = 16
+rings = 8
+
+[node name="Cheese" type="Node3D" unique_id=1133332988]
+
+[node name="@MeshInstance3D@60" type="MeshInstance3D" parent="." unique_id=718774761]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_fc6ol")
+mesh = SubResource("CylinderMesh_f7h83")
+
+[node name="@MeshInstance3D@61" type="MeshInstance3D" parent="." unique_id=1104211056]
+transform = Transform3D(0.12, 0, 0, 0, 0.012, 0, 0, 0, 0.12, -0.15, 0.405, 0.14)
+material_override = SubResource("StandardMaterial3D_nxtkq")
+mesh = SubResource("SphereMesh_1f4fh")
+
+[node name="@MeshInstance3D@62" type="MeshInstance3D" parent="." unique_id=532690155]
+transform = Transform3D(0.12, 0, 0, 0, 0.012, 0, 0, 0, 0.12, 0.2, 0.405, 0.1)
+material_override = SubResource("StandardMaterial3D_nxtkq")
+mesh = SubResource("SphereMesh_s20qw")
+
+[node name="@MeshInstance3D@63" type="MeshInstance3D" parent="." unique_id=1270235191]
+transform = Transform3D(0.12, 0, 0, 0, 0.012, 0, 0, 0, 0.12, 0.06, 0.405, -0.24)
+material_override = SubResource("StandardMaterial3D_nxtkq")
+mesh = SubResource("SphereMesh_6f5hu")

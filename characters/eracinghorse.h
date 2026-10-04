@@ -12,6 +12,9 @@ public:
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;
 
+    // Which of the four racing teams (the colour of its sprites).
+    int team() const { return mId % 4; }
+
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
 private:

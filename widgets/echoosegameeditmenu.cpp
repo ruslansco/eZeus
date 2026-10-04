@@ -21,6 +21,7 @@
 #include "estringhelpers.h"
 #include "elanguage.h"
 #include "egamedir.h"
+#include "engine/eadventurelist.h"
 #include "audio/esounds.h"
 
 #include <filesystem>
@@ -29,65 +30,6 @@ namespace fs = std::filesystem;
 
 #include "pak/zeusfile.h"
 #include "pak/epakhelpers.h"
-
-bool readPakGlossary(const std::string& filename,
-                     eCampaignGlossary& glossary) {
-    glossary.fIsPak = true;
-    const auto name = eStringHelpers::pathToName(filename);
-//    const bool test = name.find("Test") != name.npos;
-//    if(test && name != "Test6.pak") return false;
-    const auto ext = name.substr(name.size() - 3);
-    if(ext != "pak") return false;
-    std::string txtFile = filename.substr(0, filename.size() - 3) + "txt";
-    if(eLanguage::language() == "ru") {
-        const auto ruTxtFile = filename.substr(0, filename.size() - 3) + "_ru.txt";
-        std::ifstream ruFile(ruTxtFile);
-        if(ruFile.good()) {
-            txtFile = ruTxtFile;
-        }
-    }
-    glossary.fPakPath = filename;
-    std::ifstream file(txtFile);
-    ZeusFile in(filename);
-    in.readVersion();
-    const auto version = in.version();
-    const bool poseidon = version == eZeusFileVersion::poseidon_2_0;
-    uint8_t bitmapId;
-    if(poseidon) {
-        in.seek(836249);
-    } else {
-        in.seek(835185);
-    }
-    bitmapId = in.readUByte();
-    glossary.fBitmap = ePakHelpers::pakBitmapIdConvert(bitmapId);
-    if(file.good()) {
-        std::map<std::string, std::string> map;
-        const bool r = eCampaign::sLoadStrings(txtFile, map);
-        if(!r) return false;
-        glossary.fTitle = map["Adventure_Title"];
-        glossary.fIntroduction = map["Adventure_Introduction"];
-        glossary.fComplete = map["Adventure_Complete"];
-    } else {
-        const std::vector<char> special = {'@', '[', '&', ']',
-                                           '{', '}', '^', '#'};
-        bool found = false;
-        for(const auto c : special) {
-            const auto pos = std::find(name.begin(), name.end(), c);
-            if(pos != name.end()) {
-                found = true;
-                break;
-            }
-        }
-        if(!found) return false;
-        in.seek(35648);
-        const auto briefId = in.readUShort();
-
-        const auto brief = eLanguage::zeusMM(briefId);
-        glossary.fTitle = brief.fTitle;
-        glossary.fIntroduction = brief.fContent;
-    }
-    return true;
-}
 
 namespace {
 std::string tr(const std::string& key, const std::string& fallback) {
@@ -165,42 +107,7 @@ void eChooseGameEditMenu::initialize(const bool editor) {
     mEditor = editor;
     setBackAction([this]() { window()->showMainMenu(); });
 
-    std::vector<eCampaignGlossary> glossaries;
-    {
-        const auto folder = eGameDir::adventuresDir();
-        std::filesystem::create_directories(folder);
-        for(const auto& entry : fs::directory_iterator(folder)) {
-            const bool dir = entry.is_directory();
-            if(!dir) continue;
-            const auto path = entry.path();
-            const std::string pathStr = path.u8string();
-            const auto name = eStringHelpers::pathToName(pathStr);
-            eCampaignGlossary glossary;
-            const bool r = eCampaign::sReadGlossary(name, glossary);
-            if(r) glossaries.push_back(glossary);
-        }
-    }
-    {
-        std::function<void(std::string)> procesFolder;
-        procesFolder = [&](const std::string& folder) {
-            for(const auto& entry : fs::directory_iterator(folder)) {
-                const bool dir = entry.is_directory();
-                const auto path = entry.path();
-                const std::string pathStr = path.u8string();
-                if(dir) {
-                    procesFolder(pathStr);
-                    continue;
-                }
-                const auto ext = pathStr.substr(pathStr.size() - 3);
-                if(ext != "pak") continue;
-                eCampaignGlossary glossary;
-                const bool r = readPakGlossary(pathStr, glossary);
-                if(r) glossaries.push_back(glossary);
-            }
-        };
-        const auto folder = eGameDir::pakAdventuresDir();
-        procesFolder(folder);
-    }
+    const auto glossaries = eAdventureList::scan();
     mGlossaries = glossaries;
 
     const auto res = resolution();

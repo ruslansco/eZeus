@@ -1,6 +1,8 @@
 #include "ecorral.h"
 
 #include "textures/egametextures.h"
+#include "engine/egameboard.h"
+#include "buildings/ehdoverlays.h"
 #include "characters/ebutcher.h"
 #include "characters/ecattle.h"
 #include "characters/actions/efollowaction.h"
@@ -16,11 +18,16 @@ eCorral::eCorral(eGameBoard& board,
                           4, 4, 25, eResourceType::meat,
                           cid) {
     eGameTextures::loadCorral();
+    eGameTextures::loadRemastered("corral", 4);
 }
 
 std::shared_ptr<eTexture> eCorral::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings();
+    // Remastered Roman cattle yard: the butcher works while an ox is being processed.
+    if(const auto hd = blds[sizeId].remastered("corral")) {
+        return (*hd)[static_cast<int>(getBoard().direction())][mProcessing > 0 ? hdAnimFrame() : 8];
+    }
     return blds[sizeId].fCorral;
 }
 
@@ -29,6 +36,14 @@ std::vector<eOverlay> eCorral::getOverlays(const eTileSize size) const {
     const auto& blds = eGameTextures::buildings();
     const auto& texs = blds[sizeId];
     std::vector<eOverlay> result;
+    if(const auto hd = texs.remastered("corral")) {
+        // oxen in the pen and sides of meat on the rack, rendered in the building's scene
+        const int dir = static_cast<int>(getBoard().direction());
+        const auto& set = texs.hdOverlays("corral");
+        if(mNCattle > 0) eAddHDStock(result, set, *hd, "cattle", mNCattle, dir, sizeId);
+        if(resource() > 0) eAddHDStock(result, set, *hd, "meat", resource(), dir, sizeId);
+        return result;
+    }
     if(resource() > 0) {
         const int res = std::clamp(resource() - 1, 0, 4);
         auto& meat = result.emplace_back();

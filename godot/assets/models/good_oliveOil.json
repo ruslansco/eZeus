@@ -1,0 +1,21 @@
+{
+  "asset": "good_oliveOil",
+  "file": "good_oliveOil.glb",
+  "bytes": 221840,
+  "vertices": 2720,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.3514999747276306,
+      -0.33149999380111694,
+      -0.009999999776482582
+    ],
+    [
+      0.37783780694007874,
+      0.3578377962112427,
+      0.3229999840259552
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

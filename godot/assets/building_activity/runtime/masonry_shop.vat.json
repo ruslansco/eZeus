@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 81,
+ "parts": {
+  "masonry_shop_9": {
+   "row": 0,
+   "rows": 4,
+   "poses": 9,
+   "vertices": 3756,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024402141571044922
+  },
+  "masonry_shop_10": {
+   "row": 36,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 122,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004717111587524414
+  },
+  "masonry_shop_13": {
+   "row": 45,
+   "rows": 4,
+   "poses": 9,
+   "vertices": 3862,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004448890686035156
+  }
+ },
+ "source": {
+  "file": "masonry_shop.glb",
+  "bytes": 1290064,
+  "mtime": 1790834133
+ }
+}

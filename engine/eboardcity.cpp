@@ -1,6 +1,7 @@
 #include "eboardcity.h"
 
 #include "buildings/ebuilding.h"
+#include "edifficulty.h"
 #include "buildings/eemployingbuilding.h"
 #include "buildings/estoragebuilding.h"
 #include "buildings/esmallhouse.h"
@@ -402,6 +403,62 @@ void eBoardCity::warnShortages() {
     }
 }
 
+void eBoardCity::warnRisks() {
+    // Buildings whose maintenance has run down catch fire or collapse
+    // (eBuilding::timeChanged): say so while there is time to send a
+    // maintenance office. Unrest: when it passes 25% and is still rising.
+    const auto& ss = mHistory.samples();
+    if(ss.empty()) return;
+    const int month = ss.back().monthIndex();
+    const auto diff = mBoard.difficulty(owningPlayerId());
+    const auto warn = [&](const int key, const int kind, const int count,
+                          eBuilding* const worst, const int again) {
+        const int last = mHistory.lastWarning(key);
+        if(last >= 0 && month - last < again) return;
+        mHistory.setLastWarning(key, month);
+        eEventData ed(mId);
+        ed.fTime = kind;
+        ed.fResourceCount = count;
+        if(worst) {
+            ed.fTile = worst->centerTile();
+            ed.fReason = eBuilding::sNameForBuilding(worst);
+        }
+        mBoard.event(eEvent::riskWarning, ed);
+    };
+    int fire = 0;
+    int collapse = 0;
+    eBuilding* worstFire = nullptr;
+    eBuilding* worstCollapse = nullptr;
+    for(const auto b : mAllBuildings) {
+        if(!b || b->isOnFire()) continue;
+        const auto type = b->type();
+        const int m = b->maintenance();
+        if(m >= 25) continue;
+        if(eBuilding::sFlammable(type) && eDifficultyHelpers::fireRisk(diff, type) > 0) {
+            fire++;
+            if(!worstFire || m < worstFire->maintenance()) worstFire = b;
+        }
+        if(eDifficultyHelpers::damageRisk(diff, type) > 0) {
+            collapse++;
+            if(!worstCollapse || m < worstCollapse->maintenance()) worstCollapse = b;
+        }
+    }
+    const int fireKey = -1;
+    const int collapseKey = -2;
+    const int unrestKey = -3;
+    if(fire >= 3 || (worstFire && worstFire->maintenance() < 10)) {
+        warn(fireKey, 0, fire, worstFire, 4);
+    }
+    if(collapse >= 3 || (worstCollapse && worstCollapse->maintenance() < 10)) {
+        warn(collapseKey, 1, collapse, worstCollapse, 4);
+    }
+    if(ss.size() >= 2) {
+        const int now = ss.back().fUnrest;
+        const int before = ss[ss.size() - 2].fUnrest;
+        if(now >= 25 && now > before) warn(unrestKey, 2, now, nullptr, 6);
+    }
+}
+
 void eBoardCity::nextYear() {
     mTradeLedger.nextYear();
     mTaxesPaidLastYear = mTaxesPaidThisYear;
@@ -598,6 +655,11 @@ void eBoardCity::nextMonth() {
     if(personPlayerOwner()) {
         recordHistory();
         warnShortages();
+        warnRisks();
+        if(mHistory.samples().size() >= 2) {
+            eEventData ed(mId);
+            mBoard.event(eEvent::monthlySummary, ed);
+        }
     }
 
     const auto date = mBoard.date();
@@ -1212,6 +1274,12 @@ void eBoardCity::destroyed(const eBuildingType type,
 void eBoardCity::allow(const eBuildingType type,
                        const int id) {
     mAvailableBuildings.allow(type, id);
+    mBoard.updateButtonsVisibility();
+}
+
+void eBoardCity::allowPyramid(const eBuildingType type,
+                              const std::vector<bool>& levels) {
+    mAvailableBuildings.allowPyramid(type, levels);
     mBoard.updateButtonsVisibility();
 }
 

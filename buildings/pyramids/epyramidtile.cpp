@@ -37,7 +37,9 @@ stdsptr<eTexture> ePyramidTile::getTexture(const eTileSize size) const {
         const auto p = static_cast<ePyramid*>(m);
         const bool isDark = e < 0 ? false : p->darkLevel(e);
         if(isDark) return blds.fPyramid2.getTexture(33 - 1);
-        else return blds.fPalaceTiles.getTexture(0);
+        const auto& hd = blds.fPalaceTileHD[0];          // the Roman palace paving (art/palace_tiles)
+        if(hd[0][0]) return hd[0][0];
+        return blds.fPalaceTiles.getTexture(0);
     } else if(mType == 1) {
         return blds.fPyramid2.getTexture(34 - 1);
     } else if(mType == 2) {

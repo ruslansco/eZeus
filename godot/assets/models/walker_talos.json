@@ -1,0 +1,85 @@
+{
+  "asset": "walker_talos",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_talos.glb",
+  "bytes": 12780988,
+  "vertices": 15778,
+  "surfaces": 3,
+  "source_surfaces": 7,
+  "bounds_blender": [
+    [
+      -0.38008254766464233,
+      -0.28558266162872314,
+      0.0009500266751274467
+    ],
+    [
+      0.37821701169013977,
+      0.3023959696292877,
+      1.573196530342102
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Talos",
+        "sex": "male",
+        "profile": {
+          "age": 35,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 1.15,
+          "cheek": 1.0,
+          "nose": 0.003,
+          "chin": 0.006,
+          "eye": 1.0,
+          "hair": [
+            [
+              0.3,
+              0.18,
+              0.06
+            ],
+            [
+              0.5,
+              0.32,
+              0.12
+            ]
+          ],
+          "hair_length": 0.02,
+          "beard_length": 0.02,
+          "grey": 0,
+          "seed": 71202
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "6124fcc4ef52c51ef259261e0ad8b1f6450b3e151f23f3cd8da62c8b377d5c1f",
+        "clavi_srgb": [
+          0.62,
+          0.4,
+          0.18
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 255,
+    "targets_after": 158,
+    "uv_attributes_removed": 0
+  }
+}

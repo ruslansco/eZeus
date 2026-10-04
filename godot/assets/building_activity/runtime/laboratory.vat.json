@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 333,
+ "parts": {
+  "laboratory_0": {
+   "row": 0,
+   "rows": 2,
+   "poses": 9,
+   "vertices": 1200,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024390220642089844
+  },
+  "laboratory_1": {
+   "row": 18,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 16446,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048792362213134766
+  },
+  "laboratory_2": {
+   "row": 171,
+   "rows": 18,
+   "poses": 9,
+   "vertices": 18303,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  }
+ },
+ "source": {
+  "file": "laboratory.glb",
+  "bytes": 5325964,
+  "mtime": 1790833943
+ }
+}

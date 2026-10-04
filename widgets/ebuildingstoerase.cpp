@@ -43,7 +43,8 @@ bool isNonEmptyAgora(eBuilding* const b) {
     return a->hasVendors();
 }
 
-void eBuildingsToErase::addBuilding(eBuilding* const b) {
+eBuilding* eBuildingsToErase::target(eBuilding* const b) {
+    if(!b) return nullptr;
     eBuilding* bb = b;
     const auto t = b->type();
     if(t == eBuildingType::agoraSpace) {
@@ -73,6 +74,12 @@ void eBuildingsToErase::addBuilding(eBuilding* const b) {
         const auto s = sb->monument();
         if(s) bb = s;
     }
+    return bb;
+}
+
+void eBuildingsToErase::addBuilding(eBuilding* const b) {
+    const auto bb = target(b);
+    if(!bb) return;
     if(isNonEmptyAgora(bb)) {
         mAgoBs.insert(bb);
     } else if(isImportant(bb)) {

@@ -1,0 +1,319 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/world_map.gd" id="1_jsrsj"]
+[ext_resource type="Theme" path="res://ui/lapis_gold.tres" id="2_kkwua"]
+[ext_resource type="Script" path="res://scripts/world_atlas.gd" id="3_atlas"]
+
+[node name="WorldMap" type="CanvasLayer" unique_id=604718238]
+layer = 30
+visible = false
+script = ExtResource("1_jsrsj")
+
+[node name="Themed" type="Control" parent="." unique_id=970260024]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("2_kkwua")
+
+[node name="Sea" type="ColorRect" parent="Themed" unique_id=949842402]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.03, 0.06, 0.12, 1)
+
+[node name="Margin" type="MarginContainer" parent="Themed" unique_id=1357800925]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Row" type="HBoxContainer" parent="Themed/Margin" unique_id=2047290263]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="MapFrame" type="PanelContainer" parent="Themed/Margin/Row" unique_id=1301147352]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Card"
+
+[node name="MapBox" type="Control" parent="Themed/Margin/Row/MapFrame" unique_id=674911477]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Map" type="TextureRect" parent="Themed/Margin/Row/MapFrame/MapBox" unique_id=636500942]
+visible = false
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Atlas" type="SubViewportContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+script = ExtResource("3_atlas")
+
+[node name="Markers" type="Control" parent="Themed/Margin/Row/MapFrame/MapBox" unique_id=1148425150]
+unique_name_in_owner = true
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="AtlasHeading" type="VBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 620.0
+offset_bottom = 95.0
+mouse_filter = 2
+
+[node name="AtlasTitle" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AtlasTitle"
+theme_override_colors/font_shadow_color = Color(0.01, 0.04, 0.07, 0.95)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 3
+text = "The Aegean world"
+mouse_filter = 2
+
+[node name="AtlasCaption" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+theme_override_colors/font_color = Color(0.8, 0.87, 0.85, 1)
+theme_override_colors/font_shadow_color = Color(0.01, 0.04, 0.07, 1)
+theme_override_constants/shadow_offset_y = 2
+text = "City states of the ancient world"
+mouse_filter = 2
+
+[node name="AtlasControls" type="HBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -230.0
+offset_top = -101.0
+offset_right = 230.0
+offset_bottom = -55.0
+theme_override_constants/separation = 6
+
+[node name="AtlasOverview" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+size_flags_horizontal = 3
+text = "Overview"
+
+[node name="AtlasFocus" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+size_flags_horizontal = 3
+text = "Focus city"
+
+[node name="AtlasZoomOut" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+custom_minimum_size = Vector2(44, 0)
+text = "−"
+tooltip_text = "Zoom out"
+
+[node name="AtlasZoomIn" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+custom_minimum_size = Vector2(44, 0)
+text = "+"
+tooltip_text = "Zoom in"
+
+[node name="AtlasHint" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox"]
+unique_name_in_owner = true
+anchor_left = 0.08
+anchor_top = 1.0
+anchor_right = 0.92
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = -50.0
+offset_right = 0.0
+offset_bottom = -8.0
+theme_type_variation = &"AtlasHint"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+text = "Drag to orbit · Wheel to zoom · Right drag to pan"
+mouse_filter = 2
+
+[node name="Side" type="PanelContainer" parent="Themed/Margin/Row" unique_id=1705860603]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+theme_type_variation = &"Card"
+
+[node name="Column" type="VBoxContainer" parent="Themed/Margin/Row/Side" unique_id=1953410824]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Nav" type="HBoxContainer" parent="Themed/Margin/Row/Side/Column" unique_id=485421355]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Previous" type="Button" parent="Themed/Margin/Row/Side/Column/Nav" unique_id=688657527]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 40)
+layout_mode = 2
+focus_mode = 0
+text = "◀"
+
+[node name="Header" type="VBoxContainer" parent="Themed/Margin/Row/Side/Column/Nav" unique_id=341468897]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Relation" type="Label" parent="Themed/Margin/Row/Side/Column/Nav/Header" unique_id=1889362356]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Name" type="Label" parent="Themed/Margin/Row/Side/Column/Nav/Header" unique_id=1451317482]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Heading"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Leader" type="Label" parent="Themed/Margin/Row/Side/Column/Nav/Header" unique_id=1983246323]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Next" type="Button" parent="Themed/Margin/Row/Side/Column/Nav" unique_id=1918190106]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 40)
+layout_mode = 2
+focus_mode = 0
+text = "▶"
+
+[node name="RegardName" type="Label" parent="Themed/Margin/Row/Side/Column" unique_id=242119395]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Value"
+horizontal_alignment = 1
+
+[node name="Regard" type="ProgressBar" parent="Themed/Margin/Row/Side/Column" unique_id=1584700516]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+show_percentage = false
+
+[node name="GoodsScroll" type="ScrollContainer" parent="Themed/Margin/Row/Side/Column" unique_id=572955328]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Goods" type="VBoxContainer" parent="Themed/Margin/Row/Side/Column/GoodsScroll" unique_id=822337355]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Tribute" type="Label" parent="Themed/Margin/Row/Side/Column" unique_id=2108659316]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Caption"
+autowrap_mode = 3
+
+[node name="Actions" type="GridContainer" parent="Themed/Margin/Row/Side/Column" unique_id=866304416]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 3
+
+[node name="Request" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=969502843]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Request"
+
+[node name="Fulfil" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=882299145]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Fulfil"
+
+[node name="Gift" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=1684285915]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Gift"
+
+[node name="Raid" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=1735296283]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Raid"
+
+[node name="Conquer" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=938856479]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Conquer"
+
+[node name="Aid" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=1494414821]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Aid"
+
+[node name="Quests" type="Button" parent="Themed/Margin/Row/Side/Column" unique_id=861546378]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Quests of the gods"
+
+[node name="Status" type="Label" parent="Themed/Margin/Row/Side/Column" unique_id=257246538]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Caption"
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="Themed/Margin/Row/Side/Column" unique_id=1362566935]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Primary"
+text = "Back to city"

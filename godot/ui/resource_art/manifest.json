@@ -1,0 +1,218 @@
+[
+	{
+		"icon": "food_total.png",
+		"model": "models/food_total.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "food_total",
+		"source": "resource_models.gd",
+		"triangles": 912
+	},
+	{
+		"icon": "urchin.png",
+		"model": "models/urchin.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "urchin",
+		"source": "resource_models.gd",
+		"triangles": 3168
+	},
+	{
+		"icon": "fish.png",
+		"model": "models/fish.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "fish",
+		"source": "resource_models.gd",
+		"triangles": 840
+	},
+	{
+		"icon": "meat.png",
+		"model": "models/meat.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "meat",
+		"source": "resource_models.gd",
+		"triangles": 1008
+	},
+	{
+		"icon": "cheese.png",
+		"model": "models/cheese.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "cheese",
+		"source": "resource_models.gd",
+		"triangles": 1008
+	},
+	{
+		"icon": "carrots.png",
+		"model": "models/carrots.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "carrots",
+		"source": "resource_models.gd",
+		"triangles": 1260
+	},
+	{
+		"icon": "onions.png",
+		"model": "models/onions.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "onions",
+		"source": "resource_models.gd",
+		"triangles": 1128
+	},
+	{
+		"icon": "grain.png",
+		"model": "models/grain.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "grain",
+		"source": "resource_models.gd",
+		"triangles": 7344
+	},
+	{
+		"icon": "oranges.png",
+		"model": "models/oranges.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "oranges",
+		"source": "resource_models.gd",
+		"triangles": 1152
+	},
+	{
+		"icon": "grapes.png",
+		"model": "models/grapes.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "grapes",
+		"source": "resource_models.gd",
+		"triangles": 3312
+	},
+	{
+		"icon": "olives.png",
+		"model": "models/olives.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "olives",
+		"source": "resource_models.gd",
+		"triangles": 1440
+	},
+	{
+		"icon": "wine.png",
+		"model": "models/wine.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "wine",
+		"source": "resource_models.gd",
+		"triangles": 1344
+	},
+	{
+		"icon": "oil.png",
+		"model": "models/oil.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "oil",
+		"source": "resource_models.gd",
+		"triangles": 1344
+	},
+	{
+		"icon": "fleece.png",
+		"model": "models/fleece.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "fleece",
+		"source": "resource_models.gd",
+		"triangles": 1152
+	},
+	{
+		"icon": "wood.png",
+		"model": "models/wood.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "wood",
+		"source": "resource_models.gd",
+		"triangles": 864
+	},
+	{
+		"icon": "bronze.png",
+		"model": "models/bronze.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "bronze",
+		"source": "resource_models.gd",
+		"triangles": 36
+	},
+	{
+		"icon": "marble.png",
+		"model": "models/marble.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "marble",
+		"source": "resource_models.gd",
+		"triangles": 444
+	},
+	{
+		"icon": "arms.png",
+		"model": "models/arms.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "arms",
+		"source": "resource_models.gd",
+		"triangles": 468
+	},
+	{
+		"icon": "sculptures.png",
+		"model": "models/sculptures.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "sculptures",
+		"source": "resource_models.gd",
+		"triangles": 1020
+	},
+	{
+		"icon": "orichalcum.png",
+		"model": "models/orichalcum.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "orichalcum",
+		"source": "resource_models.gd",
+		"triangles": 36
+	},
+	{
+		"icon": "black_marble.png",
+		"model": "models/black_marble.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "black_marble",
+		"source": "resource_models.gd",
+		"triangles": 444
+	},
+	{
+		"icon": "horses.png",
+		"model": "models/horses.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "horses",
+		"source": "resource_models.gd",
+		"triangles": 1704
+	},
+	{
+		"icon": "chariots.png",
+		"model": "models/chariots.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "chariots",
+		"source": "resource_models.gd",
+		"triangles": 1688
+	},
+	{
+		"icon": "silver.png",
+		"model": "models/silver.tscn",
+		"needs_evidence": false,
+		"provenance": "original procedural meshes; no reference/native art extracted",
+		"resource": "silver",
+		"source": "resource_models.gd",
+		"triangles": 36
+	}
+]

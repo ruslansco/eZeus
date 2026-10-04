@@ -1,0 +1,38 @@
+{
+  "asset": "timber_mill",
+  "source": "art/timber_mill/build_sprites.py",
+  "file": "timber_mill.glb",
+  "bytes": 3193308,
+  "vertices": 13510,
+  "surfaces": 6,
+  "source_surfaces": 35,
+  "bounds_blender": [
+    [
+      -0.9900000095367432,
+      -0.9900000095367432,
+      -0.2795860171318054
+    ],
+    [
+      0.9947333335876465,
+      0.9900000095367432,
+      1.590000033378601
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 80,
+    "allocation_target": 12994,
+    "base_sha256": "1f15fa2a8c4048ddcdb7cb0d4d65681a32ebcd964e28b12a227c65a50a67a398",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

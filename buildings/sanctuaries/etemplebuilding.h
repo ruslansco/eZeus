@@ -8,6 +8,7 @@ public:
     eTempleBuilding(eGameBoard& board, const eCityId cid);
     eTempleBuilding(const int id, eGameBoard& board,
                     const eCityId cid);
+    int pieceId() const { return mId; }
 
     std::shared_ptr<eTexture>
     getTexture(const eTileSize size) const override;

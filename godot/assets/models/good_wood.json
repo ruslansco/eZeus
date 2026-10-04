@@ -1,0 +1,21 @@
+{
+  "asset": "good_wood",
+  "file": "good_wood.glb",
+  "bytes": 55628,
+  "vertices": 384,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.03500001132488251,
+      -0.1599999964237213,
+      -0.032499998807907104
+    ],
+    [
+      0.4328378140926361,
+      0.40083783864974976,
+      0.17249998450279236
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

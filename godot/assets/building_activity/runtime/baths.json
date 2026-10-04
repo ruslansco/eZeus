@@ -1,0 +1,38 @@
+{
+  "asset": "baths",
+  "source": "art/baths/build_sprites.py",
+  "file": "baths.glb",
+  "bytes": 7335060,
+  "vertices": 34388,
+  "surfaces": 5,
+  "source_surfaces": 28,
+  "bounds_blender": [
+    [
+      -2.005295515060425,
+      -2.005295515060425,
+      -0.23999999463558197
+    ],
+    [
+      1.9800000190734863,
+      1.9800000190734863,
+      2.596276044845581
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 49,
+    "allocation_target": 35000,
+    "base_sha256": "317f1ffd140a8f9e67e9afd5a4219e8bbf66969eb38bba9cdb528254b1bd3028",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

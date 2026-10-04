@@ -27,6 +27,9 @@ public:
 
     void startSacrifice(const eSacrifice s);
     bool sacrificing() const { return mSacrifice != eSacrifice::none; }
+    // What is on the altar now (read-only, for the presentation): the sacrificial animal or goods, and how long ago the rite began.
+    eSacrifice sacrifice() const { return mSacrifice; }
+    int sacrificeTime() const { return mSacrificeTime; }
 private:
     eSacrifice mSacrifice = eSacrifice::none;
     int mSacrificeTime = 600000;

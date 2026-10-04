@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iphqn"]
+albedo_color = Color(0.54901963, 0.6666667, 0.3019608, 1)
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_4v804"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_s1sou"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_yxxad"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_1ih1j"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_omyq0"]
+albedo_color = Color(0.6666667, 0.7529412, 0.5647059, 1)
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_xfmvn"]
+radial_segments = 16
+rings = 8
+
+[node name="Olives" type="Node3D" unique_id=1894684923]
+
+[node name="@MeshInstance3D@122" type="MeshInstance3D" parent="." unique_id=729750614]
+transform = Transform3D(0.27, 0, 0, 0, 0.35, 0, 0, 0, 0.3, -0.16, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_iphqn")
+mesh = SubResource("SphereMesh_4v804")
+
+[node name="@MeshInstance3D@123" type="MeshInstance3D" parent="." unique_id=773117260]
+transform = Transform3D(0.27, 0, 0, 0, 0.35, 0, 0, 0, 0.3, 0.16, 0.2, 0)
+material_override = SubResource("StandardMaterial3D_iphqn")
+mesh = SubResource("SphereMesh_s1sou")
+
+[node name="@MeshInstance3D@124" type="MeshInstance3D" parent="." unique_id=276861228]
+transform = Transform3D(0.27, 0, 0, 0, 0.35, 0, 0, 0, 0.3, -0.16, 0.44, 0)
+material_override = SubResource("StandardMaterial3D_iphqn")
+mesh = SubResource("SphereMesh_yxxad")
+
+[node name="@MeshInstance3D@125" type="MeshInstance3D" parent="." unique_id=54021567]
+transform = Transform3D(0.27, 0, 0, 0, 0.35, 0, 0, 0, 0.3, 0.16, 0.44, 0)
+material_override = SubResource("StandardMaterial3D_iphqn")
+mesh = SubResource("SphereMesh_1ih1j")
+
+[node name="@MeshInstance3D@126" type="MeshInstance3D" parent="." unique_id=992115295]
+transform = Transform3D(0.118784614, -0.017309433, 0.22943059, 0.06761892, 0.04531539, 0, -0.083173886, 0.012120194, 0.32766083, 0.1, 0.64, 0)
+material_override = SubResource("StandardMaterial3D_omyq0")
+mesh = SubResource("SphereMesh_xfmvn")

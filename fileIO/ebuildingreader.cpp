@@ -364,6 +364,9 @@ stdsptr<eBuilding> eBuildingReader::sRead(
     case eBuildingType::avenue: {
         b = e::make_shared<eAvenue>(board, cid);
     } break;
+    case eBuildingType::boulevard: {
+        b = e::make_shared<eBoulevard>(board, cid);
+    } break;
 
     case eBuildingType::commemorative: {
         int id;

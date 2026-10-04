@@ -1,0 +1,21 @@
+{
+  "asset": "good_olives",
+  "file": "good_olives.glb",
+  "bytes": 286308,
+  "vertices": 3360,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -12.128113746643066,
+      -30.679466247558594,
+      -37.33332824707031
+    ],
+    [
+      25.25634002685547,
+      50.484004974365234,
+      11.000003814697266
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

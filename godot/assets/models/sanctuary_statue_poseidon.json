@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_statue_poseidon",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_statue_poseidon.glb",
+  "bytes": 6734808,
+  "vertices": 30232,
+  "surfaces": 2,
+  "source_surfaces": 5,
+  "bounds_blender": [
+    [
+      -0.6852465271949768,
+      -0.6219362616539001,
+      0.0
+    ],
+    [
+      0.8853220343589783,
+      0.6219362616539001,
+      4.734780311584473
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

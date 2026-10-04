@@ -1,0 +1,21 @@
+{
+  "asset": "good_armor",
+  "file": "good_armor.glb",
+  "bytes": 153584,
+  "vertices": 1336,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.9510578513145447,
+      -0.9999999403953552,
+      -2.43326473236084
+    ],
+    [
+      5.686283588409424,
+      9.09202766418457,
+      1.9411766529083252
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

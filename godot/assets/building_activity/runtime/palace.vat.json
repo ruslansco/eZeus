@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 252,
+ "parts": {
+  "palace_0": {
+   "row": 0,
+   "rows": 15,
+   "poses": 9,
+   "vertices": 14941,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "palace_2": {
+   "row": 135,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 528,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048792362213134766
+  },
+  "palace_3": {
+   "row": 144,
+   "rows": 12,
+   "poses": 9,
+   "vertices": 11456,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  }
+ },
+ "source": {
+  "file": "palace.glb",
+  "bytes": 5478808,
+  "mtime": 1790834225
+ }
+}

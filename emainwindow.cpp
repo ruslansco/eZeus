@@ -1,7 +1,11 @@
 #include "emainwindow.h"
 
+#include "engine/estatedigest.h"
+#include "erand.h"
 #include "widgets/emainmenu.h"
 #include "widgets/esettingsmenu.h"
+#include "widgets/econtrolsmenu.h"
+#include "presentation/e3dbridge.h"
 #include "widgets/egamewidget.h"
 #include "widgets/egameloadingwidget.h"
 #include "widgets/egamemenu.h"
@@ -118,6 +122,7 @@ bool eMainWindow::initialize(const eSettings& settings) {
     }
     eGameDir::setAudioLanguage(mSettings.fAudioLanguage);
     eFonts::setLanguage(mSettings.fLanguage);
+    eFonts::setClassic(mSettings.fClassicFont);
     SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
 
     const std::string icoPath = eGameDir::path("zeus.ico");
@@ -504,6 +509,7 @@ void eMainWindow::showSettingsMenu() {
             eSounds::reload();
             eMusic::clearCampaignVoices();
         }
+        eFonts::setClassic(mSettings.fClassicFont);
         if(langChanged) {
             eFonts::setLanguage(mSettings.fLanguage);
             eLanguage::reload(mSettings.fLanguage);
@@ -672,6 +678,14 @@ int eMainWindow::exec() {
     std::vector<double> benchMs;
     std::vector<std::array<double, eBenchTimers::count>> benchSections;
     bool shotLoaded = false;
+    bool replayDone = false;
+    std::unique_ptr<e3DBridge> bridge;
+    bool bridgeReady = false;
+    if(const char* port = getenv("EZEUS_3D_PORT")) {
+        if(shot.size() < 3) { fprintf(stderr, "EZEUS_3D requires the isolated EZEUS_SHOT harness\n"); return 1; }
+        bridge = std::make_unique<e3DBridge>(std::clamp(atoi(port), 1024, 65535));
+        if(!bridge->valid()) return 1;
+    }
     if(shot.size() < 3) shot.clear();
     // Menu screenshot mode (development aid):
     // EZEUS_MENU_SHOT="<out.png>;<screen>;<seconds>[;<mouse x>;<mouse y>[;<keys>]]"
@@ -813,7 +827,7 @@ int eMainWindow::exec() {
                 if(isCtrl && k == SDL_SCANCODE_F) {
                     showFPS = !showFPS;
                 }
-                const eKeyPressEvent ke(x, y, shift, ctrl, buttons, k);
+                const eKeyPressEvent ke(x, y, shift, isCtrl, buttons, k, e.key.repeat != 0);
                 if(mWidget) mWidget->keyPress(ke);
             } else if(e.type == SDL_KEYUP) {
                 const auto k = e.key.keysym.scancode;
@@ -872,7 +886,7 @@ int eMainWindow::exec() {
 
         if(showFPS) {
             const std::string fpsStr = std::to_string(fpsVal) + " FPS";
-            auto font = eFonts::defaultFont(resolution());
+            auto font = eFonts::labelFont(resolution().largeFontSize());
             p.setFont(font);
             int tw = 60, th = 20;
             if(font) TTF_SizeUTF8(font, fpsStr.c_str(), &tw, &th);
@@ -889,6 +903,24 @@ int eMainWindow::exec() {
                 printf("EZEUS_SHOT: could not load '%s'\n", shot[0].c_str());
                 mQuit = true;
             }
+        }
+        // EZEUS_REPLAY="<ticks>;<seed>" with EZEUS_SHOT: replay the loaded city through the shared simulation
+        // order and print the digest of its state, for comparison with the embedded build (see
+        // tools/replay_parity.py). It never writes a save.
+        if(const char* const replay = getenv("EZEUS_REPLAY"); replay && shotLoaded && !replayDone && mBoard && mGW) {
+            replayDone = true;
+            const std::string spec = replay;
+            const auto cut = spec.find(';');
+            const int ticks = std::atoi(spec.substr(0, cut).c_str());
+            const long long seed = cut == std::string::npos ? -1 : std::atoll(spec.substr(cut + 1).c_str());
+            mBoard->setAutosaver(nullptr);
+            if(seed >= 0) eRand::seed(static_cast<unsigned>(seed));
+            eReplaySteps(*mBoard, ticks);
+            std::string sections;
+            const auto digest = eStateDigest(*mBoard, &sections);
+            printf("EZEUS_REPLAY: ticks=%d seed=%lld digest=%s sections=[%s] off_thread_draws=%ld save=%s\n", ticks, seed, digest.c_str(), sections.c_str(), eRand::offThreadDraws(), eSaveDigest(*mBoard).c_str());
+            fflush(stdout);
+            mQuit = true;
         }
         if(!menuShot.empty() && mWidget) {
             if(!menuShotStarted && dynamic_cast<eMainMenu*>(mWidget)) {
@@ -946,7 +978,15 @@ int eMainWindow::exec() {
         }
         eTerrainHD::sFinishFrame(mSdlRenderer);
 
-        if(!shot.empty() && mGW && (mWidget == mGW || (mWW && mWidget == mWW))) {
+        if(bridge && shotLoaded && mGW && mBoard && mWidget == mGW) {
+            if(!bridgeReady) {
+                mGW->setSpeedId(0);
+                if(!mGW->isPaused()) mGW->switchPause();
+                bridgeReady = true;
+            }
+            if(bridge->poll(*mBoard, *mGW)) mQuit = true;
+        }
+        if(!bridge && !shot.empty() && mGW && (mWidget == mGW || (mWW && mWidget == mWW))) {
             shotFrames++;
             // EZEUS_SHOT_FOCUS=<eCharacterType number>[,<n>]: centre on the n-th such
             // walker (for reviewing remastered characters). Retried for a few frames:
@@ -1133,6 +1173,53 @@ int eMainWindow::exec() {
             if(const char* const sd = getenv("EZEUS_SHOT_DIR"); sd && shotFrames == 2) {
                 mGW->setWorldDirection(static_cast<eWorldDirection>(atoi(sd) % 4));
             }
+            // Exercise actual input on the designated test city without saving it.
+            if(getenv("EZEUS_TEST_CAMERA") && shotFrames == 3) {
+                const auto& keys = settings().fKeyBindings;
+                const auto start = mBoard->direction();
+                const auto focus = mGW->viewedTile();
+                const int time = mBoard->totalTime();
+                const auto player = mBoard->personPlayer();
+                const int money = mBoard->drachmas(player);
+                std::map<eTile*, eBuilding*> layout;
+                mBoard->iterateOverAllTiles([&](eTile* t) { layout[t] = t->underBuilding(); });
+                const auto check = [](bool ok, const char* message) {
+                    if(!ok) { fprintf(stderr, "TEST_CAMERA FAIL: %s\n", message); std::exit(EXIT_FAILURE); }
+                };
+                const auto press = [&](SDL_Scancode key, bool ctrl = false, bool repeat = false) {
+                    mGW->keyPress(eKeyPressEvent(0, 0, false, ctrl, eMouseButton::none, key, repeat));
+                };
+                check(keys.fCameraRotateLeft != SDL_SCANCODE_UNKNOWN &&
+                      keys.fCameraRotateRight != SDL_SCANCODE_UNKNOWN, "rotation keys bound");
+                for(const auto key : {keys.fCameraRotateLeft, keys.fCameraRotateRight}) {
+                    const int step = key == keys.fCameraRotateLeft ? -1 : 1;
+                    for(int i = 1; i <= 4; ++i) {
+                        press(key);
+                        check(mBoard->direction() == eRotateWorldDirection(start, i * step), "four views and wraparound");
+                    }
+                    const auto after = mGW->viewedTile();
+                    if(after != focus && after && focus) {
+                        fprintf(stderr, "TEST_CAMERA focus delta: (%d,%d) -> (%d,%d)\n",
+                                focus->x(), focus->y(), after->x(), after->y());
+                    }
+                    check(after == focus, "focal tile preserved after full turn");
+                    press(key, false, true);
+                    press(key, true);
+                    check(mBoard->direction() == start, "repeat and modified input ignored");
+                }
+                press(keys.fCameraRotateLeft); press(keys.fCameraRotateRight);
+                press(keys.fRotate);
+                check(mBoard->direction() == start, "opposite keys cancel; R only rotates preview");
+                check(mBoard->totalTime() == time && mBoard->drachmas(player) == money, "simulation unchanged by camera input");
+                for(const auto& [tile, building] : layout) check(tile->underBuilding() == building, "world layout unchanged");
+                printf("TEST_CAMERA PASS: four views both ways, wraparound, focus, repeat/modifiers, R, simulation and layout\n");
+            }
+            if(getenv("EZEUS_SHOT_CONTROLS") && shotFrames == 4) {
+                const auto cm = new eControlsMenu(settings().fKeyBindings, this, [](const eKeyBindings&) {});
+                cm->initialize();
+                execDialog(cm);
+                cm->align(eAlignment::center);
+            }
             // EZEUS_SHOT_PROBE=<x>,<y>,<r>: print the building type of every tile around (x, y).
             if(const char* const pr = getenv("EZEUS_SHOT_PROBE"); pr && shotFrames == 3) {
                 int px = 0, py = 0, r = 3;
@@ -1160,16 +1247,18 @@ int eMainWindow::exec() {
                 });
             }
             // EZEUS_SHOT_TERRAIN=<eTerrain bits>[,<n>][,e]: centre on the n-th tile of that
-            // terrain (",e" = elevation/cliff tiles only), for reviewing terrain remasters.
+            // terrain (",e" = elevation, ",h" = half-height slopes), for terrain reviews.
             if(const char* const tf = getenv("EZEUS_SHOT_TERRAIN"); tf && !shotFocused && shotFrames == 3) {
                 int bits = 0, nth = 0;
                 sscanf(tf, "%d,%d", &bits, &nth);
                 const bool elev = std::string(tf).find(",e") != std::string::npos;
+                const bool half = std::string(tf).find(",h") != std::string::npos;
                 int seen = 0;
                 mBoard->iterateOverAllTiles([&](eTile* const t) {
                     if(shotFocused) return;
                     if(!(static_cast<int>(t->terrain()) & bits)) return;
                     if(elev && !t->isElevationTile()) return;
+                    if(half && !t->isHalfSlope()) return;
                     if(seen++ < nth) return;
                     mGW->viewTile(t);
                     shotFocused = true;
@@ -1187,6 +1276,7 @@ int eMainWindow::exec() {
                         c->tradeLedger().addImport(1, eResourceType::fleece, 2, 40);
                     }
                 }
+                mGW->debugFillMessageLog();
                 const bool ok = saveGameUnchecked(sp);
                 printf("EZEUS_SHOT: saved game %s: %s\n", sp, ok ? "ok" : "failed");
             }
@@ -1194,8 +1284,9 @@ int eMainWindow::exec() {
                 if(shot.size() >= 5) {
                     mGW->viewFraction(std::stod(shot[3]), std::stod(shot[4]));
                 }
+                // zoom -1 keeps the view the save was left at
                 const int zoom = std::stoi(shot[2]);
-                const int steps = zoom - mGW->currentZoomIndex();
+                const int steps = zoom < 0 ? 0 : zoom - mGW->currentZoomIndex();
                 if(steps != 0) {
                     mGW->zoomSteps(steps, width()/2, height()/2);
                 }

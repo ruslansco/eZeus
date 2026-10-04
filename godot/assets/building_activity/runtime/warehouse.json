@@ -1,0 +1,38 @@
+{
+  "asset": "warehouse",
+  "source": "art/warehouse/build_sprites.py",
+  "file": "warehouse.glb",
+  "bytes": 6293876,
+  "vertices": 33471,
+  "surfaces": 5,
+  "source_surfaces": 35,
+  "bounds_blender": [
+    [
+      -1.5261000394821167,
+      -1.5099999904632568,
+      -0.07000000029802322
+    ],
+    [
+      1.4954023361206055,
+      1.4954023361206055,
+      1.7999999523162842
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 33,
+    "allocation_target": 35000,
+    "base_sha256": "862770aa370351de2bcb9c94b0951c1ca17f8a77d468aef4f0fe1975c97a8e49",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

@@ -35,6 +35,6 @@ void eMusicVector::play(const int id, const bool loop) {
 void eMusicVector::playRandomSound(const bool loop) {
     const int sc = soundCount();
     if(sc <= 0) return;
-    const int id = eRand::rand() % sc;
+    const int id = eRand::cosmetic() % sc;
     play(id, loop);
 }

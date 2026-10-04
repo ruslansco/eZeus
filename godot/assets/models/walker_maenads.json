@@ -1,0 +1,168 @@
+{
+  "asset": "walker_maenads",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_maenads.glb",
+  "bytes": 13495796,
+  "vertices": 16283,
+  "surfaces": 3,
+  "source_surfaces": 26,
+  "bounds_blender": [
+    [
+      -0.4148835837841034,
+      -0.34377339482307434,
+      0.0034280652180314064
+    ],
+    [
+      0.49311697483062744,
+      0.31484097242355347,
+      1.2178287506103516
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Maenad",
+        "sex": "female",
+        "profile": {
+          "age": 24,
+          "soft_features": true,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ],
+          "jaw": 0.85,
+          "cheek": 1.02,
+          "nose": -0.002,
+          "chin": -0.001,
+          "eye": 1.03,
+          "hair": [
+            [
+              0.06,
+              0.03,
+              0.015
+            ],
+            [
+              0.16,
+              0.08,
+              0.04
+            ]
+          ],
+          "hair_length": 0.014,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 71707
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "b829695856e97557fe8d19d54fd862a418d4131b223c2af7514c745ccd8b8ea7",
+        "clavi_srgb": [
+          0.52,
+          0.36,
+          0.14
+        ]
+      },
+      {
+        "name": "Maenad B",
+        "sex": "female",
+        "profile": {
+          "age": 31,
+          "soft_features": true,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 0.88,
+          "cheek": 0.98,
+          "nose": 0.001,
+          "chin": 0.0,
+          "eye": 1.0,
+          "hair": [
+            [
+              0.3,
+              0.12,
+              0.04
+            ],
+            [
+              0.58,
+              0.28,
+              0.1
+            ]
+          ],
+          "hair_length": 0.014,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 71708
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "54066a4e06e3c7cc0039028ef623cd069b54d713499a6e147faa60c954bb5e7e",
+        "clavi_srgb": [
+          0.3,
+          0.4,
+          0.12
+        ]
+      },
+      {
+        "name": "Maenad C",
+        "sex": "female",
+        "profile": {
+          "age": 19,
+          "soft_features": true,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 0.83,
+          "cheek": 1.04,
+          "nose": -0.003,
+          "chin": -0.002,
+          "eye": 1.05,
+          "hair": [
+            [
+              0.02,
+              0.012,
+              0.01
+            ],
+            [
+              0.06,
+              0.04,
+              0.03
+            ]
+          ],
+          "hair_length": 0.014,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 71709
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "ea1826da5629c9f7f19c79925a955b1521a9a0a828cff668202b59bae2fbd72f",
+        "clavi_srgb": [
+          0.62,
+          0.48,
+          0.2
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 267,
+    "targets_after": 190,
+    "uv_attributes_removed": 0
+  }
+}

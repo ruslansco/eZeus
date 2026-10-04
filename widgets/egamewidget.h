@@ -2,6 +2,8 @@
 #define EGAMEWIDGET_H
 
 #include <deque>
+#include <set>
+#include <map>
 #include <optional>
 #include <chrono>
 
@@ -25,6 +27,9 @@
 #include "echeckbox.h"
 
 #include "engine/eeventdata.h"
+#include "fileIO/efileformat.h"
+#include "fileIO/ereadstream.h"
+#include "fileIO/ewritestream.h"
 
 class eTerrainEditMenu;
 class eDomesticatedAnimal;
@@ -39,7 +44,9 @@ class eInfoWidget;
 class eFramedButton;
 class eObjectiveTrackerWidget;
 class eMessageToast;
+class eTilePainter;
 class eHouseHoverCard;
+class eShortcutSheet;
 
 enum class eAgoraOrientation;
 enum class eGodType;
@@ -55,22 +62,73 @@ struct eSavedMessage {
     bool fReplay = false;   // re-opened from the message list: not logged again
 };
 
+// The message list's filter tabs.
+enum class eMessageCategory { other, military, trade, gods, disasters };
+
 // A message the player was sent, kept for the side panel's message list.
 struct eLoggedMessage {
     eEventData fEd;
     eMessage fMsg;
     int fId = 0;
+    eMessageCategory fCategory = eMessageCategory::other;
+};
+
+// A message of the list as saved: its text filled in, where it happened.
+struct eSavedLogEntry {
+    std::string fTitle;
+    std::string fText;
+    eDate fDate;
+    std::string fPlayerName;
+    int fTileX = -1;       // "go to site of event", -1 if none
+    int fTileY = -1;
+    int fCity = -1;        // the city it was addressed to, -1 if none
+    eMessageCategory fCategory = eMessageCategory::other;
+
+    void read(eReadStream& src) {
+        src >> fTitle;
+        src >> fText;
+        fDate.read(src);
+        src >> fPlayerName;
+        src >> fTileX;
+        src >> fTileY;
+        src >> fCity;
+        if(src.formatVersion() >= eFileFormat::messageCategory) {
+            src >> fCategory;
+        }
+    }
+    void write(eWriteStream& dst) const {
+        dst << fTitle;
+        dst << fText;
+        fDate.write(dst);
+        dst << fPlayerName;
+        dst << fTileX;
+        dst << fTileY;
+        dst << fCity;
+        dst << fCategory;
+    }
 };
 
 struct eGameWidgetSettings {
     bool fPaused = false;
-    int fSpeedId = 1;
-    int fSpeed = 10;
+    int fSpeedId = 0;
+    int fSpeed = 6;
     int fDX = 0;
     int fDY = 0;
     eTileSize fTileSize = eTileSize::s30;
     eWorldDirection fDir = eWorldDirection::N;
     std::map<int, std::pair<int, int>> fBookmarks;
+    // the side panel's message list (from eFileFormat::messageLog on)
+    std::vector<eSavedLogEntry> fMessageLog;
+    int fMessagesSeen = 0;
+    // where the player was looking (from eFileFormat::viewState on): the
+    // map point at the middle of the view as a fraction of the map, so it
+    // holds at any window size, the zoom step and the open panel page
+    bool fHasView = false;
+    double fViewFX = 0;
+    double fViewFY = 0;
+    int fZoomIndex = 1;
+    int fPanelCategory = -1;
+    bool fPanelMap = false;
 
     void read(eReadStream& src) {
         src >> fPaused;
@@ -90,6 +148,25 @@ struct eGameWidgetSettings {
             src >> b.first;
             src >> b.second;
         }
+
+        if(src.formatVersion() >= eFileFormat::messageLog) {
+            int nm;
+            src >> nm;
+            fMessageLog.clear();
+            for(int i = 0; i < nm; i++) {
+                fMessageLog.emplace_back().read(src);
+            }
+            src >> fMessagesSeen;
+        }
+
+        if(src.formatVersion() >= eFileFormat::viewState) {
+            src >> fHasView;
+            src >> fViewFX;
+            src >> fViewFY;
+            src >> fZoomIndex;
+            src >> fPanelCategory;
+            src >> fPanelMap;
+        }
     }
 
     void write(eWriteStream& dst) const {
@@ -107,6 +184,19 @@ struct eGameWidgetSettings {
             dst << b.second.first;
             dst << b.second.second;
         }
+
+        dst << static_cast<int>(fMessageLog.size());
+        for(const auto& m : fMessageLog) {
+            m.write(dst);
+        }
+        dst << fMessagesSeen;
+
+        dst << fHasView;
+        dst << fViewFX;
+        dst << fViewFY;
+        dst << fZoomIndex;
+        dst << fPanelCategory;
+        dst << fPanelMap;
     }
 };
 
@@ -156,6 +246,13 @@ public:
     void showCityHistory();
     // Trade per partner this year and last, and unsold stock (eTradeSummaryWidget).
     void showTradeSummary();
+    // The city's problems right now, with "Go there" (eCityAdvisorWidget).
+    void showCityAdvisor();
+    // The place "Go there" shows next for an advice, and going there (each
+    // press steps to the next of its places).
+    int advisorPlaceIndex(const std::string& key, const int n) const;
+    void advisorGoTo(const std::string& key,
+                     const std::vector<std::pair<int, int>>& places);
     // Screenshot aid (EZEUS_SHOT_PANEL=messages|badge): sample log entries.
     void debugFillMessageLog();
     // Opens a logged message again, read-only (its choices already happened).
@@ -164,8 +261,19 @@ public:
     void debugShowToasts();
     // Screenshot aid (EZEUS_SHOT_PANEL=history): the chart with ten sample years.
     void debugShowCityHistory();
-    // Screenshot aid (EZEUS_SHOT_PANEL=house): rests the mouse on a house.
-    void debugHoverHouse();
+    // Screenshot aid (EZEUS_SHOT_PANEL=terrain): the terrain editor's panel.
+    void debugShowTerrainMenu();
+    // Every shortcut, while H or / is held (sticky: until the next key,
+    // for screenshots, EZEUS_SHOT_PANEL=keys).
+    void showShortcutSheet(const bool sticky = false);
+    // Shift+1-9, 0, - : a side panel category (eGameMenu::openCategory).
+    bool openPanelCategory(const int i);
+    // Screenshot aid (EZEUS_SHOT_PANEL=house|walker): rests the mouse on a
+    // house, or on a walker building (its coverage).
+    void debugHoverHouse(const bool walker = false);
+    // screenshots: open the info window of the building ("building", a
+    // workplace; "house") or the people ("walker") nearest the view centre
+    void debugOpenInfo(const std::string& kind);
     // Screenshot aid (EZEUS_SHOT_PANEL=place|road): a fountain being placed
     // next to a road, or a road being dragged.
     void debugPlacePreview(const bool road);
@@ -207,6 +315,26 @@ private:
                 const int wSpan, const int hSpan,
                 const int a);
 
+    // Service coverage (placing a walker building, or hovering a built one):
+    // the road tiles its walkers reach from around the footprint [minX,
+    // maxX) x [minY, maxY), with their distance in steps (ePatrolMoveAction
+    // rules: roads, not through roadblocks, diagonal steps, maxD at most).
+    std::map<eTile*, int> patrolCoverage(const int minX, const int minY,
+                                         const int maxX, const int maxY,
+                                         const int maxD) const;
+    // The houses within a tile of those roads (eCharacter::changeTile).
+    // all: every building, not only houses (maintenance walkers)
+    std::set<eBuilding*> servedHouses(const std::map<eTile*, int>& roads,
+                                      const bool all = false) const;
+    // Gold road tiles fading with distance, houses tinted blue.
+    void drawCoverage(ePainter& p, eTilePainter& tp,
+                      const std::map<eTile*, int>& roads,
+                      const std::set<eBuilding*>& houses, const int maxD);
+    // the built walker building under the mouse, found each frame
+    eBuilding* mHoverPatrol = nullptr;
+    const eBuilding* mHoverPatrolCandidate = nullptr;
+    double mHoverPatrolSince = 0;
+
     void setDX(const int dx);
     void setDY(const int dy);
     void clampViewBox();
@@ -234,18 +362,6 @@ private:
                       eDiagonalOrientation& o, const eCityId cid,
                       const ePlayerId pid, const bool forestAllowed) const;
 
-    std::vector<eTile*> agoraBuildPlaceBR(eTile* const tile,
-                                          const eCityId cid,
-                                          const ePlayerId pid) const;
-    std::vector<eTile*> agoraBuildPlaceTL(eTile* const tile,
-                                          const eCityId cid,
-                                          const ePlayerId pid) const;
-    std::vector<eTile*> agoraBuildPlaceBL(eTile* const tile,
-                                          const eCityId cid,
-                                          const ePlayerId pid) const;
-    std::vector<eTile*> agoraBuildPlaceTR(eTile* const tile,
-                                          const eCityId cid,
-                                          const ePlayerId pid) const;
     std::vector<eTile*> agoraBuildPlaceIter(
             eTile* const tile, const bool grand,
             eAgoraOrientation& bt,
@@ -352,6 +468,7 @@ public:
 
     bool buildMouseRelease();
     bool buildMouseReleaseRecorded();
+    bool buildFromPresentation(eBuildingMode mode, int x, int y, int orientation);
     bool undoAvailable() const;
     void undoLastBuild();
     void clearUndo();
@@ -377,7 +494,7 @@ private:
     bool mRotate = false;
     int mRotateId = 0;
 
-    const int sSpeeds[6] = {2, 10, 25, 50, 100, 100};
+    const int sSpeeds[4] = {6, 15, 30, 60};
     const int sMaxSpeedId = int(std::size(sSpeeds)) - 1;
 
     bool mPaused = false;
@@ -386,7 +503,7 @@ private:
     int mRotateFrame{0};
     std::vector<int> mValiableHippodromePieces;
     int mTime{0};
-    int mSpeedId = 1;
+    int mSpeedId = 0;
     int mSpeed = sSpeeds[mSpeedId];
     std::map<int, std::pair<int, int>> mBookmarks;
 
@@ -479,6 +596,7 @@ private:
     std::vector<eLoggedMessage> mMessageLog;
     int mMessagesSeen = 0;
     int mNextMessageId = 0;
+    std::map<std::string, int> mAdvisorIndex;
 
     // Minor events (fire, workers, world news ...) show as eMessageToast
     // cards instead of a message box; fTone < 0 means a full message box.
@@ -488,11 +606,34 @@ private:
     };
     static eToastStyle sToastStyle(const eEvent e);
     eToastStyle mToastStyle;         // of the event being handled
+    static eMessageCategory sMessageCategory(const eEvent e);
+    eMessageCategory mMessageCategory = eMessageCategory::other;
+public:
+    // the message list's last filter tab
+    int messageFilter() const { return mMessageFilter; }
+    void setMessageFilter(const int f) { mMessageFilter = f; }
+private:
+    int mMessageFilter = 0;
     std::string mCondensedText;      // its short text, for the card
     std::vector<eMessageToast*> mToasts;
     void showToast(const eEventData& ed, const eMessage& msg,
                    const eToastStyle& style, const int logId);
+    // A card of our own (not a message): replaces a live card with the same
+    // key; left click dismisses it and runs onClick.
+    void addToastCard(const std::string& key, const std::string& icon,
+                      const int tone, const std::string& title,
+                      const std::string& text, const std::string& meta,
+                      const eAction& onClick);
     void layoutToasts();
+    // eEvent::monthlySummary: how the month that ended changed the city.
+    // force: also when the last two samples are not a month apart.
+    void showMonthlySummary(const eCityId cid, const bool force = false);
+public:
+    // Screenshot aid (EZEUS_SHOT_PANEL=summary|tips): the monthly card, or
+    // two notices at the top of the map.
+    void debugShowMonthlySummary();
+    void debugShowTips();
+private:
 
     // The card that says what a house needs, while the mouse rests on it.
     eHouseHoverCard* mHouseCard = nullptr;
@@ -500,6 +641,9 @@ private:
     const eBuilding* mCardHouse = nullptr;   // identity only
     double mCardSince = 0;
     void updateHouseCard();
+    eShortcutSheet* mShortcutSheet = nullptr;
+    bool mSheetSticky = false;
+    void updateShortcutSheet();
     int mMiddlePressX = -1000;   // a middle click without a drag copies
     int mMiddlePressY = -1000;
     eTerrainEditMenu* mTem = nullptr;
@@ -511,9 +655,11 @@ private:
     struct eTip {
         ePlayerCityTarget fTarget;
         std::string fText;
-        eWidget* fWid = nullptr;
+        class eTipBanner* fWid = nullptr;
         int fLastFrame = 0;
     };
+    // drops tips that have faded out (each frame, also while paused)
+    void removeFinishedTips();
 
     std::deque<eTip> mTips;
 

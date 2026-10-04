@@ -1,0 +1,12 @@
+[
+  {
+    "file": "mpfb-v2.0.17.zip",
+    "url": "https://codeload.github.com/makehumancommunity/mpfb2/zip/refs/tags/v2.0.17",
+    "sha256": "d08e726c798fdc4eefb02b06b6c4efe37d40b5439777e53cf96dce0e5073297d"
+  },
+  {
+    "file": "makehuman_system_assets_cc0.zip",
+    "url": "https://files2.makehumancommunity.org/asset_packs/makehuman_system_assets/makehuman_system_assets_cc0.zip",
+    "sha256": "b542127a8e25547c7c29c19f2d1d2adb9a664c80396ecd694095dbc8028a0107"
+  }
+]

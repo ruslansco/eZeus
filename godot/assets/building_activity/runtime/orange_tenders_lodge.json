@@ -1,0 +1,38 @@
+{
+  "asset": "orange_tenders_lodge",
+  "source": "art/orange_tenders_lodge/build_sprites.py",
+  "file": "orange_tenders_lodge.glb",
+  "bytes": 739336,
+  "vertices": 4281,
+  "surfaces": 6,
+  "source_surfaces": 33,
+  "bounds_blender": [
+    [
+      -1.02524733543396,
+      -0.9900000095367432,
+      -0.0072778863832354546
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      1.3769999742507935
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 49,
+    "allocation_target": 2500,
+    "base_sha256": "b2edf1b777435a81d9dcff1ce6dfeea270b0ba3af74d00a2f40d8c161c53b842",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

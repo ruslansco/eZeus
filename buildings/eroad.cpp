@@ -114,6 +114,9 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
         } else if((trb || blb) || ((tlw && !tlb) || (brw && !brb))) {
             texId = 11;
         }
+        // Remastered Roman bridge: texId 10 runs top-left/bottom-right on screen (model Y),
+        // 11 top-right/bottom-left (model X); see art/bridge.
+        if(const auto hd = builTexs.remastered(texId == 10 ? "bridge_y" : "bridge_x")) return (*hd)[0][0];
         return builTexs.fBridge.getTexture(texId);
     }
 
@@ -122,20 +125,17 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
     const auto tlt = tl ? tl->underBuildingType() : eBuildingType::none;
     const auto blt = bl ? bl->underBuildingType() : eBuildingType::none;
 
-    const bool avn = trt == eBuildingType::avenue ||
-                     brt == eBuildingType::avenue ||
-                     tlt == eBuildingType::avenue ||
-                     blt == eBuildingType::avenue;
+    const auto isAvn = [](const eBuildingType t) {
+        return t == eBuildingType::avenue || t == eBuildingType::boulevard;
+    };
+
+    const bool avn = isAvn(trt) || isAvn(brt) || isAvn(tlt) || isAvn(blt);
 
     if(avn) {
-        const bool tlb = tlt == eBuildingType::avenue ||
-                         tlt == eBuildingType::road;
-        const bool brb = brt == eBuildingType::avenue ||
-                         brt == eBuildingType::road;
-        const bool blb = blt == eBuildingType::avenue ||
-                         blt == eBuildingType::road;
-        const bool trb = trt == eBuildingType::avenue ||
-                         trt == eBuildingType::road;
+        const bool tlb = isAvn(tlt) || tlt == eBuildingType::road;
+        const bool brb = isAvn(brt) || brt == eBuildingType::road;
+        const bool blb = isAvn(blt) || blt == eBuildingType::road;
+        const bool trb = isAvn(trt) || trt == eBuildingType::road;
 
         const auto t = ti->topRotated<eTile>(dir);
         const auto b = ti->bottomRotated<eTile>(dir);
@@ -147,14 +147,10 @@ std::shared_ptr<eTexture> eRoad::getTexture(const eTileSize size) const {
         const auto lt = l ? l->underBuildingType() : eBuildingType::none;
         const auto rt = r ? r->underBuildingType() : eBuildingType::none;
 
-        const bool tb = tt == eBuildingType::avenue ||
-                        tt == eBuildingType::road;
-        const bool lb = lt == eBuildingType::avenue ||
-                        lt == eBuildingType::road;
-        const bool bb = bt == eBuildingType::avenue ||
-                        bt == eBuildingType::road;
-        const bool rb = rt == eBuildingType::avenue ||
-                        rt == eBuildingType::road;
+        const bool tb = isAvn(tt) || tt == eBuildingType::road;
+        const bool lb = isAvn(lt) || lt == eBuildingType::road;
+        const bool bb = isAvn(bt) || bt == eBuildingType::road;
+        const bool rb = isAvn(rt) || rt == eBuildingType::road;
 
         int id = 0;
         if(tlb && brb && blb && trb) {

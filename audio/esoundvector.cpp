@@ -1,6 +1,7 @@
 #include "esoundvector.h"
 
 #include "erand.h"
+#include "egamedir.h"
 #include <filesystem>
 
 Mix_Chunk* loadSound(const std::string& path) {
@@ -34,10 +35,23 @@ void eSoundVector::addPath(const std::string& path) {
     mPaths.push_back({sound, path});
 }
 
+namespace {
+eSoundVector::eSink gSink;
+}
+
+void eSoundVector::setSink(const eSink& sink) {
+    gSink = sink;
+}
+
 void eSoundVector::play(const int id, const int chn) {
     const int idMax = mPaths.size();
     if(id < 0 || id >= idMax) return;
     auto& p = mPaths[id];
+    if(gSink) {
+        gSink(p.second);
+        return;
+    }
+    if(eGameDir::embedded()) return;
     if(!p.first) p.first = loadSound(p.second);
     if(p.first) Mix_PlayChannel(chn, p.first, 0);
 }
@@ -45,6 +59,12 @@ void eSoundVector::play(const int id, const int chn) {
 void eSoundVector::playRandomSound() {
     const int sc = soundCount();
     if(sc <= 0) return;
-    const int id = eRand::rand() % sc;
+    const int id = eRand::cosmetic() % sc;
     play(id);
+}
+
+std::string eSoundVector::path(const int id) const {
+    const int idMax = mPaths.size();
+    if(id < 0 || id >= idMax) return "";
+    return mPaths[id].second;
 }

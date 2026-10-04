@@ -117,6 +117,7 @@
 void eCharacterTextures::loadOrichalcMiner() {
     if(fOrichalcMinerLoaded) return;
     fOrichalcMinerLoaded = true;
+    if(loadPersonHD(fOrichalcMiner, {{"collect", &fOrichalcMiner.fCollect}, {"carry", &fOrichalcMiner.fCarry}}, fRenderer, fTileH, "orichalcminer")) return;   // art/characters/people/people3.py
     const auto& sds = spriteData(fTileH,
                                  eOrichalcMinerSpriteData15,
                                  eOrichalcMinerSpriteData30,
@@ -164,6 +165,7 @@ void eCharacterTextures::loadTriremeOverlay() {
 void eCharacterTextures::loadPoseidonTowerArcher() {
     if(fPoseidonTowerArcherLoaded) return;
     fPoseidonTowerArcherLoaded = true;
+    if(loadPersonHD(fPoseidonTowerArcher, {{"fight", &fPoseidonTowerArcher.fFight}, {"patrol", &fPoseidonTowerArcher.fPatrol}}, fRenderer, fTileH, "poseidontowerarcher")) return;   // art/characters/people/people4.py
     const auto& sds = spriteData(fTileH,
                                  ePoseidonTowerArcherSpriteData15,
                                  ePoseidonTowerArcherSpriteData30,
@@ -395,6 +397,7 @@ void eCharacterTextures::loadCurator() {
 void eCharacterTextures::loadChariotPoseidon() {
     if(fChariotPoseidonLoaded) return;
     fChariotPoseidonLoaded = true;
+    if(loadStatesHD({{"walk", &fChariotPoseidon.fWalk}, {"fight", &fChariotPoseidon.fFight}, {"die", &fChariotPoseidon.fDie}}, fRenderer, fTileH, "chariotposeidon")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eChariotPoseidonSpriteData15,
                                  eChariotPoseidonSpriteData30,
@@ -411,6 +414,7 @@ void eCharacterTextures::loadChariotPoseidon() {
 void eCharacterTextures::loadArcherPoseidon() {
     if(fArcherPoseidonLoaded) return;
     fArcherPoseidonLoaded = true;
+    if(loadPersonHD(fArcherPoseidon, {{"fight", &fArcherPoseidon.fFight}}, fRenderer, fTileH, "archerposeidon")) return;   // art/characters/people/people4.py
     const auto& sds = spriteData(fTileH,
                                  eArcherPoseidonSpriteData15,
                                  eArcherPoseidonSpriteData30,
@@ -430,6 +434,7 @@ void eCharacterTextures::loadArcherPoseidon() {
 void eCharacterTextures::loadHoplitePoseidon() {
     if(fHoplitePoseidonLoaded) return;
     fHoplitePoseidonLoaded = true;
+    if(loadPersonHD(fHoplitePoseidon, {{"fight", &fHoplitePoseidon.fFight}}, fRenderer, fTileH, "hopliteposeidon")) return;   // art/characters/people/people4.py
     const auto& sds = spriteData(fTileH,
                                  eHoplitePoseidonSpriteData15,
                                  eHoplitePoseidonSpriteData30,

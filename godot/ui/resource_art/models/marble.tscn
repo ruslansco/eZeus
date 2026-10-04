@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qycod"]
+albedo_color = Color(0.9137255, 0.89411765, 0.8117647, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_suaoo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8s8bc"]
+albedo_color = Color(0.67058825, 0.7294118, 0.6627451, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_usxcj"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.86469644
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4d0qw"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.86469644
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_tl6bo"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.8646965
+radial_segments = 12
+
+[node name="Marble" type="Node3D" unique_id=23374868]
+
+[node name="@MeshInstance3D@152" type="MeshInstance3D" parent="." unique_id=679834034]
+transform = Transform3D(0.9, 0, 0, 0, 0.65, 0, 0, 0, 0.75, 0, 0.35, 0)
+material_override = SubResource("StandardMaterial3D_qycod")
+mesh = SubResource("BoxMesh_suaoo")
+
+[node name="@MeshInstance3D@153" type="MeshInstance3D" parent="." unique_id=574733585]
+transform = Transform3D(0.10408276, 0.99456865, 0, -0.99456865, 0.10408276, 0, 0, 0, 1, 0, 0.265, 0.382)
+material_override = SubResource("StandardMaterial3D_8s8bc")
+mesh = SubResource("CylinderMesh_usxcj")
+
+[node name="@MeshInstance3D@154" type="MeshInstance3D" parent="." unique_id=18321970]
+transform = Transform3D(0.10408276, 0.99456865, 0, -0.99456865, 0.10408276, 0, 0, 0, 1, 0, 0.41500002, 0.382)
+material_override = SubResource("StandardMaterial3D_8s8bc")
+mesh = SubResource("CylinderMesh_4d0qw")
+
+[node name="@MeshInstance3D@155" type="MeshInstance3D" parent="." unique_id=1783502301]
+transform = Transform3D(0.10408276, 0.99456865, 0, -0.99456865, 0.10408276, 0, 0, 0, 1, 0, 0.565, 0.382)
+material_override = SubResource("StandardMaterial3D_8s8bc")
+mesh = SubResource("CylinderMesh_tl6bo")

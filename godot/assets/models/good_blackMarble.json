@@ -1,0 +1,21 @@
+{
+  "asset": "good_blackMarble",
+  "file": "good_blackMarble.glb",
+  "bytes": 10548,
+  "vertices": 64,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.14000000059604645,
+      -0.14384415745735168,
+      -0.09000000357627869
+    ],
+    [
+      0.39653775095939636,
+      0.3724425733089447,
+      0.17000000178813934
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

@@ -21,6 +21,8 @@ eTempleAltarBuilding::getTexture(const eTileSize size) const {
     if(p <= 0) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    eGameTextures::loadGodMonumentsHD();
+    if(blds.fSanctuaryAltarHD) return blds.fSanctuaryAltarHD;
     return blds.fSanctuaryAltar;
 }
 

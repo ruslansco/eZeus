@@ -30,6 +30,17 @@ public:
     // Remastered atlas of an n x n building keyed by asset id (canvas and offsets derived as
     // in art/_kit/ezkit.py); remastered() is null until loaded or if the atlas is missing.
     void loadRemasteredN(const std::string& id, const int n);
+    // Replaces each legacy sprite of `coll` by Textures/Remastered/<dir>/<tileH>/<prefix><i>.png
+    // when that file exists and has exactly the legacy sprite's size (frame-matched pieces:
+    // pyramid blocks, hippodrome plates). Offsets are kept.
+    void replaceWithRemastered(eTextureCollection& coll, const std::string& dir, const std::string& prefix);
+    // Remastered sprite at the legacy sprite's width but any height (buildings are drawn
+    // bottom-anchored, so it stands where the legacy one stood; its offsets are kept):
+    // Textures/Remastered/<dir>/<tileH>/<name>.png, with the <2*tileH> file as its sharper twin
+    // for zoomed-in views (art/_kit/legacy_frame.py). Null when missing or not that width.
+    std::shared_ptr<eTexture> remasteredTall(const std::shared_ptr<eTexture>& old, const std::string& dir,
+                                             const std::string& name) const;
+    void replaceWithRemasteredTall(eTextureCollection& coll, const std::string& dir, const std::string& prefix);
     const eHDFrames* remastered(const std::string& id) const;
     std::map<std::string, eHDFrames> fHDByName;
     // HD state overlays (stored goods etc.): per name and direction a cropped sprite and
@@ -768,6 +779,14 @@ public:
     std::array<eGodStatueFrames,14> fGodStatuesAnimated{};
     std::array<bool,14> fGodStatuesAnimatedLoaded{};
     void loadGodStatueAnimationHD(int god);
+    // Remastered 2x2 monuments (art/sanctuary_statues --monument): rows in sStatueGods order x 4 views,
+    // plus the blank construction block. Cells 400 x 700 px at tileH 60, origin (200, 630).
+    std::array<std::array<std::shared_ptr<eTexture>, 4>, 14> fGodMonumentsHD{};
+    std::shared_ptr<eTexture> fBlankMonumentHD;
+    // Remastered altar (art/sanctuary_altar): 280 x 240 px at tileH 60, origin (140, 170); loaded with the monuments.
+    std::shared_ptr<eTexture> fSanctuaryAltarHD;
+    bool fGodMonumentsHDLoaded = false;
+    void loadGodMonumentsHD();
     bool fSanctuaryHDLoaded = false;
     void loadSanctuaryHD();
     eTextureCollection fPoseidonSanctuary;

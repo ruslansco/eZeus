@@ -1,4 +1,4 @@
-﻿
+
 #include "egameboard.h"
 
 #include "buildings/eagorabase.h"
@@ -3701,27 +3701,32 @@ void eGameBoard::sBuildTiles(int& minX, int& minY,
 bool eGameBoard::canBuildAvenue(eTile* const t, const eCityId cid,
                                 const ePlayerId pid,
                                 const bool forestAllowed) const {
+    if(!t) return false;
+    if(t->cityId() != cid && !mEditorMode) return false;
+    if(t->isElevationTile()) return false;
+    if(t->hasBridge()) return false;
+
+    for(const auto& b : t->banners()) {
+        if(!b->buildable()) return false;
+    }
+
+    if(t->underBuilding()) {
+        const auto ubt = t->underBuildingType();
+        if(ubt == eBuildingType::road ||
+           ubt == eBuildingType::avenue ||
+           ubt == eBuildingType::boulevard) {
+            if(ubt == eBuildingType::road) {
+                const auto r = static_cast<eRoad*>(t->underBuilding());
+                if(r->underAgora() || r->underGatehouse() || r->aboveHippodrome()) return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     const int tx = t->x();
     const int ty = t->y();
-    const bool cb = canBuildBase(tx, tx + 1, ty, ty + 1, forestAllowed, cid, pid);
-    if(!cb) return false;
-    const auto tr = t->topRight<eTile>();
-    const auto br = t->bottomRight<eTile>();
-    const auto bl = t->bottomLeft<eTile>();
-    const auto tl = t->topLeft<eTile>();
-    const auto tt = t->top<eTile>();
-    const auto r = t->right<eTile>();
-    const auto b = t->bottom<eTile>();
-    const auto l = t->left<eTile>();
-    const bool hr = (tr && tr->hasRoad()) ||
-                    (br && br->hasRoad()) ||
-                    (bl && bl->hasRoad()) ||
-                    (tl && tl->hasRoad()) ||
-                    (tt && tt->hasRoad()) ||
-                    (r && r->hasRoad()) ||
-                    (b && b->hasRoad()) ||
-                    (l && l->hasRoad());
-    return hr;
+    return canBuildBase(tx, tx + 1, ty, ty + 1, forestAllowed, cid, pid, false, true);
 }
 
 bool eGameBoard::canBuildBase(const int minX, const int maxX,

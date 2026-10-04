@@ -1037,6 +1037,7 @@ void eBuildingTextures::loadCommonHouse() {
                          nullptr, fRenderer);
 
     fHouseSpace = loader.load(1, 15);
+    if(const auto hd = remasteredTall(fHouseSpace, "lots", "lot")) fHouseSpace = hd;   // surveyed plot, art/lots
     for(int i = 1; i < 15;) {
         auto& coll = fCommonHouse.emplace_back(fRenderer);
         for(int j = 0; j < 2; j++, i++) {
@@ -1336,6 +1337,7 @@ void eBuildingTextures::loadOliveTree() {
     for(int i = 1; i < 7; i++) {
         loader.load(1, i, fOliveTree);
     }
+    replaceWithRemasteredTall(fOliveTree, "orchard", "olive_");   // art/orchard
 }
 
 void eBuildingTextures::loadVine() {
@@ -1353,6 +1355,7 @@ void eBuildingTextures::loadVine() {
     for(int i = 7; i < 13; i++) {
         loader.load(7, i, fVine);
     }
+    replaceWithRemasteredTall(fVine, "orchard", "vine_");         // art/orchard
 }
 
 void eBuildingTextures::loadPlantation() {
@@ -1776,6 +1779,60 @@ void eBuildingTextures::loadRemasteredAtlas(const std::string& id,
     loadRemasteredOverlays(id, offsetX, offsetY, fHDOverlays[id]);
 }
 
+void eBuildingTextures::replaceWithRemastered(eTextureCollection& coll, const std::string& dir,
+                                              const std::string& prefix) {
+    const auto base = eGameDir::texturesDir() + "Remastered/" + dir + "/" + std::to_string(fTileH) + "/";
+    for(int i = 0; i < coll.size(); i++) {
+        const auto& old = coll.getTexture(i);
+        if(!old) continue;
+        const auto hd = sRemasteredSheet(fRenderer, base + prefix + std::to_string(i) + ".png", old->width(), old->height());
+        if(!hd) continue;
+        const auto tex = std::make_shared<eTexture>();
+        tex->setParentTexture({0, 0, hd->width(), hd->height()}, hd);
+        tex->setOffset(old->offsetX(), old->offsetY());
+        coll.replaceTexture(i, tex);
+    }
+}
+
+std::shared_ptr<eTexture> eBuildingTextures::remasteredTall(const std::shared_ptr<eTexture>& old,
+                                                           const std::string& dir,
+                                                           const std::string& name) const {
+    if(!old) return nullptr;
+    const auto base = eGameDir::texturesDir() + "Remastered/" + dir + "/";
+    const auto path = base + std::to_string(fTileH) + "/" + name + ".png";
+    if(!std::filesystem::exists(path)) return nullptr;
+    const auto sheet = std::make_shared<eTexture>();
+    if(!sheet->load(fRenderer, path) || sheet->width() != old->width()) return nullptr;
+    sheet->setScaleMode(SDL_ScaleModeLinear);
+    const auto tex = std::make_shared<eTexture>();
+    tex->setParentTexture({0, 0, sheet->width(), sheet->height()}, sheet);
+    tex->setOffset(old->offsetX(), old->offsetY());
+    if(fTileH <= 30) {
+        const auto hiPath = base + std::to_string(2*fTileH) + "/" + name + ".png";
+        const auto hi = std::make_shared<eTexture>();
+        if(std::filesystem::exists(hiPath) && hi->load(fRenderer, hiPath) &&
+           hi->width() == 2*sheet->width() && hi->height() == 2*sheet->height()) {
+            hi->setScaleMode(SDL_ScaleModeLinear);
+            const auto dense = std::make_shared<eTexture>();
+            dense->setParentTexture({0, 0, hi->width(), hi->height()}, hi);
+            dense->setDensity(2);
+            const auto hiTex = std::make_shared<eTexture>();
+            hiTex->setParentTexture({0, 0, sheet->width(), sheet->height()}, dense);
+            tex->setHiRes(hiTex);
+        }
+    }
+    return tex;
+}
+
+void eBuildingTextures::replaceWithRemasteredTall(eTextureCollection& coll, const std::string& dir,
+                                                  const std::string& prefix) {
+    for(int i = 0; i < coll.size(); i++) {
+        if(const auto tex = remasteredTall(coll.getTexture(i), dir, prefix + std::to_string(i))) {
+            coll.replaceTexture(i, tex);
+        }
+    }
+}
+
 void eBuildingTextures::loadRemasteredN(const std::string& id, const int n) {
     if(fHDByName.count(id)) return;
     const int c = 160*n;
@@ -2038,6 +2095,9 @@ void eBuildingTextures::loadHorseRanch() {
                              nullptr, fRenderer);
 
         fHorseRanchEnclosure = loader.load(41, 41);
+        if(const auto hd = remasteredTall(fHorseRanchEnclosure, "enclosure", "enclosure")) {
+            fHorseRanchEnclosure = hd;                                // Roman paddock, art/enclosure
+        }
     }
     loadRemasteredAtlas("horse_ranch", 480, 30, -16, fHorseRanchHD);
 }
@@ -2203,6 +2263,8 @@ void eBuildingTextures::loadBridge() {
     for(int i = 77; i < 89; i++) {
         loader.load(77, i, fBridge);
     }
+    loadRemasteredN("bridge_x", 1);
+    loadRemasteredN("bridge_y", 1);
 }
 
 void eBuildingTextures::loadPalaceTiles() {
@@ -2475,6 +2537,58 @@ void eBuildingTextures::loadGodStatuesHD() {
             }
             fGodStatuesHD[god][view] = std::move(tex);
         }
+    }
+}
+
+void eBuildingTextures::loadGodMonumentsHD() {
+    if(fGodMonumentsHDLoaded) return;
+    fGodMonumentsHDLoaded = true;
+    const auto dir = eGameDir::texturesDir() + "Remastered/sanctuary_monuments/";
+    const int w = 400*fTileH/60;
+    const int h = 700*fTileH/60;
+    const auto sheet = sRemasteredSheet(fRenderer, dir + std::to_string(fTileH) + ".png", 4*w, 15*h);
+    if(!sheet) return;
+    std::shared_ptr<eTexture> dense;
+    if(fTileH <= 30) {
+        const auto hi = sRemasteredSheet(fRenderer, dir + std::to_string(2*fTileH) + ".png", 8*w, 30*h);
+        if(hi) {
+            dense = std::make_shared<eTexture>();
+            dense->setParentTexture({0, 0, hi->width(), hi->height()}, hi);
+            dense->setDensity(2);
+        }
+    }
+    const auto cell = [&](const int row, const int col) {
+        const SDL_Rect rect{col*w, row*h, w, h};
+        auto tex = std::make_shared<eTexture>();
+        tex->setParentTexture(rect, sheet);
+        tex->setOffset(40, -5);      // tileH 30 units: the 2x2 diamond's left corner / bottom
+        if(dense) {
+            auto hiTex = std::make_shared<eTexture>();
+            hiTex->setParentTexture(rect, dense);
+            tex->setHiRes(hiTex);
+        }
+        return tex;
+    };
+    for(int god = 0; god < 14; ++god) {
+        for(int view = 0; view < 4; ++view) fGodMonumentsHD[god][view] = cell(god, view);
+    }
+    fBlankMonumentHD = cell(14, 0);
+
+    const auto adir = eGameDir::texturesDir() + "Remastered/sanctuary_altar/";
+    const int aw = 280*fTileH/60, ah = 240*fTileH/60;
+    if(const auto altar = sRemasteredSheet(fRenderer, adir + std::to_string(fTileH) + ".png", aw, ah)) {
+        auto tex = std::make_shared<eTexture>();
+        tex->setParentTexture({0, 0, aw, ah}, altar);
+        tex->setOffset(10, -5);
+        if(fTileH <= 30) {
+            if(const auto hi = sRemasteredSheet(fRenderer, adir + std::to_string(2*fTileH) + ".png", 2*aw, 2*ah)) {
+                auto hiTex = std::make_shared<eTexture>();
+                hiTex->setParentTexture({0, 0, hi->width(), hi->height()}, hi);
+                hiTex->setDensity(2);
+                tex->setHiRes(hiTex);
+            }
+        }
+        fSanctuaryAltarHD = std::move(tex);
     }
 }
 
@@ -3003,6 +3117,7 @@ void eBuildingTextures::loadHippodrome() {
     for(int i = 1; i < 15; i++) {
         loader.load(1, i, fHippodrome);
     }
+    replaceWithRemastered(fHippodrome, "hippodrome", "h_");   // Roman circus plates, art/hippodrome
 }
 
 void eBuildingTextures::loadBirdBath() {
@@ -3586,6 +3701,7 @@ void eBuildingTextures::load() {
         for(int i = 123; i < 129; i++) {
             loader.load(87, i, fOrangeTree);
         }
+        replaceWithRemasteredTall(fOrangeTree, "orchard", "orange_");   // art/orchard
     }
 
 

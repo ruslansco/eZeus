@@ -1,4 +1,5 @@
-﻿#include "esmallhouse.h"
+﻿#include <string>
+#include "esmallhouse.h"
 
 #include "textures/egametextures.h"
 #include "engine/egameboard.h"
@@ -49,9 +50,12 @@ std::shared_ptr<eTexture> eSmallHouse::getTexture(const eTileSize size) const {
         coll = &texs.fCommonHouse[mLevel];
     }
     const int texId = seed() % coll->size();
-    if(!atlantean() && mLevel >= 0 && mLevel < 7) {
-        // Remastered house: the resident's household task loops while the house is inhabited.
-        const auto& hd = texs.fCommonHouseHD[mLevel*2 + texId % 2];
+    if(mLevel >= 0 && mLevel < 7) {
+        // Remastered house (v1, art/common_house): the resident's household task loops while the
+        // house is inhabited. Atlantean cities use the same set at every level (user's choice,
+        // 2026-09-27: the all-blue art/atlantean_house set did not tell the levels apart).
+        if(atlantean()) eGameTextures::loadCommonHouse();
+        const auto& hd = texs.fCommonHouseHD[mLevel*2 + seed() % 2];
         const auto& frames = hd[static_cast<int>(getBoard().direction())];
         if(frames[0]) return frames[hdAnimFrame()];
     }

@@ -22,6 +22,7 @@
 void eCharacterTextures::loadTrireme() {
     if(fTriremeLoaded) return;
     fTriremeLoaded = true;
+    if(loadShipHD(fTrireme, fRenderer, fTileH, "trireme")) return;
     const auto& sds = spriteData(fTileH,
                                  eTriremeSpriteData15,
                                  eTriremeSpriteData30,

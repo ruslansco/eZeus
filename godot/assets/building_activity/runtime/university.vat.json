@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 342,
+ "parts": {
+  "university_16": {
+   "row": 0,
+   "rows": 24,
+   "poses": 6,
+   "vertices": 24479,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.000244140625
+  },
+  "university_18": {
+   "row": 144,
+   "rows": 22,
+   "poses": 9,
+   "vertices": 21966,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  }
+ },
+ "source": {
+  "file": "university.glb",
+  "bytes": 6079900,
+  "mtime": 1790833922
+ }
+}

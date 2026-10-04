@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "epyramidtemple.h"
 
 #include "textures/egametextures.h"
@@ -30,6 +31,10 @@ stdsptr<eTexture> ePyramidTemple::getTexture(const eTileSize size) const {
     const auto& blds = eGameTextures::buildings()[sizeId];
     const int id = p - 1;
     const int dirId = 0;
+    // Remastered temple (art/sanctuary_temple): column = construction stage, 3 = Atlantean.
+    eGameTextures::loadSanctuaryHD();
+    const int hdCol = atlantean() && id == 2 ? 3 : std::clamp(id + 1, 1, 2);
+    if(const auto& hd = blds.fSanctuaryHD[dirId][hdCol]) return hd;
     if(atlantean() && id == 2) {
         eGameTextures::loadPoseidonSanctuary();
         const auto& coll = blds.fPoseidonSanctuary;

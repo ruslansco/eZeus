@@ -9,6 +9,7 @@
 #include "buildings/eaestheticsbuilding.h"
 
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 #include "estringhelpers.h"
 
 void eAppealDataWidget::initialize() {
@@ -136,15 +137,7 @@ void eAppealDataWidget::paintEvent(ePainter& p) {
                 w->align(eAlignment::hcenter);
             };
 
-            commParser(0, 5); // population
-            commParser(1, 7); // victory
-            commParser(2, 10); // colony
-            commParser(3, 13); // athelete
-            commParser(4, 8); // conquest
-            commParser(5, 11); // happiness
-            commParser(6, 6); // heroic
-            commParser(7, 9); // diplomacy
-            commParser(8, 12); // scholar
+            for(int id = 0; id < 9; id++) commParser(id, eCityData::commemorativeText(id));
 
             std::map<eGodType, std::vector<eTile*>> gods;
             for(const auto b : mBuildings) {

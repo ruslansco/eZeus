@@ -5,6 +5,7 @@
 #include "eviewmodebutton.h"
 
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 #include "widgets/elinewidget.h"
 #include "widgets/emultilinelabel.h"
 
@@ -115,21 +116,7 @@ void eHusbandryDataWidget::paintEvent(ePainter& p) {
             mCanSupportLabel->fitContent();
             mCanSupportLabel->align(eAlignment::hcenter);
 
-            std::string txt;
-            const int pop = mBoard.population(cid);
-            if(pop == 0 || a < 0.75*pop) {
-                txt = eLanguage::zeusText(57, 3); // far too litte
-            } else if(a < 0.85*pop) {
-                txt = eLanguage::zeusText(57, 4);  // much too little
-            } else if(a < 0.95*pop) {
-                txt = eLanguage::zeusText(57, 5); // too little
-            } else if(a < 1.10*pop) {
-                txt = eLanguage::zeusText(57, 6); // just enough
-            } else if(a < 1.35*pop) {
-                txt = eLanguage::zeusText(57, 7); // plenty
-            } else {
-                txt = eLanguage::zeusText(57, 8); // surplus
-            }
+            const auto txt = eCityData::foodOpinion(a, mBoard.population(cid)).text();
             mOpinionLabel->setText(txt);
             mOpinionLabel->fitContent();
             mOpinionLabel->align(eAlignment::hcenter);

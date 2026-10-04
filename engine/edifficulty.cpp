@@ -173,6 +173,8 @@ int costBase(const eBuildingType type) {
         return 8;
     case eBuildingType::avenue:
         return 10;
+    case eBuildingType::boulevard:
+        return 30;
 
     case eBuildingType::bench:
         return 6;

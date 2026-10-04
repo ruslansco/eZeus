@@ -1,0 +1,85 @@
+{
+  "asset": "walker_egyptianarcher",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_egyptianarcher.glb",
+  "bytes": 8308736,
+  "vertices": 15404,
+  "surfaces": 3,
+  "source_surfaces": 20,
+  "bounds_blender": [
+    [
+      -0.2239569127559662,
+      -0.17923447489738464,
+      0.0004999842494726181
+    ],
+    [
+      0.18213048577308655,
+      0.6562750339508057,
+      0.8760619163513184
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Egyptian archer",
+        "sex": "male",
+        "profile": {
+          "age": 24,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 1.109,
+          "cheek": 1.0,
+          "nose": 0.0051,
+          "chin": 0.0007,
+          "eye": 1.014,
+          "hair": [
+            [
+              0.008,
+              0.006,
+              0.005
+            ],
+            [
+              0.025,
+              0.02,
+              0.015
+            ]
+          ],
+          "hair_length": 0.016,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 93011
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "a7059666cc1dede5d5a21f13b5c9b3f75770902bededc4eea66c4db9c6f2af69",
+        "clavi_srgb": [
+          0.9,
+          0.88,
+          0.8
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 168,
+    "targets_after": 114,
+    "uv_attributes_removed": 0
+  }
+}

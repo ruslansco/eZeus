@@ -1,4 +1,5 @@
 #include "egamemenu.h"
+#include "engine/etradepartners.h"
 #include "eworldwidget.h"
 
 #include "textures/egametextures.h"
@@ -49,36 +50,16 @@ struct eSubButtonData {
 
 void tradePosts(const eCityId cid, std::vector<eSPR>& cs,
                 eGameBoard& board, const bool showAllPossibleBuildings) {
-    const auto pid = board.cityIdToPlayerId(cid);
-    const auto ppid = board.personPlayer();
-    if(pid != ppid && !showAllPossibleBuildings) return;
-    const auto& wrld = board.world();
-    int i = -1;
-    for(const auto& c : wrld.cities()) {
-        const auto cCid = c->cityId();
-        i++;
-        if(c->isRival() && !showAllPossibleBuildings) continue;
-        if(cid == cCid) continue;
-        if(!c->active() && !showAllPossibleBuildings) continue;
-        if(!c->visible() && !showAllPossibleBuildings) continue;
-        if(board.hasTradePost(cid, *c)) continue;
-        const auto tradeCid = c->cityId();
-        const auto tradePid = board.cityIdToPlayerId(tradeCid);
-        const auto tradeC = board.boardCityWithId(tradeCid);
-        const auto tradeTid = board.playerIdToTeamId(tradePid);
-        const auto tid = board.playerIdToTeamId(pid);
-        if(eTeamIdHelpers::isEnemy(tradeTid, tid)) continue;
-        if(!c->buys().empty() || !c->sells().empty() ||
-           (tradeC && pid == tradePid)) {
-            if(c->waterTrade(cid)) {
-                const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
-                const eSPR s{eBuildingMode::pier, name, 0, i};
-                cs.push_back(s);
-            } else {
-                const auto name = eLanguage::zeusText(28, 62) + " " + c->name();
-                const eSPR s{eBuildingMode::tradePost, name, 0, i};
-                cs.push_back(s);
-            }
+    for(const auto& partner : eTradePartners::available(board, cid, showAllPossibleBuildings)) {
+        const auto& c = partner.city;
+        if(partner.water) {
+            const auto name = eLanguage::zeusText(28, 60) + " " + c->name();
+            const eSPR s{eBuildingMode::pier, name, 0, partner.index};
+            cs.push_back(s);
+        } else {
+            const auto name = eLanguage::zeusText(28, 62) + " " + c->name();
+            const eSPR s{eBuildingMode::tradePost, name, 0, partner.index};
+            cs.push_back(s);
         }
     }
 }
@@ -313,6 +294,32 @@ void eGameMenu::categoryChanged(const int i) {
     if(mMapMode && mTabs) mTabs->setIndex(0);
 }
 
+int eGameMenu::currentCategory() const {
+    const auto& bs = categoryButtons();
+    for(int i = 0; i < static_cast<int>(bs.size()); i++) {
+        if(bs[i]->checked()) return i;
+    }
+    return -1;
+}
+
+bool eGameMenu::openCategory(int i) {
+    const auto& bs = categoryButtons();
+    if(i < 0 || i >= static_cast<int>(bs.size())) return false;
+    // culture and science share the rail slot
+    if(i == 6 && mScienceButton && mScienceButton->visible()) i = 11;
+    else if(i == 11 && mScienceButton && !mScienceButton->visible()) i = 6;
+    if(i >= static_cast<int>(bs.size())) return false;
+    const auto b = bs[i];
+    if(!b->visible() || !b->enabled()) return false;
+    if(!b->checked()) b->trigger();
+    else if(mMapMode && mTabs) mTabs->setIndex(0);
+    return true;
+}
+
+void eGameMenu::setMapTab(const bool m) {
+    if(mTabs && m != mMapMode) mTabs->setIndex(m ? 1 : 0);
+}
+
 void eGameMenu::setMapMode(const bool m) {
     if(m == mMapMode || !mMiniMap || !mMapHome) return;
     mMapMode = m;
@@ -372,6 +379,25 @@ void eGameMenu::paintEvent(ePainter& p) {
                         win->worldWidget()->selectNextCity(1);
                     }
                 });
+            } else if(v == "summary" || v == "tips") {
+                const auto gw = mGW;
+                const bool summary = v == "summary";
+                if(gw) window()->addSlot([gw, summary]() {
+                    if(summary) gw->debugShowMonthlySummary();
+                    else gw->debugShowTips();
+                });
+            } else if(v == "keys") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->showShortcutSheet(true); });
+            } else if(v == "terrain") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->debugShowTerrainMenu(); });
+            } else if(v == "advisor") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->showCityAdvisor(); });
+            } else if(v == "messages-real") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->showMessageLog(); });
             } else if(v == "history-real") {
                 const auto gw = mGW;
                 if(gw) window()->addSlot([gw]() { gw->showCityHistory(); });
@@ -386,12 +412,26 @@ void eGameMenu::paintEvent(ePainter& p) {
                 const auto gw = mGW;
                 const bool road = v == "road";
                 if(gw) window()->addSlot([gw, road]() { gw->debugPlacePreview(road); });
+            } else if(v == "walker") {
+                const auto gw = mGW;
+                if(gw) window()->addSlot([gw]() { gw->debugHoverHouse(true); });
+            } else if(v == "info" || v == "info-house" || v == "info-walker") {
+                const auto gw = mGW;
+                const std::string kind = v == "info" ? "building" : v.substr(5);
+                if(gw) window()->addSlot([gw, kind]() { gw->debugOpenInfo(kind); });
             } else if(v == "house") {
                 const auto gw = mGW;
                 if(gw) window()->addSlot([gw]() { gw->debugHoverHouse(); });
             } else if(v == "toasts") {
                 const auto gw = mGW;
                 if(gw) window()->addSlot([gw]() { gw->debugShowToasts(); });
+            } else if(v == "messages-gods") {
+                const auto gw = mGW;
+                if(gw) {
+                    gw->debugFillMessageLog();
+                    gw->setMessageFilter(3);
+                    window()->addSlot([gw]() { gw->showMessageLog(); });
+                }
             } else if(v == "messages" || v == "badge") {
                 if(mGW) mGW->debugFillMessageLog();
                 // after this frame: opening a dialog adds to the game widget mid-paint
@@ -696,6 +736,7 @@ void eGameMenu::initialize(eGameBoard* const b,
 
     mNameLabel = new eFramedLabel(window());
     mNameLabel->setType(eFrameType::inner);
+    mNameLabel->setFontRole(eFontRole::display);
     mNameLabel->setVerySmallFontSize();
     mNameLabel->setText("Recreational Areas");
     mNameLabel->setVeryTinyPadding();
@@ -1148,7 +1189,8 @@ void eGameMenu::initialize(eGameBoard* const b,
                                       eSPR{eBuildingMode::doricColumn, eLanguage::zeusText(28, 129)},
                                       eSPR{eBuildingMode::ionicColumn, eLanguage::zeusText(28, 145)},
                                       eSPR{eBuildingMode::corinthianColumn, eLanguage::zeusText(28, 146)},
-                                      eSPR{eBuildingMode::avenue, eLanguage::zeusText(28, 118)}};
+                                      eSPR{eBuildingMode::avenue, eLanguage::zeusText(28, 118)},
+                                      eSPR{eBuildingMode::boulevard, eLanguage::zeusText(28, 126)}};
     const auto bb9 = [this, cmx, cmy, bb9spr]() {
         openBuildWidget(cmx, cmy, bb9spr);
     };

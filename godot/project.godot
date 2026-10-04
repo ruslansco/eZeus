@@ -1,0 +1,53 @@
+; Native simulation with a Godot 3D presentation pilot.
+config_version=5
+
+[shader_globals]
+
+map_border_points={
+"type": "sampler2D",
+"value": ""
+}
+map_border_count={
+"type": "int",
+"value": 0
+}
+map_outside_tint={
+"type": "float",
+"value": 1.0
+}
+building_work_clock={
+"type": "float",
+"value": 0.0
+}
+
+[application]
+config/name="City Rebuild • 3D Pilot"
+run/main_scene="res://ui/start_menu.tscn"
+config/features=PackedStringArray("4.6", "Mobile")
+
+[autoload]
+
+GameAudio="*res://scripts/audio_manager.gd"
+UiAccess="*res://scripts/ui_accessibility.gd"
+
+[display]
+window/size/viewport_width=1440
+window/size/viewport_height=900
+window/size/window_width_override=1280
+window/size/window_height_override=800
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[internationalization]
+locale/fallback="en"
+locale/translations=PackedStringArray("res://data/ui_strings.ru.translation", "res://data/building_names.ru.translation")
+
+[rendering]
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="mobile"
+rendering_device/driver.macos="metal"
+textures/default_filters/use_nearest_mipmap_filter=false
+anti_aliasing/quality/msaa_3d=2
+mesh_lod/lod_change/threshold_pixels=3.0
+limits/global_shader_variables/buffer_size=262144
+environment/defaults/default_clear_color=Color(0.08, 0.14, 0.19, 1)

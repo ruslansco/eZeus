@@ -77,10 +77,11 @@ eTradeSummaryList::eLine& eTradeSummaryList::add(const std::string& left,
 
 const eTradeSummaryList::eText& eTradeSummaryList::text(SDL_Renderer* const r,
                                                         const std::string& s,
-                                                        const int px) {
-    auto& t = mTexts[{s, px}];
+                                                        const int px,
+                                                        const eFontRole role) {
+    auto& t = mTexts[{s, px, role}];
     if(!t.fTex && !s.empty()) {
-        t.fTex = eMenu3D::makeText(r, eFonts::defaultFont(px), s,
+        t.fTex = eMenu3D::makeText(r, eFonts::font(role, px), s,
                                    SDL_Color{255, 255, 255, 255}, t.fW, t.fH);
     }
     return t;
@@ -267,7 +268,8 @@ void eTradeSummaryList::initialize(eGameBoard& board, const eCityId cid,
         const int px = l.fFont ? small : tiny;
         int tw = 0;
         int th = px;
-        if(const auto f = eFonts::defaultFont(px)) TTF_SizeUTF8(f, "Ag", &tw, &th);
+        const auto role = l.fFont ? eFontRole::heading : eFontRole::body;
+        if(const auto f = eFonts::font(role, px)) TTF_SizeUTF8(f, "Ag", &tw, &th);
         if(l.fHeader && y > 0) y += static_cast<int>(12*m);
         if(l.fCard) y += static_cast<int>(8*m);
         l.fY = y;
@@ -324,7 +326,8 @@ void eTradeSummaryList::paintEvent(ePainter& p) {
             x += iconS + static_cast<float>(6*m);
         }
         if(!l.fLeft.empty()) {
-            const auto& t = text(r, l.fLeft, px);
+            const auto& t = text(r, l.fLeft, px,
+                                 l.fFont ? eFontRole::heading : eFontRole::body);
             if(t.fTex) {
                 const SDL_Color c = l.fHeader ? kGoldText : l.fLeftColor;
                 SDL_SetTextureColorMod(t.fTex, c.r, c.g, c.b);

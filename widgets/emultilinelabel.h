@@ -2,6 +2,7 @@
 #define EMULTILINELABEL_H
 
 #include "ewidget.h"
+#include "efonts.h"
 
 class eLabel;
 
@@ -27,6 +28,7 @@ private:
     const eResolution& res() const;
 
     int mFontSize = 0;
+    eFontRole mFontRole = eFontRole::body;
     eFontColor mFontColor = eFontColor::light;
     std::vector<eLabel*> mLabels;
 };

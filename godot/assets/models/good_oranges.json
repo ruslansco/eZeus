@@ -1,0 +1,21 @@
+{
+  "asset": "good_oranges",
+  "file": "good_oranges.glb",
+  "bytes": 111672,
+  "vertices": 1184,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -3.004788875579834,
+      -9.531046867370605,
+      -1.18756103515625
+    ],
+    [
+      21.394271850585938,
+      12.729385375976562,
+      2.756615161895752
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

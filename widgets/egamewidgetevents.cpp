@@ -165,6 +165,76 @@ void eGameWidget::handleHeroArrivalEvent(eEventData& ed) {
     showMessage(ed, gm->fArrival);
 }
 
+eMessageCategory eGameWidget::sMessageCategory(const eEvent e) {
+    using C = eMessageCategory;
+    const auto between = [e](const eEvent a, const eEvent b) {
+        return static_cast<int>(e) >= static_cast<int>(a) &&
+               static_cast<int>(e) <= static_cast<int>(b);
+    };
+    switch(e) {
+    case eEvent::fire:
+    case eEvent::collapse:
+    case eEvent::plague:
+    case eEvent::earthquake:
+    case eEvent::earthquakeGod:
+    case eEvent::tidalWave:
+    case eEvent::tidalWaveGod:
+    case eEvent::lavaFlow:
+    case eEvent::lavaFlowGod:
+    case eEvent::sinkLand:
+    case eEvent::sinkLandGod:
+    case eEvent::landSlide:
+    case eEvent::areaCutOff:
+    case eEvent::riskWarning:
+        return C::disasters;
+
+    case eEvent::godVisit:
+    case eEvent::godInvasion:
+    case eEvent::godHelp:
+    case eEvent::godQuest:
+    case eEvent::godQuestFulfilled:
+    case eEvent::godMonsterUnleash:
+    case eEvent::sanctuaryComplete:
+    case eEvent::heroArrival:
+    case eEvent::godDisaster:
+    case eEvent::godDisasterEnds:
+    case eEvent::godTradeResumes:
+        return C::gods;
+
+    case eEvent::economicProsperity:
+    case eEvent::economicDecline:
+    case eEvent::tributeSuspended:
+    case eEvent::tributeResumed:
+    case eEvent::debtAnniversary:
+        return C::trade;
+
+    case eEvent::cityConquered:
+    case eEvent::cityConquerFailed:
+    case eEvent::allyAttackedByPlayer:
+    case eEvent::cityRaidFailed:
+    case eEvent::armyReturns:
+    case eEvent::militaryBuildup:
+    case eEvent::militaryDecline:
+    case eEvent::rivalArmyAway:
+    case eEvent::cityRebellion:
+    case eEvent::cityRebellionQuelled:
+    case eEvent::cityRebellionOver:
+    case eEvent::colonyRestored:
+        return C::military;
+    default:
+        break;
+    }
+    if(between(eEvent::monsterInvasionInitial, eEvent::playerGodAttack)) return C::military;
+    if(between(eEvent::tributePaid, eEvent::giftCashGranted) ||
+       between(eEvent::giftPartialSpace, eEvent::giftRefused)) return C::trade;
+    if(between(eEvent::raidGranted, eEvent::raidRefused)) return C::military;
+    if(between(eEvent::troopsRequestVassalInitial, eEvent::vassalConqueresRival)) return C::military;
+    if(between(eEvent::aidArrives, eEvent::strikeUnsuccessful)) return C::military;
+    if(between(eEvent::rivalConqueredByAlly, eEvent::parentConqueredByRival)) return C::military;
+    if(between(eEvent::tradeShutdowns, eEvent::wageDecrease)) return C::trade;
+    return C::other;
+}
+
 eGameWidget::eToastStyle eGameWidget::sToastStyle(const eEvent e) {
     // tone: 0 news, 1 alarm, 2 good news (eMessageToast::eTone)
     switch(e) {
@@ -216,6 +286,7 @@ eGameWidget::eToastStyle eGameWidget::sToastStyle(const eEvent e) {
     case eEvent::colonyRestored: return {"world", 2};
 
     case eEvent::shortageWarning: return {"amphora", 1};
+    case eEvent::riskWarning: return {"fire", 1};
     default: return {};
     }
 }
@@ -233,10 +304,15 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
     }
     // minor news shows as a card (showMessageImpl); reset on every way out
     mToastStyle = sToastStyle(e);
+    mMessageCategory = sMessageCategory(e);
     struct eResetStyle {
         eToastStyle& fS;
-        ~eResetStyle() { fS = eToastStyle(); }
-    } resetStyle{mToastStyle};
+        eMessageCategory& fC;
+        ~eResetStyle() {
+            fS = eToastStyle();
+            fC = eMessageCategory::other;
+        }
+    } resetStyle{mToastStyle, mMessageCategory};
     const auto& inst = eMessages::instance;
     switch(e) {
     case eEvent::fire: {
@@ -1725,6 +1801,40 @@ void eGameWidget::handleEvent(const eEvent e, eEventData& ed) {
 
     case eEvent::areaCutOff: {
         showMessage(ed, inst.fAreaCutOff, true);
+        return;
+    } break;
+    case eEvent::riskWarning: {
+        const auto tr = [](const char* key, const char* fallback) {
+            const auto& t = eLanguage::text(key);
+            return t.empty() ? std::string(fallback) : t;
+        };
+        std::string title;
+        std::string text;
+        const auto n = std::to_string(ed.fResourceCount);
+        if(ed.fTime == 0) {
+            title = ed.fReason.empty() ? tr("risk_fire_title0", "Fire risk high") :
+                                         tr("risk_fire_title", "Fire risk high near the %b");
+            text = tr("risk_fire_text", "%n buildings have had no upkeep for a long time and may catch fire. A maintenance office's walkers must pass them.");
+            mToastStyle.fIcon = "fire";
+        } else if(ed.fTime == 1) {
+            title = ed.fReason.empty() ? tr("risk_collapse_title0", "Buildings may collapse") :
+                                         tr("risk_collapse_title", "%n buildings about to collapse");
+            text = tr("risk_collapse_text", "Worst is the %b. A maintenance office's walkers must pass these buildings to repair them.");
+            mToastStyle.fIcon = "collapse";
+        } else {
+            title = tr("risk_unrest_title", "Unrest is rising: %n%");
+            text = tr("risk_unrest_text", "People grow restless without food, water or work, or with high taxes. The city advisor shows where.");
+            mToastStyle.fIcon = "military";
+        }
+        for(auto* str : {&title, &text}) {
+            eStringHelpers::replaceAll(*str, "%b", ed.fReason);
+            eStringHelpers::replaceAll(*str, "%n", n);
+        }
+        showMessage(ed, eMessage{title, text});
+        return;
+    } break;
+    case eEvent::monthlySummary: {
+        if(ed.fTarget.isCityTarget()) showMonthlySummary(ed.fTarget.cityTarget());
         return;
     } break;
     case eEvent::shortageWarning: {

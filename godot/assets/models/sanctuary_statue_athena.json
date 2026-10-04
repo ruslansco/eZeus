@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_statue_athena",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_statue_athena.glb",
+  "bytes": 7266760,
+  "vertices": 31844,
+  "surfaces": 2,
+  "source_surfaces": 4,
+  "bounds_blender": [
+    [
+      -1.2344093322753906,
+      -0.507993757724762,
+      0.0
+    ],
+    [
+      0.834872841835022,
+      0.7992315292358398,
+      4.3805999755859375
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

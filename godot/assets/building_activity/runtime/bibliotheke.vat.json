@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 234,
+ "parts": {
+  "bibliotheke_14": {
+   "row": 0,
+   "rows": 15,
+   "poses": 9,
+   "vertices": 14884,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "bibliotheke_16": {
+   "row": 135,
+   "rows": 11,
+   "poses": 9,
+   "vertices": 11069,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  }
+ },
+ "source": {
+  "file": "bibliotheke.glb",
+  "bytes": 5800196,
+  "mtime": 1790833902
+ }
+}

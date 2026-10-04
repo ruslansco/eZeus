@@ -1,0 +1,85 @@
+{
+  "asset": "walker_artisan",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_artisan.glb",
+  "bytes": 5321392,
+  "vertices": 15978,
+  "surfaces": 3,
+  "source_surfaces": 18,
+  "bounds_blender": [
+    [
+      -0.18755289912223816,
+      -0.18225902318954468,
+      0.0004999544471502304
+    ],
+    [
+      0.19235599040985107,
+      0.18021810054779053,
+      0.8492265939712524
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Artisan",
+        "sex": "male",
+        "profile": {
+          "age": 41,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 1.02,
+          "cheek": 1.0,
+          "nose": 0.003,
+          "chin": -0.001,
+          "eye": 1.0,
+          "hair": [
+            [
+              0.09,
+              0.035,
+              0.012
+            ],
+            [
+              0.22,
+              0.09,
+              0.03
+            ]
+          ],
+          "hair_length": 0.02,
+          "beard_length": 0.016,
+          "grey": 0.05,
+          "seed": 31511
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "dd94446e3585999bbae34bebca8191ad27325d9d4f20c88baf2c5f84a055d9d0",
+        "clavi_srgb": [
+          0.2,
+          0.22,
+          0.45
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 61,
+    "uv_attributes_removed": 0
+  }
+}

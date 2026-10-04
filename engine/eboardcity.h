@@ -134,6 +134,8 @@ public:
                const int id = -1);
     void destroyed(const eBuildingType type,
                    const int id = -1);
+    void allowPyramid(const eBuildingType type,
+                      const std::vector<bool>& levels);
     void allow(const eBuildingType type,
                const int id = -1);
     void disallow(const eBuildingType type,
@@ -388,6 +390,7 @@ public:
     int roadState() const { return mRoadState; }
 
     int allBuildingsState() const { return mAllBuildingsState; }
+    const std::vector<eBuilding*>& allBuildings() const { return mAllBuildings; }
 
     int terrainState() const { return mTerrainState; }
     void incTerrainState();
@@ -590,6 +593,7 @@ private:
     int mAllDiscCoverage = 0;
     int mTaxesCoverage = 0;
     void warnShortages();
+    void warnRisks();
     eCityHistory mHistory;
     eTradeLedger mTradeLedger;
 

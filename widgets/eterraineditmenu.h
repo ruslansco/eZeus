@@ -97,7 +97,11 @@ public:
     int brushSize() const;
 
     void updateCitiesOnBoard(eGameBoard& board);
+protected:
+    // lapis and gold, like the city's side panel (eGameMenu)
+    void paintEvent(ePainter& p) override;
 private:
+    int mMult = 1;
     eBrushType mBrushType = eBrushType::apply;
     int mBrushSize = 1;
     eTerrainEditMode mMode = eTerrainEditMode::dry;

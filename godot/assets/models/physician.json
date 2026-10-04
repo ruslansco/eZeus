@@ -1,0 +1,85 @@
+{
+  "asset": "physician",
+  "source": "art/characters/physician/build_sprites.py",
+  "file": "physician.glb",
+  "bytes": 7603452,
+  "vertices": 15899,
+  "surfaces": 3,
+  "source_surfaces": 16,
+  "bounds_blender": [
+    [
+      -0.19080370664596558,
+      -0.20830786228179932,
+      -0.001259485026821494
+    ],
+    [
+      0.21113049983978271,
+      0.240465447306633,
+      0.8307411074638367
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "breathing",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Greek physician",
+        "sex": "male",
+        "profile": {
+          "age": 36,
+          "jaw": 1.08,
+          "cheek": 0.97,
+          "nose": 0.003,
+          "chin": 0.004,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0.004,
+          "grey": 0.06,
+          "seed": 963107943,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "a4c92408814a7af24c45e064a3f8c71de6b057db786250e09c2b530c15b23a23",
+        "clavi_srgb": [
+          0.45,
+          0.075,
+          0.16
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 105,
+    "uv_attributes_removed": 0
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "asset": "oil_vendor",
+  "source": "art/agora/build_stall.py",
+  "file": "oil_vendor.glb",
+  "bytes": 3355416,
+  "vertices": 27935,
+  "surfaces": 6,
+  "source_surfaces": 29,
+  "bounds_blender": [
+    [
+      -0.996999979019165,
+      -0.996999979019165,
+      0.0
+    ],
+    [
+      1.0,
+      1.0,
+      1.1200000047683716
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 57,
+    "allocation_target": 35000,
+    "base_sha256": "4105ef8d55fb25c1bdbf1fe8c9a737b40af23a6aea22726eb756d4029fa198db",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

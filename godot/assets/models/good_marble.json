@@ -1,0 +1,21 @@
+{
+  "asset": "good_marble",
+  "file": "good_marble.glb",
+  "bytes": 10548,
+  "vertices": 64,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.14000000059604645,
+      -0.13558915257453918,
+      -0.09000000357627869
+    ],
+    [
+      0.3955739736557007,
+      0.3657960295677185,
+      0.17000000178813934
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

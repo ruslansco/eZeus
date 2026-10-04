@@ -1,0 +1,9 @@
+{
+  "sources": ["godot/scripts/terrain_forest.gd", "godot/shaders/tree.gdshader", "godot/scripts/terrain_bridges.gd"],
+  "authoring": "Procedural olive-style crowns, cypress foliage, branches, leaf blades and timber/stone crossing geometry authored for Godot. No original sprite RGB, imported legacy meshes or live Blender scene changes.",
+  "provenance_status": "needs_evidence",
+  "forest": {"native_flag": 16, "species": ["olive", "cypress"], "variants_each": 2, "section_tiles": 24, "wind_amplitude": [0.014, 0.009], "max_vertices_including_lod": 6000, "lod": "Indexed reduced mesh selected by projected geometric error; no billboard trees."},
+  "bridges": {"identity": "Actual native water bit 4 AND road flag, plus connected shore-road approaches only", "deck_height_above_native_water": 0.14, "deck_width_tiles": 0.68, "deck_vertices": 540, "approach_vertices": 12},
+  "native_boundary": "No native coordinate, pathfinding, shipping, terrain, resource, cost, RNG or tick changes. Walkers convert native corner-based positions to Godot tile centers once. Pedestrians follow deck/approach picking surfaces; boats retain native water height.",
+  "coverage": "Designated saved city only. Other bridge topology, heights, wider species/content and sustained minimum-hardware performance need coverage. Code and content licensing/release gates remain required."
+}

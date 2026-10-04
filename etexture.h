@@ -73,6 +73,12 @@ public:
     void render(SDL_Renderer* const r,
                 const int x, const int y,
                 const bool flipped = false) const;
+    // As render, with the top edge shifted `lean` pixels sideways and the
+    // bottom kept in place (trees in the wind, eWeather).
+    void renderLeaning(SDL_Renderer* const r,
+                       const SDL_Rect& srcRect,
+                       const SDL_Rect& dstRect,
+                       const float lean) const;
 
     int x() const { return mX; }
     int y() const { return mY; }

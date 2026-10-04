@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "efonts.h"
 
 #include "textures/egeometrybatch.h"
 
@@ -128,7 +129,7 @@ inline SDL_Texture* makeText(SDL_Renderer* const r, TTF_Font* const font,
                              int& w, int& h) {
     w = h = 0;
     if(!font || text.empty()) return nullptr;
-    const auto s = TTF_RenderUTF8_Blended(font, text.c_str(), col);
+    const auto s = TTF_RenderUTF8_Blended(eFonts::forText(font, text), text.c_str(), col);
     if(!s) return nullptr;
     const auto t = SDL_CreateTextureFromSurface(r, s);
     w = s->w;

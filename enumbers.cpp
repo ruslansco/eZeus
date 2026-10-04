@@ -326,7 +326,7 @@ void eNumbers::sLoad(const std::string& path) {
             return;
         }
     };
-    loadI("day_length_i", sDayLength, 350, 1, 10000);
+    loadI("day_length_i", sDayLength, 360, 1, 10000);
 
     loadD("elite_housing_tax_mult_d", sEliteHousingTaxMultiplier, 1, 0, 10);
     loadD("common_housing_tax_mult_d", sCommonHousingTaxMulitplier, 1, 0, 10);

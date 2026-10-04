@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 219,
+ "parts": {
+  "oil_vendor_0": {
+   "row": 0,
+   "rows": 23,
+   "poses": 2,
+   "vertices": 22629,
+   "frames": {
+    "work_00": 0,
+    "work_01": 0,
+    "work_02": 0,
+    "work_03": 0,
+    "work_04": 0,
+    "work_05": 0,
+    "work_06": 0,
+    "work_07": 0,
+    "inactive": 1
+   },
+   "max_error": 0.0002440810203552246
+  },
+  "oil_vendor_1": {
+   "row": 46,
+   "rows": 19,
+   "poses": 9,
+   "vertices": 18618,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024402141571044922
+  },
+  "oil_vendor_7": {
+   "row": 217,
+   "rows": 1,
+   "poses": 2,
+   "vertices": 640,
+   "frames": {
+    "work_00": 0,
+    "work_01": 0,
+    "work_02": 0,
+    "work_03": 0,
+    "work_04": 0,
+    "work_05": 0,
+    "work_06": 0,
+    "work_07": 0,
+    "inactive": 1
+   },
+   "max_error": 0.00023823976516723633
+  }
+ },
+ "source": {
+  "file": "oil_vendor.glb",
+  "bytes": 3355416,
+  "mtime": 1790834104
+ }
+}

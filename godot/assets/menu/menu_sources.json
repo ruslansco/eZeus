@@ -1,0 +1,61 @@
+{
+  "version": "gates_of_hades_v4",
+  "scope": "Main-menu-only 3D presentation. No native map, RNG, gameplay, collision or navigation changes.",
+  "scene": "res://ui/login_scene_3d.tscn",
+  "geometry_source": "res://scripts/login_scene_3d.gd",
+  "textures": [
+    {
+      "file": "cloud_sky_2k.exr",
+      "bytes": 19165638,
+      "sha256": "d8fe66515818cad080b89aa6605902a7240eadf5ca3e02eac749b7d16975b389"
+    },
+    {
+      "file": "rock_06_diff_2k.jpg",
+      "bytes": 3266219,
+      "sha256": "cd0e306ee8fb9ddc11f8d7c4dc709fa09caf91ebdd7941ab79196654f1789481"
+    },
+    {
+      "file": "rock_06_nor_gl_2k.jpg",
+      "bytes": 2764058,
+      "sha256": "d86110c0af6375563efa6d296d37300e04089b99124e29f16373b04ec492ab6e"
+    },
+    {
+      "file": "rock_06_rough_2k.jpg",
+      "bytes": 862351,
+      "sha256": "f030ddcd6b089037826bafb4f49a3999a364ae33187ff1d1e7f0b1fc4975c883"
+    }
+  ],
+  "retained_inputs": [
+    {
+      "source": "art/menu/backdrop/assets/rock_06_{diff,nor_gl,rough}_2k.jpg",
+      "use": "Copied PBR scans; originals unchanged",
+      "license_claim": "Poly Haven CC0, described by art/menu/backdrop/bd_terrain.py",
+      "rights_status": "needs_evidence"
+    },
+    {
+      "source": "art/menu/backdrop/assets/kloofendal_48d_partly_cloudy_puresky_8k.hdr",
+      "use": "2048x1024 float EXR derivative from prepare_menu_sky.gd; original unchanged",
+      "license_claim": "Poly Haven CC0, described by art/menu/backdrop/bd_sky.py",
+      "rights_status": "needs_evidence"
+    },
+    {
+      "source": "res://assets/menu/hades_guardian.glb",
+      "use": "Two stone guardians derived from the updated walker_hades idle_00 pose; native sanctuary monument GLB unchanged",
+      "source_manifest": "res://assets/menu/hades_guardian.json",
+      "rights_status": "needs_evidence"
+    }
+  ],
+  "reference": "User Warcraft screenshot informs gateway scale and atmosphere; no pixels, logo, text or game assets copied into runtime.",
+  "budgets": {
+    "static_triangles_max": 400000,
+    "static_triangles_observed": 271928,
+    "mesh_instances_max": 32,
+    "mesh_instances_observed": 29,
+    "particles_max": 276,
+    "directional_shadow_cascades": 2,
+    "shadowed_directional_lights": 1
+  },
+  "rendering": "Godot Metal/Forward Mobile. Fog cards, opaque portal shader, bounded particles, sky, bloom and tone mapping; SSR/SSAO/volumetric fog disabled.",
+  "release_status": "Development art. Source rights evidence, visual acceptance and minimum-Mac performance remain pending.",
+  "character_direction": "Original older anatomical Hades face, silver-gray beard, red-fire hair and dark Greek drapery; no reference pixels imported"
+}

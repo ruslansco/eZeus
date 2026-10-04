@@ -151,6 +151,7 @@ void eWorldMenu::initialize(const eAction& openRequest,
 
         mNameLabel = new eLabel("a", window());
         mNameLabel->setNoPadding();
+        mNameLabel->setFontRole(eFontRole::display);
         mNameLabel->setSmallFontSize();
         mNameLabel->setYellowFontColor();
         mNameLabel->fitContent();

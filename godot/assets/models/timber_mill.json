@@ -1,0 +1,34 @@
+{
+  "asset": "timber_mill",
+  "source": "art/timber_mill/build_sprites.py",
+  "file": "timber_mill.glb",
+  "bytes": 2719020,
+  "vertices": 14766,
+  "surfaces": 3,
+  "bounds_blender": [
+    [
+      -0.9900000095367432,
+      -0.9900000095367432,
+      -0.2800000011920929
+    ],
+    [
+      0.9947333335876465,
+      0.9900000095367432,
+      1.590000033378601
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "idle_mode": null,
+  "source_surfaces": 23,
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 0,
+    "targets_after": 0,
+    "uv_attributes_removed": 0
+  }
+}

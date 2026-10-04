@@ -362,8 +362,7 @@ void eHippodromePiece::crossTile(eTile* const t,
                                  const eTileSize size,
                                  const SDL_Rect& rr,
                                  const bool back) const {
-    const bool hr = t->hasRoad();
-    if(!hr) return;
+    if(!t->hasRoad() || t->underBuildingType() != eBuildingType::road) return;
     const auto ub = t->underBuilding();
     const auto r = static_cast<eRoad*>(ub);
     const auto h = r->aboveHippodrome();

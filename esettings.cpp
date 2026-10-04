@@ -52,6 +52,9 @@ void eSettings::write() const {
     file << "leader" << " \"" << fLeader << "\"\n";
     file << "autosave_minutes" << " \"" << fAutosaveMinutes << "\"\n";
     file << "autosave_slots" << " \"" << fAutosaveSlots << "\"\n";
+    file << "monthly_summary" << " " << (fMonthlySummary ? "\"true\"" : "\"false\"") << "\n";
+    file << "classic_font" << " " << (fClassicFont ? "\"true\"" : "\"false\"") << "\n";
+    file << "weather" << " " << (fWeather ? "\"true\"" : "\"false\"") << "\n";
     auto writeKey = [&](const char* name, SDL_Scancode code) {
         const char* keyName = SDL_GetScancodeName(code);
         file << name << " \"" << (keyName ? keyName : "") << "\"\n";
@@ -62,6 +65,8 @@ void eSettings::write() const {
     writeKey("key_move_right", fKeyBindings.fMoveRight);
     writeKey("key_pause", fKeyBindings.fPause);
     writeKey("key_rotate", fKeyBindings.fRotate);
+    writeKey("key_camera_rotate_left", fKeyBindings.fCameraRotateLeft);
+    writeKey("key_camera_rotate_right", fKeyBindings.fCameraRotateRight);
     writeKey("key_clone", fKeyBindings.fClone);
     writeKey("key_demolish", fKeyBindings.fDemolish);
     writeKey("key_speed_up", fKeyBindings.fSpeedUp);
@@ -106,10 +111,23 @@ void eSettings::read() {
     };
     readInt("autosave_minutes", fAutosaveMinutes, 0, 240);
     readInt("autosave_slots", fAutosaveSlots, 1, 20);
+    const auto readBool = [&](const std::string& name, bool& to) {
+        const auto it = settings.find(name);
+        if(it == settings.end() || it->second.empty()) return;
+        to = it->second == "true";
+    };
+    readBool("monthly_summary", fMonthlySummary);
+    readBool("classic_font", fClassicFont);
+    readBool("weather", fWeather);
 
     auto readKey = [&](const std::string& name, SDL_Scancode& code) {
-        if(settings.find(name) != settings.end() && !settings[name].empty()) {
-            SDL_Scancode parsed = SDL_GetScancodeFromName(settings[name].c_str());
+        const auto it = settings.find(name);
+        if(it != settings.end()) {
+            if(it->second.empty()) {
+                code = SDL_SCANCODE_UNKNOWN; // explicitly unbound, including after migration
+                return;
+            }
+            SDL_Scancode parsed = SDL_GetScancodeFromName(it->second.c_str());
             if(parsed != SDL_SCANCODE_UNKNOWN) {
                 code = parsed;
             }
@@ -127,5 +145,33 @@ void eSettings::read() {
     readKey("key_speed_down", fKeyBindings.fSpeedDown);
     readKey("key_quick_save", fKeyBindings.fQuickSave);
     readKey("key_objectives", fKeyBindings.fObjectives);
-}
 
+    const bool hasLeft = settings.count("key_camera_rotate_left") != 0;
+    const bool hasRight = settings.count("key_camera_rotate_right") != 0;
+    // Preserve customised legacy controls. Only move the former default
+    // eyedropper when C is free; never steal a key already used by an action.
+    const auto legacyUses = [&](SDL_Scancode key) {
+        for(const auto used : {fKeyBindings.fMoveUp, fKeyBindings.fMoveDown,
+             fKeyBindings.fMoveLeft, fKeyBindings.fMoveRight, fKeyBindings.fPause,
+             fKeyBindings.fRotate, fKeyBindings.fClone, fKeyBindings.fDemolish,
+             fKeyBindings.fSpeedUp, fKeyBindings.fSpeedDown,
+             fKeyBindings.fQuickSave, fKeyBindings.fObjectives}) {
+            if(used == key) return true;
+        }
+        return false;
+    };
+    if(!hasLeft && !hasRight && fKeyBindings.fClone == SDL_SCANCODE_Q &&
+       !legacyUses(SDL_SCANCODE_C)) {
+        fKeyBindings.fClone = SDL_SCANCODE_C;
+    }
+    readKey("key_camera_rotate_left", fKeyBindings.fCameraRotateLeft);
+    readKey("key_camera_rotate_right", fKeyBindings.fCameraRotateRight);
+    if(!hasLeft && (legacyUses(fKeyBindings.fCameraRotateLeft) ||
+                   fKeyBindings.fCameraRotateLeft == fKeyBindings.fCameraRotateRight)) {
+        fKeyBindings.fCameraRotateLeft = SDL_SCANCODE_UNKNOWN;
+    }
+    if(!hasRight && (legacyUses(fKeyBindings.fCameraRotateRight) ||
+                    fKeyBindings.fCameraRotateRight == fKeyBindings.fCameraRotateLeft)) {
+        fKeyBindings.fCameraRotateRight = SDL_SCANCODE_UNKNOWN;
+    }
+}

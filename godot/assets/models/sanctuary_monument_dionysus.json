@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_monument_dionysus",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_monument_dionysus.glb",
+  "bytes": 6996872,
+  "vertices": 31707,
+  "surfaces": 2,
+  "source_surfaces": 6,
+  "bounds_blender": [
+    [
+      -1.4116054773330688,
+      -1.0,
+      0.0
+    ],
+    [
+      1.3157188892364502,
+      1.0454999208450317,
+      6.691499710083008
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

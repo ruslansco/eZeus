@@ -1,0 +1,38 @@
+{
+  "asset": "harbour",
+  "source": "art/harbour/build_sprites.py",
+  "file": "harbour.glb",
+  "bytes": 682204,
+  "vertices": 3623,
+  "surfaces": 4,
+  "source_surfaces": 17,
+  "bounds_blender": [
+    [
+      -0.9599999785423279,
+      -0.996999979019165,
+      -0.25
+    ],
+    [
+      0.996999979019165,
+      0.996999979019165,
+      1.190439224243164
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 3,
+    "allocation_target": 4285,
+    "base_sha256": "2b772ba6a9680ecc411836205f49410ae71c8d35dbf4bc0e16d538241b89b3c1",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

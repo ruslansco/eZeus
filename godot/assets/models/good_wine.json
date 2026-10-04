@@ -1,0 +1,21 @@
+{
+  "asset": "good_wine",
+  "file": "good_wine.glb",
+  "bytes": 347796,
+  "vertices": 4928,
+  "surfaces": 3,
+  "bounds_blender": [
+    [
+      -0.07500001788139343,
+      -0.08500000834465027,
+      -0.337837815284729
+    ],
+    [
+      0.46283775568008423,
+      0.11500000953674316,
+      0.2273261994123459
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

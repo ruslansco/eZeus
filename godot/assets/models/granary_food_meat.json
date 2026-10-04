@@ -1,0 +1,21 @@
+{
+  "asset": "granary_food_meat",
+  "file": "granary_food_meat.glb",
+  "bytes": 36152,
+  "vertices": 441,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      0.1901015043258667,
+      0.012159518897533417,
+      0.011999964714050293
+    ],
+    [
+      1.1763625144958496,
+      0.7663487195968628,
+      0.22006778419017792
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

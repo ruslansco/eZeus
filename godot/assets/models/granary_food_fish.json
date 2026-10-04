@@ -1,0 +1,21 @@
+{
+  "asset": "granary_food_fish",
+  "file": "granary_food_fish.glb",
+  "bytes": 64056,
+  "vertices": 693,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      0.1901015043258667,
+      -0.021585717797279358,
+      0.011999964714050293
+    ],
+    [
+      1.1763625144958496,
+      0.7663487195968628,
+      0.19283922016620636
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

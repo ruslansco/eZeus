@@ -1,0 +1,86 @@
+{
+  "asset": "walker_dionysus",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_dionysus.glb",
+  "bytes": 8993348,
+  "vertices": 15869,
+  "surfaces": 3,
+  "source_surfaces": 20,
+  "bounds_blender": [
+    [
+      -0.640394389629364,
+      -0.5697174668312073,
+      0.0
+    ],
+    [
+      0.6133257150650024,
+      0.5760000348091125,
+      2.879889726638794
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Dionysus",
+        "sex": "male",
+        "profile": {
+          "age": 28,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ],
+          "jaw": 0.98,
+          "cheek": 1.04,
+          "nose": 0.001,
+          "chin": 0.002,
+          "eye": 1.02,
+          "hair": [
+            [
+              0.04,
+              0.02,
+              0.03
+            ],
+            [
+              0.12,
+              0.06,
+              0.08
+            ]
+          ],
+          "hair_length": 0.03,
+          "beard_length": 0.012,
+          "grey": 0,
+          "seed": 62304
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "3519ca8e6f37fe5f6db9c3a707c94275bc21e14d646c942c44bb63b00db591f2",
+        "clavi_srgb": [
+          0.3,
+          0.4,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG",
+    "floating": "floating_gods_v1"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 330,
+    "targets_after": 129,
+    "uv_attributes_removed": 0
+  }
+}

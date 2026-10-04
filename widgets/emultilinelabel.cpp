@@ -39,6 +39,7 @@ void eMultiLineLabel::setSmallFontSize() {
 
 void eMultiLineLabel::setHugeFontSize() {
     const int s = res().hugeFontSize();
+    mFontRole = eFontRole::display;
     return setFontSize(s);
 }
 
@@ -56,6 +57,7 @@ void eMultiLineLabel::setText(const std::string& text) {
     if(lines.empty()) return;
     for(const auto& l : lines) {
         const auto label = new eLabel(window());
+        label->setFontRole(mFontRole);
         label->setFontSize(mFontSize);
         label->setFontColor(mFontColor);
         label->setNoPadding();

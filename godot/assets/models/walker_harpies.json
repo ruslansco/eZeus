@@ -1,0 +1,127 @@
+{
+  "asset": "walker_harpies",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_harpies.glb",
+  "bytes": 12193124,
+  "vertices": 16050,
+  "surfaces": 3,
+  "source_surfaces": 24,
+  "bounds_blender": [
+    [
+      -0.6550485491752625,
+      -0.44790154695510864,
+      0.4794883728027344
+    ],
+    [
+      0.5918172597885132,
+      0.24014396965503693,
+      1.5151704549789429
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Harpy",
+        "sex": "female",
+        "profile": {
+          "age": 40,
+          "soft_features": true,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ],
+          "jaw": 0.95,
+          "cheek": 0.9,
+          "nose": 0.008,
+          "chin": 0.004,
+          "eye": 1.04,
+          "hair": [
+            [
+              0.02,
+              0.018,
+              0.016
+            ],
+            [
+              0.06,
+              0.05,
+              0.045
+            ]
+          ],
+          "hair_length": 0.02,
+          "beard_length": 0,
+          "grey": 0.15,
+          "seed": 71808
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "77e2e0dd81e681206c434281c0a5a417a543b78943244eecc7f7b61acff16d92",
+        "clavi_srgb": [
+          0.36,
+          0.1,
+          0.08
+        ]
+      },
+      {
+        "name": "Harpy B",
+        "sex": "female",
+        "profile": {
+          "age": 34,
+          "soft_features": true,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 0.92,
+          "cheek": 0.92,
+          "nose": 0.007,
+          "chin": 0.003,
+          "eye": 1.05,
+          "hair": [
+            [
+              0.08,
+              0.05,
+              0.03
+            ],
+            [
+              0.18,
+              0.12,
+              0.08
+            ]
+          ],
+          "hair_length": 0.02,
+          "beard_length": 0,
+          "grey": 0.1,
+          "seed": 71809
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "062f1ffd4d8dc465e045b069d074e1df769572614488e150ef6d955fa5e15baf",
+        "clavi_srgb": [
+          0.3,
+          0.08,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 327,
+    "targets_after": 181,
+    "uv_attributes_removed": 0
+  }
+}

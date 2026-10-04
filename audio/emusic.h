@@ -3,6 +3,7 @@
 
 #include "emusicvector.h"
 
+#include <functional>
 #include <memory>
 #include <map>
 
@@ -29,7 +30,14 @@ public:
 
     static bool playCampaignVoice(const std::string& path);
     static void clearCampaignVoices();
+
+    // Without a music object (the embedded core, which has no audio device) the simulation's music requests go to
+    // this function by name: "menu", "city", "battle", "mission_intro", "mission_victory" or "campaign_victory".
+    // Before this existed an invasion in the embedded core dereferenced the missing object.
+    using eModeSink = std::function<void(const std::string&)>;
+    static void setModeSink(const eModeSink& sink);
 private:
+    static void mode(const char* name);
     void incTimeImpl();
 
     void playMenuMusicImpl();

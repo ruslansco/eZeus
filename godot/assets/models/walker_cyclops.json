@@ -1,0 +1,85 @@
+{
+  "asset": "walker_cyclops",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_cyclops.glb",
+  "bytes": 13323660,
+  "vertices": 15904,
+  "surfaces": 3,
+  "source_surfaces": 20,
+  "bounds_blender": [
+    [
+      -0.37735509872436523,
+      -0.8172551989555359,
+      0.0009500266751274467
+    ],
+    [
+      0.40539827942848206,
+      1.3914116621017456,
+      1.846839427947998
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Cyclops",
+        "sex": "male",
+        "profile": {
+          "age": 40,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 1.28,
+          "cheek": 1.1,
+          "nose": 0.01,
+          "chin": 0.008,
+          "eye": 0.35,
+          "hair": [
+            [
+              0.03,
+              0.02,
+              0.01
+            ],
+            [
+              0.1,
+              0.07,
+              0.04
+            ]
+          ],
+          "hair_length": 0.03,
+          "beard_length": 0.045,
+          "grey": 0.05,
+          "seed": 71101
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "e1c07b5ecae8761bdb6f6d642b8a363730f1b534b4077e0b87de4b36a74e79be",
+        "clavi_srgb": [
+          0.24,
+          0.16,
+          0.1
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 270,
+    "targets_after": 187,
+    "uv_attributes_removed": 0
+  }
+}

@@ -1,0 +1,1457 @@
+{
+	"assets": {
+		"animal_boar": {
+			"tris": 19944,
+			"verts": 15443
+		},
+		"animal_deer": {
+			"tris": 18952,
+			"verts": 14272
+		},
+		"animal_donkey": {
+			"tris": 17690,
+			"verts": 12659
+		},
+		"animal_ox": {
+			"tris": 20724,
+			"verts": 14968
+		},
+		"animal_sheep_fleeced": {
+			"tris": 19888,
+			"verts": 17780
+		},
+		"animal_sheep_nude": {
+			"tris": 19888,
+			"verts": 13851
+		},
+		"animal_wolf": {
+			"tris": 20512,
+			"verts": 13946
+		},
+		"armory": {
+			"tris": 64253,
+			"verts": 155555
+		},
+		"arms_vendor": {
+			"tris": 48070,
+			"verts": 112464
+		},
+		"artisans_guild": {
+			"tris": 63243,
+			"verts": 157720
+		},
+		"baths": {
+			"tris": 64451,
+			"verts": 164698
+		},
+		"bibliotheke": {
+			"tris": 64159,
+			"verts": 174321
+		},
+		"black_marble_workshop": {
+			"tris": 25988,
+			"verts": 50693
+		},
+		"carding_shed": {
+			"tris": 22352,
+			"verts": 49382
+		},
+		"chariot_factory": {
+			"tris": 65673,
+			"verts": 165932
+		},
+		"chariot_vendor": {
+			"tris": 51824,
+			"verts": 119402
+		},
+		"college": {
+			"tris": 66136,
+			"verts": 178327
+		},
+		"commemorative_0": {
+			"tris": 1972,
+			"verts": 3870
+		},
+		"commemorative_1": {
+			"tris": 52263,
+			"verts": 127463
+		},
+		"commemorative_2": {
+			"tris": 1948,
+			"verts": 3852
+		},
+		"commemorative_3": {
+			"tris": 52015,
+			"verts": 125179
+		},
+		"commemorative_4": {
+			"tris": 48251,
+			"verts": 117982
+		},
+		"commemorative_5": {
+			"tris": 51236,
+			"verts": 123689
+		},
+		"commemorative_6": {
+			"tris": 55538,
+			"verts": 132555
+		},
+		"commemorative_7": {
+			"tris": 57029,
+			"verts": 147265
+		},
+		"commemorative_8": {
+			"tris": 53486,
+			"verts": 128307
+		},
+		"common_house_0a": {
+			"tris": 141228,
+			"verts": 286796
+		},
+		"common_house_1a": {
+			"tris": 145534,
+			"verts": 299624
+		},
+		"common_house_2a": {
+			"tris": 145062,
+			"verts": 299062
+		},
+		"common_house_3a": {
+			"tris": 152714,
+			"verts": 312670
+		},
+		"common_house_4a": {
+			"tris": 180728,
+			"verts": 378381
+		},
+		"common_house_5a": {
+			"tris": 174934,
+			"verts": 362433
+		},
+		"common_house_6a": {
+			"tris": 61520,
+			"verts": 151642
+		},
+		"corral": {
+			"tris": 53242,
+			"verts": 122174
+		},
+		"dairy": {
+			"tris": 60399,
+			"verts": 151661
+		},
+		"deco_bench": {
+			"tris": 780,
+			"verts": 1784
+		},
+		"deco_birdbath": {
+			"tris": 6588,
+			"verts": 17288
+		},
+		"deco_dolphin": {
+			"tris": 54951,
+			"verts": 144340
+		},
+		"deco_fish_pond": {
+			"tris": 85807,
+			"verts": 236435
+		},
+		"deco_flower_garden": {
+			"tris": 26860,
+			"verts": 80160
+		},
+		"deco_gazebo": {
+			"tris": 54787,
+			"verts": 129855
+		},
+		"deco_hedge_maze": {
+			"tris": 126099,
+			"verts": 345665
+		},
+		"deco_orrery": {
+			"tris": 30028,
+			"verts": 82016
+		},
+		"deco_shell_garden": {
+			"tris": 13804,
+			"verts": 35344
+		},
+		"deco_short_obelisk": {
+			"tris": 112,
+			"verts": 228
+		},
+		"deco_spring": {
+			"tris": 62018,
+			"verts": 167581
+		},
+		"deco_stone_circle": {
+			"tris": 62041,
+			"verts": 168998
+		},
+		"deco_sundial": {
+			"tris": 9564,
+			"verts": 25424
+		},
+		"deco_tall_obelisk": {
+			"tris": 444,
+			"verts": 1212
+		},
+		"deco_topiary": {
+			"tris": 43748,
+			"verts": 105269
+		},
+		"drama_school": {
+			"tris": 63707,
+			"verts": 168659
+		},
+		"elite_house_0a": {
+			"tris": 61140,
+			"verts": 144433
+		},
+		"elite_house_0b": {
+			"tris": 61021,
+			"verts": 145474
+		},
+		"elite_house_1a": {
+			"tris": 63479,
+			"verts": 153292
+		},
+		"elite_house_1b": {
+			"tris": 63719,
+			"verts": 154638
+		},
+		"elite_house_2a": {
+			"tris": 63258,
+			"verts": 156083
+		},
+		"elite_house_2b": {
+			"tris": 63286,
+			"verts": 155692
+		},
+		"elite_house_3a": {
+			"tris": 62969,
+			"verts": 153767
+		},
+		"elite_house_3b": {
+			"tris": 63079,
+			"verts": 155208
+		},
+		"elite_house_4a": {
+			"tris": 64473,
+			"verts": 164762
+		},
+		"elite_house_4b": {
+			"tris": 64522,
+			"verts": 165026
+		},
+		"farm": {
+			"tris": 9816,
+			"verts": 20968
+		},
+		"fishery": {
+			"tris": 69112,
+			"verts": 171486
+		},
+		"fishing_boat": {
+			"tris": 36846,
+			"verts": 86422
+		},
+		"fleece_vendor": {
+			"tris": 46372,
+			"verts": 113189
+		},
+		"food_vendor": {
+			"tris": 49956,
+			"verts": 119550
+		},
+		"foundry": {
+			"tris": 59326,
+			"verts": 149038
+		},
+		"fountain": {
+			"tris": 64061,
+			"verts": 159379
+		},
+		"gatehouse": {
+			"tris": 3588,
+			"verts": 7082
+		},
+		"granary": {
+			"tris": 66396,
+			"verts": 165390
+		},
+		"growers_lodge": {
+			"tris": 63371,
+			"verts": 163872
+		},
+		"gymnasium": {
+			"tris": 65772,
+			"verts": 174812
+		},
+		"harbour": {
+			"tris": 9072,
+			"verts": 18988
+		},
+		"hero_hall_achilles": {
+			"tris": 49651,
+			"verts": 122673
+		},
+		"hero_hall_atalanta": {
+			"tris": 49251,
+			"verts": 123994
+		},
+		"hero_hall_bellerophon": {
+			"tris": 49620,
+			"verts": 122996
+		},
+		"hero_hall_hercules": {
+			"tris": 49665,
+			"verts": 122897
+		},
+		"hero_hall_jason": {
+			"tris": 49588,
+			"verts": 122622
+		},
+		"hero_hall_odysseus": {
+			"tris": 49491,
+			"verts": 122355
+		},
+		"hero_hall_perseus": {
+			"tris": 49553,
+			"verts": 122537
+		},
+		"hero_hall_theseus": {
+			"tris": 49578,
+			"verts": 124633
+		},
+		"horse_vendor": {
+			"tris": 56532,
+			"verts": 141903
+		},
+		"hospital": {
+			"tris": 67483,
+			"verts": 182217
+		},
+		"hunting_lodge": {
+			"tris": 13920,
+			"verts": 29771
+		},
+		"inventors_workshop": {
+			"tris": 64573,
+			"verts": 180859
+		},
+		"laboratory": {
+			"tris": 64900,
+			"verts": 175863
+		},
+		"maintenance_office": {
+			"tris": 64035,
+			"verts": 149469
+		},
+		"masonry_shop": {
+			"tris": 9280,
+			"verts": 20370
+		},
+		"mint": {
+			"tris": 64348,
+			"verts": 159147
+		},
+		"museum": {
+			"tris": 64614,
+			"verts": 175471
+		},
+		"observatory": {
+			"tris": 64996,
+			"verts": 179702
+		},
+		"oil_vendor": {
+			"tris": 53407,
+			"verts": 125037
+		},
+		"olive_0": {
+			"tris": 3062,
+			"verts": 8336
+		},
+		"olive_1": {
+			"tris": 4406,
+			"verts": 12279
+		},
+		"olive_2": {
+			"tris": 4420,
+			"verts": 12368
+		},
+		"olive_3": {
+			"tris": 4440,
+			"verts": 12469
+		},
+		"olive_4": {
+			"tris": 3828,
+			"verts": 11063
+		},
+		"olive_5": {
+			"tris": 4406,
+			"verts": 12882
+		},
+		"olive_press": {
+			"tris": 7180,
+			"verts": 19790
+		},
+		"orange_0": {
+			"tris": 4088,
+			"verts": 11250
+		},
+		"orange_1": {
+			"tris": 4142,
+			"verts": 11449
+		},
+		"orange_2": {
+			"tris": 4114,
+			"verts": 11511
+		},
+		"orange_3": {
+			"tris": 4122,
+			"verts": 11561
+		},
+		"orange_4": {
+			"tris": 4106,
+			"verts": 11614
+		},
+		"orange_5": {
+			"tris": 4494,
+			"verts": 12822
+		},
+		"orange_tenders_lodge": {
+			"tris": 6595,
+			"verts": 18658
+		},
+		"palace": {
+			"tris": 61181,
+			"verts": 163608
+		},
+		"palace_tile_lamp": {
+			"tris": 1936,
+			"verts": 4258
+		},
+		"palace_tile_plain": {
+			"tris": 536,
+			"verts": 864
+		},
+		"park": {
+			"tris": 10100,
+			"verts": 29902
+		},
+		"philosopher": {
+			"tris": 29221,
+			"verts": 15844
+		},
+		"physician": {
+			"tris": 29388,
+			"verts": 15899
+		},
+		"physician_crowd": {
+			"tris": 8434,
+			"verts": 6249
+		},
+		"podium": {
+			"tris": 67229,
+			"verts": 183389
+		},
+		"pyramid_p1_0": {
+			"tris": 1816,
+			"verts": 2150
+		},
+		"pyramid_p1_1": {
+			"tris": 1804,
+			"verts": 2043
+		},
+		"pyramid_p1_10": {
+			"tris": 1804,
+			"verts": 1998
+		},
+		"pyramid_p1_11": {
+			"tris": 2508,
+			"verts": 3598
+		},
+		"pyramid_p1_12": {
+			"tris": 2316,
+			"verts": 3022
+		},
+		"pyramid_p1_13": {
+			"tris": 2316,
+			"verts": 3067
+		},
+		"pyramid_p1_14": {
+			"tris": 2508,
+			"verts": 3649
+		},
+		"pyramid_p1_15": {
+			"tris": 1804,
+			"verts": 2043
+		},
+		"pyramid_p1_16": {
+			"tris": 1948,
+			"verts": 2331
+		},
+		"pyramid_p1_17": {
+			"tris": 1816,
+			"verts": 2150
+		},
+		"pyramid_p1_18": {
+			"tris": 1804,
+			"verts": 2043
+		},
+		"pyramid_p1_19": {
+			"tris": 1816,
+			"verts": 2155
+		},
+		"pyramid_p1_2": {
+			"tris": 1816,
+			"verts": 2155
+		},
+		"pyramid_p1_20": {
+			"tris": 1804,
+			"verts": 1998
+		},
+		"pyramid_p1_21": {
+			"tris": 1816,
+			"verts": 2150
+		},
+		"pyramid_p1_22": {
+			"tris": 1804,
+			"verts": 2043
+		},
+		"pyramid_p1_23": {
+			"tris": 1816,
+			"verts": 2155
+		},
+		"pyramid_p1_24": {
+			"tris": 1804,
+			"verts": 1998
+		},
+		"pyramid_p1_25": {
+			"tris": 3616,
+			"verts": 4084
+		},
+		"pyramid_p1_26": {
+			"tris": 1948,
+			"verts": 2286
+		},
+		"pyramid_p1_27": {
+			"tris": 1804,
+			"verts": 1998
+		},
+		"pyramid_p1_28": {
+			"tris": 2508,
+			"verts": 3598
+		},
+		"pyramid_p1_29": {
+			"tris": 2316,
+			"verts": 3022
+		},
+		"pyramid_p1_3": {
+			"tris": 1804,
+			"verts": 1998
+		},
+		"pyramid_p1_30": {
+			"tris": 2316,
+			"verts": 3067
+		},
+		"pyramid_p1_31": {
+			"tris": 2508,
+			"verts": 3649
+		},
+		"pyramid_p1_32": {
+			"tris": 1804,
+			"verts": 2043
+		},
+		"pyramid_p1_33": {
+			"tris": 1948,
+			"verts": 2331
+		},
+		"pyramid_p1_4": {
+			"tris": 1816,
+			"verts": 2150
+		},
+		"pyramid_p1_5": {
+			"tris": 1804,
+			"verts": 2043
+		},
+		"pyramid_p1_6": {
+			"tris": 1816,
+			"verts": 2155
+		},
+		"pyramid_p1_7": {
+			"tris": 1804,
+			"verts": 1998
+		},
+		"pyramid_p1_8": {
+			"tris": 3616,
+			"verts": 4084
+		},
+		"pyramid_p1_9": {
+			"tris": 1948,
+			"verts": 2286
+		},
+		"pyramid_p2_0": {
+			"tris": 1828,
+			"verts": 2174
+		},
+		"pyramid_p2_1": {
+			"tris": 1816,
+			"verts": 2067
+		},
+		"pyramid_p2_10": {
+			"tris": 2520,
+			"verts": 3622
+		},
+		"pyramid_p2_11": {
+			"tris": 2328,
+			"verts": 3046
+		},
+		"pyramid_p2_12": {
+			"tris": 2328,
+			"verts": 3091
+		},
+		"pyramid_p2_13": {
+			"tris": 2520,
+			"verts": 3673
+		},
+		"pyramid_p2_14": {
+			"tris": 1816,
+			"verts": 2067
+		},
+		"pyramid_p2_15": {
+			"tris": 1960,
+			"verts": 2355
+		},
+		"pyramid_p2_16": {
+			"tris": 1828,
+			"verts": 2174
+		},
+		"pyramid_p2_17": {
+			"tris": 1816,
+			"verts": 2067
+		},
+		"pyramid_p2_18": {
+			"tris": 1828,
+			"verts": 2179
+		},
+		"pyramid_p2_19": {
+			"tris": 1816,
+			"verts": 2022
+		},
+		"pyramid_p2_2": {
+			"tris": 1828,
+			"verts": 2179
+		},
+		"pyramid_p2_20": {
+			"tris": 1828,
+			"verts": 2174
+		},
+		"pyramid_p2_21": {
+			"tris": 1816,
+			"verts": 2067
+		},
+		"pyramid_p2_22": {
+			"tris": 1828,
+			"verts": 2179
+		},
+		"pyramid_p2_23": {
+			"tris": 1816,
+			"verts": 2022
+		},
+		"pyramid_p2_24": {
+			"tris": 1960,
+			"verts": 2310
+		},
+		"pyramid_p2_25": {
+			"tris": 1816,
+			"verts": 2022
+		},
+		"pyramid_p2_26": {
+			"tris": 2520,
+			"verts": 3622
+		},
+		"pyramid_p2_27": {
+			"tris": 2328,
+			"verts": 3046
+		},
+		"pyramid_p2_28": {
+			"tris": 2328,
+			"verts": 3091
+		},
+		"pyramid_p2_29": {
+			"tris": 2520,
+			"verts": 3673
+		},
+		"pyramid_p2_3": {
+			"tris": 1816,
+			"verts": 2022
+		},
+		"pyramid_p2_30": {
+			"tris": 1816,
+			"verts": 2067
+		},
+		"pyramid_p2_31": {
+			"tris": 1960,
+			"verts": 2355
+		},
+		"pyramid_p2_32": {
+			"tris": 64,
+			"verts": 65
+		},
+		"pyramid_p2_33": {
+			"tris": 572,
+			"verts": 897
+		},
+		"pyramid_p2_34": {
+			"tris": 364,
+			"verts": 689
+		},
+		"pyramid_p2_35": {
+			"tris": 36,
+			"verts": 68
+		},
+		"pyramid_p2_36": {
+			"tris": 24,
+			"verts": 46
+		},
+		"pyramid_p2_37": {
+			"tris": 12,
+			"verts": 24
+		},
+		"pyramid_p2_4": {
+			"tris": 1828,
+			"verts": 2174
+		},
+		"pyramid_p2_5": {
+			"tris": 1816,
+			"verts": 2067
+		},
+		"pyramid_p2_6": {
+			"tris": 1828,
+			"verts": 2179
+		},
+		"pyramid_p2_7": {
+			"tris": 1816,
+			"verts": 2022
+		},
+		"pyramid_p2_8": {
+			"tris": 1960,
+			"verts": 2310
+		},
+		"pyramid_p2_9": {
+			"tris": 1816,
+			"verts": 2022
+		},
+		"refinery": {
+			"tris": 12772,
+			"verts": 28598
+		},
+		"sanctuary_altar": {
+			"tris": 15464,
+			"verts": 35026
+		},
+		"sanctuary_court_0": {
+			"tris": 10,
+			"verts": 20
+		},
+		"sanctuary_court_1": {
+			"tris": 910,
+			"verts": 1397
+		},
+		"sanctuary_court_2": {
+			"tris": 902,
+			"verts": 1385
+		},
+		"sanctuary_court_3": {
+			"tris": 910,
+			"verts": 1397
+		},
+		"sanctuary_court_4": {
+			"tris": 910,
+			"verts": 1397
+		},
+		"sanctuary_court_5": {
+			"tris": 910,
+			"verts": 1397
+		},
+		"sanctuary_monument_aphrodite": {
+			"tris": 63681,
+			"verts": 150666
+		},
+		"sanctuary_monument_apollo": {
+			"tris": 66333,
+			"verts": 150933
+		},
+		"sanctuary_monument_ares": {
+			"tris": 63285,
+			"verts": 144353
+		},
+		"sanctuary_monument_artemis": {
+			"tris": 66030,
+			"verts": 153661
+		},
+		"sanctuary_monument_athena": {
+			"tris": 64996,
+			"verts": 151454
+		},
+		"sanctuary_monument_atlas": {
+			"tris": 58823,
+			"verts": 134621
+		},
+		"sanctuary_monument_demeter": {
+			"tris": 64294,
+			"verts": 150319
+		},
+		"sanctuary_monument_dionysus": {
+			"tris": 62915,
+			"verts": 145415
+		},
+		"sanctuary_monument_hades": {
+			"tris": 66659,
+			"verts": 151881
+		},
+		"sanctuary_monument_hephaestus": {
+			"tris": 64084,
+			"verts": 145474
+		},
+		"sanctuary_monument_hera": {
+			"tris": 62493,
+			"verts": 147367
+		},
+		"sanctuary_monument_hermes": {
+			"tris": 63562,
+			"verts": 144031
+		},
+		"sanctuary_monument_poseidon": {
+			"tris": 56531,
+			"verts": 130447
+		},
+		"sanctuary_monument_zeus": {
+			"tris": 64586,
+			"verts": 148229
+		},
+		"sanctuary_statue_aphrodite": {
+			"tris": 61431,
+			"verts": 146088
+		},
+		"sanctuary_statue_apollo": {
+			"tris": 65125,
+			"verts": 149762
+		},
+		"sanctuary_statue_ares": {
+			"tris": 61326,
+			"verts": 142899
+		},
+		"sanctuary_statue_artemis": {
+			"tris": 64618,
+			"verts": 150774
+		},
+		"sanctuary_statue_athena": {
+			"tris": 63156,
+			"verts": 147967
+		},
+		"sanctuary_statue_atlas": {
+			"tris": 63264,
+			"verts": 143797
+		},
+		"sanctuary_statue_demeter": {
+			"tris": 62288,
+			"verts": 146370
+		},
+		"sanctuary_statue_dionysus": {
+			"tris": 60585,
+			"verts": 142055
+		},
+		"sanctuary_statue_hades": {
+			"tris": 65622,
+			"verts": 151312
+		},
+		"sanctuary_statue_hephaestus": {
+			"tris": 62383,
+			"verts": 144486
+		},
+		"sanctuary_statue_hera": {
+			"tris": 59881,
+			"verts": 142075
+		},
+		"sanctuary_statue_hermes": {
+			"tris": 62214,
+			"verts": 143329
+		},
+		"sanctuary_statue_poseidon": {
+			"tris": 59426,
+			"verts": 136983
+		},
+		"sanctuary_statue_zeus": {
+			"tris": 62841,
+			"verts": 146221
+		},
+		"sanctuary_temple_0": {
+			"tris": 66537,
+			"verts": 184581
+		},
+		"sanctuary_temple_1": {
+			"tris": 66523,
+			"verts": 184528
+		},
+		"sanctuary_temple_2": {
+			"tris": 25164,
+			"verts": 56462
+		},
+		"sanctuary_temple_3": {
+			"tris": 25164,
+			"verts": 56547
+		},
+		"sculpture_studio": {
+			"tris": 64896,
+			"verts": 170261
+		},
+		"settlers1": {
+			"tris": 63027,
+			"verts": 34117
+		},
+		"tax_office": {
+			"tris": 63889,
+			"verts": 152723
+		},
+		"theater": {
+			"tris": 69416,
+			"verts": 202239
+		},
+		"timber_mill": {
+			"tris": 27956,
+			"verts": 57900
+		},
+		"tower": {
+			"tris": 1260,
+			"verts": 2520
+		},
+		"trade_post": {
+			"tris": 65951,
+			"verts": 163946
+		},
+		"trade_ship": {
+			"tris": 65303,
+			"verts": 165714
+		},
+		"trailer": {
+			"tris": 3096,
+			"verts": 5976
+		},
+		"transporter": {
+			"tris": 29255,
+			"verts": 15749
+		},
+		"tree_broadleaf": {
+			"tris": 1448,
+			"verts": 2175
+		},
+		"tree_cypress": {
+			"tris": 1830,
+			"verts": 2677
+		},
+		"university": {
+			"tris": 64781,
+			"verts": 177533
+		},
+		"vine_0": {
+			"tris": 2276,
+			"verts": 5468
+		},
+		"vine_1": {
+			"tris": 3076,
+			"verts": 7868
+		},
+		"vine_2": {
+			"tris": 3512,
+			"verts": 9194
+		},
+		"vine_3": {
+			"tris": 3656,
+			"verts": 9726
+		},
+		"vine_4": {
+			"tris": 3931,
+			"verts": 10879
+		},
+		"vine_5": {
+			"tris": 3846,
+			"verts": 10624
+		},
+		"walker_achilles": {
+			"tris": 29045,
+			"verts": 15674
+		},
+		"walker_actor": {
+			"tris": 29311,
+			"verts": 15937
+		},
+		"walker_amazonarcher": {
+			"tris": 29264,
+			"verts": 15211
+		},
+		"walker_amazonspear": {
+			"tris": 29359,
+			"verts": 15268
+		},
+		"walker_aphrodite": {
+			"tris": 29245,
+			"verts": 15486
+		},
+		"walker_apollo": {
+			"tris": 29074,
+			"verts": 15568
+		},
+		"walker_archer": {
+			"tris": 28934,
+			"verts": 15889
+		},
+		"walker_archerposeidon": {
+			"tris": 28956,
+			"verts": 15596
+		},
+		"walker_ares": {
+			"tris": 28969,
+			"verts": 15947
+		},
+		"walker_areswarrior": {
+			"tris": 29170,
+			"verts": 15854
+		},
+		"walker_artemis": {
+			"tris": 29038,
+			"verts": 15362
+		},
+		"walker_artisan": {
+			"tris": 29365,
+			"verts": 15978
+		},
+		"walker_astronomer": {
+			"tris": 28725,
+			"verts": 15539
+		},
+		"walker_atalanta": {
+			"tris": 29129,
+			"verts": 15348
+		},
+		"walker_athena": {
+			"tris": 29014,
+			"verts": 15466
+		},
+		"walker_atlanteanarcher": {
+			"tris": 29209,
+			"verts": 15386
+		},
+		"walker_atlanteanchariot": {
+			"tris": 62211,
+			"verts": 34079
+		},
+		"walker_atlanteanhoplite": {
+			"tris": 29143,
+			"verts": 15818
+		},
+		"walker_atlas": {
+			"tris": 29273,
+			"verts": 16022
+		},
+		"walker_bellerophon": {
+			"tris": 62338,
+			"verts": 32810
+		},
+		"walker_bronzeminer": {
+			"tris": 29282,
+			"verts": 15958
+		},
+		"walker_calydonianboar": {
+			"tris": 43314,
+			"verts": 29581
+		},
+		"walker_centaurarcher": {
+			"tris": 64836,
+			"verts": 30243
+		},
+		"walker_centaurhorseman": {
+			"tris": 65704,
+			"verts": 30728
+		},
+		"walker_cerberus": {
+			"tris": 44312,
+			"verts": 28331
+		},
+		"walker_chariotposeidon": {
+			"tris": 61963,
+			"verts": 34146
+		},
+		"walker_chimera": {
+			"tris": 45248,
+			"verts": 29758
+		},
+		"walker_competitor": {
+			"tris": 29483,
+			"verts": 15758
+		},
+		"walker_curator": {
+			"tris": 28873,
+			"verts": 15547
+		},
+		"walker_cyclops": {
+			"tris": 29281,
+			"verts": 15904
+		},
+		"walker_demeter": {
+			"tris": 29169,
+			"verts": 15492
+		},
+		"walker_dionysus": {
+			"tris": 29079,
+			"verts": 15871
+		},
+		"walker_dragon": {
+			"tris": 1286,
+			"verts": 1242
+		},
+		"walker_echidna": {
+			"tris": 47816,
+			"verts": 36614
+		},
+		"walker_egyptianarcher": {
+			"tris": 29106,
+			"verts": 15404
+		},
+		"walker_egyptianchariot": {
+			"tris": 62178,
+			"verts": 33662
+		},
+		"walker_egyptianhoplite": {
+			"tris": 29419,
+			"verts": 15562
+		},
+		"walker_firefighter": {
+			"tris": 29424,
+			"verts": 16014
+		},
+		"walker_greekhoplite": {
+			"tris": 29163,
+			"verts": 15841
+		},
+		"walker_greekhorseman": {
+			"tris": 62497,
+			"verts": 32909
+		},
+		"walker_greekrockthrower": {
+			"tris": 29461,
+			"verts": 15521
+		},
+		"walker_grower": {
+			"tris": 29425,
+			"verts": 16006
+		},
+		"walker_gymnast": {
+			"tris": 29429,
+			"verts": 15546
+		},
+		"walker_hades": {
+			"tris": 35301,
+			"verts": 19514
+		},
+		"walker_harpies": {
+			"tris": 29550,
+			"verts": 16050
+		},
+		"walker_hector": {
+			"tris": 29034,
+			"verts": 15967
+		},
+		"walker_hephaestus": {
+			"tris": 29305,
+			"verts": 15940
+		},
+		"walker_hera": {
+			"tris": 29298,
+			"verts": 15510
+		},
+		"walker_hercules": {
+			"tris": 29283,
+			"verts": 15932
+		},
+		"walker_hermes": {
+			"tris": 29370,
+			"verts": 15663
+		},
+		"walker_hoplite": {
+			"tris": 29050,
+			"verts": 15673
+		},
+		"walker_hopliteposeidon": {
+			"tris": 29123,
+			"verts": 15996
+		},
+		"walker_horseman": {
+			"tris": 62013,
+			"verts": 33102
+		},
+		"walker_hunter": {
+			"tris": 29258,
+			"verts": 15637
+		},
+		"walker_hydra": {
+			"tris": 3584,
+			"verts": 3642
+		},
+		"walker_inventor": {
+			"tris": 28865,
+			"verts": 15555
+		},
+		"walker_jason": {
+			"tris": 29246,
+			"verts": 15899
+		},
+		"walker_kraken": {
+			"tris": 2720,
+			"verts": 2196
+		},
+		"walker_lumberjack": {
+			"tris": 29296,
+			"verts": 15932
+		},
+		"walker_maenads": {
+			"tris": 29899,
+			"verts": 16283
+		},
+		"walker_marbleminer": {
+			"tris": 29360,
+			"verts": 15962
+		},
+		"walker_mayanarcher": {
+			"tris": 28976,
+			"verts": 15307
+		},
+		"walker_mayanhoplite": {
+			"tris": 29243,
+			"verts": 15465
+		},
+		"walker_medusa": {
+			"tris": 28959,
+			"verts": 15436
+		},
+		"walker_minotaur": {
+			"tris": 29323,
+			"verts": 15350
+		},
+		"walker_oceanidhoplite": {
+			"tris": 29371,
+			"verts": 15287
+		},
+		"walker_oceanidspearthrower": {
+			"tris": 29374,
+			"verts": 15289
+		},
+		"walker_odysseus": {
+			"tris": 29371,
+			"verts": 15962
+		},
+		"walker_orangetender": {
+			"tris": 29360,
+			"verts": 15675
+		},
+		"walker_oxhandler": {
+			"tris": 29367,
+			"verts": 15991
+		},
+		"walker_peddler": {
+			"tris": 29388,
+			"verts": 16027
+		},
+		"walker_perseus": {
+			"tris": 29340,
+			"verts": 15660
+		},
+		"walker_persianarcher": {
+			"tris": 29202,
+			"verts": 15689
+		},
+		"walker_persianhoplite": {
+			"tris": 29325,
+			"verts": 15733
+		},
+		"walker_persianhorseman": {
+			"tris": 62588,
+			"verts": 32988
+		},
+		"walker_phoenicianarcher": {
+			"tris": 29163,
+			"verts": 15672
+		},
+		"walker_phoenicianhorseman": {
+			"tris": 62521,
+			"verts": 32945
+		},
+		"walker_porter": {
+			"tris": 29416,
+			"verts": 16026
+		},
+		"walker_poseidon": {
+			"tris": 29196,
+			"verts": 15956
+		},
+		"walker_priestess": {
+			"tris": 29341,
+			"verts": 15500
+		},
+		"walker_rockthrower": {
+			"tris": 29223,
+			"verts": 15633
+		},
+		"walker_satyr": {
+			"tris": 29470,
+			"verts": 15750
+		},
+		"walker_scholar": {
+			"tris": 29411,
+			"verts": 15992
+		},
+		"walker_scylla": {
+			"tris": 3008,
+			"verts": 3154
+		},
+		"walker_shepherd": {
+			"tris": 29355,
+			"verts": 15988
+		},
+		"walker_sick": {
+			"tris": 29371,
+			"verts": 15959
+		},
+		"walker_sphinx": {
+			"tris": 40792,
+			"verts": 27830
+		},
+		"walker_talos": {
+			"tris": 29784,
+			"verts": 15778
+		},
+		"walker_taxcollector": {
+			"tris": 29323,
+			"verts": 15643
+		},
+		"walker_theseus": {
+			"tris": 29316,
+			"verts": 15927
+		},
+		"walker_trader": {
+			"tris": 29292,
+			"verts": 15678
+		},
+		"walker_trojanhoplite": {
+			"tris": 29145,
+			"verts": 15858
+		},
+		"walker_trojanhorseman": {
+			"tris": 62290,
+			"verts": 33063
+		},
+		"walker_trojanspearthrower": {
+			"tris": 29198,
+			"verts": 15709
+		},
+		"walker_urchin": {
+			"tris": 29638,
+			"verts": 15472
+		},
+		"walker_watchman": {
+			"tris": 29260,
+			"verts": 15636
+		},
+		"walker_waterdistributor": {
+			"tris": 29591,
+			"verts": 16845
+		},
+		"walker_zeus": {
+			"tris": 29328,
+			"verts": 16018
+		},
+		"wall_0": {
+			"tris": 240,
+			"verts": 480
+		},
+		"wall_1": {
+			"tris": 288,
+			"verts": 576
+		},
+		"wall_10": {
+			"tris": 336,
+			"verts": 672
+		},
+		"wall_11": {
+			"tris": 384,
+			"verts": 768
+		},
+		"wall_12": {
+			"tris": 336,
+			"verts": 672
+		},
+		"wall_13": {
+			"tris": 384,
+			"verts": 768
+		},
+		"wall_14": {
+			"tris": 384,
+			"verts": 768
+		},
+		"wall_15": {
+			"tris": 432,
+			"verts": 864
+		},
+		"wall_2": {
+			"tris": 288,
+			"verts": 576
+		},
+		"wall_3": {
+			"tris": 336,
+			"verts": 672
+		},
+		"wall_4": {
+			"tris": 288,
+			"verts": 576
+		},
+		"wall_5": {
+			"tris": 336,
+			"verts": 672
+		},
+		"wall_6": {
+			"tris": 336,
+			"verts": 672
+		},
+		"wall_7": {
+			"tris": 384,
+			"verts": 768
+		},
+		"wall_8": {
+			"tris": 288,
+			"verts": 576
+		},
+		"wall_9": {
+			"tris": 336,
+			"verts": 672
+		},
+		"warehouse": {
+			"tris": 64744,
+			"verts": 160012
+		},
+		"watch_post": {
+			"tris": 60821,
+			"verts": 145274
+		},
+		"wine_vendor": {
+			"tris": 51514,
+			"verts": 118184
+		},
+		"winery": {
+			"tris": 65539,
+			"verts": 163958
+		}
+	},
+	"note": "Full-detail triangle counts per development GLB. validate_geometry.gd fails if an asset grows more than 5% or lacks a LOD ladder. Regenerate with --write-baseline only for a deliberate art change."
+}

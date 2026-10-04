@@ -1,0 +1,85 @@
+{
+  "asset": "walker_minotaur",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_minotaur.glb",
+  "bytes": 9544840,
+  "vertices": 15350,
+  "surfaces": 3,
+  "source_surfaces": 15,
+  "bounds_blender": [
+    [
+      -0.35350051522254944,
+      -0.690314769744873,
+      0.0008999716374091804
+    ],
+    [
+      0.5040000081062317,
+      0.361629843711853,
+      1.6743838787078857
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Minotaur",
+        "sex": "male",
+        "profile": {
+          "age": 30,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ],
+          "jaw": 1.2,
+          "cheek": 1.05,
+          "nose": 0.004,
+          "chin": 0.004,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.03,
+              0.02,
+              0.01
+            ],
+            [
+              0.08,
+              0.05,
+              0.03
+            ]
+          ],
+          "hair_length": 0.01,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 71404
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "97c5f019a4e6b53d1df642e76df386b0001ed16486682c9601b30cdbf7df6cf6",
+        "clavi_srgb": [
+          0.4,
+          0.2,
+          0.1
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 285,
+    "targets_after": 133,
+    "uv_attributes_removed": 0
+  }
+}

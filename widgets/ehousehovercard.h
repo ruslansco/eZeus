@@ -2,6 +2,7 @@
 #define EHOUSEHOVERCARD_H
 
 #include "ewidget.h"
+#include "efonts.h"
 
 #include "engine/eresourcetype.h"
 
@@ -33,6 +34,7 @@ private:
     struct eText {
         std::string fText;
         int fFontPx = 0;
+        eFontRole fRole = eFontRole::body;
         SDL_Color fColor;
         int fX = 0;
         int fY = 0;
@@ -50,7 +52,8 @@ private:
     };
     void clear();
     eText& addText(const std::string& text, const int fontPx,
-                   const SDL_Color c, const int x, const int y);
+                   const SDL_Color c, const int x, const int y,
+                   const eFontRole role = eFontRole::body);
 
     std::string mSignature;
     std::vector<eText> mTexts;

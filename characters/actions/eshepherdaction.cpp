@@ -21,9 +21,11 @@ eShepherdAction::eShepherdAction(eCharacter* const c) :
     eShepherdAction(nullptr, static_cast<eResourceCollectorBase*>(c),
                     eCharacterType::sheep) {}
 
-bool hasAnimal(eTileBase* const tile, const eCharacterType type) {
+bool hasAnimal(eTileBase* const tile, const eCharacterType type,
+               const unsigned salt) {
+    // Runs on a worker thread: a deterministic per-search coin, not the shared generator.
+    if(eRand::searchCoin(salt, tile->x(), tile->y())) return false;
     return tile->hasCharacter([&type](const eCharacterBase& c) {
-        if(eRand::rand() % 2) return false;
         return c.type() == type && !c.busy();
     });
 }
@@ -146,8 +148,9 @@ bool eShepherdAction::findResourceDecision() {
     const stdptr<eShepherdAction> tptr(this);
 
     const auto aType = mAnimalType;
-    const auto hha = [aType](eTileBase* const tile) {
-        return hasAnimal(tile, aType);
+    const unsigned salt = static_cast<unsigned>(eRand::rand());
+    const auto hha = [aType, salt](eTileBase* const tile) {
+        return hasAnimal(tile, aType, salt);
     };
 
     const auto a = e::make_shared<eMoveToAction>(mCharacter);

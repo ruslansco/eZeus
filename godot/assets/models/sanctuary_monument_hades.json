@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_monument_hades",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_monument_hades.glb",
+  "bytes": 7353244,
+  "vertices": 33753,
+  "surfaces": 2,
+  "source_surfaces": 5,
+  "bounds_blender": [
+    [
+      -1.0,
+      -1.0,
+      0.0
+    ],
+    [
+      1.3326336145401,
+      1.0,
+      6.6660003662109375
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

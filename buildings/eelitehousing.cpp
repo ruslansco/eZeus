@@ -22,9 +22,10 @@ eTextureSpace eEliteHousing::getTextureSpace(
     if(!SDL_PointInRect(&p, &r)) return {nullptr};
     auto& board = getBoard();
     const auto dir = board.direction();
-    if(!atlantean() && mPeople > 0 && mLevel >= 0 && mLevel < 5) {
-        // Remastered estate: one 4x4 sprite drawn through the engine's per-tile slicing,
-        // the household task looping while the house is inhabited.
+    if(mPeople > 0 && mLevel >= 0 && mLevel < 5) {
+        // Remastered estate (v1, art/elite_house): one 4x4 sprite drawn through the engine's
+        // per-tile slicing, the household task looping while the house is inhabited. Atlantean
+        // cities use the same set (user's choice, 2026-09-27).
         eGameTextures::loadEliteHouse();
         const auto& texs = eGameTextures::buildings()[static_cast<int>(size)];
         const auto& frames = texs.fEliteHouseHD[mLevel*2 + seed() % 2][static_cast<int>(dir)];

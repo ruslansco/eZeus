@@ -25,6 +25,10 @@ public:
     void write(eWriteStream& dst) const override;
 
     void lookForMonster();
+    // A hunt has ended (the hero arrived where the monster was, or found no way): the monster is looked for again at once, so the chase
+    // goes on, unless the hunt ended in the very step it began (the hero already stands by the monster, or no path leads to it): that
+    // would start the next one in the same step, endlessly, so the next search waits a moment and the hero fights if he is close.
+    void huntEnded();
     void sendOnQuest();
     void goBackToHall();
     void waitAndGoBackToHall(const int w);
@@ -43,6 +47,8 @@ private:
 
     eHeroActionStage mStage = eHeroActionStage::none;
     int mLookForMonster = 0;
+    int mLookForMonsterWait = -1; // not saved: a short pause between two hunts
+    int mHuntStarted = -1; // not saved: the game time the last hunt began
     int mLookForCityDefense = 0;
 };
 
@@ -85,7 +91,7 @@ public:
 
     void call() {
         if(!mTptr) return;
-        mTptr->lookForMonster();
+        mTptr->huntEnded();
     }
 
     void read(eReadStream& src) {

@@ -1,0 +1,21 @@
+{
+  "asset": "granary_food_onions",
+  "file": "granary_food_onions.glb",
+  "bytes": 100412,
+  "vertices": 1515,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      0.1901015043258667,
+      0.014807600528001785,
+      0.011999964714050293
+    ],
+    [
+      1.1763625144958496,
+      0.7663487195968628,
+      0.24585449695587158
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

@@ -1,0 +1,85 @@
+{
+  "asset": "walker_odysseus",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_odysseus.glb",
+  "bytes": 12429840,
+  "vertices": 15962,
+  "surfaces": 3,
+  "source_surfaces": 22,
+  "bounds_blender": [
+    [
+      -0.31690335273742676,
+      -0.20643635094165802,
+      0.0005599489668384194
+    ],
+    [
+      0.2154843509197235,
+      0.2366110384464264,
+      0.9932735562324524
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Odysseus",
+        "sex": "male",
+        "profile": {
+          "age": 46,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 1.02,
+          "cheek": 0.95,
+          "nose": 0.007,
+          "chin": 0.003,
+          "eye": 0.97,
+          "hair": [
+            [
+              0.14,
+              0.06,
+              0.03
+            ],
+            [
+              0.34,
+              0.2,
+              0.12
+            ]
+          ],
+          "hair_length": 0.016,
+          "beard_length": 0.03,
+          "grey": 0.28,
+          "seed": 51505
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "ae893d2ca30e23480aa64dca2c65aa4414fdaa601463c24983e16d88be8d04c1",
+        "clavi_srgb": [
+          0.36,
+          0.22,
+          0.1
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 303,
+    "targets_after": 183,
+    "uv_attributes_removed": 0
+  }
+}

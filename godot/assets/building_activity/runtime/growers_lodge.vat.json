@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 320,
+ "parts": {
+  "growers_lodge_2": {
+   "row": 0,
+   "rows": 18,
+   "poses": 9,
+   "vertices": 18377,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004875659942626953
+  },
+  "growers_lodge_6": {
+   "row": 162,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 17312,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "growers_lodge_19": {
+   "row": 315,
+   "rows": 1,
+   "poses": 5,
+   "vertices": 72,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_05": 1,
+    "work_02": 2,
+    "work_06": 2,
+    "work_03": 3,
+    "work_07": 3,
+    "inactive": 4
+   },
+   "max_error": 0.000469207763671875
+  }
+ },
+ "source": {
+  "file": "growers_lodge.glb",
+  "bytes": 4921904,
+  "mtime": 1790834056
+ }
+}

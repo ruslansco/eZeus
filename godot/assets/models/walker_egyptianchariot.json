@@ -1,0 +1,85 @@
+{
+  "asset": "walker_egyptianchariot",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_egyptianchariot.glb",
+  "bytes": 15413936,
+  "vertices": 33662,
+  "surfaces": 3,
+  "source_surfaces": 31,
+  "bounds_blender": [
+    [
+      -0.3317031264305115,
+      -0.772405743598938,
+      -0.006751027423888445
+    ],
+    [
+      0.3317239582538605,
+      0.5999539494514465,
+      1.0872594118118286
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Egyptian charioteer",
+        "sex": "male",
+        "profile": {
+          "age": 33,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 1.04,
+          "cheek": 1.043,
+          "nose": 0.0017,
+          "chin": 0.0037,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.008,
+              0.006,
+              0.005
+            ],
+            [
+              0.025,
+              0.02,
+              0.015
+            ]
+          ],
+          "hair_length": 0.022,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 93012
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "15fbbaab7e64b34684ad0cd2d64cb60f7eeb9fea2d845d0b1e357a4201c75105",
+        "clavi_srgb": [
+          0.9,
+          0.88,
+          0.8
+        ]
+      }
+    ],
+    "vertex_budget": 45000,
+    "allocation_target": 32000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 171,
+    "targets_after": 115,
+    "uv_attributes_removed": 0
+  }
+}

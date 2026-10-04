@@ -1,0 +1,33 @@
+{
+  "asset": "common_house_1a",
+  "source": "art/common_house_1a/build_sprites.py",
+  "file": "common_house_1a.glb",
+  "bytes": 14932664,
+  "vertices": 73705,
+  "surfaces": 3,
+  "bounds_blender": [
+    [
+      -0.9900000095367432,
+      -0.9900000095367432,
+      -0.07000000029802322
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      0.8845114707946777
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "source_surfaces": 30,
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 0,
+    "targets_after": 0,
+    "uv_attributes_removed": 0
+  }
+}

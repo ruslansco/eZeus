@@ -6,6 +6,7 @@
 #include "engine/eresourcetype.h"
 
 #include <map>
+#include <tuple>
 #include <memory>
 #include <string>
 #include <vector>
@@ -46,10 +47,11 @@ private:
     };
     eLine& add(const std::string& left, const std::string& right = "",
                const int font = 0, const int indent = 0);
-    const eText& text(SDL_Renderer* const r, const std::string& s, const int px);
+    const eText& text(SDL_Renderer* const r, const std::string& s, const int px,
+                      const eFontRole role = eFontRole::body);
 
     std::vector<eLine> mLines;
-    std::map<std::pair<std::string, int>, eText> mTexts;
+    std::map<std::tuple<std::string, int, eFontRole>, eText> mTexts;
 };
 
 class eTradeSummaryWidget : public eFramedWidget {

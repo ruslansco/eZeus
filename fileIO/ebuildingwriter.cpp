@@ -165,6 +165,7 @@ void eBuildingWriter::sWrite(const eBuilding* const b,
     case eBuildingType::ionicColumn:
     case eBuildingType::corinthianColumn:
     case eBuildingType::avenue:
+    case eBuildingType::boulevard:
         break;
 
     case eBuildingType::commemorative: {

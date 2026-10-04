@@ -84,6 +84,15 @@ public:
     void update();
 
     void setShowAllPossibleBuildings(const bool b);
+
+    // The open category, as an index into categoryButtons() (-1 none).
+    int currentCategory() const;
+    // Opens a category by its index (6 is culture or science, whichever the
+    // city has); false when that category is hidden or disabled.
+    bool openCategory(const int i);
+    // The Info / Map switch at the top.
+    bool mapTab() const { return mMapMode; }
+    void setMapTab(const bool m);
 protected:
     bool mousePressEvent(const eMouseEvent& e);
     void paintEvent(ePainter& p) override;

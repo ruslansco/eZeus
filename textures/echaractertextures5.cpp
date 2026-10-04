@@ -65,6 +65,7 @@ void eCharacterTextures::loadHydra() {
                                  eHydraSpriteData45,
                                  eHydraSpriteData60);
     fHydraLoaded = true;
+    if(loadStatesHD({{"walk", &fHydra.fWalk}, {"die", &fHydra.fDie}, {"fight", &fHydra.fFight}, {"fight2", &fHydra.fFight2}}, fRenderer, fTileH, "hydra")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "hydra", sds,
                          &eZeus_hydraOffset, fRenderer);
 
@@ -82,6 +83,7 @@ void eCharacterTextures::loadKraken() {
                                  eKrakenSpriteData45,
                                  eKrakenSpriteData60);
     fKrakenLoaded = true;
+    if(loadStatesHD({{"walk", &fKraken.fWalk}, {"die", nullptr, &fKraken.fDie}, {"fight", &fKraken.fFight}, {"fight2", &fKraken.fFight2}}, fRenderer, fTileH, "kraken")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "kraken", sds,
                          &eZeus_krakenOffset, fRenderer);
 
@@ -101,6 +103,7 @@ void eCharacterTextures::loadMaenads() {
                                  eMaenadsSpriteData45,
                                  eMaenadsSpriteData60);
     fMaenadsLoaded = true;
+    if(loadStatesHD({{"walk", &fMaenads.fWalk}, {"die", &fMaenads.fDie}, {"fight", &fMaenads.fFight}, {"fight2", &fMaenads.fFight2}}, fRenderer, fTileH, "maenads")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "maenads", sds,
                          &eZeus_maenadsOffset, fRenderer);
 
@@ -118,6 +121,7 @@ void eCharacterTextures::loadMedusa() {
                                  eMedusaSpriteData45,
                                  eMedusaSpriteData60);
     fMedusaLoaded = true;
+    if(loadStatesHD({{"walk", &fMedusa.fWalk}, {"die", &fMedusa.fDie}, {"fight", &fMedusa.fFight}, {"fight2", &fMedusa.fFight2}}, fRenderer, fTileH, "medusa")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "medusa", sds,
                          &eZeus_medusaOffset, fRenderer);
 
@@ -135,6 +139,7 @@ void eCharacterTextures::loadMinotaur() {
                                  eMinotaurSpriteData45,
                                  eMinotaurSpriteData60);
     fMinotaurLoaded = true;
+    if(loadStatesHD({{"walk", &fMinotaur.fWalk}, {"die", &fMinotaur.fDie}, {"fight", &fMinotaur.fFight}, {"fight2", &fMinotaur.fFight2}}, fRenderer, fTileH, "minotaur")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "minotaur", sds,
                          &eZeus_minotaurOffset, fRenderer);
 
@@ -152,6 +157,7 @@ void eCharacterTextures::loadScylla() {
                                  eScyllaSpriteData45,
                                  eScyllaSpriteData60);
     fScyllaLoaded = true;
+    if(loadStatesHD({{"walk", &fScylla.fWalk}, {"die", nullptr, &fScylla.fDie}, {"fight", &fScylla.fFight}, {"fight2", &fScylla.fFight2}}, fRenderer, fTileH, "scylla")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "scylla", sds,
                          &eZeus_scyllaOffset, fRenderer);
 
@@ -171,6 +177,7 @@ void eCharacterTextures::loadSphinx() {
                                  eSphinxSpriteData45,
                                  eSphinxSpriteData60);
     fSphinxLoaded = true;
+    if(loadStatesHD({{"walk", &fSphinx.fWalk}, {"die", &fSphinx.fDie}, {"fight", &fSphinx.fFight}, {"fight2", &fSphinx.fFight2}}, fRenderer, fTileH, "sphinx")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "sphinx", sds,
                          &ePoseidon_SphinxOffset, fRenderer);
 
@@ -188,6 +195,7 @@ void eCharacterTextures::loadTalos() {
                                  eTalosSpriteData45,
                                  eTalosSpriteData60);
     fTalosLoaded = true;
+    if(loadStatesHD({{"walk", &fTalos.fWalk}, {"die", &fTalos.fDie}, {"fight", &fTalos.fFight}, {"fight2", &fTalos.fFight2}}, fRenderer, fTileH, "talos")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "talos", sds,
                          &eZeus_talosOffset, fRenderer);
 
@@ -205,6 +213,7 @@ void eCharacterTextures::loadSatyr() {
                                  eSatyrSpriteData45,
                                  eSatyrSpriteData60);
     fSatyrLoaded = true;
+    if(loadStatesHD({{"walk", &fSatyr.fWalk}, {"die", &fSatyr.fDie}, {"fight", &fSatyr.fFight}, {"fight2", &fSatyr.fFight2}}, fRenderer, fTileH, "satyr")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "satyr", sds,
                          &eZeus_satyrOffset, fRenderer);
 

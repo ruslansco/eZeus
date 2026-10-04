@@ -1,0 +1,85 @@
+{
+  "asset": "walker_hoplite",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_hoplite.glb",
+  "bytes": 7695008,
+  "vertices": 15673,
+  "surfaces": 3,
+  "source_surfaces": 23,
+  "bounds_blender": [
+    [
+      -0.2783004641532898,
+      -0.18594591319561005,
+      0.0004999842494726181
+    ],
+    [
+      0.20230115950107574,
+      0.2588009238243103,
+      1.1299999952316284
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Legionary",
+        "sex": "male",
+        "profile": {
+          "age": 27,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 1.1,
+          "cheek": 1.0,
+          "nose": 0.003,
+          "chin": 0.006,
+          "eye": 0.99,
+          "hair": [
+            [
+              0.025,
+              0.015,
+              0.008
+            ],
+            [
+              0.08,
+              0.045,
+              0.02
+            ]
+          ],
+          "hair_length": 0.009,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 41101
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "e52fd6b8129660fbf329202f67d2b4c89ebc29aecb6b06f941e055b23a1b315e",
+        "clavi_srgb": [
+          0.64,
+          0.055,
+          0.075
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 156,
+    "targets_after": 111,
+    "uv_attributes_removed": 0
+  }
+}

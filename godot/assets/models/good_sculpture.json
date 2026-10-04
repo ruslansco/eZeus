@@ -1,0 +1,21 @@
+{
+  "asset": "good_sculpture",
+  "file": "good_sculpture.glb",
+  "bytes": 5142948,
+  "vertices": 50326,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.17657512426376343,
+      -0.14846181869506836,
+      -0.029999999329447746
+    ],
+    [
+      0.21695663034915924,
+      0.13875478506088257,
+      0.8571937680244446
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

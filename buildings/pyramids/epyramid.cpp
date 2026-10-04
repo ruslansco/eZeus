@@ -51,17 +51,12 @@ struct ePyramidTopData {
     int fSpecial2 = 0;
 };
 
-void ePyramid::initialize(const std::vector<bool>& levels) {
-    mDark = levels;
-    const auto type = ePyramid::type();
-    const auto god = sGod(type);
-    const int godI = static_cast<int>(god);
-    mSelf = ref<ePyramid>();
-    auto& board = getBoard();
-    const auto cid = cityId();
-    const auto& rect = tileRect();
-    std::vector<ePyramidWallData> walls;
-    std::vector<ePyramidTopData> top;
+// The pieces a pyramid of this type is made of: its walls and its tops. The number of the god goes into the statues and monuments of the shrines.
+// (A shrine of the middle size also appends two levels, light and dark, to the levels it was given, as it always has.)
+static void sLayoutTables(const eBuildingType type, const int godI,
+                          std::vector<bool>& dark,
+                          std::vector<ePyramidWallData>& walls,
+                          std::vector<ePyramidTopData>& top) {
     switch(type) {
     case eBuildingType::modestPyramid: {
         walls = {
@@ -455,7 +450,7 @@ void ePyramid::initialize(const std::vector<bool>& levels) {
     case eBuildingType::shrinePoseidon:
     case eBuildingType::shrineZeus: {
         for(int i = 0; i < 2; i++) {
-            mDark.push_back(i % 2);
+            dark.push_back(i % 2);
         }
         walls = {
             {eOrientation::top, 0, 0, 0, 0},
@@ -936,6 +931,84 @@ void ePyramid::initialize(const std::vector<bool>& levels) {
     default:
         break;
     }
+}
+
+std::vector<ePyramidPlan> ePyramid::sPlan(const eBuildingType type) {
+    std::vector<ePyramidWallData> walls;
+    std::vector<ePyramidTopData> top;
+    std::vector<bool> dark;
+    sLayoutTables(type, static_cast<int>(sGod(type)), dark, walls, top);
+    std::vector<ePyramidPlan> result;
+    for(const auto& w : walls) {
+        ePyramidPlan p;
+        p.fKind = ePyramidPlan::eKind::wall;
+        p.fOrientation = w.fO;
+        p.fElevation = w.fElevation;
+        p.fX = w.fX;
+        p.fY = w.fY;
+        p.fSpecial = w.fSpecial;
+        result.push_back(p);
+    }
+    for(const auto& t : top) {
+        ePyramidPlan p;
+        switch(t.fType) {
+        case ePyramidTopType::top:
+            p.fKind = ePyramidPlan::eKind::top;
+            break;
+        case ePyramidTopType::tile:
+            p.fKind = ePyramidPlan::eKind::tile;
+            break;
+        case ePyramidTopType::statue:
+            p.fKind = ePyramidPlan::eKind::statue;
+            break;
+        case ePyramidTopType::monument:
+            p.fKind = ePyramidPlan::eKind::monument;
+            p.fW = 2;
+            p.fH = 2;
+            break;
+        case ePyramidTopType::altar:
+            p.fKind = ePyramidPlan::eKind::altar;
+            p.fW = 2;
+            p.fH = 2;
+            break;
+        case ePyramidTopType::temple:
+            p.fKind = ePyramidPlan::eKind::temple;
+            p.fW = 4;
+            p.fH = 4;
+            break;
+        case ePyramidTopType::observatory:
+            p.fKind = ePyramidPlan::eKind::observatory;
+            p.fW = 5;
+            p.fH = 5;
+            break;
+        case ePyramidTopType::museum:
+            p.fKind = ePyramidPlan::eKind::museum;
+            p.fW = 6;
+            p.fH = 6;
+            break;
+        }
+        p.fElevation = t.fElevation;
+        p.fX = t.fX;
+        p.fY = t.fY;
+        p.fSpecial = t.fSpecial;
+        p.fSpecial2 = t.fSpecial2;
+        result.push_back(p);
+    }
+    return result;
+}
+
+void ePyramid::initialize(const std::vector<bool>& levels) {
+    mDark = levels;
+    const auto type = ePyramid::type();
+    const auto god = sGod(type);
+    const int godI = static_cast<int>(god);
+    mSelf = ref<ePyramid>();
+    auto& board = getBoard();
+    const auto cid = cityId();
+    const auto& rect = tileRect();
+    std::vector<ePyramidWallData> walls;
+    std::vector<ePyramidTopData> top;
+    sLayoutTables(type, godI, mDark, walls, top);
 
     for(const auto& w : walls) {
         const auto b = e::make_shared<ePyramidWall>(

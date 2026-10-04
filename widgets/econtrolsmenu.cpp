@@ -49,7 +49,9 @@ void eControlsMenu::initialize() {
         {"pan_left", &mBindings.fMoveLeft, nullptr},
         {"pan_right", &mBindings.fMoveRight, nullptr},
         {"pause_game", &mBindings.fPause, nullptr},
-        {"rotate_map", &mBindings.fRotate, nullptr},
+        {"camera_rotate_left", &mBindings.fCameraRotateLeft, nullptr},
+        {"camera_rotate_right", &mBindings.fCameraRotateRight, nullptr},
+        {"rotate_building", &mBindings.fRotate, nullptr},
         {"clone_building", &mBindings.fClone, nullptr},
         {"quick_demolish", &mBindings.fDemolish, nullptr},
         {"speed_up", &mBindings.fSpeedUp, nullptr},
@@ -63,14 +65,14 @@ void eControlsMenu::initialize() {
     const int availH = totalH - contentY - bottomH;
 
     const int colW = (totalW - 3 * p) / 2;
-    const int numRowsPerCol = 6;
+    const int numRowsPerCol = int((mRows.size() + 1) / 2);
     const int rowH = availH / numRowsPerCol;
     const int btnW = int(105 * mult);
     const int btnH = int(24 * mult);
 
     for(size_t i = 0; i < mRows.size(); ++i) {
-        const int col = (i < 6) ? 0 : 1;
-        const int row = (col == 0) ? int(i) : int(i - 6);
+        const int col = int(i) / numRowsPerCol;
+        const int row = int(i) % numRowsPerCol;
         const int colX = p + col * (colW + p);
         const int rowY = contentY + row * rowH;
 

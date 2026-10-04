@@ -258,7 +258,7 @@ void eObjectiveTrackerWidget::paintEvent(ePainter& p) {
     if(title.empty()) title = "Objectives";
     if(mAllMet) title += " *";
 
-    auto titleFont = eFonts::defaultFont(res.smallFontSize());
+    auto titleFont = eFonts::headingFont(res.smallFontSize());
     p.setFont(titleFont);
     const int titleX = static_cast<int>(16 * mult);
     const int titleY = (hHeader - res.smallFontSize()) / 2;
@@ -267,8 +267,8 @@ void eObjectiveTrackerWidget::paintEvent(ePainter& p) {
     // Badge counter pill: [ 2/4 ]
     const std::string badgeStr = std::to_string(mMetCount) + "/" + std::to_string(mTotalCount);
     int bw = 0, bh = 0;
-    auto badgeFont = eFonts::defaultFont(res.verySmallFontSize());
-    if(badgeFont) TTF_SizeUTF8(badgeFont, badgeStr.c_str(), &bw, &bh);
+    auto badgeFont = eFonts::labelFont(res.verySmallFontSize());
+    if(badgeFont) TTF_SizeUTF8(eFonts::forText(badgeFont, badgeStr), badgeStr.c_str(), &bw, &bh);
 
     const int badgePadding = static_cast<int>(5 * mult);
     const int badgeW = bw + 2 * badgePadding;
@@ -364,7 +364,7 @@ void eObjectiveTrackerWidget::paintEvent(ePainter& p) {
             std::string displayText = item.text;
             if(goalFont) {
                 int tw = 0, th = 0;
-                TTF_SizeUTF8(goalFont, displayText.c_str(), &tw, &th);
+                TTF_SizeUTF8(eFonts::forText(goalFont, displayText), displayText.c_str(), &tw, &th);
                 if(tw > maxTextW) {
                     while(!displayText.empty() && tw > maxTextW) {
                         displayText.pop_back();
@@ -372,7 +372,7 @@ void eObjectiveTrackerWidget::paintEvent(ePainter& p) {
                             displayText.pop_back();
                         }
                         std::string testStr = displayText + "...";
-                        TTF_SizeUTF8(goalFont, testStr.c_str(), &tw, &th);
+                        TTF_SizeUTF8(eFonts::forText(goalFont, testStr), testStr.c_str(), &tw, &th);
                         if(tw <= maxTextW) {
                             displayText = testStr;
                             break;

@@ -1,0 +1,924 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/lapis_gold.tres" id="1_546lt"]
+[ext_resource type="Script" path="res://ui/hud.gd" id="2_7ihmi"]
+[ext_resource type="Script" path="res://scripts/building_inspector.gd" id="3_en2x2"]
+[ext_resource type="Script" path="res://ui/minimap.gd" id="4_7ihmi"]
+[ext_resource type="Script" path="res://ui/inspection_summary.gd" id="5_summary"]
+[ext_resource type="Script" path="res://ui/overlay_summary.gd" id="6_overlay"]
+[ext_resource type="Script" path="res://ui/objective_wreath.gd" id="7_wreath"]
+
+[node name="Hud" type="Control" unique_id=2052319287]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_546lt")
+script = ExtResource("2_7ihmi")
+
+[node name="StatusBar" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+offset_bottom = 50.0
+mouse_filter = 2
+
+[node name="ResourceRibbon" type="PanelContainer" parent="StatusBar"]
+unique_name_in_owner = true
+layout_mode = 0
+mouse_filter = 1
+theme_type_variation = &"ResourceRibbon"
+
+[node name="ResourceLayout" type="VBoxContainer" parent="StatusBar/ResourceRibbon"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="OverviewRow" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="CityPlaque" type="PanelContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"OverviewInset"
+
+[node name="CityName" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/CityPlaque"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(90, 0)
+text_overrun_behavior = 3
+theme_type_variation = &"CityName"
+
+[node name="StatsGroup" type="PanelContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"OverviewInset"
+
+[node name="StatsRow" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Money" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MoneyIcon" type="TextureRect" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Treasury" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 1
+theme_type_variation = &"StatusValue"
+
+[node name="Citizens" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CitizensIcon" type="TextureRect" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Population" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 1
+theme_type_variation = &"StatusValue"
+
+[node name="Jobs" type="Button" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 2
+theme_type_variation = &"StatusTool"
+
+[node name="ResourcesToggle" type="Button" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(30, 28)
+focus_mode = 0
+toggle_mode = true
+text = "▾"
+theme_type_variation = &"StatusTool"
+
+[node name="ResourcesReveal" type="Control" parent="StatusBar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+clip_contents = true
+mouse_filter = 1
+
+[node name="ResourcesPanel" type="PanelContainer" parent="StatusBar/ResourcesReveal"]
+unique_name_in_owner = true
+layout_mode = 0
+theme_type_variation = &"ResourceRibbon"
+
+[node name="ResourceGrid" type="GridContainer" parent="StatusBar/ResourcesReveal/ResourcesPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 24
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 2
+
+[node name="WelfareGroup" type="PanelContainer" parent="StatusBar"]
+unique_name_in_owner = true
+layout_mode = 0
+theme_type_variation = &"StatusStrip"
+
+[node name="WelfareButtons" type="HBoxContainer" parent="StatusBar/WelfareGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="EventRail" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+theme_type_variation = &"Rail"
+
+[node name="RailColumn" type="VBoxContainer" parent="EventRail"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="TimeGroup" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 16.0
+offset_top = 12.0
+theme_type_variation = &"StatusStrip"
+
+[node name="StatusRow" type="VBoxContainer" parent="TimeGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TimeActions" type="HBoxContainer" parent="TimeGroup/StatusRow"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Pause" type="Button" parent="TimeGroup/StatusRow/TimeActions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 26)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"StatusTool"
+
+[node name="Speed" type="OptionButton" parent="TimeGroup/StatusRow/TimeActions"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+action_mode = 0
+theme_type_variation = &"StatusSpeed"
+
+[node name="Date" type="Label" parent="TimeGroup/StatusRow"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 1
+theme_type_variation = &"Caption"
+
+[node name="Messages" type="Button" parent="EventRail/RailColumn"]
+unique_name_in_owner = true
+theme_type_variation = &"RailButton"
+layout_mode = 2
+focus_mode = 2
+size_flags_horizontal = 3
+
+[node name="BottomBar" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_top = 1.0
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -550.0
+offset_top = -74.0
+offset_right = 550.0
+offset_bottom = -12.0
+theme_type_variation = &"Dock"
+
+[node name="Tools" type="HBoxContainer" parent="BottomBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MapToggle" type="Button" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 30)
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+button_pressed = false
+theme_type_variation = &"Tool"
+
+[node name="ToolButtons" type="HBoxContainer" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="ToolDivider" type="VSeparator" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CategoryScroll" type="ScrollContainer" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="Categories" type="HBoxContainer" parent="BottomBar/Tools/CategoryScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="UtilityDivider" type="VSeparator" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BuildMenu" type="MenuButton" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 30)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Tool"
+
+[node name="Undo" type="Button" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 30)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Tool"
+
+[node name="OverlayMenu" type="MenuButton" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 30)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Tool"
+
+[node name="Feedback" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 220.0
+offset_top = -173.0
+offset_right = -420.0
+offset_bottom = -138.0
+theme_type_variation = &"MiniPanel"
+mouse_filter = 0
+
+[node name="Hint" type="Label" parent="Feedback"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Caption"
+text_overrun_behavior = 3
+mouse_filter = 1
+
+[node name="OverlayPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 16.0
+offset_top = 72.0
+offset_right = 324.0
+theme_type_variation = &"MiniPanel"
+
+[node name="OverlaySummary" type="VBoxContainer" parent="OverlayPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("6_overlay")
+
+[node name="BuildTray" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -490.0
+offset_top = -354.0
+offset_right = 490.0
+offset_bottom = -116.0
+theme_type_variation = &"FloatingTray"
+
+[node name="TrayLayout" type="HBoxContainer" parent="BuildTray"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="ToolContext" type="VBoxContainer" parent="BuildTray/TrayLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(230, 0)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="ContextCategory" type="Label" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Eyebrow"
+
+[node name="ContextTitle" type="Label" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ToolHeading"
+autowrap_mode = 3
+max_lines_visible = 2
+text_overrun_behavior = 3
+
+[node name="ContextPreview" type="TextureRect" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 56)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContextCostRow" type="HBoxContainer" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ContextFacts" type="Label" parent="BuildTray/TrayLayout/ToolContext/ContextCostRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+
+[node name="RotateRow" type="HBoxContainer" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="RotateLeft" type="Button" parent="BuildTray/TrayLayout/ToolContext/RotateRow"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Tool"
+
+[node name="Facing" type="Label" parent="BuildTray/TrayLayout/ToolContext/RotateRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+horizontal_alignment = 1
+theme_type_variation = &"Caption"
+
+[node name="RotateRight" type="Button" parent="BuildTray/TrayLayout/ToolContext/RotateRow"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Tool"
+
+[node name="WallFill" type="CheckButton" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+focus_mode = 0
+
+[node name="ContextHelp" type="Label" parent="BuildTray/TrayLayout/ToolContext"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+max_lines_visible = 3
+text_overrun_behavior = 3
+
+[node name="ContextDivider" type="VSeparator" parent="BuildTray/TrayLayout"]
+layout_mode = 2
+
+[node name="TrayColumn" type="VBoxContainer" parent="BuildTray/TrayLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="TrayHeader" type="HBoxContainer" parent="BuildTray/TrayLayout/TrayColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TrayTitle" type="Label" parent="BuildTray/TrayLayout/TrayColumn/TrayHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ToolHeading"
+text_overrun_behavior = 3
+
+[node name="BuildSearch" type="LineEdit" parent="BuildTray/TrayLayout/TrayColumn/TrayHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(185, 0)
+visible = false
+layout_mode = 2
+clear_button_enabled = true
+
+[node name="TrayClose" type="Button" parent="BuildTray/TrayLayout/TrayColumn/TrayHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Quiet"
+
+[node name="BuildingScroll" type="ScrollContainer" parent="BuildTray/TrayLayout/TrayColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+
+[node name="BuildingCards" type="HBoxContainer" parent="BuildTray/TrayLayout/TrayColumn/BuildingScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EmptySearch" type="Label" parent="BuildTray/TrayLayout/TrayColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"Caption"
+
+[node name="MapPeek" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -118.0
+offset_right = -16.0
+offset_bottom = -82.0
+theme_type_variation = &"MapPill"
+
+[node name="MinimapPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -208.0
+offset_top = -274.0
+offset_right = -16.0
+offset_bottom = -82.0
+mouse_filter = 2
+theme_type_variation = &"MapCard"
+
+[node name="MapSurface" type="Control" parent="MinimapPanel"]
+custom_minimum_size = Vector2(192, 192)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Minimap" type="Control" parent="MinimapPanel/MapSurface"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_7ihmi")
+
+[node name="MapClose" type="Button" parent="MinimapPanel/MapSurface"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(22, 20)
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -24.0
+offset_top = 2.0
+offset_right = -2.0
+offset_bottom = 22.0
+focus_mode = 0
+theme_type_variation = &"MapFold"
+
+[node name="GoalsPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 16.0
+offset_top = 40.0
+offset_right = 324.0
+theme_type_variation = &"ObjectivesPanel"
+
+[node name="GoalsColumn" type="VBoxContainer" parent="GoalsPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GoalsHeader" type="HBoxContainer" parent="GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="GoalsWreath" type="SubViewportContainer" parent="GoalsPanel/GoalsColumn/GoalsHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 54)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("7_wreath")
+
+[node name="GoalsHeading" type="VBoxContainer" parent="GoalsPanel/GoalsColumn/GoalsHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 3
+
+[node name="GoalsTitle" type="Label" parent="GoalsPanel/GoalsColumn/GoalsHeader/GoalsHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ToolHeading"
+
+[node name="GoalsSummary" type="Label" parent="GoalsPanel/GoalsColumn/GoalsHeader/GoalsHeading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ObjectiveCount"
+
+[node name="GoalsProgress" type="ProgressBar" parent="GoalsPanel/GoalsColumn/GoalsHeader/GoalsHeading"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 6)
+layout_mode = 2
+theme_type_variation = &"ObjectiveBar"
+max_value = 1.0
+show_percentage = false
+
+[node name="GoalsToggle" type="Button" parent="GoalsPanel/GoalsColumn/GoalsHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 0
+theme_type_variation = &"Quiet"
+
+[node name="GoalsScroll" type="ScrollContainer" parent="GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="GoalsList" type="VBoxContainer" parent="GoalsPanel/GoalsColumn/GoalsScroll"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Inspector" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -404.0
+offset_top = 72.0
+offset_right = -16.0
+offset_bottom = -180.0
+
+[node name="InspectorColumn" type="VBoxContainer" parent="Inspector"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InspectorHeader" type="HBoxContainer" parent="Inspector/InspectorColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="InspectorTitle" type="Label" parent="Inspector/InspectorColumn/InspectorHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Heading"
+autowrap_mode = 3
+
+[node name="InspectorClose" type="Button" parent="Inspector/InspectorColumn/InspectorHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+size_flags_vertical = 0
+focus_mode = 0
+theme_type_variation = &"Quiet"
+
+[node name="InspectorSubtitle" type="Label" parent="Inspector/InspectorColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+
+[node name="Workforce" type="ProgressBar" parent="Inspector/InspectorColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+show_percentage = false
+
+[node name="InspectorScroll" type="ScrollContainer" parent="Inspector/InspectorColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="InspectorContents" type="VBoxContainer" parent="Inspector/InspectorColumn/InspectorScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="InspectorText" type="Label" parent="Inspector/InspectorColumn/InspectorScroll/InspectorContents"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="InspectionSummary" type="VBoxContainer" parent="Inspector/InspectorColumn/InspectorScroll/InspectorContents"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("5_summary")
+
+[node name="InspectorControls" type="VBoxContainer" parent="Inspector/InspectorColumn/InspectorScroll/InspectorContents"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("3_en2x2")
+
+[node name="EventsBox" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -190.0
+offset_top = 72.0
+offset_right = 190.0
+grow_horizontal = 2
+theme_type_variation = &"DecisionCard"
+
+[node name="EventColumn" type="VBoxContainer" parent="EventsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="DecisionCaption" type="Label" parent="EventsBox/EventColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_type_variation = &"NoticeCaption"
+
+[node name="DecisionToggle" type="Button" parent="EventsBox/EventColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"DecisionButton"
+alignment = 0
+text_overrun_behavior = 3
+
+[node name="EnvoyHeader" type="HBoxContainer" parent="EventsBox/EventColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="EnvoyIdentity" type="VBoxContainer" parent="EventsBox/EventColumn/EnvoyHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="EnvoyCity" type="Label" parent="EventsBox/EventColumn/EnvoyHeader/EnvoyIdentity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Subheading"
+autowrap_mode = 3
+
+[node name="EnvoyLeader" type="Label" parent="EventsBox/EventColumn/EnvoyHeader/EnvoyIdentity"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="EnvoyPause" type="Label" parent="EventsBox/EventColumn/EnvoyHeader/EnvoyIdentity"]
+layout_mode = 2
+theme_type_variation = &"NoticeCaption"
+text = "Paused · Awaiting your reply"
+autowrap_mode = 3
+
+[node name="EventScroll" type="ScrollContainer" parent="EventsBox/EventColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Events" type="VBoxContainer" parent="EventsBox/EventColumn/EventScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="EventActionScroll" type="ScrollContainer" parent="EventsBox/EventColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="EventActions" type="VBoxContainer" parent="EventsBox/EventColumn/EventActionScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="MessagePanel" type="PanelContainer" parent="." unique_id=1906759111]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -416.0
+offset_top = 72.0
+offset_right = -16.0
+offset_bottom = -122.0
+
+[node name="MessageColumn" type="VBoxContainer" parent="MessagePanel" unique_id=178351603]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MessageHeader" type="HBoxContainer" parent="MessagePanel/MessageColumn" unique_id=261537588]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MessageTitle" type="Label" parent="MessagePanel/MessageColumn/MessageHeader" unique_id=910548225]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Subheading"
+
+[node name="MessageClose" type="Button" parent="MessagePanel/MessageColumn/MessageHeader" unique_id=47515509]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 2
+text = "✕"
+
+[node name="MessageScroll" type="ScrollContainer" parent="MessagePanel/MessageColumn" unique_id=515637082]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="MessageList" type="VBoxContainer" parent="MessagePanel/MessageColumn/MessageScroll" unique_id=138900519]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ToastScroll" type="ScrollContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -190.0
+offset_top = 72.0
+offset_right = 190.0
+offset_bottom = 272.0
+horizontal_scroll_mode = 0
+mouse_filter = 1
+
+[node name="Toasts" type="VBoxContainer" parent="ToastScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="DebugPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 16.0
+offset_right = 280.0
+
+[node name="Details" type="Label" parent="DebugPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+
+[node name="DemolitionDialog" type="ConfirmationDialog" parent="." unique_id=1471157238]
+unique_name_in_owner = true
+
+[node name="SaveDialog" type="ConfirmationDialog" parent="." unique_id=907343391]
+unique_name_in_owner = true
+
+[node name="SaveBox" type="VBoxContainer" parent="SaveDialog" unique_id=2064768684]
+theme_override_constants/separation = 8
+
+[node name="SavePrompt" type="Label" parent="SaveDialog/SaveBox" unique_id=222641445]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SaveName" type="LineEdit" parent="SaveDialog/SaveBox" unique_id=700678168]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+max_length = 64
+
+[node name="LoadDialog" type="ConfirmationDialog" parent="." unique_id=565473190]
+unique_name_in_owner = true
+
+[node name="LoadBox" type="VBoxContainer" parent="LoadDialog" unique_id=305076860]
+theme_override_constants/separation = 8
+
+[node name="SaveList" type="ItemList" parent="LoadDialog/LoadBox" unique_id=45426732]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 240)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SaveInfo" type="Label" parent="LoadDialog/LoadBox" unique_id=1564367826]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+
+[node name="MenuDialog" type="ConfirmationDialog" parent="." unique_id=1482023133]
+unique_name_in_owner = true
+
+[node name="PlacementBadge" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+mouse_filter = 2
+theme_type_variation = &"PlacementGood"
+
+[node name="PlacementText" type="Label" parent="PlacementBadge"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"Caption"
+autowrap_mode = 3
+
+[node name="ActiveToolCard" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_right = -16.0
+theme_type_variation = &"MiniPanel"
+
+[node name="ToolCardColumn" type="VBoxContainer" parent="ActiveToolCard"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="ToolCardRow" type="HBoxContainer" parent="ActiveToolCard/ToolCardColumn"]
+layout_mode = 2
+
+[node name="ActiveToolTitle" type="Label" parent="ActiveToolCard/ToolCardColumn/ToolCardRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text_overrun_behavior = 3
+theme_type_variation = &"ToolHeading"
+
+[node name="ActiveToolClose" type="Button" parent="ActiveToolCard/ToolCardColumn/ToolCardRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Quiet"
+
+[node name="ActiveToolPrice" type="Label" parent="ActiveToolCard/ToolCardColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+theme_type_variation = &"CardPrice"
+
+[node name="ActiveToolHelp" type="Label" parent="ActiveToolCard/ToolCardColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+max_lines_visible = 3
+text_overrun_behavior = 3
+theme_type_variation = &"Caption"

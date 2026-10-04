@@ -118,5 +118,16 @@ stdsptr<eTexture> ePyramidStatue::getTexture(const eTileSize size) const {
         }
     }
     if(!coll) return nullptr;
+    // Remastered art shared with the sanctuaries (row order of eBuildingTextures::sStatueGods).
+    const eGodType order[14] = {eGodType::zeus, eGodType::poseidon, eGodType::hades, eGodType::demeter,
+                                eGodType::athena, eGodType::artemis, eGodType::apollo, eGodType::ares,
+                                eGodType::hephaestus, eGodType::aphrodite, eGodType::hermes,
+                                eGodType::dionysus, eGodType::hera, eGodType::atlas};
+    eGameTextures::loadGodStatuesHD();
+    for(int row = 0; row < 14; ++row) {
+        if(order[row] != mType) continue;
+        if(const auto& hd = blds.fGodStatuesHD[row][dirId]) return hd;
+        break;
+    }
     return coll->getTexture(dirId);
 }

@@ -12,6 +12,7 @@ public:
         getTexture(const eTileSize size) const override;
 
     void setFollow(eCartTransporter* const c) { mFollow = c; }
+    eCartTransporter* follow() const { return mFollow.get(); }
 
     void setBig(const bool b) { mIsBig = b; }
 

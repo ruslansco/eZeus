@@ -1,0 +1,28 @@
+{
+  "asset": "deco_gazebo",
+  "source": "art/decorations/build_sprites.py",
+  "file": "deco_gazebo.glb",
+  "bytes": 6331916,
+  "vertices": 28469,
+  "surfaces": 3,
+  "source_surfaces": 9,
+  "bounds_blender": [
+    [
+      -0.9950000047683716,
+      -0.9950000047683716,
+      0.0
+    ],
+    [
+      0.9950000047683716,
+      0.9950000047683716,
+      1.7949999570846558
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

@@ -1,0 +1,286 @@
+[gd_scene format=3]
+
+[ext_resource type="Theme" path="res://ui/lapis_gold.tres" id="1_iuit4"]
+[ext_resource type="Script" path="res://ui/start_menu.gd" id="2_loyqk"]
+[ext_resource type="PackedScene" path="res://ui/episode_card.tscn" id="3_lb6g3"]
+[ext_resource type="Script" path="res://ui/episode_card.gd" id="4_fl3bm"]
+[ext_resource type="PackedScene" path="res://ui/login_scene_3d.tscn" id="5_login3d"]
+
+[ext_resource type="Shader" path="res://shaders/menu_vignette.gdshader" id="6_vignette"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vignette"]
+shader = ExtResource("6_vignette")
+
+[sub_resource type="Gradient" id="Gradient_lb6g3"]
+offsets = PackedFloat32Array(0, 0.26, 0.55, 1)
+colors = PackedColorArray(0.006, 0.012, 0.019, 0.88, 0.006, 0.012, 0.019, 0.64, 0.006, 0.012, 0.019, 0.05, 0.006, 0.012, 0.019, 0.08)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fl3bm"]
+gradient = SubResource("Gradient_lb6g3")
+width = 512
+height = 8
+fill_from = Vector2(0, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mainpage"]
+content_margin_left = 28.0
+content_margin_top = 22.0
+content_margin_right = 28.0
+content_margin_bottom = 22.0
+bg_color = Color(0.016, 0.026, 0.034, 0.62)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.58, 0.44, 0.23, 0.55)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 18
+
+[node name="StartMenu" type="Control" unique_id=1032324734]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_iuit4")
+script = ExtResource("2_loyqk")
+
+[node name="LoginScene3D" parent="." instance=ExtResource("5_login3d")]
+
+[node name="Backdrop" type="TextureRect" parent="." unique_id=2087354067]
+material = SubResource("ShaderMaterial_vignette")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_fl3bm")
+
+[node name="MainAnchor" type="MarginContainer" parent="."]
+layout_mode = 0
+anchor_right = 0.36
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_right = 16
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1633436851]
+mouse_filter = 2
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MainPage" type="PanelContainer" parent="MainAnchor" unique_id=304296399]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_mainpage")
+
+[node name="MainColumn" type="VBoxContainer" parent="MainAnchor/MainPage" unique_id=1693688610]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="MainAnchor/MainPage/MainColumn" unique_id=1002797804]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Title"
+horizontal_alignment = 1
+
+[node name="Tagline" type="Label" parent="MainAnchor/MainPage/MainColumn" unique_id=1086408568]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+horizontal_alignment = 1
+
+[node name="MainRule" type="HSeparator" parent="MainAnchor/MainPage/MainColumn" unique_id=1290210608]
+layout_mode = 2
+
+[node name="Continue" type="Button" parent="MainAnchor/MainPage/MainColumn" unique_id=2119571417]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Primary"
+
+[node name="ContinueInfo" type="Label" parent="MainAnchor/MainPage/MainColumn" unique_id=1004449321]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+horizontal_alignment = 1
+
+[node name="NewGame" type="Button" parent="MainAnchor/MainPage/MainColumn" unique_id=269284539]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+
+[node name="LoadGame" type="Button" parent="MainAnchor/MainPage/MainColumn" unique_id=841661667]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+
+[node name="MainFooter" type="HBoxContainer" parent="MainAnchor/MainPage/MainColumn" unique_id=1263514808]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Language" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter" unique_id=170927244]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sound" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter" unique_id=1959725905]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Quit" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter" unique_id=1507367940]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Interface" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(38,46)
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"Quiet"
+
+[node name="AdventurePage" type="PanelContainer" parent="Center" unique_id=1230281658]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(1040, 560)
+layout_mode = 2
+
+[node name="AdventureColumn" type="VBoxContainer" parent="Center/AdventurePage" unique_id=2043656256]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AdventureHeading" type="Label" parent="Center/AdventurePage/AdventureColumn" unique_id=685555511]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Heading"
+
+[node name="AdventureBody" type="HBoxContainer" parent="Center/AdventurePage/AdventureColumn" unique_id=586241034]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="AdventureList" type="ItemList" parent="Center/AdventurePage/AdventureColumn/AdventureBody" unique_id=1352051041]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+
+[node name="AdventureDetail" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody" unique_id=1593110738]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="AdventureTitle" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail" unique_id=1840845871]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Subheading"
+autowrap_mode = 3
+
+[node name="AdventureScroll" type="ScrollContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail" unique_id=1586842538]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="AdventureText" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/AdventureScroll" unique_id=9036652]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="AdventureStatus" type="Label" parent="Center/AdventurePage/AdventureColumn" unique_id=606761480]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+
+[node name="AdventureButtons" type="HBoxContainer" parent="Center/AdventurePage/AdventureColumn" unique_id=2116655268]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="AdventureSpacer" type="Control" parent="Center/AdventurePage/AdventureColumn/AdventureButtons" unique_id=1931269865]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AdventureBack" type="Button" parent="Center/AdventurePage/AdventureColumn/AdventureButtons" unique_id=1939678820]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 46)
+layout_mode = 2
+
+[node name="AdventureStart" type="Button" parent="Center/AdventurePage/AdventureColumn/AdventureButtons" unique_id=1139078989]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 46)
+layout_mode = 2
+theme_type_variation = &"Primary"
+
+[node name="IntroPage" type="PanelContainer" parent="Center" unique_id=242202870]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(820, 580)
+layout_mode = 2
+
+[node name="IntroCard" type="VBoxContainer" parent="Center/IntroPage" unique_id=126904816 instance=ExtResource("3_lb6g3")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+script = ExtResource("4_fl3bm")
+
+[node name="LoadPage" type="PanelContainer" parent="Center" unique_id=1800552770]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(640, 520)
+layout_mode = 2
+
+[node name="LoadColumn" type="VBoxContainer" parent="Center/LoadPage" unique_id=1541598316]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LoadHeading" type="Label" parent="Center/LoadPage/LoadColumn" unique_id=1179142666]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Heading"
+
+[node name="SaveList" type="ItemList" parent="Center/LoadPage/LoadColumn" unique_id=1379910756]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SaveInfo" type="Label" parent="Center/LoadPage/LoadColumn" unique_id=406588002]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+
+[node name="LoadButtons" type="HBoxContainer" parent="Center/LoadPage/LoadColumn" unique_id=1912782494]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="LoadSpacer" type="Control" parent="Center/LoadPage/LoadColumn/LoadButtons" unique_id=974424447]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LoadBack" type="Button" parent="Center/LoadPage/LoadColumn/LoadButtons" unique_id=309577413]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 46)
+layout_mode = 2
+
+[node name="LoadOpen" type="Button" parent="Center/LoadPage/LoadColumn/LoadButtons" unique_id=452946373]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 46)
+layout_mode = 2
+theme_type_variation = &"Primary"

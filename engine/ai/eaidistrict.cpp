@@ -4,6 +4,7 @@
 
 #include "buildings/eroad.h"
 #include "buildings/eavenue.h"
+#include "buildings/eboulevard.h"
 
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
@@ -132,6 +133,12 @@ bool gBuild(const eAIBuilding& b,
     case eBuildingType::avenue: {
         const auto bc = [boardPtr, cid, b]() {
             return e::make_shared<eAvenue>(*boardPtr, cid);
+        };
+        return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
+    } break;
+    case eBuildingType::boulevard: {
+        const auto bc = [boardPtr, cid, b]() {
+            return e::make_shared<eBoulevard>(*boardPtr, cid);
         };
         return board.buildBase(minX, minY, maxX, maxY, bc, pid, cid, editorDisplay);
     } break;
@@ -550,7 +557,7 @@ bool gBuild(const eAIBuilding& b,
         for(int x = minX; x <= maxX; x++) {
             for(int y = minY; y <= maxY; y++) {
                 const auto t = board.tile(x, y);
-                if(t->hasRoad()) {
+                if(t->hasRoad() && t->underBuildingType() == eBuildingType::road) {
                     const auto bb = t->underBuilding();
                     const auto r = static_cast<eRoad*>(bb);
                     r->setUnderAgora(a.get());
@@ -589,7 +596,7 @@ bool gBuild(const eAIBuilding& b,
         for(int x = minX; x <= maxX; x++) {
             for(int y = minY; y <= maxY; y++) {
                 const auto t = boardPtr->tile(x, y);
-                if(t->hasRoad()) {
+                if(t->hasRoad() && t->underBuildingType() == eBuildingType::road) {
                     const auto bb = t->underBuilding();
                     const auto r = static_cast<eRoad*>(bb);
                     r->setUnderAgora(a.get());

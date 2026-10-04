@@ -103,6 +103,7 @@ eOverlay eTrireme::getSecondaryTexture(const eTileSize size) const {
     const int id = static_cast<int>(size);
     const auto& texs = eGameTextures::characters();
     const auto& colls = texs[id];
+    if(colls.fTrireme.fRemastered) return eOverlay{0., 0., nullptr, false};
     const auto a = actionType();
     const bool die = a == eCharacterActionType::die;
     const std::vector<eTextureCollection>* charTexs;

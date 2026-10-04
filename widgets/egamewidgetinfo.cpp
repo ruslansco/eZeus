@@ -188,3 +188,47 @@ eInfoWidget *eGameWidget::openInfoWidget(const std::vector<eCharacter*> chars) {
     }
     return wid;
 }
+
+void eGameWidget::debugOpenInfo(const std::string& kind) {
+    if(mInfoWidget) return;
+    const int mapW = width() - mGm->width();
+    const int step = std::max(8, height()/60);
+    int best = -1;
+    eBuilding* bestB = nullptr;
+    std::vector<eCharacter*> bestC;
+    for(int y = height()/6; y < height()*5/6; y += step) {
+        for(int x = mapW/8; x < mapW*7/8; x += step) {
+            int tx, ty;
+            pixToId(x, y, tx, ty);
+            const auto t = mBoard->tile(tx, ty);
+            if(!t) continue;
+            eBuilding* b = nullptr;
+            std::vector<eCharacter*> cs;
+            if(kind == "walker") {
+                for(const auto& c : t->characters()) {
+                    if(c->type() == eCharacterType::trailer || c->dead()) continue;
+                    cs.push_back(c.get());
+                }
+                if(cs.empty()) continue;
+            } else {
+                b = t->underBuilding();
+                if(!b) continue;
+                if(kind == "house") {
+                    if(b->type() != eBuildingType::commonHouse) continue;
+                    if(static_cast<eHouseBase*>(b)->people() <= 0) continue;
+                } else if(!dynamic_cast<eEmployingBuilding*>(b)) {
+                    continue;
+                }
+            }
+            const int d = std::abs(x - mapW/2) + std::abs(y - height()/2);
+            if(best < 0 || d < best) {
+                best = d;
+                bestB = b;
+                bestC = cs;
+            }
+        }
+    }
+    if(best < 0) return;
+    if(bestB) mInfoWidget = openInfoWidget(bestB);
+    else mInfoWidget = openInfoWidget(bestC);
+}

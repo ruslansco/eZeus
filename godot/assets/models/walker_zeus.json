@@ -1,0 +1,86 @@
+{
+  "asset": "walker_zeus",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_zeus.glb",
+  "bytes": 15667236,
+  "vertices": 16011,
+  "surfaces": 3,
+  "source_surfaces": 18,
+  "bounds_blender": [
+    [
+      -0.5495598912239075,
+      -0.5735999345779419,
+      -15.611648559570312
+    ],
+    [
+      0.6154473423957825,
+      0.47347021102905273,
+      2.65842866897583
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Zeus",
+        "sex": "male",
+        "profile": {
+          "age": 58,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ],
+          "jaw": 1.14,
+          "cheek": 1.0,
+          "nose": 0.006,
+          "chin": 0.004,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.62,
+              0.6,
+              0.56
+            ],
+            [
+              0.86,
+              0.84,
+              0.8
+            ]
+          ],
+          "hair_length": 0.03,
+          "beard_length": 0.05,
+          "grey": 0.9,
+          "seed": 61101
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "d9d8f7952b82a3264c4cd94435b3723cee015625e4feab0767e52927432caa5e",
+        "clavi_srgb": [
+          0.4,
+          0.08,
+          0.32
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG",
+    "floating": "floating_gods_v1"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 387,
+    "targets_after": 238,
+    "uv_attributes_removed": 0
+  }
+}

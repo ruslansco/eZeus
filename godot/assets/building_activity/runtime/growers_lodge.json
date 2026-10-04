@@ -1,0 +1,38 @@
+{
+  "asset": "growers_lodge",
+  "source": "art/growers_lodge/build_sprites.py",
+  "file": "growers_lodge.glb",
+  "bytes": 4921904,
+  "vertices": 32510,
+  "surfaces": 6,
+  "source_surfaces": 36,
+  "bounds_blender": [
+    [
+      -1.0250509977340698,
+      -0.9900000095367432,
+      -0.0072778863832354546
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      1.3769999742507935
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 48,
+    "allocation_target": 35000,
+    "base_sha256": "710a7aedef3428e18cfc041310b5ccfda205e77fb40c6c131c641bebb9aeb338",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

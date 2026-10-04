@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vphjr"]
+albedo_color = Color(0.5254902, 0.76862746, 0.7921569, 1)
+metallic = 0.3
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_a5nvo"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cnpu2"]
+albedo_color = Color(0.25882354, 0.49411765, 0.5882353, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_s7muf"]
+top_radius = 0.0
+bottom_radius = 0.27
+height = 0.5
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dn5lf"]
+albedo_color = Color(0.0627451, 0.16862746, 0.21568628, 1)
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_fe86x"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ry010"]
+top_radius = 0.0
+bottom_radius = 0.18
+height = 0.22
+radial_segments = 12
+
+[node name="Fish" type="Node3D" unique_id=399749653]
+
+[node name="@MeshInstance3D@52" type="MeshInstance3D" parent="." unique_id=596872835]
+transform = Transform3D(1.2, 0, 0, 0, 0.5, 0, 0, 0, 0.35, 0, 0.35, 0)
+material_override = SubResource("StandardMaterial3D_vphjr")
+mesh = SubResource("SphereMesh_a5nvo")
+
+[node name="@MeshInstance3D@53" type="MeshInstance3D" parent="." unique_id=977943442]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 0.22, -0.65, 0.35, 0)
+material_override = SubResource("StandardMaterial3D_cnpu2")
+mesh = SubResource("CylinderMesh_s7muf")
+
+[node name="@MeshInstance3D@54" type="MeshInstance3D" parent="." unique_id=1371270918]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.06, 0.43, 0.43, 0.155)
+material_override = SubResource("StandardMaterial3D_dn5lf")
+mesh = SubResource("SphereMesh_fe86x")
+
+[node name="@MeshInstance3D@55" type="MeshInstance3D" parent="." unique_id=510278209]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.2, 0, 0.6, 0)
+material_override = SubResource("StandardMaterial3D_cnpu2")
+mesh = SubResource("CylinderMesh_ry010")

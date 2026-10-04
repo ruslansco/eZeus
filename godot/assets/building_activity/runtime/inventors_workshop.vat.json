@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 522,
+ "parts": {
+  "inventors_workshop_0": {
+   "row": 0,
+   "rows": 24,
+   "poses": 9,
+   "vertices": 23987,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "inventors_workshop_1": {
+   "row": 216,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 48,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00026786327362060547
+  },
+  "inventors_workshop_13": {
+   "row": 225,
+   "rows": 33,
+   "poses": 9,
+   "vertices": 33156,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  }
+ },
+ "source": {
+  "file": "inventors_workshop.glb",
+  "bytes": 4845984,
+  "mtime": 1790833963
+ }
+}

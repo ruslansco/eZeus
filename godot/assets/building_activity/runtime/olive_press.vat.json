@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 53,
+ "parts": {
+  "olive_press_6": {
+   "row": 0,
+   "rows": 1,
+   "poses": 8,
+   "vertices": 126,
+   "frames": {
+    "work_00": 0,
+    "inactive": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7
+   },
+   "max_error": 1.4185905456542969e-05
+  },
+  "olive_press_10": {
+   "row": 8,
+   "rows": 3,
+   "poses": 9,
+   "vertices": 2435,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004876852035522461
+  },
+  "olive_press_11": {
+   "row": 35,
+   "rows": 2,
+   "poses": 9,
+   "vertices": 1950,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004863739013671875
+  }
+ },
+ "source": {
+  "file": "olive_press.glb",
+  "bytes": 1069628,
+  "mtime": 1790834173
+ }
+}

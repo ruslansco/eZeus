@@ -2,12 +2,20 @@
 #include "enumbers.h"
 #include "widgets/ebuildingstoerase.h"
 #include "egamewidget.h"
+#include "engine/eagoraplacement.h"
+#include "engine/eshoreplacement.h"
+#include "engine/ebuildplacement.h"
 #include "emessagelogwidget.h"
 #include "emessagetoast.h"
 #include "ecityhistorywidget.h"
 #include "engine/eevent.h"
 #include "etradesummarywidget.h"
+#include "ecityadvisorwidget.h"
 #include "ehousehovercard.h"
+#include "eshortcutsheet.h"
+#include "etipbanner.h"
+#include "buildings/epatrolsourcebuilding.h"
+#include "buildings/epatrolbuildingbase.h"
 #include "buildings/ehousebase.h"
 #include "epanelstyle.h"
 #include "econtrolsmenu.h"
@@ -227,12 +235,47 @@ eGameWidgetSettings eGameWidget::settings() const {
     r.fDY = mDY;
     r.fDir = mBoard ? mBoard->direction() : eWorldDirection::N;
     r.fBookmarks = mBookmarks;
+    for(const auto& l : mMessageLog) {
+        auto& e = r.fMessageLog.emplace_back();
+        e.fTitle = eMessageBox::sFormatTitle(l.fEd, l.fMsg.fTitle);
+        e.fText = eMessageBox::sFormatText(l.fEd, l.fMsg.fText);
+        e.fDate = l.fEd.fDate;
+        e.fPlayerName = l.fEd.fPlayerName;
+        eTile* t = l.fEd.fTile;
+        if(const auto ch = l.fEd.fChar) {
+            if(ch->tile()) t = ch->tile();
+        }
+        if(t) {
+            e.fTileX = t->x();
+            e.fTileY = t->y();
+        }
+        if(l.fEd.fTarget.isCityTarget()) {
+            e.fCity = static_cast<int>(l.fEd.fTarget.cityTarget());
+        }
+        e.fCategory = l.fCategory;
+    }
+    r.fMessagesSeen = mMessagesSeen;
+    if(mBoard && mGm) {
+        r.fHasView = true;
+        viewedFraction(r.fViewFX, r.fViewFY);
+        // the step being zoomed to, if the zoom is still easing
+        double best = 1e9;
+        for(int i = 0; i < static_cast<int>(sZoomSteps.size()); i++) {
+            const double d = std::abs(sZoomSteps[i].scale - mTargetZoomScale);
+            if(d < best) {
+                best = d;
+                r.fZoomIndex = i;
+            }
+        }
+        r.fPanelCategory = mGm->currentCategory();
+        r.fPanelMap = mGm->mapTab();
+    }
     return r;
 }
 
 void eGameWidget::setSettings(const eGameWidgetSettings& s) {
     if(mPaused != s.fPaused) switchPause();
-    mSpeedId = s.fSpeedId;
+    mSpeedId = std::clamp(s.fSpeedId, 0, sMaxSpeedId);
     mSpeed = sSpeeds[mSpeedId];
     updateSpeedDisplay();
     if(mObjectivesTracker) mObjectivesTracker->updatePosition();
@@ -247,6 +290,34 @@ void eGameWidget::setSettings(const eGameWidgetSettings& s) {
     mGm->setWorldDirection(s.fDir);
     if(mTem) mTem->setWorldDirection(s.fDir);
     mBookmarks = s.fBookmarks;
+    // the message list saved with the game (text already filled in)
+    mMessageLog.clear();
+    for(const auto& e : s.fMessageLog) {
+        auto& l = mMessageLog.emplace_back();
+        if(e.fCity >= 0) l.fEd.fTarget = ePlayerCityTarget(static_cast<eCityId>(e.fCity));
+        l.fEd.fDate = e.fDate;
+        l.fEd.fPlayerName = e.fPlayerName;
+        if(mBoard && e.fTileX >= 0) l.fEd.fTile = mBoard->tile(e.fTileX, e.fTileY);
+        l.fMsg = eMessage{e.fTitle, e.fText};
+        l.fId = mNextMessageId++;
+        l.fCategory = e.fCategory;
+    }
+    mMessagesSeen = std::clamp(s.fMessagesSeen, 0, static_cast<int>(mMessageLog.size()));
+
+    // back to where the player was looking when the game was saved
+    if(s.fHasView && mBoard) {
+        const int maxZoom = static_cast<int>(sZoomSteps.size()) - 1;
+        mZoomIndex = std::clamp(s.fZoomIndex, 0, maxZoom);
+        mZoomScale = sZoomSteps[mZoomIndex].scale;
+        mTargetZoomScale = mZoomScale;
+        updateViewBoxSize();
+        viewFraction(std::clamp(s.fViewFX, 0.0, 1.0),
+                     std::clamp(s.fViewFY, 0.0, 1.0));
+        mPreciseDX = mDX;
+        mPreciseDY = mDY;
+        if(s.fPanelCategory >= 0) mGm->openCategory(s.fPanelCategory);
+        if(s.fPanelMap) mGm->setMapTab(true);
+    }
 }
 
 void eGameWidget::initializeNumbers() {
@@ -269,7 +340,7 @@ void eGameWidget::initializeNumbers() {
             fs = 40;
             break;
         }
-        const auto font = eFonts::defaultFont(fs);
+        const auto font = eFonts::labelFont(fs);
         const auto r = window()->renderer();
         for(int i = 0; i < 10; i++) {
             const auto tex = std::make_shared<eTexture>();
@@ -349,6 +420,10 @@ void eGameWidget::initialize() {
     mHouseCard = new eHouseHoverCard(window());
     addWidget(mHouseCard);
     mHouseCard->hide();
+
+    mShortcutSheet = new eShortcutSheet(window());
+    addWidget(mShortcutSheet);
+    mShortcutSheet->hide();
 
     mTem = new eTerrainEditMenu(window());
     mTem->initialize(this, mBoard);
@@ -729,9 +804,6 @@ void eGameWidget::viewFraction(const double fx, const double fy) {
 
 void eGameWidget::viewTile(eTile* const tile) {
     if(!tile) return;
-    int mdx;
-    int mdy;
-    mapDimensions(mdx, mdy);
     const int dtx = tile->dx();
     const int dty = tile->dy();
     const auto dir = mBoard->direction();
@@ -743,20 +815,21 @@ void eGameWidget::viewTile(eTile* const tile) {
                                          dir, width, height);
     const int tx = rdtx*mTileW;
     const int ty = rdty*mTileH/2;
-    const double x = double(tx)/mdx;
-    const double y = double(ty)/mdy;
-    viewFraction(x, y);
+    // Avoid a normalised-fraction round trip: a tiny rounding error at a
+    // tile boundary used to accumulate into a one-tile drift when rotating.
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    const int viewW = std::round((this->width() - mGm->width()) / s);
+    const int viewH = std::round(this->height() / s);
+    setDX(viewW/2 - tx);
+    setDY(viewH/2 - ty);
 }
 
 eTile* eGameWidget::viewedTile() const {
-    double fx;
-    double fy;
-    viewedFraction(fx, fy);
-    int mdx;
-    int mdy;
-    mapDimensions(mdx, mdy);
-    const int vx = fx*mdx/mTileW;
-    const int vy = fy*mdy*2/mTileH;
+    const double s = mZoomScale > 0.0 ? mZoomScale : 1.0;
+    const double w = (width() - mGm->width()) / s;
+    const double h = height() / s;
+    const int vx = std::floor((0.5*w - mDX)/mTileW + 1e-9);
+    const int vy = std::floor((0.5*h - mDY)*2/mTileH + 1e-9);
     const auto tile = mBoard->rotateddtile(vx, vy);
     return tile;
 }
@@ -858,145 +931,25 @@ void eGameWidget::iterateOverVisibleTiles(const eTileAction& a) {
 
 bool eGameWidget::canBuildVendor(const int tx, const int ty,
                                  const eResourceType resType) const {
-    const auto t = mBoard->tile(tx, ty);
-    if(!t) return false;
-    const auto b = t->underBuilding();
-    if(!b) return false;
-    const auto bt = b->type();
-    if(bt != eBuildingType::agoraSpace) return false;
-    const auto space = static_cast<eAgoraSpace*>(b);
-    const auto agora = space->agora();
-    if(agora->vendor(resType)) return false;
-    const auto ct = b->centerTile();
-    if(!ct) return false;
-    return ct->x() == tx && ct->y() == ty;
+    return eAgoraPlacement::canPlaceVendor(*mBoard, tx, ty, resType);
 }
 
 bool tileBuildable(eTile* const t) {
-    if(!t) return false;
-    if(t->underBuilding()) return false;
-    const auto& banners = t->banners();
-    for(const auto& b : banners) {
-        if(!b->buildable()) return false;
-    }
-    if(t->isElevationTile()) return false;
-    const auto& chars = t->characters();
-    if(!chars.empty()) return false;
-    return true;
+    return eShorePlacement::tileBuildable(t);
 }
 
 bool eGameWidget::waterTileHasAccessToSea(const int tx, const int ty) const {
-    const auto t = mBoard->tile(tx, ty);
-    if(!t) return false;
-    if(!t->hasWater()) return false;
-    const auto cid = mViewedCityId;
-    const auto riverEntry = mBoard->riverEntryPoint(cid);
-    if(!riverEntry) return false;
-    eKnownEndPathFinder p([](eTileBase* const tile) {
-        return tile->hasWater();
-    }, riverEntry);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    const bool r = p.findPath({0, 0, w, h}, t, 1000, true, w, h);
-    return r;
+    return eShorePlacement::waterAccess(*mBoard, mViewedCityId, tx, ty);
 }
 
 bool eGameWidget::canBuildFishery(const int tx, const int ty,
                                   eDiagonalOrientation& o) const {
-    for(int x = tx; x < tx + 2; x++) {
-        for(int y = ty - 1; y < ty - 1 + 2; y++) {
-            const auto t = mBoard->tile(x, y);
-            const bool b = tileBuildable(t);
-            if(!b) return false;
-        }
-    }
-    const auto t = mBoard->tile(tx, ty);
-    if(!t) return false;
-    const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
-    if(tr) {
-        o = eDiagonalOrientation::topRight;
-        return true;
-    }
-    const bool br = eBuildableHelpers::canBuildFisheryBR(t);
-    if(br) {
-        o = eDiagonalOrientation::bottomRight;
-        return true;
-    }
-    const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
-    if(bl) {
-        o = eDiagonalOrientation::bottomLeft;
-        return true;
-    }
-    const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
-    if(tl) {
-        o = eDiagonalOrientation::topLeft;
-        return true;
-    }
-    return false;
+    return eShorePlacement::canBuildFishery(*mBoard, tx, ty, o);
 }
 
 bool eGameWidget::canBuildTriremeWharf(const int tx, const int ty,
                                        eDiagonalOrientation& o) const {
-    for(int x = tx - 1; x < tx - 1 + 3; x++) {
-        for(int y = ty - 1; y < ty - 1 + 3; y++) {
-            const auto t = mBoard->tile(x, y);
-            const bool b = tileBuildable(t);
-            if(!b) return false;
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx - 1, ty);
-        if(!t) return false;
-        const bool tr = eBuildableHelpers::canBuildFisheryTR(t);
-        if(tr) {
-            const auto br = t->bottomRight<eTile>();
-            const bool tr = eBuildableHelpers::canBuildFisheryTR(br);
-            if(tr) {
-                o = eDiagonalOrientation::topRight;
-                return true;
-            }
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx, ty);
-        if(!t) return false;
-        const bool br = eBuildableHelpers::canBuildFisheryBR(t);
-        if(br) {
-            const auto bl = t->bottomLeft<eTile>();
-            const bool br = eBuildableHelpers::canBuildFisheryBR(bl);
-            if(br) {
-                o = eDiagonalOrientation::bottomRight;
-                return true;
-            }
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx - 1, ty + 1);
-        if(!t) return false;
-        const bool bl = eBuildableHelpers::canBuildFisheryBL(t);
-        if(bl) {
-            const auto br = t->bottomRight<eTile>();
-            const bool bl = eBuildableHelpers::canBuildFisheryBL(br);
-            if(bl) {
-                o = eDiagonalOrientation::bottomLeft;
-                return true;
-            }
-        }
-    }
-    {
-        const auto t = mBoard->tile(tx - 1, ty + 1);
-        if(!t) return false;
-        const bool tl = eBuildableHelpers::canBuildFisheryTL(t);
-        if(tl) {
-            const auto tr = t->topRight<eTile>();
-            const bool tl = eBuildableHelpers::canBuildFisheryTL(tr);
-            if(tl) {
-                o = eDiagonalOrientation::topLeft;
-                return true;
-            }
-        }
-    }
-    return false;
+    return eBuildPlacement::canBuildTriremeWharf(*mBoard, tx, ty, o);
 }
 
 bool eGameWidget::canBuildPier(const int tx, const int ty,
@@ -1004,31 +957,7 @@ bool eGameWidget::canBuildPier(const int tx, const int ty,
                                const eCityId cid,
                                const ePlayerId pid,
                                const bool forestAllowed) const {
-    const bool r = canBuildFishery(tx, ty, o);
-    if(!r) return false;
-    int minX;
-    int minY;
-    switch(o) {
-    case eDiagonalOrientation::topRight: {
-        minX = tx - 1;
-        minY = ty + 1;
-    } break;
-    case eDiagonalOrientation::bottomRight: {
-        minX = tx - 4;
-        minY = ty - 2;
-    } break;
-    case eDiagonalOrientation::bottomLeft: {
-        minX = tx - 1;
-        minY = ty - 5;
-    } break;
-    default:
-    case eDiagonalOrientation::topLeft: {
-        minX = tx + 2;
-        minY = ty - 2;
-    } break;
-    }
-    return mBoard->canBuildBase(minX, minX + 4, minY, minY + 4,
-                                forestAllowed, cid, pid);
+    return eShorePlacement::canBuildPier(*mBoard, tx, ty, o, cid, pid, forestAllowed);
 }
 
 std::vector<ePatrolGuide>::iterator
@@ -1069,133 +998,8 @@ int eGameWidget::hippodromeId() const {
 }
 
 void eGameWidget::updateHippodromeIds() {
-    mValiableHippodromePieces.clear();
-
-    const auto hs = mBoard->buildings(mViewedCityId, eBuildingType::hippodromePiece);
-    if(hs.empty()) {
-        mValiableHippodromePieces = {0, 1, 2, 3, 4, 5, 6, 7};
-        return;
-    }
-
-    int minX;
-    int minY;
-    int maxX;
-    int maxY;
-    eGameBoard::sBuildTiles(minX, minY, maxX, maxY,
-                            mHoverTX, mHoverTY, 4, 4);
-    maxY--;
-    maxX--;
-    bool topLeft = false;
-    bool topRight = false;
-    bool bottomRight = false;
-    bool bottomLeft = false;
-
-    bool topLeftBlocked = false;
-    bool topRightBlocked = false;
-    bool bottomRightBlocked = false;
-    bool bottomLeftBlocked = false;
-
-    const auto hippodromeAt = [&](const int x, const int y) {
-        const auto b = mBoard->buildingAt(x, y);
-        if(!b) return static_cast<eHippodromePiece*>(nullptr);
-        const auto type = b->type();
-        if(type == eBuildingType::hippodromePiece) {
-            const auto h = static_cast<eHippodromePiece*>(b);
-            return h;
-        } else if(type == eBuildingType::road) {
-            const auto r = static_cast<eRoad*>(b);
-            return r->aboveHippodrome();
-        }
-        return static_cast<eHippodromePiece*>(nullptr);
-    };
-
-    {
-        const int x = minX - 1;
-        const auto b1 = hippodromeAt(x, minY);
-        const auto b2 = hippodromeAt(x, maxY);
-        if(b1 == b2 && b1 && b2) {
-            const int id = b1->id();
-            topLeftBlocked = true;
-            topLeft = id == 0 || id == 4 || id == 5 || id == 7;
-        }
-    }
-    {
-        const int y = minY - 1;
-        const auto b1 = hippodromeAt(minX, y);
-        const auto b2 = hippodromeAt(maxX, y);
-        if(b1 == b2 && b1 && b2) {
-            const int id = b1->id();
-            topRightBlocked = true;
-            topRight = id == 1 || id == 2 || id == 6 || id == 7;
-        }
-    }
-    {
-        const int x = maxX + 1;
-        const auto b1 = hippodromeAt(x, minY);
-        const auto b2 = hippodromeAt(x, maxY);
-        if(b1 == b2 && b1 && b2) {
-            const int id = b1->id();
-            bottomRightBlocked = true;
-            bottomRight = id == 0 || id == 1 || id == 3 || id == 4;
-        }
-    }
-    {
-        const int y = maxY + 1;
-        const auto b1 = hippodromeAt(minX, y);
-        const auto b2 = hippodromeAt(maxX, y);
-        if(b1 == b2 && b1 && b2) {
-            const int id = b1->id();
-            bottomLeftBlocked = true;
-            bottomLeft = id == 2 || id == 3 || id == 5 || id == 6;
-        }
-    }
-
-    if(topLeft && bottomRight) {
-        mValiableHippodromePieces = {0, 4};
-    } else if(topLeft && bottomLeft) {
-        mValiableHippodromePieces = {1};
-    } else if(topRight && bottomLeft) {
-        mValiableHippodromePieces = {2, 6};
-    } else if(topLeft && topRight) {
-        mValiableHippodromePieces = {3};
-    } else if(topRight && bottomRight) {
-        mValiableHippodromePieces = {5};
-    } else if(bottomLeft && bottomRight) {
-        mValiableHippodromePieces = {7};
-    } else if(topLeft) {
-        mValiableHippodromePieces = {0, 1, 3, 4};
-    } else if(topRight) {
-        mValiableHippodromePieces = {2, 3, 5, 6};
-    } else if(bottomRight) {
-        mValiableHippodromePieces = {0, 4, 5, 7};
-    } else if(bottomLeft) {
-        mValiableHippodromePieces = {1, 2, 6, 7};
-    }
-
-    if(!topLeft && topLeftBlocked) {
-        eVectorHelpers::remove(mValiableHippodromePieces, 0);
-        eVectorHelpers::remove(mValiableHippodromePieces, 1);
-        eVectorHelpers::remove(mValiableHippodromePieces, 3);
-        eVectorHelpers::remove(mValiableHippodromePieces, 4);
-    }
-    if(!topRight && topRightBlocked) {
-        eVectorHelpers::remove(mValiableHippodromePieces, 2);
-        eVectorHelpers::remove(mValiableHippodromePieces, 3);
-        eVectorHelpers::remove(mValiableHippodromePieces, 5);
-        eVectorHelpers::remove(mValiableHippodromePieces, 6);
-    }
-    if(!bottomRight && bottomRightBlocked) {
-        eVectorHelpers::remove(mValiableHippodromePieces, 0);
-        eVectorHelpers::remove(mValiableHippodromePieces, 4);
-        eVectorHelpers::remove(mValiableHippodromePieces, 5);
-        eVectorHelpers::remove(mValiableHippodromePieces, 7);
-    }
-    if(!bottomLeft && bottomLeftBlocked) {
-        eVectorHelpers::remove(mValiableHippodromePieces, 1);
-        eVectorHelpers::remove(mValiableHippodromePieces, 2);
-        eVectorHelpers::remove(mValiableHippodromePieces, 6);
-        eVectorHelpers::remove(mValiableHippodromePieces, 7);
-    }
+    mValiableHippodromePieces = eBuildPlacement::hippodromePieceIds(
+                                    *mBoard, mViewedCityId, mHoverTX, mHoverTY);
 }
 
 void eGameWidget::showMessage(eEventData& ed,
@@ -1225,7 +1029,7 @@ void eGameWidget::showTip(const ePlayerCityTarget& target,
                           const std::string& tip,
                           const int frames) {
     for(const auto& t : mTips) {
-        if(t.fText == tip && t.fTarget == target) return;
+        if(t.fText == tip && t.fTarget == target && !t.fWid->leaving()) return;
     }
     std::string text;
     const auto ppid = mBoard->personPlayer();
@@ -1247,24 +1051,16 @@ void eGameWidget::showTip(const ePlayerCityTarget& target,
         }
         text = tip;
     }
-    const auto msgb = new eFlatButton(window());
-    msgb->setNoPadding();
-    msgb->setTinyFontSize();
-    msgb->setText(text);
-    msgb->fitContent();
-    const int p = msgb->padding();
+    const auto msgb = new eTipBanner(window());
+    msgb->initialize(text);
     addWidget(msgb);
-    msgb->resize(msgb->width() + 2*p, msgb->height() + 2*p);
     msgb->setX((width() - mGm->width() - msgb->width())/2);
     eTip& etip = mTips.emplace_back();
     etip.fTarget = target;
     etip.fText = tip;
     etip.fWid = msgb;
     etip.fLastFrame = mFrame + frames;
-    const auto etipPtr = &etip;
-    msgb->setPressAction([etipPtr, frames]() {
-        etipPtr->fLastFrame -= frames;
-    });
+    msgb->setPressAction([msgb]() { msgb->dismiss(); });
     updateTipPositions();
 }
 
@@ -1302,10 +1098,22 @@ void eGameWidget::updateTipPositions() {
     }
     for(const auto& tip : mTips) {
         const auto w = tip.fWid;
-        w->setY(y);
-        const int wh = w->height();
-        y += wh + 2*p;
+        w->setStackY(y);
+        if(!w->leaving()) y += w->height() + 2*p;
     }
+}
+
+void eGameWidget::removeFinishedTips() {
+    bool changed = false;
+    for(int i = 0; i < static_cast<int>(mTips.size()); i++) {
+        const auto w = mTips[i].fWid;
+        if(!w->finished()) continue;
+        w->deleteLater();
+        mTips.erase(mTips.begin() + i);
+        i--;
+        changed = true;
+    }
+    if(changed) updateTipPositions();
 }
 
 void eGameWidget::replayMessage(const int i) {
@@ -1344,6 +1152,25 @@ void eGameWidget::debugFillMessageLog() {
         l.fEd.fDate = mBoard->date();
         l.fEd.fPlayerName = window()->leader();
         l.fMsg = eMessage{s.first, s.second};
+        l.fId = mNextMessageId++;
+    }
+    {
+        // categories for the samples, in their order
+        const eMessageCategory cats[] = {eMessageCategory::gods, eMessageCategory::disasters,
+                                         eMessageCategory::gods, eMessageCategory::trade,
+                                         eMessageCategory::trade, eMessageCategory::other};
+        const int n = mMessageLog.size();
+        for(int i = 0; i < 6 && n - 6 + i >= 0; i++) {
+            mMessageLog[n - 6 + i].fCategory = cats[i];
+        }
+        // the fire gets a site, for the "go to" button
+        eTile* site = nullptr;
+        if(const auto c = mBoard->boardCityWithId(mViewedCityId)) {
+            for(const auto b : c->allBuildings()) {
+                if(b && (site = b->centerTile())) break;
+            }
+        }
+        if(n >= 6) mMessageLog[n - 5].fEd.fTile = site;
     }
     mMessagesSeen = 2;
 }
@@ -1419,13 +1246,33 @@ void eGameWidget::showToast(const eEventData& ed, const eMessage& msg,
     meta += goTo ? toastText("toast_goto", "Click to go there") :
                    toastText("toast_open", "Click to read");
 
+    addToastCard(title, style.fIcon, style.fTone, title, text, meta,
+                 [this, goTo, logId]() {
+        if(goTo) {
+            goTo();
+            return;
+        }
+        for(int i = 0; i < static_cast<int>(mMessageLog.size()); i++) {
+            if(mMessageLog[i].fId == logId) {
+                // not while the click is still being delivered to the card
+                window()->addSlot([this, i]() { replayMessage(i); });
+                break;
+            }
+        }
+    });
+}
+
+void eGameWidget::addToastCard(const std::string& key, const std::string& icon,
+                               const int tone, const std::string& title,
+                               const std::string& text, const std::string& meta,
+                               const eAction& onClick) {
     const auto res = resolution();
     const int mapW = width() - mGm->width();
     const int w = std::min(static_cast<int>(310*res.multiplier()), mapW*2/5);
 
     // a repeat (another fire) replaces the card instead of stacking up
     for(const auto t : mToasts) {
-        if(t->key() == title && !t->leaving()) t->dismiss();
+        if(t->key() == key && !t->leaving()) t->dismiss();
     }
     int live = 0;
     for(const auto t : mToasts) {
@@ -1440,28 +1287,84 @@ void eGameWidget::showToast(const eEventData& ed, const eMessage& msg,
     }
 
     const auto toast = new eMessageToast(window());
-    toast->setKey(title);
-    toast->initialize(style.fIcon,
-                      static_cast<eMessageToast::eTone>(style.fTone),
+    toast->setKey(key);
+    toast->initialize(icon, static_cast<eMessageToast::eTone>(std::clamp(tone, 0, 2)),
                       title, text, meta, w);
-    toast->setPressAction([this, toast, goTo, logId]() {
+    toast->setPressAction([toast, onClick]() {
         toast->dismiss();
-        if(goTo) {
-            goTo();
-            return;
-        }
-        for(int i = 0; i < static_cast<int>(mMessageLog.size()); i++) {
-            if(mMessageLog[i].fId == logId) {
-                // not while the click is still being delivered to the card
-                window()->addSlot([this, i]() { replayMessage(i); });
-                break;
-            }
-        }
+        if(onClick) onClick();
     });
     toast->setRightPressAction([toast]() { toast->dismiss(); });
     addWidget(toast);
     mToasts.push_back(toast);
     layoutToasts();
+}
+
+namespace {
+// plain digits, as the top bar shows them (the game font has no comma)
+std::string groupDigits(const int v) {
+    return std::to_string(v);
+}
+
+std::string signedChange(const int v) {
+    // plain ASCII: the game fonts may lack the minus sign
+    if(v == 0) return "0";
+    return (v > 0 ? "+" : "-") + groupDigits(std::abs(v));
+}
+}
+
+void eGameWidget::debugShowMonthlySummary() {
+    if(const auto c = mBoard->boardCityWithId(mViewedCityId)) c->recordHistory();
+    showMonthlySummary(mViewedCityId, true);
+    for(const auto t : mToasts) t->settle();
+}
+
+void eGameWidget::debugShowTips() {
+    const auto target = ePlayerCityTarget(mBoard->personPlayer());
+    showTip(target, "Lack of housing hinders immigration");
+    showTip(target, eLanguage::text("game_saved"));
+    for(const auto& t : mTips) t.fWid->settle();
+}
+
+void eGameWidget::showMonthlySummary(const eCityId cid, const bool force) {
+    if(!window()->settings().fMonthlySummary) return;
+    const auto c = mBoard->boardCityWithId(cid);
+    if(!c) return;
+    const auto& ss = c->history().samples();
+    if(ss.empty() || (ss.size() < 2 && !force)) return;
+    const auto& now = ss.back();
+    const auto& then = ss.size() >= 2 ? ss[ss.size() - 2] : now;
+    if(!force && now.monthIndex() - then.monthIndex() != 1) return;
+    const auto tr = [](const char* key, const char* fallback) {
+        const auto& t = eLanguage::text(key);
+        return t.empty() ? std::string(fallback) : t;
+    };
+    const auto month = eMonthHelper::name(static_cast<eMonth>(std::clamp(then.fMonth, 0, 11)));
+    auto title = tr("summary_title", "%m in review");
+    eStringHelpers::replaceAll(title, "%m", month);
+    if(mBoard->personPlayerCitiesOnBoard().size() > 1) {
+        title = mBoard->cityName(cid) + ": " + title;
+    }
+    const int dPop = now.fPopulation - then.fPopulation;
+    const int dMoney = now.fDrachmas - then.fDrachmas;
+    const int dFood = now.fFood - then.fFood;
+    const auto item = [](const std::string& name, const int v, const int d) {
+        return name + " " + groupDigits(v) + " (" + signedChange(d) + ")";
+    };
+    std::string text = item(tr("summary_population", "Population"), now.fPopulation, dPop) +
+                       "\n" + item(tr("summary_treasury", "Treasury"), now.fDrachmas, dMoney) +
+                       "\n" + item(tr("summary_food", "Food"), now.fFood, dFood) +
+                       "  ·  " + tr("summary_unrest", "Unrest") + " " +
+                       std::to_string(now.fUnrest) + "%";
+    int tone = 0;
+    if(dPop >= 0 && dMoney >= 0 && (dPop > 0 || dMoney > 0)) tone = 2;
+    else if(dPop < 0 && dMoney < 0) tone = 1;
+    const auto meta = mBoard->date().shortString() + "  ·  " +
+                      tr("summary_open", "Click for the city history");
+    addToastCard("monthly_summary", "chart", tone, title, text, meta, [this, cid]() {
+        if(cid != mViewedCityId) return;
+        window()->addSlot([this]() { showCityHistory(); });
+    });
 }
 
 void eGameWidget::layoutToasts() {
@@ -1502,6 +1405,22 @@ void eGameWidget::debugShowToasts() {
         ed.fResourceCount = 18;
         ed.fTime = 2;
         mBoard->event(eEvent::shortageWarning, ed);
+    }
+    // and a fire risk warning, naming a real building
+    if(const auto c = mBoard->boardCityWithId(mViewedCityId)) {
+        eBuilding* worst = nullptr;
+        for(const auto b : c->allBuildings()) {
+            if(b && b->type() == eBuildingType::granary) worst = b;
+        }
+        if(!worst && !c->allBuildings().empty()) worst = c->allBuildings().front();
+        eEventData ed(mViewedCityId);
+        ed.fTime = 0;
+        ed.fResourceCount = 5;
+        if(worst) {
+            ed.fTile = worst->centerTile();
+            ed.fReason = eBuilding::sNameForBuilding(worst);
+        }
+        mBoard->event(eEvent::riskWarning, ed);
     }
     for(const auto t : mToasts) t->settle();
 }
@@ -1551,6 +1470,28 @@ void eGameWidget::debugShowCityHistory() {
     showCentredDialog(window(), this, w, mGm->width());
 }
 
+void eGameWidget::showCityAdvisor() {
+    const auto w = new eCityAdvisorWidget(window());
+    w->initialize(this, *mBoard, mViewedCityId, [w]() { w->deleteLater(); });
+    showCentredDialog(window(), this, w, mGm->width());
+}
+
+int eGameWidget::advisorPlaceIndex(const std::string& key, const int n) const {
+    if(n <= 0) return 0;
+    const auto it = mAdvisorIndex.find(key);
+    return it == mAdvisorIndex.end() ? 0 : it->second % n;
+}
+
+void eGameWidget::advisorGoTo(const std::string& key,
+                              const std::vector<std::pair<int, int>>& places) {
+    if(places.empty()) return;
+    const int n = places.size();
+    const int i = advisorPlaceIndex(key, n);
+    mAdvisorIndex[key] = (i + 1) % n;
+    const auto& pl = places[i];
+    if(const auto t = mBoard->tile(pl.first, pl.second)) viewTile(t);
+}
+
 void eGameWidget::showTradeSummary() {
     const auto w = new eTradeSummaryWidget(window());
     w->initialize(*mBoard, mViewedCityId, [w]() { w->deleteLater(); });
@@ -1586,6 +1527,7 @@ void eGameWidget::showMessageImpl(eEventData& ed,
         l.fEd.fPlayerName = window()->leader();
         l.fMsg = msg;
         l.fId = logId = mNextMessageId++;
+        l.fCategory = mMessageCategory;
         const size_t cap = 300;
         if(mMessageLog.size() > cap) {
             mMessageLog.erase(mMessageLog.begin());
@@ -1654,154 +1596,19 @@ void eGameWidget::showMessageImpl(eEventData& ed,
 }
 
 bool eGameWidget::roadPath(std::vector<eOrientation>& path) {
-    const auto allowed = mEditorMode ? eTerrain::buildableAfterClear :
-                                       eTerrain::buildable;
-    ePathFinder p([allowed](eTileBase* const t) {
-        const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(allowed & terr);
-        if(!tr) return false;
-        const auto bt = t->underBuildingType();
-        const bool r = bt == eBuildingType::road ||
-                       bt == eBuildingType::none;
-        if(!r) return false;
-        if(!t->walkableElev() && t->isElevationTile()) return false;
-        return true;
-    }, [&](eTileBase* const t) {
-        return t->x() == mPressedTX && t->y() == mPressedTY;
-    });
-    const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
-    if(!r) return false;
-    return p.extractPath(path);
+    return eBuildPlacement::roadPath(*mBoard, mHoverTX, mHoverTY,
+                                     mPressedTX, mPressedTY, mEditorMode, path);
 }
 
 bool eGameWidget::columnPath(std::vector<eOrientation>& path) {
-    ePathFinder p([](eTileBase* const t) {
-        const auto terr = t->terrain();
-        const bool tr = static_cast<bool>(eTerrain::buildable & terr);
-        if(!tr) return false;
-        if(t->isElevationTile()) return false;
-        const auto bt = t->underBuildingType();
-        const bool r = bt == eBuildingType::doricColumn ||
-                       bt == eBuildingType::ionicColumn ||
-                       bt == eBuildingType::corinthianColumn ||
-                       bt == eBuildingType::none;
-        if(!r) return false;
-        return true;
-    }, [&](eTileBase* const t) {
-        return t->x() == mPressedTX && t->y() == mPressedTY;
-    });
-    const auto startTile = mBoard->tile(mHoverTX, mHoverTY);
-    const int w = mBoard->width();
-    const int h = mBoard->height();
-    const bool r = p.findPath({0, 0, w, h}, startTile, 100, true, w, h);
-    if(!r) return false;
-    return p.extractPath(path);
+    return eBuildPlacement::columnPath(*mBoard, mHoverTX, mHoverTY,
+                                       mPressedTX, mPressedTY, path);
 }
 
 bool eGameWidget::bridgeTiles(eTile* const t, const eTerrain terr,
                               std::vector<eTile*>& tiles,
                               bool& rotated) {
-    tiles.clear();
-    rotated = false;
-    if(!t) return false;
-    if(!t->isShoreTile(terr)) return false;
-    if(t->underBuilding()) return false;
-    const auto tl = t->topLeft<eTile>();
-    if(!tl) return false;
-    const auto tr = t->topRight<eTile>();
-    if(!tr) return false;
-    const auto bl = t->bottomLeft<eTile>();
-    if(!bl) return false;
-    const auto br = t->bottomRight<eTile>();
-    if(!br) return false;
-
-    if(tr->isShoreTile(terr) && bl->isShoreTile(terr)) {
-        if(br->hasTerrain(terr)) {
-            if(tl->hasTerrain(terr)) return false;
-            auto tt = t;
-            tiles.push_back(tt);
-            while(true) {
-                const auto ttt = tt->bottomRight<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
-            }
-            if(!tt) return false;
-            const auto tt_tr = tt->topRight<eTile>();
-            const auto tt_bl = tt->bottomLeft<eTile>();
-            if(!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
-                return false;
-            }
-            const auto tt_tl = tt->bottomRight<eTile>();
-            if(tt_tl->hasTerrain(terr)) return false;
-        } else {
-            auto tt = t;
-            tiles.push_back(tt);
-            while(true) {
-                const auto ttt = tt->topLeft<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
-            }
-            if(!tt) return false;
-            const auto tt_tr = tt->topRight<eTile>();
-            const auto tt_bl = tt->bottomLeft<eTile>();
-            if(!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
-                return false;
-            }
-            const auto tt_tl = tt->topLeft<eTile>();
-            if(tt_tl->hasTerrain(terr)) return false;
-        }
-        return !tr->underBuilding() && !bl->underBuilding();
-    } else if(tl->isShoreTile(terr) && br->isShoreTile(terr)) {
-        rotated = true;
-        if(bl->hasTerrain(terr)) {
-            if(tr->hasTerrain(terr)) return false;
-            auto tt = t;
-            tiles.push_back(tt);
-            while(true) {
-                const auto ttt = tt->bottomLeft<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
-            }
-            if(!tt) return false;
-            const auto tt_tl = tt->topLeft<eTile>();
-            const auto tt_br = tt->bottomRight<eTile>();
-            if(!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
-                return false;
-            }
-            const auto tt_bl = tt->bottomLeft<eTile>();
-            if(tt_bl->hasTerrain(terr)) return false;
-        } else {
-            auto tt = t;
-            tiles.push_back(tt);
-            while(true) {
-                const auto ttt = tt->topRight<eTile>();
-                if(!ttt || ttt->hasBridge() || !ttt->hasTerrain(terr)) break;
-                tt = ttt;
-                tiles.push_back(tt);
-                if(tt->isShoreTile(terr)) break;
-            }
-            if(!tt) return false;
-            const auto tt_tl = tt->topLeft<eTile>();
-            const auto tt_br = tt->bottomRight<eTile>();
-            if(!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
-                return false;
-            }
-            const auto tt_tr = tt->topRight<eTile>();
-            if(tt_tr->hasTerrain(terr)) return false;
-        }
-        return !tl->underBuilding() && !br->underBuilding();
-    }
-
-    return false;
+    return eBuildPlacement::bridgeTiles(t, terr, tiles, rotated);
 }
 
 bool eGameWidget::canBuildAvenue(eTile* const t, const eCityId cid,
@@ -1859,7 +1666,7 @@ void eGameWidget::updatePatrolPath() {
                     const auto type = t->underBuildingType();
                     const bool hr = type == eBuildingType::road;
                     if(hr) return true;
-                    const bool a = type == eBuildingType::avenue;
+                    const bool a = type == eBuildingType::avenue || type == eBuildingType::boulevard;
                     if(a) return true;
                     const auto tt = static_cast<eTile*>(t);
                     return tt->underBuilding() == mPatrolBuilding;
@@ -2185,15 +1992,15 @@ void eGameWidget::showSpeedToast() {
     std::string msg;
     if(mPaused) {
         msg = eLanguage::text("speed_toast_paused");
+    } else if(mSpeedId == sMaxSpeedId) {
+        msg = eLanguage::text("speed_toast_max");
     } else {
         int pct = 100;
         switch(mSpeedId) {
-        case 0: pct = 20; break;
-        case 1: pct = 100; break;
-        case 2: pct = 250; break;
-        case 3: pct = 500; break;
-        case 4: pct = 1000; break;
-        case 5: pct = 5000; break;
+        case 0: pct = 100; break;
+        case 1: pct = 250; break;
+        case 2: pct = 500; break;
+        default: pct = 100; break;
         }
         msg = eLanguage::text("speed_toast");
         eStringHelpers::replace(msg, "%1", std::to_string(pct));
@@ -2267,6 +2074,7 @@ void eGameWidget::openInGameMenu() {
         });
         cm->initialize();
         w->execDialog(cm);
+        cm->align(eAlignment::center);
     };
     menu->initialize(resumeAct, saveAct, loadAct, exitAct, controlsAct);
     addWidget(menu);
@@ -2288,8 +2096,13 @@ void eGameWidget::cloneHoveredBuilding() {
         mode = eBuildingModeHelpers::toBuildingMode(type);
     }
     if(mode == eBuildingMode::none && tile->hasAvenue()) {
-        mode = eBuildingMode::avenue;
-        type = eBuildingType::avenue;
+        if(tile->underBuildingType() == eBuildingType::boulevard) {
+            mode = eBuildingMode::boulevard;
+            type = eBuildingType::boulevard;
+        } else {
+            mode = eBuildingMode::avenue;
+            type = eBuildingType::avenue;
+        }
     } else if(mode == eBuildingMode::none && tile->hasRoad()) {
         mode = eBuildingMode::road;
         type = eBuildingType::road;
@@ -2345,7 +2158,7 @@ bool eGameWidget::hasModalDialog() const {
         if(!c || !c->visible()) continue;
         if(c == mGm || c == mAm || c == mTopBar || c == mTem ||
            c == mObjectivesTracker || c == mBuyCityWidget || c == mPausedLabel ||
-           c == mHouseCard) {
+           c == mHouseCard || c == mShortcutSheet) {
             continue;
         }
         if(dynamic_cast<const eMessageToast*>(c)) continue;
@@ -2406,6 +2219,33 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
     const auto k = e.key();
     const auto& bindings = window()->settings().fKeyBindings;
 
+    // a screenshot's sheet stays up until the next key
+    if(mSheetSticky && mShortcutSheet && mShortcutSheet->visible() &&
+       k != SDL_SCANCODE_H && k != SDL_SCANCODE_SLASH) {
+        mSheetSticky = false;
+        mShortcutSheet->hide();
+    }
+    // Shift+1-9, 0, - open the side panel's categories in rail order
+    if(e.shiftPressed() && !e.ctrlPressed()) {
+        int cat = -1;
+        if(k >= SDL_SCANCODE_1 && k <= SDL_SCANCODE_9) cat = k - SDL_SCANCODE_1;
+        else if(k == SDL_SCANCODE_0) cat = 9;
+        else if(k == SDL_SCANCODE_MINUS) cat = 10;
+        if(cat >= 0) {
+            openPanelCategory(cat);
+            return true;
+        }
+    }
+
+    if(k != SDL_SCANCODE_UNKNOWN &&
+       (k == bindings.fCameraRotateLeft || k == bindings.fCameraRotateRight)) {
+        if(!e.ctrlPressed() && !e.repeat() && mBoard) {
+            setWorldDirection(eRotateWorldDirection(mBoard->direction(),
+                k == bindings.fCameraRotateLeft ? -1 : 1));
+        }
+        return true;
+    }
+
     if(k == bindings.fSpeedUp || k == SDL_Scancode::SDL_SCANCODE_KP_PLUS) {
         mSpeedId = std::clamp(mSpeedId + 1, 0, sMaxSpeedId);
         mSpeed = sSpeeds[mSpeedId];
@@ -2446,6 +2286,9 @@ bool eGameWidget::keyPressEvent(const eKeyPressEvent& e) {
               k == bindings.fMoveLeft ||
               k == bindings.fMoveRight) {
         return true;
+    } else if(k == SDL_Scancode::SDL_SCANCODE_H ||
+              k == SDL_Scancode::SDL_SCANCODE_SLASH) {
+        showShortcutSheet();
     } else if(k == SDL_Scancode::SDL_SCANCODE_F1) {
         if(e.ctrlPressed()) {
             setBookmark(1);
@@ -2679,7 +2522,14 @@ void squareTiles(eGameBoard* const board, const int bSize,
     }
 }
 
-void eGameWidget::debugHoverHouse() {
+void eGameWidget::debugShowTerrainMenu() {
+    if(!mTem) return;
+    mGm->hide();
+    mTem->show();
+    if(!mTem->categoryButtons().empty()) mTem->categoryButtons()[2]->trigger();
+}
+
+void eGameWidget::debugHoverHouse(const bool walker) {
     // the inhabited common house nearest the middle of the map view that
     // still has a level to go
     const int mapW = width() - mGm->width();
@@ -2693,9 +2543,14 @@ void eGameWidget::debugHoverHouse() {
             pixToId(x, y, tx, ty);
             const auto t = mBoard->tile(tx, ty);
             const auto b = t ? t->underBuilding() : nullptr;
-            if(!b || b->type() != eBuildingType::commonHouse) continue;
-            const auto h = static_cast<eHouseBase*>(b);
-            if(h->people() <= 0 || h->level() >= 6) continue;
+            if(walker) {
+                if(!b || !dynamic_cast<ePatrolBuildingBase*>(b) ||
+                   dynamic_cast<ePatrolSourceBuilding*>(b)) continue;
+            } else {
+                if(!b || b->type() != eBuildingType::commonHouse) continue;
+                const auto h = static_cast<eHouseBase*>(b);
+                if(h->people() <= 0 || h->level() >= 6) continue;
+            }
             const int d = std::abs(x - mapW/2) + std::abs(y - height()/2);
             if(best < 0 || d < best) {
                 best = d;
@@ -2713,6 +2568,7 @@ void eGameWidget::debugHoverHouse() {
     mHouseCard->setInstant(true);
     updateHouseCard();
     mCardSince = -100;
+    mHoverPatrolSince = -100;
     updateHouseCard();
 }
 
@@ -2788,7 +2644,40 @@ bool eGameWidget::mouseLeaveEvent(const eMouseEvent& e) {
     return true;
 }
 
+bool eGameWidget::openPanelCategory(const int i) {
+    if(!mGm || !mGm->visible() || (mTem && mTem->visible())) return false;
+    return mGm->openCategory(i);
+}
+
+void eGameWidget::showShortcutSheet(const bool sticky) {
+    if(!mShortcutSheet || !mBoard) return;
+    mSheetSticky = sticky;
+    if(mShortcutSheet->visible()) return;
+    const auto c = mBoard->boardCityWithId(viewedCity());
+    const bool science = c ? c->atlantean() : false;
+    mShortcutSheet->build(window()->settings().fKeyBindings, science);
+    mShortcutSheet->setInstant(sticky);
+    mShortcutSheet->restart();
+    // centred over the map, clear of the panel
+    const int mapW = width() - (mGm && mGm->visible() ? mGm->width() : 0);
+    mShortcutSheet->move(std::max(0, (mapW - mShortcutSheet->width())/2),
+                         std::max(0, (height() - mShortcutSheet->height())/2));
+    // above the cards and dialogs already open
+    removeWidget(mShortcutSheet);
+    addWidget(mShortcutSheet);
+    mShortcutSheet->show();
+}
+
+void eGameWidget::updateShortcutSheet() {
+    if(!mShortcutSheet || !mShortcutSheet->visible() || mSheetSticky) return;
+    const Uint8* const ks = SDL_GetKeyboardState(nullptr);
+    if(!ks[SDL_SCANCODE_H] && !ks[SDL_SCANCODE_SLASH]) {
+        mShortcutSheet->hide();
+    }
+}
+
 void eGameWidget::updateHouseCard() {
+    mHoverPatrol = nullptr;
     if(!mHouseCard) return;
     const auto hide = [this]() {
         mCardHouse = nullptr;
@@ -2808,8 +2697,22 @@ void eGameWidget::updateHouseCard() {
     const auto b = tile ? tile->underBuilding() : nullptr;
     const bool house = b && (b->type() == eBuildingType::commonHouse ||
                              b->type() == eBuildingType::eliteHousing);
-    if(!house || b->cityId() != mViewedCityId) return hide();
     const double now = ePanel::time();
+    // a built walker building: paintEvent draws the roads its walkers cover
+    const bool patrol = b && !house && b->cityId() == mViewedCityId && !mPatrolBuilding &&
+                        dynamic_cast<ePatrolBuildingBase*>(b) &&
+                        !dynamic_cast<ePatrolSourceBuilding*>(b);
+    if(patrol) {
+        if(b != mHoverPatrolCandidate) {
+            mHoverPatrolCandidate = b;
+            mHoverPatrolSince = now;
+        } else if(now - mHoverPatrolSince >= 0.35) {
+            mHoverPatrol = b;
+        }
+    } else {
+        mHoverPatrolCandidate = nullptr;
+    }
+    if(!house || b->cityId() != mViewedCityId) return hide();
     if(b != mCardHouse) {
         mCardHouse = b;
         mCardSince = now;
@@ -2888,6 +2791,33 @@ namespace {
     // and never for less than sUndoMinRealSeconds.
     const int sUndoGameDays = 15;
     const int sUndoMinRealSeconds = 5;
+}
+
+bool eGameWidget::buildFromPresentation(eBuildingMode mode, int x, int y, int orientation) {
+    if(!mBoard || !mGm || mLocked || !mBoard->tile(x, y)) return false;
+    // Presentation commands use the minimum footprint tile. The legacy mouse
+    // anchor differs by size; derive the inverse from its existing contract.
+    int span = 1;
+    if(mode == eBuildingMode::commonHousing || mode == eBuildingMode::fountain) span = 2;
+    else if(mode == eBuildingMode::hospital) span = 4;
+    int minX, minY, maxX, maxY;
+    eGameBoard::sBuildTiles(minX, minY, maxX, maxY, 0, 0, span, span);
+    x -= minX; y -= minY;
+    if(!mBoard->tile(x, y)) return false;
+    const auto oldMode = mGm->mode();
+    const int px = mPressedTX, py = mPressedTY, hx = mHoverTX, hy = mHoverTY;
+    const bool left = mLeftPressed, rotate = mRotate;
+    const int rotateId = mRotateId;
+    mGm->setMode(mode);
+    mPressedTX = mHoverTX = x; mPressedTY = mHoverTY = y;
+    mLeftPressed = true;
+    mRotateId = (orientation % 4 + 4) % 4;
+    mRotate = (mRotateId % 2) != 0;
+    const bool result = buildMouseReleaseRecorded();
+    mGm->setMode(oldMode);
+    mPressedTX = px; mPressedTY = py; mHoverTX = hx; mHoverTY = hy;
+    mLeftPressed = left; mRotate = rotate; mRotateId = rotateId;
+    return result;
 }
 
 bool eGameWidget::buildMouseReleaseRecorded() {
@@ -3507,4 +3437,3 @@ void eGameWidget::updateSmoothCamera(const double dt) {
         }
     }
 }
-

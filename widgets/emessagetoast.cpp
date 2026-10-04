@@ -15,11 +15,12 @@ SDL_Color alpha(SDL_Color c, const double a) {
 }
 
 SDL_Surface* renderText(const int fontPx, const std::string& text,
-                        const int wrap) {
+                        const int wrap,
+                        const eFontRole role = eFontRole::body) {
     if(text.empty()) return nullptr;
-    const auto font = eFonts::defaultFont(fontPx);
+    const auto font = eFonts::font(role, fontPx);
     if(!font) return nullptr;
-    return TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(),
+    return TTF_RenderUTF8_Blended_Wrapped(eFonts::forText(font, text), text.c_str(),
                                           SDL_Color{255, 255, 255, 255},
                                           std::max(1, wrap));
 }
@@ -52,7 +53,8 @@ void eMessageToast::initialize(const std::string& icon, const eTone tone,
     const int tf = res.smallFontSize();
     const int bf = res.tinyFontSize();
     const int mf = std::max(8, static_cast<int>(std::round(bf*0.9)));
-    mSurf[0] = renderText(tf, title, wrap);
+    // news is scanned at a glance: a bold sans title, not the display face
+    mSurf[0] = renderText(tf, title, wrap, eFontRole::heading);
     mSurf[1] = renderText(bf, text, wrap);
     mSurf[2] = renderText(mf, meta, wrap);
     int h = mPad;

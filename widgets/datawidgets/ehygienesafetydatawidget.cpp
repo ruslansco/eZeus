@@ -6,6 +6,7 @@
 #include "engine/egameboard.h"
 
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 
 void eHygieneSafetyDataWidget::initialize() {
     mSeeWater = new eViewModeButton(
@@ -101,49 +102,8 @@ void eHygieneSafetyDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
         const auto cid = viewedCity();
-        const int hygiene = mBoard.health(cid);
-        int hString = -1;
-        if(hygiene > 90) {
-            hString = 12;
-        } else if(hygiene > 85) {
-            hString = 11;
-        } else if(hygiene > 80) {
-            hString = 10;
-        } else if(hygiene > 75) {
-            hString = 9;
-        } else if(hygiene > 70) {
-            hString = 8;
-        } else if(hygiene > 65) {
-            hString = 7;
-        } else if(hygiene > 60) {
-            hString = 6;
-        } else if(hygiene > 55) {
-            hString = 5;
-        } else if(hygiene > 50) {
-            hString = 4;
-        } else if(hygiene > 45) {
-            hString = 3;
-        } else {
-            hString = 2;
-        }
-        mHygieneLabel->setText(eLanguage::zeusText(56, hString));
-        mHygieneLabel->fitContent();
-        mHygieneLabel->align(eAlignment::hcenter);
-
-        const int unrest = mBoard.unrest(cid);
-        int uString = -1;
-        if(unrest > 8) {
-            uString = 19;
-        } else if(unrest > 6) {
-            uString = 20;
-        } else if(unrest > 4) {
-            uString = 21;
-        } else if(unrest > 0) {
-            uString = 22;
-        } else {
-            uString = 23;
-        }
-        mUnrestLabel->setText(eLanguage::zeusText(56, uString));
+        mHygieneLabel->setText(eCityData::hygieneLevel(mBoard.health(cid)).text());
+        mUnrestLabel->setText(eCityData::unrestLevel(mBoard.unrest(cid)).text());
         mUnrestLabel->fitContent();
         mUnrestLabel->align(eAlignment::hcenter);
     }

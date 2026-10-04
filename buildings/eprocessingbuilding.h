@@ -41,6 +41,9 @@ public:
     void write(eWriteStream& dst) const override;
 
     int rawCount() const { return mRawCount; }
+    eResourceType rawMaterial() const { return mRawMaterial; }
+    int maxRaw() const { return mMaxRaw; }
+    int rawUse() const { return mRawUse; }
 private:
     const std::vector<eBuildingTextures>& mTextures;
 

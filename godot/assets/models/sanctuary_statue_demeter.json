@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_statue_demeter",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_statue_demeter.glb",
+  "bytes": 7188032,
+  "vertices": 31370,
+  "surfaces": 3,
+  "source_surfaces": 5,
+  "bounds_blender": [
+    [
+      -0.5714636445045471,
+      -0.5209482312202454,
+      0.0
+    ],
+    [
+      0.8732613921165466,
+      0.7996122241020203,
+      4.332299709320068
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

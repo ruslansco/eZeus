@@ -71,7 +71,7 @@ void ePanelActionButton::paintEvent(ePainter& p) {
         if(n > mBadgeN) mBadgeBorn = now;     // a new message: the badge pops
         mBadgeN = n;
         if(mBadgeTex) SDL_DestroyTexture(mBadgeTex);
-        const auto font = eFonts::defaultFont(std::max(8, static_cast<int>(std::round(d*.3f))));
+        const auto font = eFonts::labelFont(std::max(8, static_cast<int>(std::round(d*.3f))));
         mBadgeTex = eMenu3D::makeText(r, font, n > 99 ? "99+" : std::to_string(n),
                                       SDL_Color{255, 255, 255, 255}, mBadgeW, mBadgeH);
     }
@@ -177,7 +177,7 @@ void ePanelTabs::paintEvent(ePainter& p) {
     const char* icons[2] = {"info", "map"};
     for(int i = 0; i < 2; i++) {
         if(!mTextTex[i] && !mText[i].empty()) {
-            const auto font = eFonts::defaultFont(fontPx);
+            const auto font = eFonts::labelFont(fontPx);
             mTextTex[i] = eMenu3D::makeText(r, font, mText[i], SDL_Color{255, 255, 255, 255},
                                             mTextW[i], mTextH[i]);
         }
@@ -296,7 +296,7 @@ void ePanelPillButton::paintEvent(ePainter& p) {
     if(!mTex || mTexPx != px) {
         if(mTex) SDL_DestroyTexture(mTex);
         mTexPx = px;
-        mTex = eMenu3D::makeText(r, eFonts::defaultFont(px), mLabel,
+        mTex = eMenu3D::makeText(r, eFonts::labelFont(px), mLabel,
                                  SDL_Color{255, 255, 255, 255}, mTW, mTH);
     }
     if(mTex) {

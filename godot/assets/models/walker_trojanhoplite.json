@@ -1,0 +1,85 @@
+{
+  "asset": "walker_trojanhoplite",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_trojanhoplite.glb",
+  "bytes": 7954764,
+  "vertices": 15858,
+  "surfaces": 3,
+  "source_surfaces": 16,
+  "bounds_blender": [
+    [
+      -0.3118227422237396,
+      -0.17924624681472778,
+      0.0004999842494726181
+    ],
+    [
+      0.20196402072906494,
+      0.21670271456241608,
+      1.190000057220459
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Trojan hoplite",
+        "sex": "male",
+        "profile": {
+          "age": 31,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ],
+          "jaw": 1.012,
+          "cheek": 0.941,
+          "nose": -0.0012,
+          "chin": 0.0028,
+          "eye": 0.971,
+          "hair": [
+            [
+              0.02,
+              0.015,
+              0.01
+            ],
+            [
+              0.07,
+              0.045,
+              0.025
+            ]
+          ],
+          "hair_length": 0.011,
+          "beard_length": 0.02,
+          "grey": 0,
+          "seed": 93005
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "277c019535e877f8a8f3bee7593ca453783431d4a0f94c0b0d293d51886ac8fb",
+        "clavi_srgb": [
+          0.2,
+          0.36,
+          0.24
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 159,
+    "targets_after": 114,
+    "uv_attributes_removed": 0
+  }
+}

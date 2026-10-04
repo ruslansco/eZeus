@@ -1,0 +1,85 @@
+{
+  "asset": "walker_greekhoplite",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_greekhoplite.glb",
+  "bytes": 7738992,
+  "vertices": 15841,
+  "surfaces": 3,
+  "source_surfaces": 17,
+  "bounds_blender": [
+    [
+      -0.3120304346084595,
+      -0.17924624681472778,
+      0.0004999842494726181
+    ],
+    [
+      0.20220595598220825,
+      0.21703316271305084,
+      1.190000057220459
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Greek hoplite",
+        "sex": "male",
+        "profile": {
+          "age": 28,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 1.119,
+          "cheek": 0.941,
+          "nose": 0.003,
+          "chin": 0.0053,
+          "eye": 0.975,
+          "hair": [
+            [
+              0.03,
+              0.02,
+              0.012
+            ],
+            [
+              0.09,
+              0.05,
+              0.025
+            ]
+          ],
+          "hair_length": 0.018,
+          "beard_length": 0.02,
+          "grey": 0,
+          "seed": 93000
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "0d9181881b9b7d6b9f996e4d89f93a09cda3d7a9f2fecea1a69c3d8429dbc110",
+        "clavi_srgb": [
+          0.55,
+          0.2,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 153,
+    "targets_after": 111,
+    "uv_attributes_removed": 0
+  }
+}

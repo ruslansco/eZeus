@@ -1,0 +1,38 @@
+{
+  "asset": "gymnasium",
+  "source": "art/gymnasium/build_sprites.py",
+  "file": "gymnasium.glb",
+  "bytes": 6840068,
+  "vertices": 34543,
+  "surfaces": 5,
+  "source_surfaces": 28,
+  "bounds_blender": [
+    [
+      -1.5099999904632568,
+      -1.5099999904632568,
+      0.0
+    ],
+    [
+      1.5,
+      1.5,
+      2.0318398475646973
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 49,
+    "allocation_target": 35000,
+    "base_sha256": "b48066bb5d1934b651eec5bf19469dec6118326922948a6471c8f3d8e1aa3626",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "asset": "museum",
+  "source": "art/museum/build_sprites.py",
+  "file": "museum.glb",
+  "bytes": 6746044,
+  "vertices": 35376,
+  "surfaces": 5,
+  "source_surfaces": 35,
+  "bounds_blender": [
+    [
+      -2.996999979019165,
+      -2.997000217437744,
+      -0.0022131800651550293
+    ],
+    [
+      3.0,
+      3.0,
+      3.041316032409668
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 57,
+    "allocation_target": 35000,
+    "base_sha256": "ba14fccbc82e75dc3eeb87fea566267cf132be4b5160660892d837fb1d2714e3",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

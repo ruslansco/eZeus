@@ -8,6 +8,15 @@ eAvenue::eAvenue(eGameBoard& board, const eCityId cid) :
     eGameTextures::loadAvenue();
 }
 
+eAvenue::eAvenue(eGameBoard& board, const eBuildingType type, const eCityId cid) :
+    eBuilding(board, type, 1, 1, cid) {
+    eGameTextures::loadAvenue();
+}
+
+static inline bool isAvenueOrBoulevard(const eBuildingType t) {
+    return t == eBuildingType::avenue || t == eBuildingType::boulevard;
+}
+
 int eAvenue::provide(const eProvide p, const int n) {
     const auto t = centerTile();
     if(!t) return eBuilding::provide(p, n);
@@ -18,7 +27,7 @@ int eAvenue::provide(const eProvide p, const int n) {
             if(!tt) continue;
             if(const auto b = tt->underBuilding()) {
                 const auto tp = b->type();
-                if(tp == eBuildingType::avenue) continue;
+                if(isAvenueOrBoulevard(tp)) continue;
                 const int r = b->provide(p, rem);
                 rem -= r;
                 if(rem <= 0) return n;
@@ -38,19 +47,19 @@ bool isSingle(eTile* const t,
     const int ty = t->y();
     const auto tl = (t->*tg1)(dir);
     const auto br = (t->*tg2)(dir);
-    const bool tlb = tl && tl->underBuildingType() == eBuildingType::avenue;
-    const bool brb = br && br->underBuildingType() == eBuildingType::avenue;
+    const bool tlb = tl && isAvenueOrBoulevard(tl->underBuildingType());
+    const bool brb = br && isAvenueOrBoulevard(br->underBuildingType());
     bool single = true;
     if(tlb && brb) {
         bool s = false;
         if(tl) {
             if(const auto tltl = (tl->*tg1)(dir)) {
-                s = tltl->underBuildingType() != eBuildingType::avenue;
+                s = !isAvenueOrBoulevard(tltl->underBuildingType());
             }
         }
         if(br && !s) {
             if(const auto brbr = (br->*tg2)(dir)) {
-                s = brbr->underBuildingType() != eBuildingType::avenue;
+                s = !isAvenueOrBoulevard(brbr->underBuildingType());
             }
         }
         single = s;
@@ -82,45 +91,95 @@ eAvenue::getTexture(const eTileSize size) const {
     const auto blt = bl ? bl->underBuildingType() : eBuildingType::none;
     const auto trt = tr ? tr->underBuildingType() : eBuildingType::none;
 
-    const bool tlb = tlt == eBuildingType::avenue ||
+    const bool tlb = isAvenueOrBoulevard(tlt) ||
                      tlt == eBuildingType::road;
-    const bool brb = brt == eBuildingType::avenue ||
+    const bool brb = isAvenueOrBoulevard(brt) ||
                      brt == eBuildingType::road;
-    const bool blb = blt == eBuildingType::avenue ||
+    const bool blb = isAvenueOrBoulevard(blt) ||
                      blt == eBuildingType::road;
-    const bool trb = trt == eBuildingType::avenue ||
+    const bool trb = isAvenueOrBoulevard(trt) ||
                      trt == eBuildingType::road;
 
     eTileGetter tg1 = nullptr;
     eTileGetter tg2 = nullptr;
     int collId = 0;
     int id = 0;
-    if(tlb && brb && blb && trb) {
-        const auto b = t->bottomRotated<eTile>(dir);
-        const auto l = t->leftRotated<eTile>(dir);
-        const auto r = t->rightRotated<eTile>(dir);
+    const bool tlm = isAvenueOrBoulevard(tlt);
+    const bool brm = isAvenueOrBoulevard(brt);
+    const bool blm = isAvenueOrBoulevard(blt);
+    const bool trm = isAvenueOrBoulevard(trt);
 
-        const auto bt = b ? b->underBuildingType() : eBuildingType::none;
-        const auto lt = l ? l->underBuildingType() : eBuildingType::none;
-        const auto rt = r ? r->underBuildingType() : eBuildingType::none;
+    const bool axis1Med = tlm || brm;
+    const bool axis2Med = blm || trm;
 
-        const bool lb = lt == eBuildingType::avenue ||
-                        lt == eBuildingType::road;
-        const bool bb = bt == eBuildingType::avenue ||
-                        bt == eBuildingType::road;
-        const bool rb = rt == eBuildingType::avenue ||
-                        rt == eBuildingType::road;
-
-        collId = 4;
-        if(!bb) {
-            id = 0;
-        } else if(!rb) {
-            id = 1;
-        } else if(!lb) {
-            id = 2;
+    if(axis1Med && !axis2Med) {
+        tg1 = &eTile::topLeftRotated<eTile>;
+        tg2 = &eTile::bottomRightRotated<eTile>;
+        if(trb && blb) {
+            collId = 0;
+        } else if(trb) {
+            collId = 0;
         } else {
-            id = 3;
+            collId = 1;
         }
+    } else if(axis2Med && !axis1Med) {
+        tg1 = &eTile::topRightRotated<eTile>;
+        tg2 = &eTile::bottomLeftRotated<eTile>;
+        if(tlb && brb) {
+            collId = 2;
+        } else if(tlb) {
+            collId = 2;
+        } else {
+            collId = 3;
+        }
+    } else if(axis1Med && axis2Med) {
+        if(tlb && brb && blb && trb) {
+            const auto b = t->bottomRotated<eTile>(dir);
+            const auto l = t->leftRotated<eTile>(dir);
+            const auto r = t->rightRotated<eTile>(dir);
+
+            const auto bt = b ? b->underBuildingType() : eBuildingType::none;
+            const auto lt = l ? l->underBuildingType() : eBuildingType::none;
+            const auto rt = r ? r->underBuildingType() : eBuildingType::none;
+
+            const bool lb = isAvenueOrBoulevard(lt) || lt == eBuildingType::road;
+            const bool bb = isAvenueOrBoulevard(bt) || bt == eBuildingType::road;
+            const bool rb = isAvenueOrBoulevard(rt) || rt == eBuildingType::road;
+
+            collId = 4;
+            if(!bb) {
+                id = 0;
+            } else if(!rb) {
+                id = 1;
+            } else if(!lb) {
+                id = 2;
+            } else {
+                id = 3;
+            }
+        } else if(trb && brb && !tlb && !blb) {
+            collId = 4;
+            id = 4;
+        } else if(blb && brb && !tlb && !trb) {
+            collId = 4;
+            id = 5;
+        } else if(blb && tlb && !brb && !trb) {
+            collId = 4;
+            id = 6;
+        } else if(tlb && trb && !brb && !blb) {
+            collId = 4;
+            id = 7;
+        } else {
+            collId = 4;
+            id = 0;
+        }
+    } else if(tlb && brb) {
+        tg1 = &eTile::topLeftRotated<eTile>;
+        tg2 = &eTile::bottomRightRotated<eTile>;
+        collId = (trb || blb) ? 0 : 1;
+    } else if(blb && trb) {
+        tg1 = &eTile::topRightRotated<eTile>;
+        tg2 = &eTile::bottomLeftRotated<eTile>;
+        collId = (tlb || brb) ? 2 : 3;
     } else if(trb && brb && !tlb && !blb) {
         collId = 4;
         id = 4;
@@ -133,22 +192,14 @@ eAvenue::getTexture(const eTileSize size) const {
     } else if(tlb && trb && !brb && !blb) {
         collId = 4;
         id = 7;
-    } else if(tlb && brb) {
+    } else if(tlb || brb) {
         tg1 = &eTile::topLeftRotated<eTile>;
         tg2 = &eTile::bottomRightRotated<eTile>;
-        if(trb) {
-            collId = 0;
-        } else {
-            collId = 1;
-        }
-    } else if(blb && trb) {
-        tg2 = &eTile::bottomLeftRotated<eTile>;
+        collId = (trb || blb) ? 0 : 1;
+    } else if(blb || trb) {
         tg1 = &eTile::topRightRotated<eTile>;
-        if(tlb) {
-            collId = 2;
-        } else {
-            collId = 3;
-        }
+        tg2 = &eTile::bottomLeftRotated<eTile>;
+        collId = (tlb || brb) ? 2 : 3;
     }
     if(tg1 && tg2) {
         const bool s = isSingle(t, tg1, tg2, dir);

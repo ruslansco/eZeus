@@ -1,0 +1,38 @@
+{
+  "asset": "inventors_workshop",
+  "source": "art/inventors_workshop/build_sprites.py",
+  "file": "inventors_workshop.glb",
+  "bytes": 4845984,
+  "vertices": 34582,
+  "surfaces": 6,
+  "source_surfaces": 32,
+  "bounds_blender": [
+    [
+      -1.4900000095367432,
+      -1.5,
+      -0.014684915542602539
+    ],
+    [
+      1.5,
+      1.5,
+      2.015932083129883
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 113,
+    "allocation_target": 35000,
+    "base_sha256": "6f2e1c6e2252aaca7e799a8e985c503b64a76e7f52a254ebd3b7fcac2fccbc35",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

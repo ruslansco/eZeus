@@ -1,0 +1,740 @@
+source,ru
+ (overflow: %d), (излишек: %d)
+%d %s %d AD,%d %s %d н. э.
+%d %s %d BC,%d %s %d до н. э.
+%d dr each,%d др. за штуку
+%d existing,уже есть: %d
+%d° orbit  •  %d FPS  •  %d / %d city objects covered  •  %d tiles,Поворот %d°  •  %d FPS  •  %d / %d объектов города готовы  •  %d клеток
+%s citizens,%s жителей
+%s dr,%s др.
+A burning building cannot be demolished,Горящее здание нельзя снести
+A burning building cannot be managed,Горящим зданием нельзя управлять
+A land trade post.,Сухопутный торговый пост.
+A pier needs a shore with water beside it,Пристани нужен берег с водой рядом
+A road is already there,Здесь уже есть дорога
+A sea trade post (a pier).,Морской торговый пост (пристань).
+A trade post cannot be opened now.,Сейчас торговый пост открыть нельзя.
+A trade post stands here.,Здесь стоит торговый пост.
+Accept,Принимать
+Actors,Актёры
+Administration and security,Управление и безопасность
+Adventure complete,Приключение завершено
+Agriculture,Земледелие
+All culture,Вся культура
+All science,Вся наука
+Ambient sounds,Звуки окружения
+An agora needs six tiles of road with free ground beside them,Для агоры нужны шесть клеток дороги и свободная земля рядом
+Another city's land,Земля другого города
+Appeal,Привлекательность
+Apply,Применить
+Apr,апр
+Armor,Оружие
+Arms,Оружие
+Astronomers,Астрономы
+Athletes,Атлеты
+Aug,авг
+Autosaved,Автосохранение выполнено
+Awaiting dispatch: %d,Ожидает вывоза: %d
+Back,Назад
+Bays in use: %d / %d,Занято отсеков: %d / %d
+Begin,Приступить
+Black marble,Чёрный мрамор
+Bronze,Бронза
+Build,Строить
+Building details,Описание здания
+Built. Undo is available for the last construction.,Построено. Последнюю постройку можно отменить.
+"Buys from you (price, this year / limit)","Покупает у вас (цена, в этом году / предел)"
+Cancel,Отмена
+Carrots,Морковь
+Chariots,Колесницы
+Cheese,Сыр
+Choose,Выбрать
+Choose a colony,Выберите колонию
+Choose a different name,Выберите другое название
+Choose a valid stock limit,Выберите допустимый лимит запасов
+Choose an adventure,Выберите приключение
+"Choose the goods this post trades and how much to keep in store: an import is bought until that much is held, an export is sold from the stock above nothing.","Выберите товары, которыми торгует пост, и какой запас держать: импорт закупается, пока не накопится столько, экспорт продаётся из имеющихся запасов."
+City Rebuild,Город заново
+City ground,Земля города
+City problems,Проблемы города
+City: %s,Город: %s
+"Columns over houses: green and tall when the taxes are paid, a short red stub when they are not.","Столбики над домами: высокий зелёный — налоги уплачены, короткий красный — нет."
+Columns: all the culture each house enjoys. Taller is better.,"Столбики: вся культура, доступная каждому дому. Чем выше, тем лучше."
+Columns: all the science each house enjoys. Taller is better.,"Столбики: вся наука, доступная каждому дому. Чем выше, тем лучше."
+Columns: fire and collapse risk of each building. Taller and redder is worse.,"Столбики: риск пожара и обвала каждого здания. Чем выше и краснее, тем хуже."
+Columns: the astronomy each house enjoys. Taller is better.,"Столбики: сколько астрономии доступно каждому дому. Чем выше, тем лучше."
+Columns: the games each house enjoys. Taller is better.,"Столбики: сколько игр доступно каждому дому. Чем выше, тем лучше."
+Columns: the gymnasium each house enjoys. Taller is better.,"Столбики: сколько гимнасия доступно каждому дому. Чем выше, тем лучше."
+Columns: the hygiene of each house. Taller and greener is better.,"Столбики: гигиена каждого дома. Чем выше и зеленее, тем лучше."
+Columns: the invention each house enjoys. Taller is better.,"Столбики: сколько изобретательства доступно каждому дому. Чем выше, тем лучше."
+Columns: the museum each house enjoys. Taller is better.,"Столбики: сколько музея доступно каждому дому. Чем выше, тем лучше."
+Columns: the philosophy each house enjoys. Taller is better.,"Столбики: сколько философии доступно каждому дому. Чем выше, тем лучше."
+Columns: the scholarship each house enjoys. Taller is better.,"Столбики: сколько учёности доступно каждому дому. Чем выше, тем лучше."
+Columns: the theatre each house enjoys. Taller is better.,"Столбики: сколько театра доступно каждому дому. Чем выше, тем лучше."
+Columns: the water each house gets. Taller is better.,"Столбики: сколько воды получает каждый дом. Чем выше, тем лучше."
+Columns: unrest in each house. Taller and redder is worse.,"Столбики: волнения в каждом доме. Чем выше и краснее, тем хуже."
+Competitors,Участники игр
+Construction undone and its cost refunded.,"Постройка отменена, стоимость возвращена."
+Continue,Продолжить
+Continue: %s,Продолжить: %s
+Copper,Медь
+Cost: %d  •  %s,Стоимость: %d  •  %s
+Culture,Культура
+Culture / science,Культура / наука
+Culture overlays,Слои культуры
+Curators,Хранители музеев
+Date,Дата
+Dec,дек
+Defeat,Поражение
+Demolish,Снести
+Demolish this landmark?,Снести это важное здание?
+Demolished using the city's rules.,Снесено по правилам города.
+Demolition: %d  •  Click to remove; demolition cannot be undone,Снос: %d  •  Нажмите для удаления; снос нельзя отменить
+Desirability and appeal,Привлекательность
+Difficulty,Сложность
+Done,Готово
+Drachmas,Драхмы
+Effects,Эффекты
+Empty,Опустошать
+Enter a name for the save,Введите название сохранения
+Episode %d of %d,Эпизод %d из %d
+Exporting,Продаём
+Exports: goods the partner buys,"Экспорт: товары, которые покупает партнёр"
+Farming and animals,Земледелие и животные
+"Farms, orchards, lodges, herds and the people who tend them.","Фермы, сады, домики, стада и те, кто за ними ухаживает."
+Feb,фев
+Fire and collapse risk,Риски пожара и обвала
+Fish,Рыба
+Fleece,Шерсть
+Food,Еда
+Food and housing supplies,Снабжение жилья
+Game,Игра
+Game saved as “%s”,Игра сохранена: «%s»
+Gardens and monuments,Сады и памятники
+Get,Получать
+Get collects from other stores; Empty sends stock away through native carts.,Получать — забирать из других складов; опустошать — вывозить товары повозками.
+"Gods, heroes and monsters","Боги, герои и чудовища"
+Goods,Товары
+"Granaries, storehouses, trade posts, piers and the carts and ships between them.","Амбары, склады, торговые пункты, причалы, а также повозки и корабли между ними."
+Grapes,Виноград
+Health and water,Здоровье и вода
+Horses,Лошади
+Housing,Жильё
+Housing and roads,Жильё и дороги
+Hygiene and health,Гигиена и медицина
+Importing,Покупаем
+Imports: goods the partner sells,"Импорт: товары, которые продаёт партнёр"
+Industry,Производство
+"Industry controls affect every producer of these goods in this city, including shared producers.","Управление отраслью действует на всех производителей этих товаров в городе, включая общие производства."
+Industry paused,Отрасль остановлена
+Input:,Сырьё:
+Input: %s — %d / %d,Сырьё: %s — %d / %d
+Inspect,Осмотр
+Inventors,Изобретатели
+Jan,янв
+Jul,июл
+Jun,июн
+Keep,Оставить
+Level ground is needed,Нужна ровная земля
+"Limits use cargo loads. Each bay holds 4 loads, or 1 sculpture. Lower limits keep existing stock.",Лимиты указаны в грузах. В отсеке — 4 груза или 1 скульптура. Уменьшение лимита сохраняет запасы.
+Load,Загрузить
+Load game,Загрузка игры
+Load game…,Загрузить игру…
+Loading…,Загрузка…
+Main menu,Главное меню
+Mar,мар
+Marble,Мрамор
+"Markers on each house: food, fleece and oil (and for palaces wine, arms and horses). Coloured when stocked, red when short.","Метки на каждом доме: еда, шерсть и масло (во дворцах ещё вино, оружие и лошади). Цветная — запас есть, красная — не хватает."
+Markets,Рынки
+Master volume,Общая громкость
+May,май
+Meat,Мясо
+Messages,Сообщения
+Missing for level %d: %s,Не хватает для уровня %d: %s
+Music,Музыка
+Mute all sound,Выключить весь звук
+Name of the save,Название сохранения
+New game,Новая игра
+No adventures were found,Приключения не найдены
+No messages yet,Сообщений пока нет
+No resource to collect,Нет ресурса для сбора
+No road access,Нет доступа к дороге
+No road can reach that tile,Дорогу до этой клетки не проложить
+No save folder is configured,Папка сохранений не настроена
+No saved games yet,Сохранённых игр пока нет
+No trade post yet: open one from the Build menu.,Торгового поста пока нет: постройте его в меню строительства.
+No workers,Нет работников
+Normal view,Обычный вид
+Not trading,Не торгуется
+Nothing needs to be set aside here,Здесь ничего не нужно откладывать
+Nov,ноя
+Objective complete,Задача выполнена
+Objectives,Задачи
+Oct,окт
+Olive oil,Оливковое масло
+Olives,Оливки
+On fire,Пожар
+Onions,Лук
+Only discontented and sick citizens.,Только недовольные и больные жители.
+"Only the roads, the citizens and the carts.","Только дороги, жители и повозки."
+Operational,Работает
+Oranges,Апельсины
+Orichalcum,Орихалк
+Other,Прочее
+Output: %s — %d / %d,Продукция: %s — %d / %d
+Outside the city map,За пределами карты
+Overlays,Слои
+Pause,Пауза
+Pause %s industry,Остановить отрасль: %s
+Philosophers,Философы
+Place this on an empty agora space,Поставьте это на свободное место агоры
+Population,Население
+Production,Производство
+Quit,Выход
+Raise a city of ancient Greece,Построй город Древней Греции
+Ready to place,Можно разместить
+Recipe: %d input → 1 output,Рецепт: %d сырья → 1 товар
+Reject,Не принимать
+Residents: %d / %d  •  Level: %d,Жители: %d / %d  •  Уровень: %d
+Resolve the city's pending decision first,Сначала ответьте на запрос города
+Restart episode,Начать эпизод заново
+Resume,Продолжить
+Resume %s industry,Возобновить отрасль: %s
+Return to the main menu? Progress since your last save is lost.,"Вернуться в главное меню? Всё, что сделано после последнего сохранения, будет потеряно."
+Road access: %s  •  Maintenance: %d%%,Доступ к дороге: %s  •  Обслуживание: %d%%
+Road network,Дорожная сеть
+Road: %d new tiles  •  Cost: %d,Дорога: новых клеток %d  •  Стоимость: %d
+Rock outcrop,Скальный выход
+"Sanctuaries and halls, and the gods, heroes and monsters on the map.","Святилища и залы, а также боги, герои и чудовища на карте."
+Save,Сохранить
+Save game,Сохранение игры
+Save game…,Сохранить игру…
+Saved %s  •  %.1f MB,Сохранено %s  •  %.1f МБ
+Scholars,Учёные
+Science,Наука
+Science overlays,Слои науки
+Sculptures,Скульптуры
+Sea urchins,Морские ежи
+Security and defences,Безопасность и стены
+"Sells to you (price, this year / limit)","Продаёт вам (цена, в этом году / предел)"
+Sep,сен
+Set aside,Отложить
+Show or hide the objectives,Показать или скрыть задачи
+Silver,Серебро
+Sound,Звук
+Sound off,Звук выключен
+Sound on,Звук включён
+Sound…,Звук…
+Space is occupied,Место занято
+Speed 1,Скорость 1
+Speed 2,Скорость 2
+Speed 3,Скорость 3
+Speed 4,Скорость 4
+Start,Начать
+Stay,Остаться
+Stock limit,Лимит запасов
+Stock to keep,Запас для хранения
+Stone,Камень
+Storage,Склады
+Storage and trade,Склады и торговля
+Storage orders updated. Carts will follow the new orders.,Заказы склада изменены. Повозки выполнят новые указания.
+Stored goods,Запасы
+Switch language,Сменить язык
+Tax collection,Сбор налогов
+"Terrain, a citizen or a banner blocks this space","Мешает ландшафт, житель или знамя"
+Terrain: %s,Местность: %s
+That adventure could not be opened,Не удалось открыть это приключение
+That save could not be opened,Это сохранение не удалось открыть
+That save could not be opened; the test city was loaded instead,Это сохранение не удалось открыть; загружен тестовый город
+That trade partner cannot get a post now,Для этого партнёра сейчас нельзя построить пост
+The action could not be completed,Действие не выполнено
+The city's credit limit has been reached,Достигнут предел долга города
+The city's industry and workforce have been updated.,Отрасль и распределение работников города обновлены.
+The file could not be written,Файл не удалось записать
+The footprint crosses a city boundary,Здание пересекает границу города
+The game could not be saved: %s,Не удалось сохранить игру: %s
+The goods are set aside,Товары отложены
+The selected building changed. Inspect it again,Выбранное здание изменилось. Осмотрите его снова
+The target changed. Inspect it again,Объект изменился. Осмотрите его снова
+There are not enough goods in store yet,На складах пока недостаточно товаров
+There is no quick save yet,Быстрого сохранения пока нет
+There is no recent construction to undo,Нет недавней постройки для отмены
+There is nothing to demolish here,Здесь нечего сносить
+These tools need the embedded simulation,Этим инструментам нужен встроенный движок
+This agora already has that vendor,В этой агоре уже есть такой торговец
+This building does not control that industry,Это здание не относится к этой отрасли
+This building is unavailable in this city,Это здание недоступно в городе
+This city has no trade partners.,У этого города нет торговых партнёров.
+This footprint is blocked,Это место заблокировано
+This removes the complete landmark or stocked market. Cost: %d. Demolition cannot be undone.,Будет снесено всё важное здание или рынок с продавцами. Стоимость: %d. Снос нельзя отменить.
+This store cannot handle those goods,Этот склад не принимает такие товары
+This water does not lead to the sea,Эта вода не ведёт к морю
+"Tile %d, %d  •  Height %d","Клетка %d, %d  •  Высота %d"
+Timber,Древесина
+Trade,Торговля
+Trade is stopped.,Торговля остановлена.
+Trade orders updated. Traders will follow them.,Торговые приказы обновлены. Торговцы будут им следовать.
+Trade partners,Торговые партнёры
+Trade partners…,Торговые партнёры…
+Trade with %s,Торговля с городом %s
+Trade with this partner is stopped.,Торговля с этим партнёром остановлена.
+Treasury,Казна
+Undo,Отменить
+Unrest and crime,Волнения и преступность
+Victory,Победа
+Voices,Голоса
+"Wait for the current actions to finish, then apply again",Дождитесь выполнения действий и повторите
+Waiting for raw materials,Ожидает сырьё
+"Walls, towers, gates, soldiers, the watch and the immortals.","Стены, башни, ворота, солдаты, стража и бессмертные."
+Water,Вода
+Water and fountains,Вода и фонтаны
+Wheat,Пшеница
+Wine,Вино
+Workers:,Работники:
+Workers: %d / %d,Работники: %d / %d
+"Workshops, mills and the people who work in them.","Мастерские, мельницы и те, кто в них работает."
+Your city can found one of these colonies next.,Ваш город может основать одну из этих колоний.
+Your city has fallen. You can try the episode again from its start.,Ваш город пал. Можно попробовать эпизод снова с самого начала.
+by land,по суше
+by sea,по морю
+in store,на складе
+needs are met,всё обеспечено
+no,нет
+this year %d of %d,в этом году %d из %d
+yes,да
+Walls and defence,Стены и оборона
+Wall: %d pieces  •  Cost: %d,Стена: звеньев %d  •  Стоимость: %d
+Drag to wall a rectangle's outline  •  hold Shift to fill it,"Тяните, чтобы обвести стеной прямоугольник  •  Shift — залить его целиком"
+Drag to fill an area  •  each plot is built where it fits,"Тяните, чтобы застроить область  •  каждый участок строится, где помещается"
+%s: %d  •  Cost: %d,%s: %d  •  Стоимость: %d
+Homes,Жильё
+Health,Здоровье
+Civic,Город
+Defence,Защита
+Gardens,Сады
+Show or hide the map,Показать или скрыть карту
+Search buildings…,Найти здание…
+Close,Закрыть
+No matching buildings,Здания не найдены
+Search results,Результаты поиска
+%d × %d tiles,%d × %d клеток
+The world map is not available,Карта мира недоступна
+Your city,Ваш город
+Parent city,Родной город
+Colony,Колония
+Distant city,Далёкий город
+Enchanted place,Заколдованное место
+Ruins,Руины
+Ally,Союзник
+Vassal,Вассал
+Rival,Соперник
+City,Город
+Select a city on the map,Выберите город на карте
+Leader: %s,Правитель: %s
+Regard: %d of 100,Отношение: %d из 100
+Sells to you,Продаёт вам
+Buys from you,Покупает у вас
+Tribute: %d %s,Дань: %d %s
+This city does not regard you enough to grant anything.,"Этот город недостаточно уважает вас, чтобы что-либо дать."
+This city does not offer that.,Этот город не предлагает этого.
+Nothing can be asked of or given to this city.,У этого города нельзя ничего просить и ему нельзя ничего дарить.
+That is not a size of gift.,Такого размера дара не бывает.
+There are not enough goods in that city.,В этом городе не хватает товаров.
+That request is no longer there.,Этой просьбы больше нет.
+That city is not on the map.,Этого города нет на карте.
+That is not one of your cities.,Это не ваш город.
+Request from %s,Просьба к городу %s
+%s does not regard you enough to grant anything.,"Город %s недостаточно уважает вас, чтобы что-либо дать."
+Request %s,Попросить: %s
+Order %s,Потребовать: %s
+Demand %s,Вытребовать: %s
+Your request for %s has gone to %s. The answer comes in about three months.,Ваша просьба о товаре «%s» отправлена городу %s. Ответ придёт примерно через три месяца.
+"Every city's regard falls by 10 when you ask, and this city's by 10 more.","Когда вы просите, отношение всех городов падает на 10, а этого города — ещё на 10."
+Gift to %s,Дар городу %s
+There is nothing to give.,Дарить нечего.
+A gift of %d %s is on its way to %s. It arrives in about three months.,Дар: %d %s отправлен городу %s. Он прибудет примерно через три месяца.
+Requests of %s,Просьбы города %s
+%s asks nothing of you.,Город %s ничего у вас не просит.
+You do not have enough.,У вас этого не хватает.
+Send from %s,Отправить из города %s
+Send,Отправить
+%d %s have gone to %s.,%d %s отправлено городу %s.
+Fulfil,Выполнить
+Request,Просьба
+Gift,Дар
+Raid,Набег
+Conquer,Завоевание
+Aid,Помощь
+Back to city,Назад в город
+Army,Армия
+Click the ground…,Щёлкните по земле…
+Place banner,Поставить знамя
+helping another city,помогает другому городу
+abroad,в походе
+fighting,в бою
+at the palace,во дворце
+called out,вызвана
+%d of %d,%d из %d
+"%d companies, %d soldiers, %d called out","Рот: %d, солдат: %d, вызвано: %d"
+"The city has no soldiers yet. Once the palace stands, well-built houses supply them: common houses rock throwers, elite houses with arms hoplites, and with horses also horsemen.","В городе ещё нет солдат. Когда стоит дворец, их присылают добротные дома: простые — метателей, элитные с оружием — гоплитов, а с конями — ещё и всадников."
+Call all out,Вызвать всех
+Send all home,Отправить всех домой
+Go to,Перейти
+Call out,Вызвать
+Send home,Отправить домой
+Click where the company should stand  •  Escape cancels,"Щёлкните там, где должна стоять рота  •  Esc — отмена"
+The companies are called out to their banners.,Роты вызваны к своим знамёнам.
+The companies return to the palace.,Роты возвращаются во дворец.
+The company is called out to its banner.,Рота вызвана к своему знамени.
+The company returns to the palace.,Рота возвращается во дворец.
+The banner is moved.,Знамя перенесено.
+That company is no longer in the army,Этой роты больше нет в армии
+That company is abroad,Эта рота в походе
+There is no free ground for the company there,Там нет свободной земли для роты
+Escape cancels,Esc — отмена
+Under attack: %d invaders,Нападение: врагов — %d
+Go to the invaders,К захватчикам
+Raid on %s,Набег на город %s
+Conquest of %s,Завоевание города %s
+Reinforcements for %s,Подкрепление для города %s
+Troops to send,Войска для отправки
+Plunder,Добыча
+Anything,Что угодно
+Horsemen,Всадники
+Hoplites,Гоплиты
+Heroes,Герои
+Amazons and warriors of Ares,Амазонки и воины Ареса
+Troops of allied cities,Войска союзных городов
+%d troops,войск: %d
+(abroad),(в походе)
+There is nothing to enlist.,Некого отправлять.
+Enlist all,Всех в поход
+Clear,Снять выбор
+"Enlisted: %d soldiers in %d companies, %d heroes","Выбрано: солдат — %d, рот — %d, героев — %d"
+troops of %s,войска города %s
+Choose at least one company or hero first.,Сначала выберите хотя бы одну роту или героя.
+That force is already abroad.,Эти войска уже в походе.
+Only one allied city's troops may go along.,С вами может пойти войско только одного союзного города.
+That force cannot be enlisted now.,Этих воинов сейчас нельзя отправить.
+That plunder is not on offer.,Такой добычи нет.
+Nothing is waiting to be sent.,Нечего отправлять.
+That choice could not be understood.,Выбор не удалось понять.
+Send an army to raid this city for plunder.,Отправить войско в набег на этот город за добычей.
+This city cannot be raided.,На этот город нельзя совершить набег.
+Reinforce,Подкрепить
+Send troops to defend this city.,Отправить войска на защиту этого города.
+Send an army to conquer this city.,Отправить войско завоевать этот город.
+This city cannot be conquered.,Этот город нельзя завоевать.
+"Ask this city for troops, or to strike a rival.",Попросить у города войска или удар по сопернику.
+Nothing can be asked of this city.,У этого города нечего просить.
+That cannot be done to this city.,С этим городом этого сделать нельзя.
+This city has no troops to spare.,У этого города нет лишних войск.
+Aid from this city is already with you.,Помощь этого города уже с вами.
+That city is not a rival.,Этот город — не соперник.
+The army sets out for %s.,Войско выступило к городу %s.
+Aid from %s,Помощь от города %s
+%s does not regard you enough to send aid.,"Город %s недостаточно уважает вас, чтобы прислать помощь."
+%s has no troops to spare.,У города %s нет лишних войск.
+Aid from %s is already with you.,Помощь города %s уже с вами.
+Request defensive aid,Попросить помощь в обороне
+Your request for aid has gone to %s. Its troops arrive in about a month.,Просьба о помощи отправлена в город %s. Его войска придут примерно через месяц.
+There are no cities to strike.,Некого поражать: соперников нет.
+Request a military strike,Попросить нанести военный удар
+%s will strike %s in about a month.,Город %s ударит по городу %s примерно через месяц.
+The troops set out to help.,Войска выступили на помощь.
+That cannot be done now,Сейчас этого сделать нельзя
+A monster stalks the city: %s,Чудовище бродит по городу: %s
+%d monsters stalk the city,Чудовищ в городе: %d
+Go to the monster,К чудовищу
+Heroes' halls,Замки героев
+The hero asks of the city,Чего герой требует от города
+The hero has not been summoned yet.,Герой ещё не призван.
+The hero has been summoned and is on his way.,Герой призван и уже в пути.
+The hero is in the city and defends it.,Герой в городе и защищает его.
+The hero is away on a quest.,Герой отправился выполнять задание.
+Summon %s,Призвать: %s
+The hero is summoned.,Герой призван.
+No hero's hall is there.,Здесь нет замка героя.
+The hero has been summoned already.,Герой уже призван.
+The hero's requirements are not all met.,Требования героя выполнены не все.
+The hero has not arrived yet.,Герой ещё не прибыл.
+That quest is no longer asked for.,Это задание больше не требуется.
+Quests of the gods,Задания богов
+Send a hero on the quest a god asks for.,Отправить героя выполнять задание бога.
+No god asks anything of you.,Ни один бог ничего у вас не просит.
+You have no hall for %s.,У вас нет замка для героя: %s.
+%s has not arrived yet.,%s ещё не прибыл.
+%s waits in the city.,%s ждёт в городе.
+Send %s,Отправить: %s
+%s sets out on the quest.,%s отправляется выполнять задание.
+You have no hall for that hero.,У вас нет замка этого героя.
+Sanctuaries,Святилища
+Cost: %d  •  %d marble  •  %s,Стоимость: %d  •  мрамора: %d  •  %s
+The city may not found another sanctuary.,Город не может основать ещё одно святилище.
+The city's storehouses hold too little marble.,В хранилищах города слишком мало мрамора.
+There is no monument there.,Здесь нет монумента.
+It is built already.,Это уже построено.
+The sanctuary is not finished yet.,Святилище ещё не достроено.
+Temples,Храмы
+%d marble,мрамора: %d
+Resume the work,Возобновить работы
+Halt the work,Остановить работы
+The work on the monument is halted.,Работы на монументе остановлены.
+The work on the monument goes on.,Работы на монументе продолжаются.
+Mythology,Мифология
+Show,Показать
+Turn left,Повернуть влево
+Fill wall rectangle,Заполнить прямоугольник стеной
+Facing: %d°,Поворот: %d°
+"Click for one tile, or drag a road. The route follows the native grid.",Щёлкните для одного участка или протяните дорогу. Маршрут проходит по сетке.
+Drag an outline. Fill places the whole rectangle; Shift also fills it.,Протяните контур. Заполнение размещает весь прямоугольник; Shift также заполняет его.
+"Click for one plot, or drag to place an area.",Щёлкните для одного участка или протяните область.
+Click to place. T turns the preview; Esc returns to inspection.,Щёлкните для размещения. T поворачивает макет; Esc возвращает к осмотру.
+Choose a building tile to start placement.,"Выберите карточку здания, чтобы начать размещение."
+Click to place. Facing follows the native connection; Esc returns to inspection.,Щелкните для размещения. Направление задает соединение; Esc возвращает к осмотру.
+Interface options,Настройки интерфейса
+Interface options…,Настройки интерфейса…
+Preview changes now. Apply remembers them; Cancel restores your previous sizes.,Изменения видны сразу. «Применить» сохраняет их; «Отмена» возвращает прежние размеры.
+Interface size,Размер интерфейса
+Text size,Размер текста
+Restore default sizes,Вернуть стандартные размеры
+Could not save preferences. Your previous sizes will be restored when you cancel.,Не удалось сохранить настройки. «Отмена» вернет прежние размеры.
+Staffed,Есть работники
+Understaffed,Не хватает работников
+Vacant housing,Жилье пустует
+Occupied housing,Жилье заселено
+City building,Городское здание
+Building status,Состояние здания
+Road access,Доступ к дороге
+Connected,Подключено
+Not connected,Не подключено
+Maintenance,Обслуживание
+Workers,Работники
+Residents,Жители
+Level %d  ·  Next level %d,Уровень %d  ·  Следующий уровень %d
+Needs are met,Потребности удовлетворены
+Needed: %s,Необходимо: %s
+Supplies,Снабжение
+Risks,Риски
+Roads,Дороги
+Lowest coverage,Минимальное покрытие
+Higher coverage,Лучшее покрытие
+Taxes paid,Налоги уплачены
+Taxes not paid,Налоги не уплачены
+Lower risk,Низкий риск
+Higher risk,Высокий риск
+Poor health,Плохое здоровье
+Better health,Лучшее здоровье
+Lower appeal,Низкая привлекательность
+Higher appeal,Высокая привлекательность
+Low stock,Мало запасов
+Homes assessed: %d,Проверено домов: %d
+Low supplies: %d,Мало запасов: %d
+Taxes not paid: %d,Налоги не уплачены: %d
+Buildings flagged: %d,Зданий с риском: %d
+Higher risk: %d,Высокий риск: %d
+Lowest coverage: %d,Минимальное покрытие: %d
+Buildings in this view: %d,Зданий в этом режиме: %d
+Service readings unavailable,Нет данных о службах
+
+Ground colour: appeal rises from red through green to blue.,Цвет земли: привлекательность растёт от красного через зелёный к синему.
+Level %d,Уровень %d
+Pyramids,Пирамиды
+Shrines,Святыни
+Materials by cart,Материалы подвозят
+City map,Карта города
+Show city map,Показать карту города
+Hide city map,Скрыть карту города
+Click to read the full message,"Нажмите, чтобы прочитать сообщение"
+Dismiss notification,Скрыть уведомление
+Review decision,Рассмотреть решение
+Fold decision,Свернуть решение
+Decision required · Click to review,Требуется решение · Нажмите для просмотра
+%d pending decisions · Click to review,Ожидают решения: %d · Нажмите для просмотра
+Refuse,Отказать
+The Aegean world,Эгейский мир
+The Atlantean world,Мир Атлантиды
+City states of the ancient world,Города древнего мира
+Focus city,К городу
+Drag to orbit · Wheel to zoom · Right drag to pan,Поворот: перетаскивание · Масштаб: колесо · Сдвиг: правая кнопка
+Zoom in,Приблизить
+Zoom out,Отдалить
+Greek coastline · terrain preview,Побережье Греции · обзор ландшафта
+Overview,Весь мир
+Quick load,Быстрая загрузка
+Quick save,Быстрое сохранение
+Undo last construction,Отменить последнее строительство
+World map…,Карта мира…
+Army…,Армия…
+Mythology…,Мифология…
+Turn right,Повернуть вправо
+Select a building to inspect  ·  %s / %s orbit  ·  %s / %s tilt,Выберите здание  ·  %s / %s — вращение  ·  %s / %s — наклон
+%s / %s orbit · %s / %s tilt up / down · %s pan · Wheel zoom · Middle drag orbit / tilt · %s pauses · %s city overview · %s turns placement,%s / %s — вращение · %s / %s — наклон вверх / вниз · %s — движение · Колесо — масштаб · Средняя кнопка — наклон · %s — пауза · %s — весь город · %s — поворот здания
+Controls…,Управление…
+Game settings…,Настройки игры…
+Controls,Управление
+Game settings,Настройки игры
+Restore defaults,Вернуть по умолчанию
+Reset,Сбросить
+Press a key…,Нажмите клавишу…
+Camera,Камера
+Construction,Строительство
+City views,Виды города
+Camera speed,Скорость камеры
+Fixed controls,Постоянные клавиши
+Orbit left,Вращать влево
+Orbit right,Вращать вправо
+Tilt up,Наклон вверх
+Tilt down,Наклон вниз
+Pan forward,Вперёд
+Pan back,Назад
+Pan left,Влево
+Pan right,Вправо
+City overview,Весь город
+Turn the placement,Повернуть здание
+Demolition tool,Инструмент сноса
+Pause or resume,Пауза или продолжение
+World map,Карта мира
+City details,Сведения о городе
+Fullscreen,Полный экран
+Normal view (second key),Обычный вид (вторая клавиша)
+Pan speed,Скорость перемещения
+Turn and tilt speed,Скорость вращения и наклона
+Zoom speed,Скорость масштаба
+Escape,Esc
+"Cancel the tool, a drag or a window","Отменить инструмент, перетаскивание или окно"
+Delete,Delete
+Demolition tool (as the demolition key),Инструмент сноса (как и клавиша сноса)
+Shift,Shift
+"Pan faster; with a wall tool, fill the rectangle",Двигаться быстрее; со стеной — залить прямоугольник
+Mouse wheel,Колесо мыши
+Zoom to the pointer,Масштаб к указателю
+Middle button drag,Перетаскивание средней кнопкой
+Orbit and tilt the camera,Вращение и наклон камеры
+Left button,Левая кнопка
+Place a building or inspect it,Построить здание или осмотреть его
+Right button,Правая кнопка
+Cancel a drag; send the selected banner to a tile,Отменить перетаскивание; отправить выбранное знамя на клетку
+Left / Right,Влево / Вправо
+On the world map: the previous and the next city,На карте мира: предыдущий и следующий город
+Click a key to change it; Escape cancels.,"Нажмите на клавишу, чтобы изменить её; Esc — отмена."
+Press the new key for %s. Escape cancels.,Нажмите новую клавишу для «%s». Esc — отмена.
+Nothing was changed.,Ничего не изменено.
+%s is now %s.,«%s» — теперь %s.
+%s is now %s. %s took %s.,«%s» — теперь %s. «%s» получает %s.
+%s cannot be used for a control.,%s нельзя назначить.
+"%s takes a plain key, without Ctrl, Cmd or Alt.","«%s» — только простая клавиша, без Ctrl, Cmd и Alt."
+"%s is used for %s, which cannot take %s.",%s занята: «%s» не может получить %s.
+%s is back to %s.,«%s» — снова %s.
+%s cannot go back to its key: another control that cannot take your key for it has it.,"«%s» не может вернуться на свою клавишу: она у действия, которое не может принять вашу."
+All controls are back to their defaults.,Все клавиши и скорости возвращены по умолчанию.
+Autosave,Автосохранение
+Off,Выкл.
+Every %d minutes,Каждые %d мин.
+Autosaves kept,Хранить автосохранений
+"Autosaves count only while the game is running, and rotate through the slots.",Автосохранения идут только пока игра не на паузе и по очереди занимают ячейки.
+Voice language,Язык голосов
+Same as the interface,Как в интерфейсе
+Send the god against an enemy city,Послать бога против вражеского города
+Display settings,Настройки экрана
+Display settings…,Настройки экрана…
+Window mode,Режим экрана
+Windowed,В окне
+Display,Монитор
+Display %d · %d × %d,Монитор %d · %d × %d
+Window size,Размер окна
+Frame-rate limit,Ограничение FPS
+Unlimited,Без ограничения
+%d FPS,%d FPS
+VSync,Вертикальная синхронизация
+Synchronize frames with the display to reduce tearing.,"Синхронизировать кадры с монитором, чтобы уменьшить разрывы изображения."
+Fit to display,По размеру экрана
+Fullscreen uses your desktop resolution. Window sizes fit the selected display. Apply previews for 15 seconds.,Полноэкранный режим использует разрешение рабочего стола. Размеры окна подобраны для выбранного монитора. «Применить» включает предпросмотр на 15 секунд.
+Keep changes,Сохранить изменения
+Revert,Вернуть
+Keep these display settings? Reverting in %d seconds.,Сохранить настройки экрана? Возврат через %d сек.
+Could not save display settings. Revert to try again.,Не удалось сохранить настройки экрана. Верните прежние настройки и повторите.
+Inbox (%d),Входящие (%d)
+City journal,Городской журнал
+Fill %d vacant jobs to reach full staffing.,Для полного штата заполните %d свободных рабочих мест.
+Connect this building to the road network.,Соедините здание с дорожной сетью.
+This industry is paused city-wide. Resume it in the production controls.,Эта отрасль остановлена во всём городе. Возобновите её в настройках производства.
+Check the native recipe and available inputs below.,Проверьте рецепт и доступное сырьё ниже.
+Space for %d more residents.,Есть место ещё для %d жителей.
+Reduce interface motion,Уменьшить анимацию интерфейса
+City stock: %s — %s,Запас города: %s — %s
+Jobs,Работа
+"Employed: %d / %d
+Open jobs: %d
+Unemployed: %d","Занято: %d / %d
+Свободных мест: %d
+Безработных: %d"
+Drag to lay a row along a path,Протяните, чтобы проложить ряд по пути
+This needs a shore with water beside it,Нужен берег с водой рядом
+The city has a palace already,В городе уже есть дворец
+The city has a stadium already,В городе уже есть стадион
+Too close to the enemy,Слишком близко к врагу
+A bridge starts on a shore and crosses straight to the other,Мост начинается у берега и идёт прямо к другому
+Place this on a street,Поставьте это на улицу
+There is a roadblock here already,Здесь уже есть дорожный блок
+No hippodrome piece fits beside the others here,Здесь не подходит ни одна часть ипподрома
+Place this on a straight piece of the hippodrome,Поставьте это на прямую часть ипподрома
+"Build more sheds, dairies or corrals for more animals","Для новых животных постройте больше чесален, сыроварен или загонов"
+Game menu,Меню игры
+Settings,Настройки
+City paused · Escape to return,Город на паузе · Escape — вернуться
+Return to city,Вернуться в город
+Interface language,Язык интерфейса
+Show resources,Показать ресурсы
+Hide resources,Скрыть ресурсы
+Cancel selection or close a panel; inspect a tile; move the selected banner,Отменить выбор или закрыть панель; осмотреть клетку; переместить выбранное знамя
+Free,Бесплатно
+City…,Город…
+Summary,Сводка
+Employment,Занятость
+Administration,Управление
+Husbandry,Сельское хозяйство
+Hygiene and safety,Гигиена и безопасность
+Military,Армия
+The tax rate is set.,Налоги установлены.
+The wage rate is set.,Зарплата установлена.
+The workers are shared out again.,Рабочие распределены заново.
+The towers are manned.,На башнях стоит стража.
+The towers' guards go home.,Стража уходит с башен.
+That setting is not one the city offers,Город не предлагает такой настройки
+The trireme sails there.,Трирема плывёт туда.
+Trireme selected  •  right-click the water to send it  •  Escape lets it go,"Трирема выбрана  •  щёлкните правой кнопкой по воде, чтобы отправить её  •  Escape отменяет выбор"
+The wharf builds triremes again.,Верфь снова строит триремы.
+The wharf is shut down.,Верфь закрыта.
+That trireme cannot be given orders now,Этой триреме сейчас нельзя отдать приказ
+"Choose a trireme, then the water to send it to","Выберите трирему, затем воду, куда её отправить"
+This building has no such switch,У этого здания нет такого переключателя
+%d of %d achieved,Выполнено: %d из %d
+Achieved,Выполнено
+Below %s: %s (%s people),Ниже уровня «%s»: %s (жителей: %s)
+To reach %s they lack:,"Чтобы стать «%s», им не хватает:"
+"Even when they all qualify, %s more people are needed: build more houses.","Даже если все дома подойдут, нужно ещё %s жителей: стройте новые дома."
+Build more houses.,Стройте больше домов.
+Entertainment,Развлечения
+"Houses need food: farms or fishermen, a granary and a food vendor in an agora.","Домам нужна еда: фермы или рыбаки, зернохранилище и торговец едой на агоре."
+Houses need water: a fountain whose water carriers reach them.,"Домам нужна вода: фонтан, водоносы которого доходят до них."
+"Houses need fleece: sheep and a carding shed, a storehouse and a fleece vendor in an agora.","Домам нужно руно: овцы и чесальня, склад и торговец руном на агоре."
+"Houses need olive oil: olive groves, a press, a storehouse and an oil vendor in an agora.","Домам нужно оливковое масло: оливковые рощи, пресс, склад и торговец маслом на агоре."
+"Houses need armor: bronze, a foundry and an armory, and an agora that sells it.","Домам нужны доспехи: бронза, литейня и оружейная, а также агора, где их продают."
+"Houses need wine: vineyards, a winery and a wine vendor in an agora.","Домам нужно вино: виноградники, винодельня и торговец вином на агоре."
+Elite houses need horses: a horse ranch and a horse trainer.,Особнякам нужны лошади: конный завод и конюх.
+"Houses need more kinds of entertainment in reach: theaters, gymnasiums, podiums or stadiums.","Домам нужно больше видов развлечений рядом: театры, гимнасии, подиумы или стадионы."
+"Raise the appeal around the houses: parks, gardens, statues and fountains nearby, and no workshops, storehouses or other plain buildings beside them.","Поднимите привлекательность вокруг домов: парки, сады, статуи и фонтаны рядом, а мастерские, склады и другие невзрачные здания — подальше."
+
+Awaiting your decision,Ожидается ваше решение
+Awaiting your decision · %d pending,Ожидается ваше решение · в очереди: %d
+Paused · Awaiting your reply,Пауза · Ожидается ваш ответ
+Olympian,Олимпиец
+Hero,Герой
+Monster,Чудовище
+Drag to turn,Перетащите, чтобы повернуть
+Also here,Также здесь
+Listen,Слушать
+Stop,Стоп
+This character has no recorded voice.,У этого персонажа нет озвучки.
+Sound is muted (M).,Звук выключен (M).

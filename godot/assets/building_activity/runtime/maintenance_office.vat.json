@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 315,
+ "parts": {
+  "maintenance_office_0": {
+   "row": 0,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 17266,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "maintenance_office_4": {
+   "row": 153,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 17143,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "maintenance_office_40": {
+   "row": 306,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 96,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00022268295288085938
+  }
+ },
+ "source": {
+  "file": "maintenance_office.glb",
+  "bytes": 5780952,
+  "mtime": 1790833845
+ }
+}

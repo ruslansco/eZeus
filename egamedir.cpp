@@ -6,6 +6,13 @@
 #include <filesystem>
 
 std::string eGameDir::sPath;
+std::string eGameDir::sEmbeddedExeDir;
+
+void eGameDir::initializeEmbedded(const std::string& engineDir) {
+    const auto engine = std::filesystem::canonical(engineDir);
+    sEmbeddedExeDir = engine.string() + "/Bin/";
+    sPath = engine.parent_path().string() + "/";
+}
 std::string eGameDir::sAudioLanguage = "en";
 
 void eGameDir::setAudioLanguage(const std::string& lang) {
@@ -74,6 +81,7 @@ std::string eGameDir::i60BinaryPath() {
 }
 
 std::string eGameDir::exeDir() {
+    if(!sEmbeddedExeDir.empty()) return sEmbeddedExeDir;
     const auto d = SDL_GetBasePath();
     const std::string str(d);
     return str;

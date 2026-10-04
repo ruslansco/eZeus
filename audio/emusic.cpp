@@ -10,47 +10,69 @@ eMusic::eMusic() {
     sInstance = this;
 }
 
+namespace {
+eMusic::eModeSink gModeSink;
+}
+
+void eMusic::setModeSink(const eModeSink& sink) {
+    gModeSink = sink;
+}
+
+void eMusic::mode(const char* const name) {
+    if(gModeSink) gModeSink(name);
+}
+
 void eMusic::loadMenu() {
+    if(!sInstance) return;
     sInstance->loadMenuImpl();
 }
 
 void eMusic::load() {
+    if(!sInstance) return;
     sInstance->loadImpl();
 }
 
 bool eMusic::loaded() {
-    return sInstance->mLoaded;
+    return sInstance && sInstance->mLoaded;
 }
 
 void eMusic::incTime() {
+    if(!sInstance) return;
     sInstance->incTimeImpl();
 }
 
 void eMusic::playMenuMusic() {
+    if(!sInstance) return mode("menu");
     sInstance->playMenuMusicImpl();
 }
 
 void eMusic::playRandomMusic() {
+    if(!sInstance) return mode("city");
     sInstance->playRandomMusicImpl();
 }
 
 void eMusic::playRandomBattleMusic() {
+    if(!sInstance) return mode("battle");
     sInstance->playRandomBattleMusicImpl();
 }
 
 void eMusic::playMissionIntroMusic() {
+    if(!sInstance) return mode("mission_intro");
     sInstance->playMissionIntroMusicImpl();
 }
 
 void eMusic::playMissionVictoryMusic() {
+    if(!sInstance) return mode("mission_victory");
     sInstance->playMissionVictoryMusicImpl();
 }
 
 void eMusic::playCampaignVictoryMusic() {
+    if(!sInstance) return mode("campaign_victory");
     sInstance->playCampaignVictoryMusicImpl();
 }
 
 bool eMusic::playCampaignVoice(const std::string &path) {
+    if(!sInstance) return false;
     return sInstance->playCampaignVoiceImpl(path);
 }
 

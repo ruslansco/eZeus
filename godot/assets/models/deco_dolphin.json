@@ -1,0 +1,43 @@
+{
+  "asset": "deco_dolphin",
+  "source": "art/decorations/build_sprites.py",
+  "file": "deco_dolphin.glb",
+  "bytes": 6897136,
+  "vertices": 39759,
+  "surfaces": 3,
+  "source_surfaces": 16,
+  "bounds_blender": [
+    [
+      -1.496999979019165,
+      -1.496999979019165,
+      0.0
+    ],
+    [
+      1.496999979019165,
+      1.496999979019165,
+      1.219040870666504
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "foliage": {
+    "revision": 1,
+    "source": "eZeus/tools/godot_garden_foliage.py",
+    "method": "opaque_folded_volumetric_leaves_branching_stems_clipped_hedges",
+    "vertex_budget": 45000,
+    "seed": "local_python_stable_strings_not_simulation_rng",
+    "native_footprint": 3,
+    "park_variant": null
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 0,
+    "targets_after": 0,
+    "uv_attributes_removed": 0
+  }
+}

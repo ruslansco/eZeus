@@ -1,4 +1,4 @@
-﻿#include "ecampaign.h"
+#include "ecampaign.h"
 
 #include "elanguage.h"
 #include "pak/zeusfile.h"
@@ -107,7 +107,7 @@ void readEpisodeAllowedBuildings(eEpisode& ep, ZeusFile& file,
                            eBuildingType::none, // columns
                            eBuildingType::park,
                            eBuildingType::avenue,
-                           eBuildingType::none, // boulevards
+                           eBuildingType::boulevard, // boulevards
                            eBuildingType::wall,
                            eBuildingType::tower,
                            eBuildingType::gatehouse,

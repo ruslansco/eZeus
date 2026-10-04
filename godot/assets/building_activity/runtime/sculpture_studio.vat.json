@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 271,
+ "parts": {
+  "sculpture_studio_0": {
+   "row": 0,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 16974,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048720836639404297
+  },
+  "sculpture_studio_1": {
+   "row": 153,
+   "rows": 12,
+   "poses": 9,
+   "vertices": 12062,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "sculpture_studio_2": {
+   "row": 261,
+   "rows": 5,
+   "poses": 2,
+   "vertices": 4719,
+   "frames": {
+    "work_00": 0,
+    "work_01": 0,
+    "work_02": 0,
+    "work_03": 0,
+    "work_04": 0,
+    "work_05": 0,
+    "work_06": 0,
+    "work_07": 0,
+    "inactive": 1
+   },
+   "max_error": 0.0002440810203552246
+  }
+ },
+ "source": {
+  "file": "sculpture_studio.glb",
+  "bytes": 5342032,
+  "mtime": 1790834193
+ }
+}

@@ -1,0 +1,38 @@
+{
+  "asset": "observatory",
+  "source": "art/observatory/build_sprites.py",
+  "file": "observatory.glb",
+  "bytes": 5806164,
+  "vertices": 34594,
+  "surfaces": 6,
+  "source_surfaces": 33,
+  "bounds_blender": [
+    [
+      -2.497000217437744,
+      -2.496999979019165,
+      -0.0006151199340820312
+    ],
+    [
+      2.50207257270813,
+      2.5,
+      3.869999885559082
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 45,
+    "allocation_target": 35000,
+    "base_sha256": "6ceb0edb86664d01a59a1863f1ca2c2c5f194d2b48f9721889757f82d7bfc518",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

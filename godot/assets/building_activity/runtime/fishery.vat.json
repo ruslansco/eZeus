@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 374,
+ "parts": {
+  "fishery_8": {
+   "row": 0,
+   "rows": 18,
+   "poses": 9,
+   "vertices": 17590,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "fishery_9": {
+   "row": 162,
+   "rows": 23,
+   "poses": 9,
+   "vertices": 22953,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "fishery_22": {
+   "row": 369,
+   "rows": 1,
+   "poses": 5,
+   "vertices": 96,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_05": 1,
+    "work_02": 2,
+    "work_06": 2,
+    "work_03": 3,
+    "work_07": 3,
+    "inactive": 4
+   },
+   "max_error": 6.0558319091796875e-05
+  }
+ },
+ "source": {
+  "file": "fishery.glb",
+  "bytes": 4987092,
+  "mtime": 1790834018
+ }
+}

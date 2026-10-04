@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_monument_artemis",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_monument_artemis.glb",
+  "bytes": 7373900,
+  "vertices": 33186,
+  "surfaces": 2,
+  "source_surfaces": 5,
+  "bounds_blender": [
+    [
+      -1.0493781566619873,
+      -1.0,
+      0.0
+    ],
+    [
+      1.1714651584625244,
+      2.0909438133239746,
+      5.318958282470703
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

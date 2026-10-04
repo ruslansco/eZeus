@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 297,
+ "parts": {
+  "winery_14": {
+   "row": 0,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 16796,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048792362213134766
+  },
+  "winery_16": {
+   "row": 153,
+   "rows": 12,
+   "poses": 9,
+   "vertices": 11442,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  },
+  "winery_17": {
+   "row": 261,
+   "rows": 4,
+   "poses": 9,
+   "vertices": 3682,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  }
+ },
+ "source": {
+  "file": "winery.glb",
+  "bytes": 7393104,
+  "mtime": 1790834162
+ }
+}

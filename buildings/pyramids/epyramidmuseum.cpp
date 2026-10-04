@@ -1,4 +1,5 @@
 #include "epyramidmuseum.h"
+#include "engine/egameboard.h"
 
 #include "textures/egametextures.h"
 #include "epyramid.h"
@@ -29,5 +30,8 @@ stdsptr<eTexture> ePyramidMuseum::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    // Remastered Roman building (art/museum), worker-free idle pose.
+    const auto& hd = blds.fMuseumHD[static_cast<int>(getBoard().direction())];
+    if(hd[8]) return hd[8];
     return blds.fMuseum;
 }

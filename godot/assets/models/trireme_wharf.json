@@ -1,0 +1,28 @@
+{
+  "asset": "trireme_wharf",
+  "source": "art/harbour/build_sprites.py",
+  "file": "trireme_wharf.glb",
+  "bytes": 8377652,
+  "vertices": 34178,
+  "surfaces": 3,
+  "source_surfaces": 24,
+  "bounds_blender": [
+    [
+      -1.2300000190734863,
+      -1.496999979019165,
+      -0.2796891927719116
+    ],
+    [
+      1.496999979019165,
+      1.496999979019165,
+      1.7599999904632568
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

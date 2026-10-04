@@ -1,0 +1,38 @@
+{
+  "asset": "fishery",
+  "source": "art/fishery/build_sprites.py",
+  "file": "fishery.glb",
+  "bytes": 4987092,
+  "vertices": 34040,
+  "surfaces": 5,
+  "source_surfaces": 34,
+  "bounds_blender": [
+    [
+      -0.7194806337356567,
+      -0.9900000095367432,
+      -0.07000000029802322
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      1.2999999523162842
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 40,
+    "allocation_target": 35000,
+    "base_sha256": "7e74599a263388db364103fd3b197e4811c5c9b77c6374b41cc98d2acd986070",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "asset": "roadblock",
+  "source": "art/roadblock/build_sprites.py",
+  "file": "roadblock.glb",
+  "bytes": 53800,
+  "vertices": 344,
+  "surfaces": 3,
+  "source_surfaces": 8,
+  "bounds_blender": [
+    [
+      -0.44999998807907104,
+      -0.07000000029802322,
+      -0.06999999284744263
+    ],
+    [
+      0.44999998807907104,
+      0.13300000131130219,
+      0.3880000114440918
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

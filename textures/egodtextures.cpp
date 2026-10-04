@@ -1,4 +1,5 @@
 #include "egodtextures.h"
+#include "echaractertextures.h"   // loadStatesHD
 
 #include "offsets/Zeus_Aphrodite.h"
 #include "offsets/Zeus_Apollo.h"
@@ -173,6 +174,7 @@ void loadHermesTextures(eHermesTextures& god,
 void eGodTextures::loadAphrodite() {
     if(fAphroditeLoaded) return;
     fAphroditeLoaded = true;
+    if(loadStatesHD({{"walk", &fAphrodite.fWalk}, {"fight", &fAphrodite.fFight}, {"disappear", nullptr, &fAphrodite.fDisappear}}, fRenderer, fTileH, "aphrodite")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eAphroditeSpriteData15,
@@ -187,6 +189,7 @@ void eGodTextures::loadAphrodite() {
 void eGodTextures::loadApollo() {
     if(fApolloLoaded) return;
     fApolloLoaded = true;
+    if(loadStatesHD({{"walk", &fApollo.fWalk}, {"fight", &fApollo.fFight}, {"disappear", nullptr, &fApollo.fDisappear}, {"bless", &fApollo.fBless}}, fRenderer, fTileH, "apollo")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eApolloSpriteData15,
@@ -201,6 +204,7 @@ void eGodTextures::loadApollo() {
 void eGodTextures::loadAres() {
     if(fAresLoaded) return;
     fAresLoaded = true;
+    if(loadStatesHD({{"walk", &fAres.fWalk}, {"fight", &fAres.fFight}, {"disappear", nullptr, &fAres.fDisappear}}, fRenderer, fTileH, "ares")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eAresSpriteData15,
@@ -215,6 +219,7 @@ void eGodTextures::loadAres() {
 void eGodTextures::loadArtemis() {
     if(fArtemisLoaded) return;
     fArtemisLoaded = true;
+    if(loadStatesHD({{"walk", &fArtemis.fWalk}, {"fight", &fArtemis.fFight}, {"disappear", nullptr, &fArtemis.fDisappear}, {"bless", &fArtemis.fBless}}, fRenderer, fTileH, "artemis")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eArtemisSpriteData15,
@@ -229,6 +234,7 @@ void eGodTextures::loadArtemis() {
 void eGodTextures::loadAthena() {
     if(fAthenaLoaded) return;
     fAthenaLoaded = true;
+    if(loadStatesHD({{"walk", &fAthena.fWalk}, {"fight", &fAthena.fFight}, {"disappear", nullptr, &fAthena.fDisappear}, {"bless", &fAthena.fBless}}, fRenderer, fTileH, "athena")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eAthenaSpriteData15,
@@ -243,6 +249,7 @@ void eGodTextures::loadAthena() {
 void eGodTextures::loadAtlas() {
     if(fAtlasLoaded) return;
     fAtlasLoaded = true;
+    if(loadStatesHD({{"walk", &fAtlas.fWalk}, {"fight", &fAtlas.fFight}, {"disappear", nullptr, &fAtlas.fDisappear}, {"bless", &fAtlas.fBless}}, fRenderer, fTileH, "atlas")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eAtlasSpriteData15,
@@ -257,6 +264,7 @@ void eGodTextures::loadAtlas() {
 void eGodTextures::loadDemeter() {
     if(fDemeterLoaded) return;
     fDemeterLoaded = true;
+    if(loadStatesHD({{"walk", &fDemeter.fWalk}, {"fight", &fDemeter.fFight}, {"disappear", nullptr, &fDemeter.fDisappear}}, fRenderer, fTileH, "demeter")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eDemeterSpriteData15,
@@ -271,6 +279,7 @@ void eGodTextures::loadDemeter() {
 void eGodTextures::loadDionysus() {
     if(fDionysusLoaded) return;
     fDionysusLoaded = true;
+    if(loadStatesHD({{"walk", &fDionysus.fWalk}, {"fight", &fDionysus.fFight}, {"disappear", nullptr, &fDionysus.fDisappear}, {"appear", nullptr, &fDionysus.fAppear}}, fRenderer, fTileH, "dionysus")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eDionysusSpriteData15,
@@ -285,6 +294,7 @@ void eGodTextures::loadDionysus() {
 void eGodTextures::loadHades() {
     if(fHadesLoaded) return;
     fHadesLoaded = true;
+    if(loadStatesHD({{"walk", &fHades.fWalk}, {"fight", &fHades.fFight}, {"disappear", nullptr, &fHades.fDisappear}}, fRenderer, fTileH, "hades")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eHadesSpriteData15,
@@ -299,6 +309,7 @@ void eGodTextures::loadHades() {
 void eGodTextures::loadHephaestus() {
     if(fHephaestusLoaded) return;
     fHephaestusLoaded = true;
+    if(loadStatesHD({{"walk", &fHephaestus.fWalk}, {"fight", &fHephaestus.fFight}, {"disappear", nullptr, &fHephaestus.fDisappear}}, fRenderer, fTileH, "hephaestus")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eHephaestusSpriteData15,
@@ -313,6 +324,7 @@ void eGodTextures::loadHephaestus() {
 void eGodTextures::loadHera() {
     if(fHeraLoaded) return;
     fHeraLoaded = true;
+    if(loadStatesHD({{"walk", &fHera.fWalk}, {"fight", &fHera.fFight}, {"disappear", nullptr, &fHera.fDisappear}}, fRenderer, fTileH, "hera")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eHeraSpriteData15,
@@ -327,6 +339,7 @@ void eGodTextures::loadHera() {
 void eGodTextures::loadHermes() {
     if(fHermesLoaded) return;
     fHermesLoaded = true;
+    if(loadStatesHD({{"walk", &fHermes.fWalk}, {"fight", &fHermes.fFight}, {"run", &fHermes.fRun}}, fRenderer, fTileH, "hermes")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eHermesSpriteData15,
@@ -341,6 +354,7 @@ void eGodTextures::loadHermes() {
 void eGodTextures::loadPoseidon() {
     if(fPoseidonLoaded) return;
     fPoseidonLoaded = true;
+    if(loadStatesHD({{"walk", &fPoseidon.fWalk}, {"fight", &fPoseidon.fFight}, {"disappear", nullptr, &fPoseidon.fDisappear}}, fRenderer, fTileH, "poseidon")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  ePoseidonSpriteData15,
@@ -355,6 +369,7 @@ void eGodTextures::loadPoseidon() {
 void eGodTextures::loadZeus() {
     if(fZeusLoaded) return;
     fZeusLoaded = true;
+    if(loadStatesHD({{"walk", &fZeus.fWalk}, {"fight", &fZeus.fFight}, {"disappear", nullptr, &fZeus.fDisappear}, {"bless", &fZeus.fBless}}, fRenderer, fTileH, "zeus")) return;   // art/characters/people/people6.py
 
     const auto& sds = spriteData(fTileH,
                                  eZeusSpriteData15,

@@ -1,0 +1,85 @@
+{
+  "asset": "walker_hercules",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_hercules.glb",
+  "bytes": 8573264,
+  "vertices": 15932,
+  "surfaces": 3,
+  "source_surfaces": 18,
+  "bounds_blender": [
+    [
+      -0.2140142172574997,
+      -0.3945992588996887,
+      0.0005599489668384194
+    ],
+    [
+      0.24383558332920074,
+      0.1906442642211914,
+      1.0294885635375977
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Hercules",
+        "sex": "male",
+        "profile": {
+          "age": 38,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 1.18,
+          "cheek": 1.06,
+          "nose": 0.005,
+          "chin": 0.006,
+          "eye": 0.96,
+          "hair": [
+            [
+              0.014,
+              0.01,
+              0.007
+            ],
+            [
+              0.05,
+              0.035,
+              0.02
+            ]
+          ],
+          "hair_length": 0.026,
+          "beard_length": 0.034,
+          "grey": 0,
+          "seed": 51303
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "da61699b66cab97ec4e5b61ef56ed3ff23289b9d07387dac6e978b15266d465a",
+        "clavi_srgb": [
+          0.58,
+          0.38,
+          0.14
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 216,
+    "targets_after": 118,
+    "uv_attributes_removed": 0
+  }
+}

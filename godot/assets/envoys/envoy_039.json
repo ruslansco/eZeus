@@ -1,0 +1,38 @@
+{
+  "id": "envoy_039",
+  "profile": {
+    "age": 66,
+    "skin": [
+      0.34450000000000003,
+      0.23725,
+      0.16575
+    ],
+    "jaw": 1.072378801759808,
+    "cheek": 1.0347193628175857,
+    "nose": 0.004743161347587627,
+    "chin": -0.0013147282747792161,
+    "eye": 1.0113511427143387,
+    "hair": [
+      [
+        0.32,
+        0.29,
+        0.24
+      ],
+      [
+        0.32,
+        0.29,
+        0.24
+      ]
+    ],
+    "hair_length": 0.01,
+    "beard_length": 0,
+    "grey": 0,
+    "seed": 8739
+  },
+  "triangles": 77688,
+  "body_sha256": "13f27b542f83e99f7966247dc0c97b356326f980e0b7abc2457e1b350cb1ee2c",
+  "source": "art/_kit/assets/human-base-meshes-bundle-v1.4.1",
+  "provenance": "needs_evidence",
+  "generator": "tools/build_envoy_portraits.py",
+  "revision": 1
+}

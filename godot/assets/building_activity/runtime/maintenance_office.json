@@ -1,0 +1,38 @@
+{
+  "asset": "maintenance_office",
+  "source": "art/maintenance_office/build_sprites.py",
+  "file": "maintenance_office.glb",
+  "bytes": 5780952,
+  "vertices": 33100,
+  "surfaces": 6,
+  "source_surfaces": 42,
+  "bounds_blender": [
+    [
+      -1.0277199745178223,
+      -0.9954023361206055,
+      -0.07000000029802322
+    ],
+    [
+      0.9954023361206055,
+      0.9954023361206055,
+      1.6799999475479126
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 41,
+    "allocation_target": 35000,
+    "base_sha256": "826efddadce29408f67ebcbbc68b665807df9ce7184a78e486997a95ded3dcc0",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

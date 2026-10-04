@@ -28,6 +28,12 @@ struct ePersonHDSlot {
 bool loadPersonHD(eBasicCharacterTextures& tex, const std::vector<ePersonHDSlot>& slots,
                   SDL_Renderer* renderer, int tileH, const std::string& name);
 
+// Same atlas layout for heroes, monsters and gods, whose engine states are all slots: an
+// 8-heading state fills fDirs; a 1-heading state fills fSingle, or when only fDirs is given is
+// copied to all 8 headings (deaths are rendered once, facing the viewer).
+bool loadStatesHD(const std::vector<ePersonHDSlot>& slots, SDL_Renderer* renderer, int tileH,
+                  const std::string& name);
+
 bool loadAnimalHD(eBasicCharacterTextures& tex,
                   std::vector<eTextureCollection>* fight,
                   std::vector<eTextureCollection>* lay,
@@ -62,7 +68,11 @@ struct eTradeBoatTextures {
     eTextureCollection fStand;
     std::vector<eTextureCollection> fSwim;
     std::vector<eTextureCollection> fDie;
+    bool fRemastered = false;
 };
+
+bool loadShipHD(eTradeBoatTextures& tex, SDL_Renderer* renderer, int tileH,
+                const std::string& name);
 
 struct eResourceCollectorTextures : public eBasicCharacterTextures {
     using eBasicCharacterTextures::eBasicCharacterTextures;

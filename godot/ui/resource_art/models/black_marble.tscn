@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ndlop"]
+albedo_color = Color(0.23137255, 0.31764707, 0.3882353, 1)
+roughness = 0.4
+
+[sub_resource type="BoxMesh" id="BoxMesh_hr43r"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i7n1h"]
+albedo_color = Color(0.67058825, 0.7019608, 0.73333335, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_knon8"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.86469644
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_73l51"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.86469644
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hy0bj"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.8646965
+radial_segments = 12
+
+[node name="BlackMarble" type="Node3D" unique_id=215580474]
+
+[node name="@MeshInstance3D@169" type="MeshInstance3D" parent="." unique_id=2083548701]
+transform = Transform3D(0.9, 0, 0, 0, 0.65, 0, 0, 0, 0.75, 0, 0.35, 0)
+material_override = SubResource("StandardMaterial3D_ndlop")
+mesh = SubResource("BoxMesh_hr43r")
+
+[node name="@MeshInstance3D@170" type="MeshInstance3D" parent="." unique_id=426469321]
+transform = Transform3D(0.10408276, 0.99456865, 0, -0.99456865, 0.10408276, 0, 0, 0, 1, 0, 0.265, 0.382)
+material_override = SubResource("StandardMaterial3D_i7n1h")
+mesh = SubResource("CylinderMesh_knon8")
+
+[node name="@MeshInstance3D@171" type="MeshInstance3D" parent="." unique_id=1083099087]
+transform = Transform3D(0.10408276, 0.99456865, 0, -0.99456865, 0.10408276, 0, 0, 0, 1, 0, 0.41500002, 0.382)
+material_override = SubResource("StandardMaterial3D_i7n1h")
+mesh = SubResource("CylinderMesh_73l51")
+
+[node name="@MeshInstance3D@172" type="MeshInstance3D" parent="." unique_id=493857595]
+transform = Transform3D(0.10408276, 0.99456865, 0, -0.99456865, 0.10408276, 0, 0, 0, 1, 0, 0.565, 0.382)
+material_override = SubResource("StandardMaterial3D_i7n1h")
+mesh = SubResource("CylinderMesh_hy0bj")

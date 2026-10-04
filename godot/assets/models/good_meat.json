@@ -1,0 +1,21 @@
+{
+  "asset": "good_meat",
+  "file": "good_meat.glb",
+  "bytes": 116736,
+  "vertices": 1224,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.894425094127655,
+      -0.8506401181221008,
+      -8.250000953674316
+    ],
+    [
+      23.629484176635742,
+      14.063855171203613,
+      3.7499990463256836
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

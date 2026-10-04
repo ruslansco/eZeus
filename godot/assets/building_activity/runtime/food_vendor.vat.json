@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 197,
+ "parts": {
+  "food_vendor_0": {
+   "row": 0,
+   "rows": 16,
+   "poses": 9,
+   "vertices": 15941,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024402141571044922
+  },
+  "food_vendor_4": {
+   "row": 144,
+   "rows": 22,
+   "poses": 2,
+   "vertices": 22160,
+   "frames": {
+    "work_00": 0,
+    "work_01": 0,
+    "work_02": 0,
+    "work_03": 0,
+    "work_04": 0,
+    "work_05": 0,
+    "work_06": 0,
+    "work_07": 0,
+    "inactive": 1
+   },
+   "max_error": 0.0002440810203552246
+  },
+  "food_vendor_5": {
+   "row": 188,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 398,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00023823976516723633
+  }
+ },
+ "source": {
+  "file": "food_vendor.glb",
+  "bytes": 2887000,
+  "mtime": 1790834092
+ }
+}

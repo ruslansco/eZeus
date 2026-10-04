@@ -1,0 +1,28 @@
+{
+  "asset": "sanctuary_statue_atlas",
+  "source": "art/sanctuary_statues/build_sprites.py",
+  "file": "sanctuary_statue_atlas.glb",
+  "bytes": 7086168,
+  "vertices": 32254,
+  "surfaces": 2,
+  "source_surfaces": 4,
+  "bounds_blender": [
+    [
+      -0.663320004940033,
+      -0.8565199971199036,
+      0.0
+    ],
+    [
+      0.663320004940033,
+      0.7380008101463318,
+      4.238920211791992
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

@@ -4,6 +4,7 @@
 #include "enumbers.h"
 
 #include <algorithm>
+#include <string>
 
 eFarmBase::eFarmBase(eGameBoard& board,
                      const eBuildingType type,
@@ -13,10 +14,16 @@ eFarmBase::eFarmBase(eGameBoard& board,
     eResourceBuildingBase(board, type, sw, sh, 10, resType, cid),
     mTextures(eGameTextures::buildings())  {
     eGameTextures::loadPlantation();
+    eGameTextures::loadRemastered("farm_base", 3);
+    for(const char* crop : {"wheat", "carrots", "onions"}) {
+        for(int k = 0; k < 6; k++) eGameTextures::loadRemastered(std::string("farm_") + crop + "_" + std::to_string(k), 1);
+    }
 }
 
 std::shared_ptr<eTexture> eFarmBase::getTexture(const eTileSize size) const {
     const int sizeId = static_cast<int>(size);
+    // Remastered villa rustica: one screen-relative sprite, like the original.
+    if(const auto hd = mTextures[sizeId].remastered("farm_base")) return (*hd)[0][0];
     return mTextures[sizeId].fPlantation;
 }
 
@@ -39,6 +46,15 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
         o.fAlignTop = true;
         const int texId = i >= usedFields ? 0 : std::clamp(mRipe, 0, 5);
         const auto type = resourceType();
+        {
+            const char* crop = type == eResourceType::onions ? "onions" :
+                               type == eResourceType::carrots ? "carrots" : "wheat";
+            const auto hd = texs.remastered(std::string("farm_") + crop + "_" + std::to_string(texId));
+            if(hd) {
+                o.fTex = (*hd)[0][0];      // a 1x1 field tile drawn where the legacy crop was
+                continue;
+            }
+        }
         switch(type) {
         case eResourceType::onions:
             o.fTex = texs.fOnions.getTexture(texId);

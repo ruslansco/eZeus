@@ -1,0 +1,38 @@
+{
+  "asset": "palace",
+  "source": "art/palace/build_sprites.py",
+  "file": "palace.glb",
+  "bytes": 5478808,
+  "vertices": 38324,
+  "surfaces": 6,
+  "source_surfaces": 32,
+  "bounds_blender": [
+    [
+      -3.9900002479553223,
+      -2.8358054161071777,
+      -0.0028318464756011963
+    ],
+    [
+      3.9900002479553223,
+      2.8350000381469727,
+      2.8885085582733154
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 60,
+    "allocation_target": 35000,
+    "base_sha256": "53e0fb8c93a5b7839225c3a84fd105b9a294609659f07666dd122aa9dc6f82fc",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

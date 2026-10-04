@@ -1,0 +1,21 @@
+{
+  "asset": "good_grapes",
+  "file": "good_grapes.glb",
+  "bytes": 240656,
+  "vertices": 2784,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.8944249749183655,
+      -2.4744021892547607,
+      -3.590986728668213
+    ],
+    [
+      24.531944274902344,
+      25.245967864990234,
+      1.1062040328979492
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

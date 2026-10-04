@@ -27,5 +27,7 @@ stdsptr<eTexture> ePyramidAltar::getTexture(const eTileSize size) const {
     if(!finished()) return nullptr;
     const int sizeId = static_cast<int>(size);
     const auto& blds = eGameTextures::buildings()[sizeId];
+    eGameTextures::loadGodMonumentsHD();
+    if(blds.fSanctuaryAltarHD) return blds.fSanctuaryAltarHD;   // remastered altar (art/sanctuary_altar)
     return blds.fSanctuaryAltar;
 }

@@ -104,6 +104,7 @@ enum class eBuildingMode {
     ionicColumn,
     corinthianColumn,
     avenue,
+    boulevard,
 
     populationMonument,
     victoryMonument,

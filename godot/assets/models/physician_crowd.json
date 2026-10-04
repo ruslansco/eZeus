@@ -1,0 +1,37 @@
+{
+  "asset": "physician_crowd",
+  "source": "art/characters/citizen_v2/physician_v2.blend",
+  "file": "physician_crowd.glb",
+  "bytes": 2937284,
+  "vertices": 5339,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.1567862629890442,
+      -0.3033139109611511,
+      -1.105692744255066
+    ],
+    [
+      0.15857762098312378,
+      0.35303062200546265,
+      0.8047778606414795
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "vertex_colours_baked_from_citizen_textures",
+  "idle_mode": "breathing",
+  "generator": "tools/build_citizen_benchmark.py",
+  "lod_of": "physician_v2",
+  "native_asset": "physician",
+  "gait_revision": "contact_roll_v1",
+  "stance_fraction": 0.56,
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 35,
+    "targets_after": 35,
+    "uv_attributes_removed": 0
+  }
+}

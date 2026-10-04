@@ -1,0 +1,11 @@
+{
+  "source": "godot/scripts/terrain_details.gd",
+  "outcrop_models": {"source": "tools/godot_mineral_outcrops.py", "revision": 1, "export": "godot/assets/terrain/mineral_outcrops.glb", "vertex_budget": 400},
+  "authoring": "Procedural 3D geometry (foliage at runtime, mineral outcrops by the Blender script) and shaders authored for the Godot presentation; no original sprite RGB or extracted terrain meshes.",
+  "provenance_status": "needs_evidence",
+  "resource_flags": {"stone": 64, "copper": 128, "silver": 256, "tall_stone": 512, "marble": 1024, "orichalcum": 4096, "black_marble": 8192},
+  "design": "Per-kind outcrops (grey limestone, strata crag, rust/verdigris copper gossan, galena-studded silver host, gold orichalcum crystals on basalt, sawn white/black marble ledges) on the green ground (only marble quarries keep a sawn floor), continuous mineral beds and low quarry perimeter fragments with walkable centers, sparse olive/sage understory; no shoreline rock scatter.",
+  "budgets": {"section_tiles": 24, "grass_per_section": 96, "shrubs_per_section": 48, "grass_fade": [42,62], "shrub_fade": [65,95]},
+  "native_boundary": "Read-only tile flags/heights; no collision, navigation, resource quantity, construction rule or RNG changes.",
+  "coverage": "Actual designated city includes stone/copper/marble/orichalcum. Other resource kinds need native campaign visual coverage. Content review and production release gates still apply."
+}

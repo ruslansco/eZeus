@@ -17,8 +17,10 @@ eGrowerAction::eGrowerAction(eCharacter* const c) :
     eGrowerAction(eGrowerType::grapesAndOlives, nullptr, c) {}
 
 bool hasResource(eThreadTile* const tile, const eGrowerType gt,
-                 const bool grapesDisabled, const bool olivesDisabled) {
-    if(eRand::rand() % 2) return false;
+                 const bool grapesDisabled, const bool olivesDisabled,
+                 const unsigned salt) {
+    // Runs on a worker thread: a deterministic per-search coin, not the shared generator.
+    if(eRand::searchCoin(salt, tile->x(), tile->y())) return false;
     const auto ub = tile->underBuildingType();
     bool r;
     switch(gt) {
@@ -177,8 +179,9 @@ bool eGrowerAction::findResourceDecision() {
     const auto cid = cityId();
     const bool gd = board.isShutDown(cid, eResourceType::grapes);
     const bool od = board.isShutDown(cid, eResourceType::olives);
-    const auto hha = [gt, gd, od](eThreadTile* const tile) {
-        return hasResource(tile, gt, gd, od);
+    const unsigned salt = static_cast<unsigned>(eRand::rand());
+    const auto hha = [gt, gd, od, salt](eThreadTile* const tile) {
+        return hasResource(tile, gt, gd, od, salt);
     };
 
     const auto a = e::make_shared<eMoveToAction>(mGrower);

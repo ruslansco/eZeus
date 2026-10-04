@@ -4,6 +4,7 @@
 
 #include "engine/egameboard.h"
 #include "elanguage.h"
+#include "engine/ebuildinginfotext.h"
 #include "widgets/eswitchbutton.h"
 
 void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
@@ -14,32 +15,8 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
     eBuilding::sInfoText(b, title, info, employmentInfo, additionalInfo);
     eInfoWidget::initialize(title);
 
-    auto& board = b->getBoard();
-    const auto cid = b->cityId();
-    const bool palace = board.hasPalace(cid);
-    if(!palace) {
-        addText(eLanguage::zeusText(175, 18));
-    }
-
-    const auto storedWood = eLanguage::zeusText(175, 12);
-    const auto storedArmor = eLanguage::zeusText(175, 13);
-
-    const int cwood = b->count(eResourceType::wood);
-    const int carmor = b->count(eResourceType::armor);
-
-    const auto cwoodStr = std::to_string(cwood);
-    const auto carmorStr = std::to_string(carmor);
-
-    const auto loads = eLanguage::zeusText(8, 55);
-
-    addText(storedWood + " " + cwoodStr + " " + loads + "  " +
-            storedArmor + " " + carmorStr + " " + loads);
-
-    const bool r = b->accessToRoad();
-    if(!r) {
-        addText(eLanguage::zeusText(69, 4));
-    }
-
+    // Shared with the Godot inspector (engine/ebuildinginfotext).
+    for(const auto& line : eBuildingInfoText::triremeWharf(*b)) addText(line);
     addText(info);
 
     addText(employmentInfo);
@@ -50,8 +27,8 @@ void eTriremeWharfInfoWidget::initialize(eTriremeWharf* const b) {
 
     const auto button = new eSwitchButton(window());
     button->setUnderline(false);
-    button->addValue(eLanguage::zeusText(175, 19));
-    button->addValue(eLanguage::zeusText(175, 20));
+    button->addValue(eBuildingInfoText::triremeWharfSwitch(false));
+    button->addValue(eBuildingInfoText::triremeWharfSwitch(true));
     button->fitValidContent();
     button->setValue(b->shutDown() ? 0 : 1);
     button->setSwitchAction([b](const int val) {

@@ -1,0 +1,85 @@
+{
+  "asset": "walker_marbleminer",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_marbleminer.glb",
+  "bytes": 5319944,
+  "vertices": 15962,
+  "surfaces": 3,
+  "source_surfaces": 18,
+  "bounds_blender": [
+    [
+      -0.1766747534275055,
+      -0.18177580833435059,
+      0.0005000140517950058
+    ],
+    [
+      0.21707412600517273,
+      0.18021810054779053,
+      0.8857998251914978
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Quarryman",
+        "sex": "male",
+        "profile": {
+          "age": 53,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 1.1,
+          "cheek": 0.98,
+          "nose": 0.005,
+          "chin": 0.006,
+          "eye": 0.97,
+          "hair": [
+            [
+              0.16,
+              0.14,
+              0.12
+            ],
+            [
+              0.38,
+              0.35,
+              0.31
+            ]
+          ],
+          "hair_length": 0.014,
+          "beard_length": 0.032,
+          "grey": 0.36,
+          "seed": 31409
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "839d01de74e82cd9b10a59d5effde779bff173412bee8a6860b5dd92ad42787d",
+        "clavi_srgb": [
+          0.42,
+          0.4,
+          0.36
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 72,
+    "uv_attributes_removed": 0
+  }
+}

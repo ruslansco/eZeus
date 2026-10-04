@@ -4,6 +4,7 @@
 
 #include "engine/egameboard.h"
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 #include "evectorhelpers.h"
 #include "widgets/emicrobutton.h"
 #include "widgets/ebasicbutton.h"
@@ -318,41 +319,30 @@ void eMilitaryDataWidget::updateWidgets() {
 
     const auto towers = mBoard.buildings(cid, eBuildingType::tower);
 
-    if(inCity.empty() && standingDown.empty()) {
-        mAtPalace->setText(eLanguage::zeusText(51, 82)); // no soldiers
-        mAtPalace->setTooltip(eLanguage::zeusText(68, 37)); // no soldiers to command
+    const auto soldiers = eCityData::soldiers(inCity.size(), standingDown.size());
+    mAtPalace->setText(eLanguage::zeusText(51, eCityData::soldiersText(soldiers)));
+    mAtPalace->setTooltip(eLanguage::zeusText(68, eCityData::soldiersTooltip(soldiers)));
+    if(soldiers == eCityData::eSoldiers::none) {
         mAtPalace->setPressAction(nullptr);
-    } else if(!inCity.empty()) {
-        mAtPalace->setText(eLanguage::zeusText(51, 6)); // all called
-        mAtPalace->setTooltip(eLanguage::zeusText(68, 170)); // click to send all soldiers home
+    } else if(soldiers == eCityData::eSoldiers::allCalled) {
         mAtPalace->setPressAction([this, cid]() {
             mBoard.sendAllSoldiersHome(cid);
             updateWidgets();
         });
     } else {
-        mAtPalace->setText(eLanguage::zeusText(51, 8)); // at palace
-        mAtPalace->setTooltip(eLanguage::zeusText(68, 171)); // click to muster all
         mAtPalace->setPressAction([this, cid]() {
             mBoard.musterAllSoldiers(cid);
             updateWidgets();
         });
     }
+    const bool manning = mBoard.manTowers(cid);
+    mNoTowers->setText(eLanguage::zeusText(51, eCityData::towersText(towers.size(), manning)));
+    mNoTowers->setTooltip(eLanguage::zeusText(68, eCityData::towersTooltip(towers.size(), manning)));
     if(towers.empty()) {
-        mNoTowers->setText(eLanguage::zeusText(51, 84)); // no towers
-        mNoTowers->setTooltip(eLanguage::zeusText(68, 39)); // no towers to man
         mNoTowers->setPressAction(nullptr);
-    } else if(mBoard.manTowers(cid)) {
-        mNoTowers->setText(eLanguage::zeusText(51, 11)); // manning
-        mNoTowers->setTooltip(eLanguage::zeusText(68, 174)); // click to send home
-        mNoTowers->setPressAction([this, cid]() {
-            mBoard.setManTowers(cid, false);
-            updateWidgets();
-        });
     } else {
-        mNoTowers->setText(eLanguage::zeusText(51, 12)); // not manning
-        mNoTowers->setTooltip(eLanguage::zeusText(68, 175)); // click to man
-        mNoTowers->setPressAction([this, cid]() {
-            mBoard.setManTowers(cid, true);
+        mNoTowers->setPressAction([this, cid, manning]() {
+            mBoard.setManTowers(cid, !manning);
             updateWidgets();
         });
     }

@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 249,
+ "parts": {
+  "fleece_vendor_1": {
+   "row": 0,
+   "rows": 16,
+   "poses": 9,
+   "vertices": 16097,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024402141571044922
+  },
+  "fleece_vendor_10": {
+   "row": 144,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 56,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 4.2498111724853516e-05
+  },
+  "fleece_vendor_26": {
+   "row": 153,
+   "rows": 16,
+   "poses": 6,
+   "vertices": 16056,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.000244140625
+  }
+ },
+ "source": {
+  "file": "fleece_vendor.glb",
+  "bytes": 2478588,
+  "mtime": 1790834092
+ }
+}

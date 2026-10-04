@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 90,
+ "parts": {
+  "refinery_4": {
+   "row": 0,
+   "rows": 5,
+   "poses": 9,
+   "vertices": 4713,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0009670257568359375
+  },
+  "refinery_13": {
+   "row": 45,
+   "rows": 4,
+   "poses": 9,
+   "vertices": 3870,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024396181106567383
+  },
+  "refinery_21": {
+   "row": 81,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 152,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00012162327766418457
+  }
+ },
+ "source": {
+  "file": "refinery.glb",
+  "bytes": 1588592,
+  "mtime": 1790834247
+ }
+}

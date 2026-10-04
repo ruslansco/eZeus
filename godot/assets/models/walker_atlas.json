@@ -1,0 +1,86 @@
+{
+  "asset": "walker_atlas",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_atlas.glb",
+  "bytes": 13772204,
+  "vertices": 16019,
+  "surfaces": 3,
+  "source_surfaces": 19,
+  "bounds_blender": [
+    [
+      -0.5750916004180908,
+      -0.5486610531806946,
+      -0.012000000104308128
+    ],
+    [
+      0.5736052393913269,
+      0.47347021102905273,
+      3.345325469970703
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Atlas",
+        "sex": "male",
+        "profile": {
+          "age": 64,
+          "skin": [
+            0.57,
+            0.395,
+            0.285
+          ],
+          "jaw": 1.22,
+          "cheek": 1.02,
+          "nose": 0.007,
+          "chin": 0.007,
+          "eye": 0.94,
+          "hair": [
+            [
+              0.32,
+              0.3,
+              0.27
+            ],
+            [
+              0.58,
+              0.55,
+              0.5
+            ]
+          ],
+          "hair_length": 0.028,
+          "beard_length": 0.05,
+          "grey": 0.7,
+          "seed": 62405
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "ba0605c4ea0c147b2d2af188ece9513adfc35f5723f9be7636896e9d5cdf4c2c",
+        "clavi_srgb": [
+          0.2,
+          0.26,
+          0.46
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG",
+    "floating": "floating_gods_v1"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 363,
+    "targets_after": 203,
+    "uv_attributes_removed": 0
+  }
+}

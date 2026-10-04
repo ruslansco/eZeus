@@ -12,6 +12,8 @@ public:
     eBuildingsToErase() {}
 
     void addBuilding(eBuilding* const b);
+    // Resolve a clicked child/road to the complete native demolition target.
+    static eBuilding* target(eBuilding* const b);
 
     int erase(const bool important);
 

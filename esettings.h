@@ -13,7 +13,9 @@ struct eKeyBindings {
 
   SDL_Scancode fPause = SDL_SCANCODE_SPACE;
   SDL_Scancode fRotate = SDL_SCANCODE_R;
-  SDL_Scancode fClone = SDL_SCANCODE_Q;
+  SDL_Scancode fCameraRotateLeft = SDL_SCANCODE_Q;
+  SDL_Scancode fCameraRotateRight = SDL_SCANCODE_E;
+  SDL_Scancode fClone = SDL_SCANCODE_C;
   SDL_Scancode fDemolish = SDL_SCANCODE_X;
 
   SDL_Scancode fSpeedUp = SDL_SCANCODE_RIGHTBRACKET;
@@ -25,6 +27,8 @@ struct eKeyBindings {
     return fMoveUp == o.fMoveUp && fMoveDown == o.fMoveDown &&
            fMoveLeft == o.fMoveLeft && fMoveRight == o.fMoveRight &&
            fPause == o.fPause && fRotate == o.fRotate &&
+           fCameraRotateLeft == o.fCameraRotateLeft &&
+           fCameraRotateRight == o.fCameraRotateRight &&
            fClone == o.fClone && fDemolish == o.fDemolish &&
            fSpeedUp == o.fSpeedUp && fSpeedDown == o.fSpeedDown &&
            fQuickSave == o.fQuickSave && fObjectives == o.fObjectives;
@@ -46,6 +50,12 @@ struct eSettings {
   // "autosave 1.ez" (newest) .. "autosave <fAutosaveSlots>.ez". 0 disables.
   int fAutosaveMinutes = 10;
   int fAutosaveSlots = 5;
+  // a card summing up each month (eEvent::monthlySummary)
+  bool fMonthlySummary = true;
+  // the Zeus font for all text, not only titles (eFonts::setClassic)
+  bool fClassicFont = false;
+  // seasonal colour, rain, cloud shadows and wind in the trees (eWeather)
+  bool fWeather = true;
   eKeyBindings fKeyBindings;
 
   std::vector<eTileSize> availableSizes() const;
@@ -55,4 +65,3 @@ struct eSettings {
 };
 
 #endif // ESETTINGS_H
-

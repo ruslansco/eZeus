@@ -1,0 +1,77 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wyo8t"]
+albedo_color = Color(0.84705883, 0.6784314, 0.41568628, 1)
+roughness = 0.4
+
+[sub_resource type="SphereMesh" id="SphereMesh_ehvxf"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gcri7"]
+albedo_color = Color(0.91764706, 0.81960785, 0.6, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fvqk0"]
+top_radius = 0.0
+bottom_radius = 0.12
+height = 0.2
+radial_segments = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3c07p"]
+albedo_color = Color(0.41960785, 0.5568628, 0.26666668, 1)
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4msnu"]
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.3324154
+radial_segments = 12
+
+[sub_resource type="SphereMesh" id="SphereMesh_w8r13"]
+radial_segments = 16
+rings = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_xlvqq"]
+top_radius = 0.0
+bottom_radius = 0.12
+height = 0.2
+radial_segments = 12
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_vrlnc"]
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.3324154
+radial_segments = 12
+
+[node name="Onions" type="Node3D" unique_id=1262190637]
+
+[node name="@MeshInstance3D@73" type="MeshInstance3D" parent="." unique_id=740670522]
+transform = Transform3D(0.52, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -0.24, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_wyo8t")
+mesh = SubResource("SphereMesh_ehvxf")
+
+[node name="@MeshInstance3D@74" type="MeshInstance3D" parent="." unique_id=1883228475]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24, 0.54, 0)
+material_override = SubResource("StandardMaterial3D_gcri7")
+mesh = SubResource("CylinderMesh_fvqk0")
+
+[node name="@MeshInstance3D@75" type="MeshInstance3D" parent="." unique_id=1145626139]
+transform = Transform3D(0.93256813, 0.36099407, 0, -0.36099407, 0.93256813, 0, 0, 0, 1, -0.17999999, 0.70500004, 0)
+material_override = SubResource("StandardMaterial3D_3c07p")
+mesh = SubResource("CylinderMesh_4msnu")
+
+[node name="@MeshInstance3D@76" type="MeshInstance3D" parent="." unique_id=863783611]
+transform = Transform3D(0.52, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0.24, 0.25, 0)
+material_override = SubResource("StandardMaterial3D_wyo8t")
+mesh = SubResource("SphereMesh_w8r13")
+
+[node name="@MeshInstance3D@77" type="MeshInstance3D" parent="." unique_id=212417248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.24, 0.54, 0)
+material_override = SubResource("StandardMaterial3D_gcri7")
+mesh = SubResource("CylinderMesh_xlvqq")
+
+[node name="@MeshInstance3D@78" type="MeshInstance3D" parent="." unique_id=1407412578]
+transform = Transform3D(0.9325681, 0.36099413, 0, -0.36099413, 0.9325681, 0, 0, 0, 1, 0.3, 0.70500004, 0)
+material_override = SubResource("StandardMaterial3D_3c07p")
+mesh = SubResource("CylinderMesh_vrlnc")

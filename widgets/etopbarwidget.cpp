@@ -11,6 +11,29 @@
 #include "egamewidget.h"
 
 #include "emainwindow.h"
+#include "eweather.h"
+
+namespace {
+// The season, or the weather when it is not fair, beside the date.
+class eWeatherBadge : public eWidget {
+public:
+    using eWidget::eWidget;
+protected:
+    void paintEvent(ePainter& p) override {
+        const auto icon = eWeather::iconName();
+        const auto tip = eWeather::description();
+        if(tip != mTip) {
+            mTip = tip;
+            setTooltip(tip);
+        }
+        const int px = std::min(width(), height());
+        ePanel::drawIcon(p.renderer(), icon, p.x() + width()/2.f,
+                         p.y() + height()/2.f, px, ePanel::kGold);
+    }
+private:
+    std::string mTip;
+};
+}
 
 // ============================================================
 //  eSpeedControlWidget — graphical speed indicator
@@ -123,10 +146,10 @@ void eSpeedControlWidget::paintEvent(ePainter& p) {
     int activeBtn = -1;
     switch(mState) {
     case eSpeedState::paused: activeBtn = 0; break;
-    case eSpeedState::slow:   activeBtn = 1; break;
-    case eSpeedState::normal: activeBtn = 2; break;
-    case eSpeedState::fast:   activeBtn = 3; break;
-    case eSpeedState::vfast:  activeBtn = 4; break;
+    case eSpeedState::normal: activeBtn = 1; break;
+    case eSpeedState::fast:   activeBtn = 2; break;
+    case eSpeedState::vfast:  activeBtn = 3; break;
+    case eSpeedState::max:    activeBtn = 4; break;
     }
 
     auto colorForBtn = [&](int idx) -> SDL_Color {
@@ -155,13 +178,13 @@ void eSpeedControlWidget::paintEvent(ePainter& p) {
     std::string speedStr;
     switch(mState) {
     case eSpeedState::paused: speedStr = "PAUSED"; break;
-    case eSpeedState::slow:   speedStr = "20%";    break;
     case eSpeedState::normal: speedStr = "100%";   break;
-    case eSpeedState::fast:   speedStr = "500%";   break;
-    case eSpeedState::vfast:  speedStr = "MAX";    break;
+    case eSpeedState::fast:   speedStr = "250%";   break;
+    case eSpeedState::vfast:  speedStr = "500%";   break;
+    case eSpeedState::max:    speedStr = "MAX";    break;
     }
 
-    auto font = eFonts::defaultFont(resolution().verySmallFontSize());
+    auto font = eFonts::labelFont(resolution().verySmallFontSize());
     p.setFont(font);
     const int textY = (height() - resolution().verySmallFontSize()) / 2;
     p.drawText(mSpeedTextRegion.x + 2 * mMult, textY, speedStr,
@@ -172,10 +195,10 @@ bool eSpeedControlWidget::mousePressEvent(const eMouseEvent& e) {
     const int btn = hitTest(e.x(), e.y());
     switch(btn) {
     case 0: if(mPauseAction)  mPauseAction();  return true;
-    case 1: if(mSlowAction)   mSlowAction();   return true;
-    case 2: if(mNormalAction) mNormalAction();  return true;
-    case 3: if(mFastAction)   mFastAction();   return true;
-    case 4: if(mVFastAction)  mVFastAction();  return true;
+    case 1: if(mNormalAction) mNormalAction(); return true;
+    case 2: if(mFastAction)   mFastAction();   return true;
+    case 3: if(mVFastAction)  mVFastAction();  return true;
+    case 4: if(mMaxAction)    mMaxAction();    return true;
     }
     return false;
 }
@@ -251,6 +274,12 @@ void eTopBarWidget::initialize() {
     mDateLabel->fitContent();
     mDateLabel->setEnabled(false);
 
+    const auto s35 = new eWidget(window());
+    s35->setWidth(mult*3);
+    const auto weather = new eWeatherBadge(window());
+    weather->setNoPadding();
+    weather->resize(std::round(mult*7.5), std::round(mult*7.5));
+
     const auto s4 = new eWidget(window());
     s4->setWidth(mult*8);
 
@@ -268,6 +297,8 @@ void eTopBarWidget::initialize() {
     addWidget(mPopulationWidget);
     addWidget(s3);
     addWidget(mDateLabel);
+    addWidget(s35);
+    addWidget(weather);
     addWidget(s4);
     addWidget(mSpeedControl);
     addWidget(s5);
@@ -278,6 +309,7 @@ void eTopBarWidget::initialize() {
     mDrachmasWidget->align(eAlignment::vcenter);
     mPopulationWidget->align(eAlignment::vcenter);
     mDateLabel->align(eAlignment::vcenter);
+    weather->align(eAlignment::vcenter);
     mSpeedControl->align(eAlignment::vcenter);
 
     layoutHorizontally();
@@ -297,28 +329,28 @@ void eTopBarWidget::createSpeedControls() {
         mGW->switchPause();
     });
 
-    mSpeedControl->setSlowAction([this]() {
+    mSpeedControl->setNormalAction([this]() {
         if(!mGW) return;
         if(mGW->isPaused()) mGW->switchPause();
         mGW->setSpeedId(0);
     });
 
-    mSpeedControl->setNormalAction([this]() {
+    mSpeedControl->setFastAction([this]() {
         if(!mGW) return;
         if(mGW->isPaused()) mGW->switchPause();
         mGW->setSpeedId(1);
     });
 
-    mSpeedControl->setFastAction([this]() {
-        if(!mGW) return;
-        if(mGW->isPaused()) mGW->switchPause();
-        mGW->setSpeedId(3);
-    });
-
     mSpeedControl->setVFastAction([this]() {
         if(!mGW) return;
         if(mGW->isPaused()) mGW->switchPause();
-        mGW->setSpeedId(5);
+        mGW->setSpeedId(2);
+    });
+
+    mSpeedControl->setMaxAction([this]() {
+        if(!mGW) return;
+        if(mGW->isPaused()) mGW->switchPause();
+        mGW->setSpeedId(3);
     });
 
     updateSpeedControls();
@@ -335,13 +367,13 @@ void eTopBarWidget::updateSpeedControls() {
     if(paused) {
         mSpeedControl->setState(S::paused);
     } else if(sid == 0) {
-        mSpeedControl->setState(S::slow);
-    } else if(sid == 1) {
         mSpeedControl->setState(S::normal);
-    } else if(sid <= 3) {
+    } else if(sid == 1) {
         mSpeedControl->setState(S::fast);
-    } else {
+    } else if(sid == 2) {
         mSpeedControl->setState(S::vfast);
+    } else {
+        mSpeedControl->setState(S::max);
     }
 }
 

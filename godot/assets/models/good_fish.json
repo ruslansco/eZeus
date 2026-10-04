@@ -1,0 +1,21 @@
+{
+  "asset": "good_fish",
+  "file": "good_fish.glb",
+  "bytes": 166792,
+  "vertices": 1704,
+  "surfaces": 3,
+  "bounds_blender": [
+    [
+      -2.4970364570617676,
+      -2.482515811920166,
+      -1.4166669845581055
+    ],
+    [
+      27.96509552001953,
+      5.58184289932251,
+      3.916666030883789
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

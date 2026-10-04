@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 198,
+ "parts": {
+  "hospital_4": {
+   "row": 0,
+   "rows": 8,
+   "poses": 9,
+   "vertices": 7417,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004870891571044922
+  },
+  "hospital_5": {
+   "row": 72,
+   "rows": 14,
+   "poses": 9,
+   "vertices": 13441,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  }
+ },
+ "source": {
+  "file": "hospital.glb",
+  "bytes": 7202232,
+  "mtime": 1790833886
+ }
+}

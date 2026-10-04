@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/episode_overlay.gd" id="1_6pfdv"]
+[ext_resource type="Theme" path="res://ui/lapis_gold.tres" id="2_86f5c"]
+[ext_resource type="PackedScene" path="res://ui/episode_card.tscn" id="3_e38a2"]
+[ext_resource type="Script" path="res://ui/episode_card.gd" id="4_ed0ul"]
+
+[node name="EpisodeOverlay" type="CanvasLayer" unique_id=731722646]
+layer = 30
+visible = false
+script = ExtResource("1_6pfdv")
+
+[node name="Themed" type="Control" parent="." unique_id=529228233]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("2_86f5c")
+
+[node name="Dim" type="ColorRect" parent="Themed" unique_id=1903763329]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.01, 0.02, 0.06, 0.72)
+
+[node name="Center" type="CenterContainer" parent="Themed" unique_id=558230917]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Panel" type="PanelContainer" parent="Themed/Center" unique_id=1577407915]
+custom_minimum_size = Vector2(820, 560)
+layout_mode = 2
+
+[node name="Card" type="VBoxContainer" parent="Themed/Center/Panel" unique_id=126904816 instance=ExtResource("3_e38a2")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+script = ExtResource("4_ed0ul")

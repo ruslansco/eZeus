@@ -1,0 +1,28 @@
+{
+  "asset": "hero_hall_hercules",
+  "source": "art/hero_hall/build_sprites.py",
+  "file": "hero_hall_hercules.glb",
+  "bytes": 5923632,
+  "vertices": 27544,
+  "surfaces": 3,
+  "source_surfaces": 16,
+  "bounds_blender": [
+    [
+      -1.996999979019165,
+      -1.996999979019165,
+      0.0
+    ],
+    [
+      2.0,
+      2.0,
+      2.4099998474121094
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

@@ -1,0 +1,21 @@
+{
+  "asset": "good_wheat",
+  "file": "good_wheat.glb",
+  "bytes": 208176,
+  "vertices": 2440,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.35600000619888306,
+      -0.35499730706214905,
+      -0.00044718384742736816
+    ],
+    [
+      0.15088766813278198,
+      0.16465282440185547,
+      0.29499998688697815
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

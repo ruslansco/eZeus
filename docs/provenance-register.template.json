@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "purpose": "Template only. No game content is cleared by this file or the inventory.",
+  "release_identity": null,
+  "commercial_route": "independent_game_pending_audit",
+  "status_values": ["unreviewed", "needs_evidence", "replace", "cleared", "excluded"],
+  "records": [],
+  "record_template": {
+    "id": null,
+    "category": null,
+    "repository_paths": [],
+    "package_paths": [],
+    "creator": null,
+    "rightsholder": null,
+    "origin": null,
+    "upstream_url_and_revision": null,
+    "license_or_agreement": null,
+    "evidence_location": null,
+    "reviewed_sha256_by_file": {},
+    "source_input_records": [],
+    "generated_content_details": null,
+    "attribution_requirements": [],
+    "other_license_obligations": [],
+    "obligations_completed": false,
+    "review_status": "unreviewed",
+    "reviewer": null,
+    "reviewed_at": null,
+    "replacement_task": null,
+    "ships_in_release": false,
+    "notes": null
+  }
+}

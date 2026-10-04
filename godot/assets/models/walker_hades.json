@@ -1,0 +1,90 @@
+{
+  "asset": "walker_hades",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_hades.glb",
+  "bytes": 11547772,
+  "vertices": 19523,
+  "surfaces": 3,
+  "source_surfaces": 11,
+  "bounds_blender": [
+    [
+      -0.9243717193603516,
+      -0.6934776306152344,
+      0.0
+    ],
+    [
+      0.9214326739311218,
+      0.553238034248352,
+      3.510059356689453
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Hades",
+        "sex": "male",
+        "profile": {
+          "age": 72,
+          "skin": [
+            0.215,
+            0.35,
+            0.42
+          ],
+          "jaw": 1.05,
+          "cheek": 0.91,
+          "nose": 0.006,
+          "chin": 0.006,
+          "eye": 0.95,
+          "hair": [
+            [
+              0.35,
+              0.38,
+              0.42
+            ],
+            [
+              0.57,
+              0.6,
+              0.65
+            ]
+          ],
+          "hair_length": 0.006,
+          "beard_length": 0.046,
+          "grey": 0.94,
+          "seed": 61303
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "642bd0ba0659c91ea1967df413b796f4e1958bc5b78f8efb5c66fe3d91125929",
+        "clavi_srgb": [
+          0.3,
+          0.04,
+          0.08
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 19000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG",
+    "floating": "floating_gods_v1",
+    "art_direction": "underworld_lord_v2",
+    "adapter": "eZeus/tools/godot_hades_art.py",
+    "reference": "user mood reference: flame hair and sweeping dark Greek drapery; original older anatomical face, gray beard and red fire per follow-up",
+    "hem_effect": "res://scripts/hades_hem_fire.gd; bounded cosmetic flames/embers, follows native dissolve pose"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 252,
+    "targets_after": 130,
+    "uv_attributes_removed": 0
+  }
+}

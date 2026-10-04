@@ -162,6 +162,8 @@ std::shared_ptr<eTexture> eSpriteLoader::load(
 }
 
 void eSpriteLoader::loadTex(const int i) {
+    // Simulation keeps sprite frame metadata without loading raster data or a GPU.
+    if(eGameDir::embedded()) { mTexs[i] = std::make_shared<eTexture>(); return; }
     const bool binary = true;
     std::shared_ptr<eTexture> tex;
     if(binary) {

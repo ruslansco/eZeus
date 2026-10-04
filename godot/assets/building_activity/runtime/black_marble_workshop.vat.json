@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 171,
+ "parts": {
+  "black_marble_workshop_12": {
+   "row": 0,
+   "rows": 9,
+   "poses": 9,
+   "vertices": 8327,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00047910213470458984
+  },
+  "black_marble_workshop_14": {
+   "row": 81,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 265,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00046813488006591797
+  },
+  "black_marble_workshop_16": {
+   "row": 90,
+   "rows": 9,
+   "poses": 9,
+   "vertices": 8614,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024390220642089844
+  }
+ },
+ "source": {
+  "file": "black_marble_workshop.glb",
+  "bytes": 2916916,
+  "mtime": 1790834261
+ }
+}

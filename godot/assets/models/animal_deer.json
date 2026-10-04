@@ -1,0 +1,34 @@
+{
+  "asset": "animal_deer",
+  "source": "art/characters/animals/build_animal.py",
+  "file": "animal_deer.glb",
+  "bytes": 4644540,
+  "vertices": 9528,
+  "surfaces": 2,
+  "bounds_blender": [
+    [
+      -0.15511466562747955,
+      -0.41347038745880127,
+      -0.002149940235540271
+    ],
+    [
+      0.15511466562747955,
+      0.5051827430725098,
+      1.1303417682647705
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "idle_mode": "static_authored_held_pose",
+  "source_surfaces": 6,
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 70,
+    "targets_after": 48,
+    "uv_attributes_removed": 0
+  }
+}

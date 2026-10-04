@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 170,
+ "parts": {
+  "tax_office_3": {
+   "row": 0,
+   "rows": 22,
+   "poses": 2,
+   "vertices": 22122,
+   "frames": {
+    "work_00": 0,
+    "work_01": 0,
+    "work_02": 0,
+    "work_03": 0,
+    "work_04": 0,
+    "work_05": 0,
+    "work_06": 0,
+    "work_07": 0,
+    "inactive": 1
+   },
+   "max_error": 0.000244140625
+  },
+  "tax_office_4": {
+   "row": 44,
+   "rows": 13,
+   "poses": 9,
+   "vertices": 12820,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "tax_office_11": {
+   "row": 161,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 536,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00023829936981201172
+  }
+ },
+ "source": {
+  "file": "tax_office.glb",
+  "bytes": 4654076,
+  "mtime": 1790833859
+ }
+}

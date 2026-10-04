@@ -1,4 +1,4 @@
-﻿#include "eloadingwidget.h"
+#include "eloadingwidget.h"
 
 #include "emainwindow.h"
 #include "textures/egametextures.h"
@@ -18,7 +18,7 @@ void eLoadingWidget::initialize() {
     if(mUseTextures) {
         mImageLabel = new eLabel(window());
         addWidget(mImageLabel);
-        setLoadImage(1);
+        setLoadImage(eRand::rand() % 12 + 1);
     }
 
     if(mUseTextures) {
@@ -85,8 +85,10 @@ void eLoadingWidget::setLoadImage(const int id) {
         tex = texs.fLoadImage12;
     }
     mImageLabel->setTexture(tex);
-    mImageLabel->fitContent();
-    mImageLabel->align(eAlignment::center);
+    mImageLabel->setWidth(width());
+    mImageLabel->setHeight(height());
+    mImageLabel->setX(0);
+    mImageLabel->setY(0);
 }
 
 void eLoadingWidget::paintEvent(ePainter& p) {
@@ -99,7 +101,6 @@ void eLoadingWidget::paintEvent(ePainter& p) {
         mLabel->setText(text);
         mLabelW->fitContent();
         mLabelW->align(eAlignment::hcenter);
-        setLoadImage(eRand::rand() % 12 + 1);
 
         mPB->setWidth(mLabelW->width());
         mPB->align(eAlignment::hcenter);

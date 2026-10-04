@@ -1,0 +1,85 @@
+{
+  "asset": "walker_archerposeidon",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_archerposeidon.glb",
+  "bytes": 8787732,
+  "vertices": 15596,
+  "surfaces": 3,
+  "source_surfaces": 24,
+  "bounds_blender": [
+    [
+      -0.2239569127559662,
+      -0.1851343810558319,
+      0.0004999842494726181
+    ],
+    [
+      0.19244550168514252,
+      0.6568455696105957,
+      0.9054171442985535
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Atlantean archer",
+        "sex": "male",
+        "profile": {
+          "age": 29,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 0.96,
+          "cheek": 1.04,
+          "nose": 0.002,
+          "chin": 0.001,
+          "eye": 1.01,
+          "hair": [
+            [
+              0.03,
+              0.018,
+              0.01
+            ],
+            [
+              0.1,
+              0.06,
+              0.03
+            ]
+          ],
+          "hair_length": 0.016,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 41507
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "008633f90414d8be8032bc8f433025ce9cc66c12197495181a804f238003772f",
+        "clavi_srgb": [
+          0.86,
+          0.56,
+          0.24
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 177,
+    "targets_after": 130,
+    "uv_attributes_removed": 0
+  }
+}

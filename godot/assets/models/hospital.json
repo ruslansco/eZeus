@@ -1,0 +1,34 @@
+{
+  "asset": "hospital",
+  "source": "art/hospital/hospital_reference.blend",
+  "file": "hospital.glb",
+  "bytes": 8829196,
+  "vertices": 38031,
+  "surfaces": 3,
+  "source_surfaces": 53,
+  "bounds_blender": [
+    [
+      -2.0199999809265137,
+      -2.0199999809265137,
+      -0.06829464435577393
+    ],
+    [
+      1.9954023361206055,
+      1.9954023361206055,
+      2.4099209308624268
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 0,
+    "targets_after": 0,
+    "uv_attributes_removed": 0
+  }
+}

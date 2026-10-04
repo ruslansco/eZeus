@@ -1,0 +1,38 @@
+{
+  "asset": "carding_shed",
+  "source": "art/carding_shed/build_sprites.py",
+  "file": "carding_shed.glb",
+  "bytes": 1805932,
+  "vertices": 11026,
+  "surfaces": 4,
+  "source_surfaces": 40,
+  "bounds_blender": [
+    [
+      -1.0057820081710815,
+      -0.9968891143798828,
+      -0.001999999862164259
+    ],
+    [
+      1.0034410953521729,
+      0.9900000095367432,
+      1.2969999313354492
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 63,
+    "allocation_target": 10501,
+    "base_sha256": "68d2170462ebb55aa3b8bc802a8296038482a9e4192d01a9095be6d6dcbdf435",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

@@ -139,6 +139,7 @@ void eCharacterTextures::loadHomeless() {
 void eCharacterTextures::loadPersianHoplite() {
     if(fPersianHopliteLoaded) return;
     fPersianHopliteLoaded = true;
+    if(loadPersonHD(fPersianHoplite, {{"fight", &fPersianHoplite.fFight}}, fRenderer, fTileH, "persianhoplite")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  ePersianHopliteSpriteData15,
                                  ePersianHopliteSpriteData30,
@@ -158,6 +159,7 @@ void eCharacterTextures::loadPersianHoplite() {
 void eCharacterTextures::loadPersianArcher() {
     if(fPersianArcherLoaded) return;
     fPersianArcherLoaded = true;
+    if(loadPersonHD(fPersianArcher, {{"fight", &fPersianArcher.fFight}}, fRenderer, fTileH, "persianarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  ePersianArcherSpriteData15,
                                  ePersianArcherSpriteData30,
@@ -177,6 +179,7 @@ void eCharacterTextures::loadPersianArcher() {
 void eCharacterTextures::loadPersianHorseman() {
     if(fPersianHorsemanLoaded) return;
     fPersianHorsemanLoaded = true;
+    if(loadPersonHD(fPersianHorseman, {{"fight", &fPersianHorseman.fFight}}, fRenderer, fTileH, "persianhorseman")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  ePersianHorsemanSpriteData15,
                                  ePersianHorsemanSpriteData30,
@@ -196,6 +199,7 @@ void eCharacterTextures::loadPersianHorseman() {
 void eCharacterTextures::loadTrojanHoplite() {
     if(fTrojanHopliteLoaded) return;
     fTrojanHopliteLoaded = true;
+    if(loadPersonHD(fTrojanHoplite, {{"fight", &fTrojanHoplite.fFight}}, fRenderer, fTileH, "trojanhoplite")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eTrojanHopliteSpriteData15,
                                  eTrojanHopliteSpriteData30,
@@ -215,6 +219,7 @@ void eCharacterTextures::loadTrojanHoplite() {
 void eCharacterTextures::loadTrojanSpearthrower() {
     if(fTrojanSpearthrowerLoaded) return;
     fTrojanSpearthrowerLoaded = true;
+    if(loadPersonHD(fTrojanSpearthrower, {{"fight", &fTrojanSpearthrower.fFight}}, fRenderer, fTileH, "trojanspearthrower")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eTrojanSpearthrowerSpriteData15,
                                  eTrojanSpearthrowerSpriteData30,
@@ -234,6 +239,7 @@ void eCharacterTextures::loadTrojanSpearthrower() {
 void eCharacterTextures::loadTrojanHorseman() {
     if(fTrojanHorsemanLoaded) return;
     fTrojanHorsemanLoaded = true;
+    if(loadPersonHD(fTrojanHorseman, {{"fight", &fTrojanHorseman.fFight}}, fRenderer, fTileH, "trojanhorseman")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eTrojanHorsemanSpriteData15,
                                  eTrojanHorsemanSpriteData30,
@@ -253,6 +259,7 @@ void eCharacterTextures::loadTrojanHorseman() {
 void eCharacterTextures::loadCentaurHorseman() {
     if(fCentaurHorsemanLoaded) return;
     fCentaurHorsemanLoaded = true;
+    if(loadPersonHD(fCentaurHorseman, {{"fight", &fCentaurHorseman.fFight}}, fRenderer, fTileH, "centaurhorseman")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eCentaurHorsemanSpriteData15,
                                  eCentaurHorsemanSpriteData30,
@@ -272,6 +279,7 @@ void eCharacterTextures::loadCentaurHorseman() {
 void eCharacterTextures::loadCentaurArcher() {
     if(fCentaurArcherLoaded) return;
     fCentaurArcherLoaded = true;
+    if(loadPersonHD(fCentaurArcher, {{"fight", &fCentaurArcher.fFight}}, fRenderer, fTileH, "centaurarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eCentaurArcherSpriteData15,
                                  eCentaurArcherSpriteData30,
@@ -291,6 +299,7 @@ void eCharacterTextures::loadCentaurArcher() {
 void eCharacterTextures::loadAmazonSpear() {
     if(fAmazonSpearLoaded) return;
     fAmazonSpearLoaded = true;
+    if(loadPersonHD(fAmazonSpear, {{"fight", &fAmazonSpear.fFight}}, fRenderer, fTileH, "amazonspear")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eAmazonSpearSpriteData15,
                                  eAmazonSpearSpriteData30,
@@ -310,6 +319,7 @@ void eCharacterTextures::loadAmazonSpear() {
 void eCharacterTextures::loadAmazonArcher() {
     if(fAmazonArcherLoaded) return;
     fAmazonArcherLoaded = true;
+    if(loadPersonHD(fAmazonArcher, {{"fight", &fAmazonArcher.fFight}}, fRenderer, fTileH, "amazonarcher")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eAmazonArcherSpriteData15,
                                  eAmazonArcherSpriteData30,
@@ -329,6 +339,7 @@ void eCharacterTextures::loadAmazonArcher() {
 void eCharacterTextures::loadAresWarrior() {
     if(fAresWarriorLoaded) return;
     fAresWarriorLoaded = true;
+    if(loadStatesHD({{"walk", &fAresWarrior.fWalk}, {"fight", &fAresWarrior.fFight}, {"die", &fAresWarrior.fDie}}, fRenderer, fTileH, "areswarrior")) return;   // art/characters/people/people10.py
     const auto& sds = spriteData(fTileH,
                                  eAresWarriorSpriteData15,
                                  eAresWarriorSpriteData30,

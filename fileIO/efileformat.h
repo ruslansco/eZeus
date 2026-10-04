@@ -7,6 +7,9 @@ namespace eFileFormat {
         settlerEmigrant,
         cartTarget,
         cityHistory,
+        messageLog,
+        messageCategory,
+        viewState,
 
         nextVersion
     };

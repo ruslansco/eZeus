@@ -3,6 +3,7 @@
 #include "eviewmodebutton.h"
 
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 #include "widgets/elinewidget.h"
 #include "engine/egameboard.h"
 #include "widgets/ebuttonbase.h"
@@ -195,16 +196,7 @@ void eMythologyDataWidget::paintEvent(ePainter& p) {
                     });
 
                     const auto stateB = new eMythologyButton(window());
-                    int textId = 2;
-                    if(s->finished()) {
-                        if(s->sacrificing()) {
-                            textId = 3; // sacrificing
-                        } else {
-                            textId = 2; // working
-                        }
-                    } else {
-                        textId = 9; // needs materials
-                    }
+                    const int textId = eCityData::sanctuaryStateText(s->finished(), s->sacrificing());
                     stateB->initialize(eLanguage::zeusText(59, textId));
                     w->addWidget(stateB);
                     stateB->align(eAlignment::hcenter);

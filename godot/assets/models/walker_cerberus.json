@@ -1,0 +1,34 @@
+{
+  "asset": "walker_cerberus",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_cerberus.glb",
+  "bytes": 23751424,
+  "vertices": 22214,
+  "surfaces": 2,
+  "source_surfaces": 8,
+  "bounds_blender": [
+    [
+      -0.24807655811309814,
+      -0.821586012840271,
+      -0.0026915862690657377
+    ],
+    [
+      0.24807655811309814,
+      0.8432778120040894,
+      0.945626974105835
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 182,
+    "targets_after": 119,
+    "uv_attributes_removed": 0
+  }
+}

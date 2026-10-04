@@ -1,0 +1,38 @@
+{
+  "asset": "hunting_lodge",
+  "source": "art/hunting_lodge/build_sprites.py",
+  "file": "hunting_lodge.glb",
+  "bytes": 1749560,
+  "vertices": 7290,
+  "surfaces": 6,
+  "source_surfaces": 42,
+  "bounds_blender": [
+    [
+      -1.0092910528182983,
+      -0.9900000095367432,
+      -0.008022768422961235
+    ],
+    [
+      1.0199999809265137,
+      1.0059667825698853,
+      1.3969999551773071
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 42,
+    "allocation_target": 6548,
+    "base_sha256": "090820960589574947543e9aebf5d704d2ec217195b6e76abf144d9b2840943f",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

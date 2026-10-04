@@ -6,6 +6,7 @@
 #include "widgets/eframedbutton.h"
 
 #include "elanguage.h"
+#include "engine/ecitydata.h"
 #include "engine/egameboard.h"
 #include "estringhelpers.h"
 #include "buildings/eheroshall.h"
@@ -103,6 +104,10 @@ void eOverviewDataWidget::initialize() {
         const auto& t = eLanguage::text("history_title");
         setMoreInfoIcon("chart", t.empty() ? "City History" : t);
         showMoreInfoButton();
+        const auto& at = eLanguage::text("adv_button");
+        addFooterPill(at.empty() ? "City advisor" : at, [this]() {
+            if(const auto gw = gameWidget()) gw->showCityAdvisor();
+        });
     }
 
     const auto inner = innerWidget();
@@ -347,130 +352,24 @@ void eOverviewDataWidget::paintEvent(ePainter& p) {
     const bool update = ((mTime++) % 20) == 0;
     if(update) {
         const auto cid = viewedCity();
-        {
-            const int pop = mBoard.popularity(cid);
-            int string = -1;
-            if(pop > 90) {
-                string = 38; // superb
-            } else if(pop > 85) {
-                string = 37; // great
-            } else if(pop > 80) {
-                string = 36; // high
-            } else if(pop > 75) {
-                string = 34; // good
-            } else if(pop > 70) {
-                string = 33; // ok
-            } else if(pop > 60) {
-                string = 32; // poor
-            } else if(pop > 50) {
-                string = 31; // bad
-            } else if(pop > 40) {
-                string = 28; // awful
-            }else {
-                string = 27; // terrible
-            }
-            mPopularity->setText(eLanguage::zeusText(61, string));
-            mPopularity->setSeverity(pop > 80 ? 0 : pop > 60 ? 1 : 2);
+        // The verdicts are shared with the Godot city window (engine/ecitydata).
+        const auto show = [](eOverviewEntry* const e, const eCityVerdict& v) {
+            e->setText(v.text());
+            e->setSeverity(v.fSeverity);
+        };
+        show(mPopularity, eCityData::popularity(mBoard.popularity(cid)));
+        if(const auto husbData = mBoard.husbandryData(cid)) {
+            show(mFoodLevel, eCityData::foodLevel(husbData->canSupport(), mBoard.population(cid)));
         }
-        {
-            const auto husbData = mBoard.husbandryData(cid);
-            if(husbData) {
-                const int a = husbData->canSupport();
-                const int pop = mBoard.population(cid);
-                int string = -1;
-                if(pop == 0 || a < 0.75*pop) {
-                    string = 94; // too low
-                } else if(a < 0.85*pop) {
-                    string = 95; // low
-                } else {
-                    string = 97; // good
-                }
-                mFoodLevel->setText(eLanguage::zeusText(61, string));
-                mFoodLevel->setSeverity(string == 97 ? 0 : string == 95 ? 1 : 2);
-            }
+        if(const auto emplData = mBoard.employmentData(cid)) {
+            const auto line = eCityData::employment(emplData->freeJobVacancies(), emplData->employable(), emplData->unemployed());
+            mUnemployment->setTitle(eLanguage::zeusText(61, line.fTitle));
+            mUnemployment->setText(line.fValue);
+            mUnemployment->setSeverity(line.fSeverity);
         }
-        {
-            const auto emplData = mBoard.employmentData(cid);
-            if(emplData) {
-                const int f = emplData->freeJobVacancies();
-                const int w = emplData->employable();
-                const int u = emplData->unemployed();
-                if(u == 0) {
-                    mUnemployment->setTitle(eLanguage::zeusText(61, 115)); // employment good
-                    mUnemployment->setText("");
-                    mUnemployment->setSeverity(0);
-                } else if(f > 0) {
-                    mUnemployment->setTitle(eLanguage::zeusText(61, 111)); // workers needed
-                    mUnemployment->setText(std::to_string(f));
-                    mUnemployment->setSeverity(w > 0 && f > w/5 ? 2 : 1);
-                } else {
-                    mUnemployment->setTitle(eLanguage::zeusText(61, 107)); // unemployment
-                    int per = w == 0 ? 0 : std::round(100.*u/w);
-                    per = std::clamp(per, 0, 100);
-                    mUnemployment->setText(std::to_string(per) + "%");
-                    mUnemployment->setSeverity(per > 10 ? 2 : 1);
-                }
-            }
-        }
-        {
-            const int hygiene = mBoard.health(cid);
-            int string = -1;
-            if(hygiene > 90) {
-                string = 137; // perfect
-            } else if(hygiene > 85) {
-                string = 136; // great
-            } else if(hygiene > 80) {
-                string = 135; // excellent
-            } else if(hygiene > 75) {
-                string = 134; // very good
-            } else if(hygiene > 70) {
-                string = 133; // good
-            } else if(hygiene > 65) {
-                string = 132; // ok
-            } else if(hygiene > 60) {
-                string = 131; // not good
-            } else if(hygiene > 55) {
-                string = 130; // poort
-            } else if(hygiene > 50) {
-                string = 129; // bad
-            } else if(hygiene > 45) {
-                string = 128; // terrible
-            } else {
-                string = 127; // appalling
-            }
-            mHygiene->setText(eLanguage::zeusText(61, string));
-            mHygiene->setSeverity(hygiene > 70 ? 0 : hygiene > 55 ? 1 : 2);
-        }
-        {
-            const int unrest = mBoard.unrest(cid);
-            int string = -1;
-            if(unrest == 0) {
-                string = 149; // none
-            } else if(unrest > 10) {
-                string = 144; // severe
-            } else if(unrest > 5) {
-                string = 146; // high
-            } else {
-                string = 148; // low
-            }
-            mUnrest->setText(eLanguage::zeusText(61, string));
-            mUnrest->setSeverity(unrest == 0 ? 0 : unrest > 5 ? 2 : 1);
-        }
-        {
-            const auto finances = mBoard.finances(cid);
-            const auto& year = finances.thisYear();
-            int string;
-            if(year.netInOutFlow() > 250) {
-                string = 153; // up
-            } else if(year.netInOutFlow() < -100) {
-                string = 155; // down
-            } else {
-                string = 154; // ok
-            }
-
-            mFinances->setText(eLanguage::zeusText(61, string));
-            mFinances->setSeverity(string == 153 ? 0 : string == 154 ? 1 : 2);
-        }
+        show(mHygiene, eCityData::hygiene(mBoard.health(cid)));
+        show(mUnrest, eCityData::unrest(mBoard.unrest(cid)));
+        show(mFinances, eCityData::finances(mBoard.finances(cid).thisYear().netInOutFlow()));
     }
     eWidget::paintEvent(p);
 }

@@ -6,6 +6,8 @@
 class eGameDir {
 public:
     static void initialize();
+    static void initializeEmbedded(const std::string& engineDir);
+    static bool embedded() { return !sEmbeddedExeDir.empty(); }
     static std::string path(const std::string& path);
     static std::string settingsPath();
     static std::string numbersPath();
@@ -23,6 +25,7 @@ public:
     static const std::string& audioLanguage();
 private:
     static std::string sPath;
+    static std::string sEmbeddedExeDir;
     static std::string sAudioLanguage;
 };
 

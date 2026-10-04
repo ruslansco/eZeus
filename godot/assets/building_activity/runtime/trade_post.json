@@ -1,0 +1,38 @@
+{
+  "asset": "trade_post",
+  "source": "art/trade_post/build_sprites.py",
+  "file": "trade_post.glb",
+  "bytes": 6102572,
+  "vertices": 34052,
+  "surfaces": 6,
+  "source_surfaces": 31,
+  "bounds_blender": [
+    [
+      -1.9954023361206055,
+      -1.9954023361206055,
+      -0.07000000029802322
+    ],
+    [
+      1.9954023361206055,
+      1.9954023361206055,
+      1.6699999570846558
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 37,
+    "allocation_target": 35000,
+    "base_sha256": "2e5afceddde1827fd2ca6f820d1e7623bcb3c054edae346fd729a3140547e628",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

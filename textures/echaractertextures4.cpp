@@ -59,6 +59,7 @@ void eCharacterTextures::loadCalydonianBoar() {
                                  eCalydonianBoarSpriteData45,
                                  eCalydonianBoarSpriteData60);
     fCalydonianBoarLoaded = true;
+    if(loadStatesHD({{"walk", &fCalydonianBoar.fWalk}, {"die", &fCalydonianBoar.fDie}, {"fight", &fCalydonianBoar.fFight}, {"fight2", &fCalydonianBoar.fFight2}}, fRenderer, fTileH, "calydonianboar")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "calydonianBoar", sds,
                          &eZeus_calydonianboarOffset, fRenderer);
 
@@ -76,6 +77,7 @@ void eCharacterTextures::loadCerberus() {
                                  eCerberusSpriteData45,
                                  eCerberusSpriteData60);
     fCerberusLoaded = true;
+    if(loadStatesHD({{"walk", &fCerberus.fWalk}, {"die", &fCerberus.fDie}, {"fight", &fCerberus.fFight}, {"fight2", &fCerberus.fFight2}}, fRenderer, fTileH, "cerberus")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "cerberus", sds,
                          &eZeus_cerberusOffset, fRenderer);
 
@@ -93,6 +95,7 @@ void eCharacterTextures::loadChimera() {
                                  eChimeraSpriteData45,
                                  eChimeraSpriteData60);
     fChimeraLoaded = true;
+    if(loadStatesHD({{"walk", &fChimera.fWalk}, {"die", &fChimera.fDie}, {"fight", &fChimera.fFight}, {"fight2", &fChimera.fFight2}}, fRenderer, fTileH, "chimera")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "chimera", sds,
                          &ePoseidon_ChimeraOffset, fRenderer);
 
@@ -110,6 +113,7 @@ void eCharacterTextures::loadCyclops() {
                                  eCyclopsSpriteData45,
                                  eCyclopsSpriteData60);
     fCyclopsLoaded = true;
+    if(loadStatesHD({{"walk", &fCyclops.fWalk}, {"die", &fCyclops.fDie}, {"fight", &fCyclops.fFight}, {"fight2", &fCyclops.fFight2}}, fRenderer, fTileH, "cyclops")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "cyclops", sds,
                          &eZeus_cyclopsOffset, fRenderer);
 
@@ -127,6 +131,7 @@ void eCharacterTextures::loadDragon() {
                                  eDragonSpriteData45,
                                  eDragonSpriteData60);
     fDragonLoaded = true;
+    if(loadStatesHD({{"walk", &fDragon.fWalk}, {"die", &fDragon.fDie}, {"fight", &fDragon.fFight}, {"fight2", &fDragon.fFight2}}, fRenderer, fTileH, "dragon")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "dragon", sds,
                          &eZeus_dragonOffset, fRenderer);
 
@@ -144,6 +149,7 @@ void eCharacterTextures::loadEchidna() {
                                  eEchidnaSpriteData45,
                                  eEchidnaSpriteData60);
     fEchidnaLoaded = true;
+    if(loadStatesHD({{"walk", &fEchidna.fWalk}, {"die", &fEchidna.fDie}, {"fight", &fEchidna.fFight}, {"fight2", &fEchidna.fFight2}}, fRenderer, fTileH, "echidna")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "echidna", sds,
                          &ePoseidon_EchidnaOffset, fRenderer);
 
@@ -161,6 +167,7 @@ void eCharacterTextures::loadHarpie() {
                                  eHarpieSpriteData45,
                                  eHarpieSpriteData60);
     fHarpieLoaded = true;
+    if(loadStatesHD({{"walk", &fHarpies.fWalk}, {"die", &fHarpies.fDie}, {"fight", &fHarpies.fFight}, {"fight2", &fHarpies.fFight2}}, fRenderer, fTileH, "harpies")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "harpie", sds,
                          &ePoseidon_HarpieOffset, fRenderer);
 
@@ -178,6 +185,7 @@ void eCharacterTextures::loadHector() {
                                  eHectorSpriteData45,
                                  eHectorSpriteData60);
     fHectorLoaded = true;
+    if(loadStatesHD({{"walk", &fHector.fWalk}, {"die", &fHector.fDie}, {"fight", &fHector.fFight}, {"fight2", &fHector.fFight2}}, fRenderer, fTileH, "hector")) return;   // art/characters/people/people7.py
     eSpriteLoader loader(fTileH, "hector", sds,
                          &eZeus_hectorOffset, fRenderer);
 

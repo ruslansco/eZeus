@@ -1,0 +1,86 @@
+{
+  "asset": "walker_atalanta",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_atalanta.glb",
+  "bytes": 9013728,
+  "vertices": 15348,
+  "surfaces": 3,
+  "source_surfaces": 21,
+  "bounds_blender": [
+    [
+      -0.2508317530155182,
+      -0.2249203324317932,
+      0.0005600449512712657
+    ],
+    [
+      0.21654482185840607,
+      0.7391999959945679,
+      0.9484936594963074
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Atalanta",
+        "sex": "female",
+        "profile": {
+          "age": 22,
+          "soft_features": true,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 0.86,
+          "cheek": 1.0,
+          "nose": -0.001,
+          "chin": -0.001,
+          "eye": 1.02,
+          "hair": [
+            [
+              0.1,
+              0.035,
+              0.012
+            ],
+            [
+              0.26,
+              0.09,
+              0.03
+            ]
+          ],
+          "hair_length": 0.012,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 51202
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "f2022c964d9e318e3cbf9c79fb0ba71c8ccc11124b3af01c6408a09fb0d8fe52",
+        "clavi_srgb": [
+          0.34,
+          0.2,
+          0.08
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 225,
+    "targets_after": 129,
+    "uv_attributes_removed": 0
+  }
+}

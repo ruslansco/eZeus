@@ -1,0 +1,21 @@
+{
+  "asset": "good_urchin",
+  "file": "good_urchin.glb",
+  "bytes": 1016556,
+  "vertices": 7880,
+  "surfaces": 1,
+  "bounds_blender": [
+    [
+      -0.1950966715812683,
+      -0.36531177163124084,
+      -0.15908968448638916
+    ],
+    [
+      0.3678377866744995,
+      0.2173716127872467,
+      0.13975225389003754
+    ]
+  ],
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "rights_status": "needs_evidence"
+}

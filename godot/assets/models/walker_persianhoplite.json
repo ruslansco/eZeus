@@ -1,0 +1,85 @@
+{
+  "asset": "walker_persianhoplite",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_persianhoplite.glb",
+  "bytes": 9790624,
+  "vertices": 15733,
+  "surfaces": 3,
+  "source_surfaces": 14,
+  "bounds_blender": [
+    [
+      -0.26431336998939514,
+      -0.17924624681472778,
+      0.0004999842494726181
+    ],
+    [
+      0.20212450623512268,
+      0.21102283895015717,
+      1.190000057220459
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Persian Immortal",
+        "sex": "male",
+        "profile": {
+          "age": 32,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 1.083,
+          "cheek": 1.005,
+          "nose": 0.001,
+          "chin": 0.0041,
+          "eye": 1.013,
+          "hair": [
+            [
+              0.008,
+              0.006,
+              0.005
+            ],
+            [
+              0.03,
+              0.022,
+              0.016
+            ]
+          ],
+          "hair_length": 0.011,
+          "beard_length": 0.035,
+          "grey": 0,
+          "seed": 93019
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "d556e56793ddfcdc8b4d07f8c39b2a05db931e507e41666744f25258c1117585",
+        "clavi_srgb": [
+          0.56,
+          0.2,
+          0.3
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 198,
+    "targets_after": 143,
+    "uv_attributes_removed": 0
+  }
+}

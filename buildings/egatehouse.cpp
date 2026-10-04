@@ -27,6 +27,9 @@ void eGatehouse::erase() {
             if(ub->type() == eBuildingType::road) {
                 const auto r = static_cast<eRoad*>(ub);
                 r->setUnderGatehouse(nullptr);
+                // The passage goes with the gatehouse. eBuilding::erase below empties every tile of the gatehouse, so a
+                // road left registered would sit off the map, and come back on it with the next save.
+                r->eBuilding::erase();
             }
         }
     }

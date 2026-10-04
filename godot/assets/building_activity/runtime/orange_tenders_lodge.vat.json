@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 50,
+ "parts": {
+  "orange_tenders_lodge_1": {
+   "row": 0,
+   "rows": 3,
+   "poses": 9,
+   "vertices": 2277,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004875659942626953
+  },
+  "orange_tenders_lodge_4": {
+   "row": 27,
+   "rows": 2,
+   "poses": 9,
+   "vertices": 1858,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024360418319702148
+  },
+  "orange_tenders_lodge_17": {
+   "row": 45,
+   "rows": 1,
+   "poses": 5,
+   "vertices": 72,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_05": 1,
+    "work_02": 2,
+    "work_06": 2,
+    "work_03": 3,
+    "work_07": 3,
+    "inactive": 4
+   },
+   "max_error": 0.000469207763671875
+  }
+ },
+ "source": {
+  "file": "orange_tenders_lodge.glb",
+  "bytes": 739336,
+  "mtime": 1790834077
+ }
+}

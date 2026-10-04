@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 360,
+ "parts": {
+  "warehouse_4": {
+   "row": 0,
+   "rows": 22,
+   "poses": 9,
+   "vertices": 22126,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048804283142089844
+  },
+  "warehouse_22": {
+   "row": 198,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 16809,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "warehouse_33": {
+   "row": 351,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 48,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024044513702392578
+  }
+ },
+ "source": {
+  "file": "warehouse.glb",
+  "bytes": 6293876,
+  "mtime": 1790833826
+ }
+}

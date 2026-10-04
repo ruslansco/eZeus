@@ -11,6 +11,7 @@ using namespace eMenu3D;
 void eMenuButton::setup(const std::string& text, const eStyle style,
                         const int minWidth) {
     mStyle = style;
+    setFontRole(eFontRole::label);
     setSmallFontSize();
     setText(text);
     fitContent();

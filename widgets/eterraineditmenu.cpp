@@ -8,6 +8,10 @@
 #include "eminimap.h"
 #include "egamewidget.h"
 #include "elanguage.h"
+#include "emainwindow.h"
+#include "epanelstyle.h"
+
+#include <cmath>
 
 void eTerrainEditMenu::initialize(eGameWidget* const gw,
                                   eGameBoard* const board) {
@@ -20,9 +24,12 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     const auto& intrfc = eGameTextures::interface();
     const auto& coll = intrfc[iRes];
     const auto tex = coll.fMapEditMenuBackground;
-    setTexture(tex);
+    setTexture(tex);    // gives the panel its width; paintEvent draws the new design
     setPadding(0);
     fitContent();
+    mMult = mult;
+    // on tall screens the panel runs to the bottom
+    setHeight(std::max(height(), window()->height()));
 
     mSpacing = 2*mult;
 
@@ -349,43 +356,80 @@ void eTerrainEditMenu::initialize(eGameWidget* const gw,
     mMiniMap->move(24*mult, wy);
     mMiniMap->setBoard(board);
 
-    addButton(coll.fBrushSize, w0);
-    mB1 = addButton(coll.fEmptyLand, w1);
-    addButton(coll.fForest, w2);
-    addButton(coll.fWaterMarshBeach, w3);
-    mB4 = addButton(coll.fMeadow, w4);
-    addButton(coll.fFishAndUrchin, w5);
-    addButton(coll.fRocks, w6);
-    addButton(coll.fScrub, w7);
-    addButton(coll.fElevation, w8);
-    addButton(coll.fDisasters, w9);
-    addButton(coll.fWaterPoints, w10);
-    addButton(coll.fLandInvasionPoints, w11);
-    addButton(coll.fExitEndEntryPoints, mW12);
-    addButton(coll.fAnimalPoints, w13);
+    // the category rail: gold medallions, like the city's side panel
+    const int railW = 22*mult;
+    const int railH = 17*mult;
+    const auto tip = [](const char* key, const char* fallback) {
+        const auto& t = eLanguage::text(key);
+        return t.empty() ? std::string(fallback) : t;
+    };
+    addButton("brush", railW, railH, w0)->setTooltip(tip("terrain_brush", "Brush size"));
+    mB1 = addButton("land", railW, railH, w1);
+    mB1->setTooltip(tip("terrain_land", "Empty land"));
+    addButton("tree", railW, railH, w2)->setTooltip(tip("terrain_forest", "Forest"));
+    addButton("water", railW, railH, w3)->setTooltip(tip("terrain_water", "Water, beach and marsh"));
+    mB4 = addButton("meadow", railW, railH, w4);
+    mB4->setTooltip(tip("terrain_meadow", "Meadow"));
+    addButton("fish", railW, railH, w5)->setTooltip(tip("terrain_fish", "Fish and urchins"));
+    addButton("rocks", railW, railH, w6)->setTooltip(tip("terrain_rocks", "Rocks and ores"));
+    addButton("scrub", railW, railH, w7)->setTooltip(tip("terrain_scrub", "Scrub"));
+    addButton("mountain", railW, railH, w8)->setTooltip(tip("terrain_elevation", "Elevation"));
+    addButton("fire", railW, railH, w9)->setTooltip(tip("terrain_disasters", "Disasters"));
+    addButton("river", railW, railH, w10)->setTooltip(tip("terrain_water_points", "River and water points"));
+    addButton("flag", railW, railH, w11)->setTooltip(tip("terrain_invasion", "Invasion points"));
+    addButton("gate", railW, railH, mW12)->setTooltip(tip("terrain_entry", "Entry, exit and territory"));
+    addButton("deer", railW, railH, w13)->setTooltip(tip("terrain_animals", "Animal points"));
 
     connectAndLayoutButtons();
 
     {
-        const auto btmButtons = new eWidget(window());
-        btmButtons->setPadding(0);
-
-        const auto b0 = eCheckableButton::sCreate(coll.fBuildRoad, window(), btmButtons);
+        // the original road and undo buttons here did nothing: rotation only
         mRotateButton = new eRotateButton(window());
-        btmButtons->addWidget(mRotateButton);
+        mRotateButton->setModern(true);
+        const int box = std::round(16.5*mult);
+        mRotateButton->resize(std::round(48.0*mult), box);
         mRotateButton->setDirectionSetter([gw](const eWorldDirection dir) {
             gw->setWorldDirection(dir);
         });
-        const auto b1 = eCheckableButton::sCreate(coll.fUndo, window(), btmButtons);
-
-        const int x = mult*24;
-        const int y = std::round(mult*279.5);
-        btmButtons->resize(b0->width() + b1->width() + mRotateButton->width(),
-                           b0->height());
-        btmButtons->move(x, y);
-        btmButtons->layoutHorizontally();
-        addWidget(btmButtons);
+        addWidget(mRotateButton);
+        mRotateButton->move(std::round(24*mult + (67*mult - mRotateButton->width())/2.0),
+                            std::round(279.5*mult));
     }
+}
+
+void eTerrainEditMenu::paintEvent(ePainter& p) {
+    using namespace ePanel;
+    const auto r = p.renderer();
+    const float ox = p.x();
+    const float oy = p.y();
+    const float W = width();
+    const float H = height();
+    const auto u = [this](const double v) { return static_cast<float>(v*mMult); };
+    const float hair = std::max(1.f, u(.45));
+    body(r, ox, oy, W, H, mMult);
+    // category rail
+    well(r, SDL_FRect{ox + u(1.8), oy + u(9.5), u(24.4), u(271)}, u(12), hair);
+    // tool card
+    {
+        const SDL_FRect f{ox + u(23), oy + u(8), W - u(25), u(203)};
+        roundRect(r, f, u(4), SDL_Color{20, 36, 70, 150}, SDL_Color{8, 14, 32, 195});
+        roundRect(r, SDL_FRect{f.x + 1, f.y + 1, f.w - 2, u(20)}, u(4),
+                  SDL_Color{140, 180, 240, 26}, SDL_Color{140, 180, 240, 0});
+        roundRect(r, f, u(4), SDL_Color{240, 198, 104, 175}, SDL_Color{150, 106, 34, 110}, hair);
+    }
+    // the minimap in a gold frame
+    if(mMiniMap) {
+        const SDL_FRect mf{ox + mMiniMap->x() - 1.f, oy + mMiniMap->y() - 1.f,
+                           mMiniMap->width() + 2.f, mMiniMap->height() + 2.f};
+        well(r, SDL_FRect{mf.x - u(2), mf.y - u(2), mf.w + u(4), mf.h + u(4)}, u(3), hair);
+        roundRect(r, mf, u(1), SDL_Color{236, 192, 96, 200}, SDL_Color{150, 106, 34, 170}, hair);
+    }
+    // rotation
+    well(r, SDL_FRect{ox + u(23), oy + u(277), W - u(25), u(21)}, u(10.5), hair);
+
+    const float bottom = std::min(oy + H, float(window()->height())) - u(3);
+    const float top = oy + u(303);
+    emblemAt(r, ox + W/2 + u(.6), top, u(58), bottom - top, mMult);
 }
 
 eTerrainEditMode eTerrainEditMenu::mode() const {

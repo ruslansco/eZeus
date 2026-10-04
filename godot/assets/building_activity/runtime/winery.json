@@ -1,0 +1,38 @@
+{
+  "asset": "winery",
+  "source": "art/winery/build_sprites.py",
+  "file": "winery.glb",
+  "bytes": 7393104,
+  "vertices": 33900,
+  "surfaces": 6,
+  "source_surfaces": 36,
+  "bounds_blender": [
+    [
+      -0.9900000095367432,
+      -0.9900000095367432,
+      -0.001999999862164259
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      1.4759645462036133
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 31,
+    "allocation_target": 35000,
+    "base_sha256": "f885377c6386cee39a4852577fef84df70500441532be72e4eec965ff371d58a",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

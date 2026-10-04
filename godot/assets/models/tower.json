@@ -1,0 +1,28 @@
+{
+  "asset": "tower",
+  "source": "art/tower/build_sprites.py",
+  "file": "tower.glb",
+  "bytes": 119748,
+  "vertices": 840,
+  "surfaces": 1,
+  "source_surfaces": 5,
+  "bounds_blender": [
+    [
+      -0.996999979019165,
+      -0.996999979019165,
+      0.0
+    ],
+    [
+      0.996999979019165,
+      0.996999979019165,
+      2.6999998092651367
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}
