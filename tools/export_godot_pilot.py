@@ -145,11 +145,25 @@ def construct(name):
             recolour = {'Imperial crimson': (.035, .032, .03), 'Aegean blue lacquer': (.02, .018, .016), 'Polished bronze and gold inlay': (.30, .17, .08)}
             for material in bpy.data.materials:
                 colour = recolour.get(material.name)
-                if colour and material.use_nodes:
+                if not colour:
+                    continue
+                # The vertex palette is read from the viewport colour; the shader's base colour is kept alike.
+                material.diffuse_color = (*colour, 1.0)
+                if material.use_nodes:
                     for node in material.node_tree.nodes:
                         if node.type == 'BSDF_PRINCIPLED':
                             node.inputs['Base Color'].default_value = (*colour, 1.0)
-        return str(source.relative_to(ROOT)), None, None
+        # The oars row as the naval script swings them (art/ships/build_sprites.py, pose): 24 phases of one stroke, each oar's
+        # pivot turned by its side. The crew and the hull hold still (their rig is not in the saved file).
+        pivots = [ob for ob in bpy.data.objects if ob.name.startswith('Oar pivot')]
+        def row(frame):
+            phase = 2 * math.pi * frame / 24
+            for ob in pivots:
+                side = 1 if ob.location.x > 0 else -1
+                ob.rotation_euler.z = side * .28 * math.sin(phase)
+                ob.rotation_euler.y = side * .09 * math.cos(phase)
+        row(0)
+        return str(source.relative_to(ROOT)), row, lambda frame: row(0)
     if name == 'fishing_boat':
         source = Path(__file__).with_name('godot_fishing_boat.py')
         execute_source(source, [])
@@ -428,6 +442,9 @@ def export(name):
     exported, mappings = [], []
     total = sum(len(g['vertices']) for g in groups.values())
     budget = (26000 if name == 'settlers1' else 12000) if pose else (2500 if name.startswith(('tree_', 'olive_', 'orange_', 'vine_', 'wall_', 'sanctuary_court_')) else 35000)
+    if name in ('trireme', 'enemy_boat'):
+        # The galleys keep their static detail (crew, shields, rigging) while their oars row.
+        budget = 35000
     if name in GARDEN_ASSETS:
         budget = GARDEN_BUDGETS[name]
     if human_asset:

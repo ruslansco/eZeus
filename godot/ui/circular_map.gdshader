@@ -1,8 +1,15 @@
 shader_type canvas_item;
-uniform vec2 canvas_size = vec2(1280.0, 720.0);
-uniform vec2 center = vec2(100.0);
+
+varying vec2 canvas_pos;
+
+uniform vec2 center = vec2(100.0, 100.0);
 uniform float radius = 96.0;
+
+void vertex() {
+	canvas_pos = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
+}
+
 void fragment() {
-	float distance_to_center = length(SCREEN_UV * canvas_size - center);
-	COLOR.a *= 1.0 - smoothstep(radius - 1.0, radius, distance_to_center);
+	float distance_to_center = length(canvas_pos - center);
+	COLOR.a *= 1.0 - smoothstep(radius - 0.75, radius, distance_to_center);
 }

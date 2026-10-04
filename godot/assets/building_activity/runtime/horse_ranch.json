@@ -1,0 +1,38 @@
+{
+  "asset": "horse_ranch",
+  "source": "art/horse_ranch/build_sprites.py",
+  "file": "horse_ranch.glb",
+  "bytes": 6303312,
+  "vertices": 32950,
+  "surfaces": 5,
+  "source_surfaces": 47,
+  "bounds_blender": [
+    [
+      -1.5043599605560303,
+      -1.5041499137878418,
+      -0.05999999865889549
+    ],
+    [
+      1.4900000095367432,
+      1.4900000095367432,
+      1.5295133590698242
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 108,
+    "allocation_target": 35000,
+    "base_sha256": "7d205cd610d22e74e201c6ec2092d63acb604c47cc36aa837c52d8715c720363",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

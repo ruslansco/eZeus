@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 390,
+ "parts": {
+  "college_0": {
+   "row": 0,
+   "rows": 26,
+   "poses": 6,
+   "vertices": 25780,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.0003447532653808594
+  },
+  "college_1": {
+   "row": 156,
+   "rows": 25,
+   "poses": 9,
+   "vertices": 25363,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "college_33": {
+   "row": 381,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 48,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00011655688285827637
+  }
+ },
+ "source": {
+  "file": "college.glb",
+  "bytes": 5099852,
+  "mtime": 1791092590
+ }
+}

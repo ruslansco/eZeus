@@ -1,0 +1,116 @@
+{
+  "asset": "walker_apollo",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_apollo.glb",
+  "bytes": 6489976,
+  "vertices": 90132,
+  "surfaces": 3,
+  "source_surfaces": 18,
+  "bounds_blender": [
+    [
+      -0.671870768070221,
+      -0.46981507539749146,
+      0.06532320380210876
+    ],
+    [
+      0.6064339280128479,
+      0.4272599220275879,
+      2.5259623527526855
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Apollo",
+        "sex": "male",
+        "profile": {
+          "age": 21,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 1.0,
+          "cheek": 1.02,
+          "nose": 0.001,
+          "chin": 0.003,
+          "eye": 1.03,
+          "hair": [
+            [
+              0.42,
+              0.3,
+              0.1
+            ],
+            [
+              0.8,
+              0.62,
+              0.26
+            ]
+          ],
+          "hair_length": 0.028,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 61606,
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.24,
+              0.16,
+              0.1
+            ],
+            "age": 21,
+            "laurel": true,
+            "headwear": false
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "c77c133f36a3468785c7efe4f68987f71fc87c4a95dcb25397235f2a7e07b4be",
+        "clavi_srgb": [
+          0.88,
+          0.62,
+          0.18
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 90236,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG",
+    "floating": "floating_gods_v1"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.24,
+          0.16,
+          0.1
+        ],
+        "age": 21,
+        "laurel": true,
+        "headwear": false
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      2.4304,
+      -0.0341
+    ],
+    "head_height": 0.39
+  }
+}

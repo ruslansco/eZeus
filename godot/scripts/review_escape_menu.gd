@@ -132,6 +132,7 @@ func run() -> void:
 		var dialog: Window=window()
 		check(dialog!=null and not menu.visible and city.core.commands_held,"menu opens "+action+" page while holding city")
 		if dialog==null:continue
+		await capture("dialog-"+action)
 		await right_click(Vector2(dialog.position)+Vector2(dialog.size)*.5)
 		check(menu.visible and root.get_node("UiAccess").dialog_open and window()==null,"right-click cancels "+action+" page and restores menu")
 	# Settings nested inside settings return one level at a time.

@@ -115,6 +115,8 @@ func run() -> void:
 	var info: Dictionary = panel.info
 	check(panel.name_label.text != "" and (panel.speech.text.contains(str(info.text)) or str(info.text).is_empty()), "name and spoken line are shown")
 	check(panel.figure != null, "the walker's 3D model stands in the portrait")
+	var portrait_path := "res://assets/portraits/%s.glb" % str(info.asset)
+	check(not ResourceLoader.exists(portrait_path) or (panel.figure.scene_file_path == portrait_path and panel.zoom_target == 1.0), "a man with a portrait model is shown with his Greek face, head and shoulders")
 	check(not str(info.voice).is_empty() and (panel.speaking or audio.muted() or not audio.enabled), "the voice line plays when the window opens")
 	await create_timer(1.2).timeout
 	await capture("person")

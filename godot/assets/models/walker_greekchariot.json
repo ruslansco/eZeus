@@ -2,10 +2,10 @@
   "asset": "walker_greekchariot",
   "source": "art/characters/people/build_person.py",
   "file": "walker_greekchariot.glb",
-  "bytes": 15257896,
-  "vertices": 34306,
+  "bytes": 15379912,
+  "vertices": 34116,
   "surfaces": 3,
-  "source_surfaces": 37,
+  "source_surfaces": 34,
   "bounds_blender": [
     [
       -0.3317031264305115,
@@ -63,9 +63,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "2c28ceac015e8c6a3b0698212eab5758b6fb5766b5dddf98a3e27c63c3cf2a84",
         "clavi_srgb": [
-          0.46,
-          0.13,
-          0.1
+          0.55,
+          0.2,
+          0.12
         ]
       }
     ],

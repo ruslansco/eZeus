@@ -2,10 +2,10 @@
   "asset": "walker_racechariot0",
   "source": "art/characters/people/build_person.py",
   "file": "walker_racechariot0.glb",
-  "bytes": 7095632,
-  "vertices": 34436,
+  "bytes": 7302948,
+  "vertices": 34267,
   "surfaces": 3,
-  "source_surfaces": 26,
+  "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.3317031264305115,
@@ -63,9 +63,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "335257dbb1ebdae66cc94a845e9f3b50b389a93b93854fb5c6ac21ab92a9cefe",
         "clavi_srgb": [
-          0.46,
-          0.13,
-          0.1
+          0.66,
+          0.1,
+          0.08
         ]
       }
     ],

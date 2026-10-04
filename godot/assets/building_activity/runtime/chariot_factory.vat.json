@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 351,
+ "parts": {
+  "chariot_factory_0": {
+   "row": 0,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 432,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00046622753143310547
+  },
+  "chariot_factory_1": {
+   "row": 9,
+   "rows": 20,
+   "poses": 9,
+   "vertices": 19815,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048792362213134766
+  },
+  "chariot_factory_5": {
+   "row": 189,
+   "rows": 18,
+   "poses": 9,
+   "vertices": 17692,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  }
+ },
+ "source": {
+  "file": "chariot_factory.glb",
+  "bytes": 7280804,
+  "mtime": 1791092585
+ }
+}

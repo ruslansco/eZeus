@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 405,
+ "parts": {
+  "drama_school_0": {
+   "row": 0,
+   "rows": 19,
+   "poses": 9,
+   "vertices": 19157,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "drama_school_2": {
+   "row": 171,
+   "rows": 26,
+   "poses": 9,
+   "vertices": 26456,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  }
+ },
+ "source": {
+  "file": "drama_school.glb",
+  "bytes": 6770268,
+  "mtime": 1791092635
+ }
+}

@@ -1,0 +1,38 @@
+{
+  "asset": "stadium",
+  "source": "art/stadium/build_sprites.py",
+  "file": "stadium.glb",
+  "bytes": 6746964,
+  "vertices": 39570,
+  "surfaces": 6,
+  "source_surfaces": 39,
+  "bounds_blender": [
+    [
+      -2.490000009536743,
+      -5.411449432373047,
+      -0.0
+    ],
+    [
+      2.490000009536743,
+      5.411449432373047,
+      2.8689303398132324
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 135,
+    "allocation_target": 35000,
+    "base_sha256": "42933f53c2b5d49124d95321ce3af0be52407283d9e432fb5bed7feb16c0e386",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

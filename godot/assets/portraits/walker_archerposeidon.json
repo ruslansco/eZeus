@@ -1,0 +1,115 @@
+{
+  "asset": "walker_archerposeidon",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_archerposeidon.glb",
+  "bytes": 4165340,
+  "vertices": 65655,
+  "surfaces": 3,
+  "source_surfaces": 20,
+  "bounds_blender": [
+    [
+      -0.2239569127559662,
+      -0.17906597256660461,
+      0.0004999842494726181
+    ],
+    [
+      0.20856398344039917,
+      0.18015077710151672,
+      0.9054171442985535
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Atlantean archer",
+        "sex": "male",
+        "profile": {
+          "age": 29,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "jaw": 0.96,
+          "cheek": 1.04,
+          "nose": 0.002,
+          "chin": 0.001,
+          "eye": 1.01,
+          "hair": [
+            [
+              0.03,
+              0.018,
+              0.01
+            ],
+            [
+              0.1,
+              0.06,
+              0.03
+            ]
+          ],
+          "hair_length": 0.016,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 41507,
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.24,
+              0.16,
+              0.1
+            ],
+            "age": 29,
+            "laurel": false,
+            "headwear": true
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "324a29853c5466bf87b01baf8f4abb66b0fc50ea6d29179966f4250818f391ec",
+        "clavi_srgb": [
+          0.86,
+          0.56,
+          0.24
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 65475,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.24,
+          0.16,
+          0.1
+        ],
+        "age": 29,
+        "laurel": false,
+        "headwear": true
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      0.8101,
+      -0.0117
+    ],
+    "head_height": 0.13
+  }
+}

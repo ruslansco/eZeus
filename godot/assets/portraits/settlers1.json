@@ -1,0 +1,196 @@
+{
+  "asset": "settlers1",
+  "source": "art/characters/people/build_person.py",
+  "file": "settlers1.glb",
+  "bytes": 6745540,
+  "vertices": 93589,
+  "surfaces": 3,
+  "source_surfaces": 37,
+  "bounds_blender": [
+    [
+      -0.3928292989730835,
+      -0.18034520745277405,
+      0.0003100087051279843
+    ],
+    [
+      0.3779570758342743,
+      0.24548034369945526,
+      0.8899999856948853
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Settler father",
+        "sex": "male",
+        "profile": {
+          "age": 39,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 1.13,
+          "cheek": 1.05,
+          "nose": 0.002,
+          "chin": 0.003,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.024,
+              0.012,
+              0.006
+            ],
+            [
+              0.085,
+              0.038,
+              0.015
+            ]
+          ],
+          "hair_length": 0.018,
+          "beard_length": 0.018,
+          "grey": 0.025,
+          "seed": 21101,
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.13,
+              0.1,
+              0.085
+            ],
+            "age": 39,
+            "laurel": false,
+            "headwear": false
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "86de9313e57629c15e0e3eb1b132c388fc1545fec46af8da45f75f5e674080f0",
+        "clavi_srgb": [
+          0.5,
+          0.15,
+          0.1
+        ]
+      },
+      {
+        "name": "Settler mother",
+        "sex": "female",
+        "profile": {
+          "age": 33,
+          "soft_features": true,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ],
+          "jaw": 0.85,
+          "cheek": 0.98,
+          "nose": -0.002,
+          "chin": -0.002,
+          "eye": 1.0,
+          "hair": [
+            [
+              0.043,
+              0.022,
+              0.01
+            ],
+            [
+              0.14,
+              0.069,
+              0.026
+            ]
+          ],
+          "hair_length": 0.011,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 21203
+        },
+        "body_height": 0.8700665268115699,
+        "body_sha256": "5db3c93be2164019bd60d5e25e6dab89e3b2aea8cc0bb735cd0c10dbe14dd827",
+        "clavi_srgb": [
+          0.52,
+          0.1,
+          0.24
+        ]
+      },
+      {
+        "name": "Settler child",
+        "sex": "male",
+        "profile": {
+          "age": 7,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ],
+          "jaw": 0.81,
+          "cheek": 1.13,
+          "nose": -0.009,
+          "chin": -0.003,
+          "eye": 1.08,
+          "hair": [
+            [
+              0.09,
+              0.045,
+              0.017
+            ],
+            [
+              0.23,
+              0.12,
+              0.046
+            ]
+          ],
+          "hair_length": 0.024,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 21307
+        },
+        "body_height": 0.8661333389414682,
+        "body_sha256": "2e192e32773d4e0dfbeaf92350577ed5ad11dbf5d68779bb64436eb5ac76f09b",
+        "clavi_srgb": [
+          0.38,
+          0.24,
+          0.48
+        ]
+      }
+    ],
+    "vertex_budget": 45000,
+    "allocation_target": 92084,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.13,
+          0.1,
+          0.085
+        ],
+        "age": 39,
+        "laurel": false,
+        "headwear": false
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.17,
+      0.8101,
+      -0.0917
+    ],
+    "head_height": 0.13
+  }
+}

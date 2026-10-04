@@ -2395,3 +2395,56 @@ pending; these results do not establish whole-game parity or minimum-Mac speed.
   `Objective*`. There are 16 new interface strings, all with Russian.
 - `--objectives-review en|ru` passes: closed, open, and with a sample housing shortfall (`captures/objectives-*.png`).
 - `validate_ui_text.gd` still fails on another session's decision-prompt strings, not on the new ones.
+
+## Character window — 3 October 2026
+
+- `python3 tools/review_character_panel.py --lang en` and `--lang ru`: **PASS, 26 checks each**, designated save and
+  real preferences unchanged. All 279 drawn walkers are described by the core; 183 have a voice file and all load; the
+  only wordless walkers are animals and carts with nothing to say (as in SDL). Covers picking (not through the dock),
+  pause/queue hold with the native clock held, model, voice play/stop/replay, others on the tile, 1280x720 at 125%/130%,
+  Escape and right-click closing with resume, a god, a hero, a wolf, Go to, and unchanged money/buildings/events.
+  Captures: `godot/captures/character-*-{en,ru}.png`.
+- `python3 tools/review_escape_menu.py --lang en`: PASS, 67 (right-click back unchanged).
+- The extension was rebuilt with `tools/build_godot_extension.sh` (it compiles the SDL widget too). The SDL
+  executable `Bin/eZeus` was not rebuilt.
+
+## Playable-loop slice 27: triremes, races, wharf and hippodrome pages — 4 October 2026
+
+- `validate_naval_race.gd`: **PASS, 65 checks** (EN and RU), headless.
+- `validate_menu_rest.gd` 179, `validate_assets.gd` 393 (the nine new models included), `validate_city_data.gd` 64: PASS.
+- `validate_ui_text.gd`: the new strings are used and translated; the orphan rows ("Decision required · Click to review", "%d pending decisions · Click to review", "Paused · Awaiting your reply", "Cancel a drag; send the selected banner to a tile") come from another session's HUD and controls work.
+- Review: `--menu-rest-review naval` (trireme at its wharf, the race with four chariots, the lineup), `captures/menu-rest-naval-*.png`.
+
+## Playable-loop slice 28: leaders and the player's cities — 4 October 2026
+
+- `validate_leaders_cities.gd`: **PASS, 52 checks** (leaders; cities in EN and RU), headless.
+- `validate_buildings.gd` 535, `validate_city_data.gd` 64, `validate_menu_rest.gd` 179, `validate_naval_race.gd` 65, `validate_embedded.gd`: PASS after the Build menu, header and pages started following the player's city in view.
+- Review: `--start-review leaders` in EN and RU (`captures/start-review-<lang>-*.png`, `captures/menu-rest-cities-*.png`).
+- Windowed `run_godot_pilot.py --validate`: EN **610 pass**, RU **610 pass** (on a second run; the first RU run once found the city unpaused at the start, which did not recur), each with the one long-standing failure (the world map's aid-regard check).
+- `validate_ui_text.gd`: the new strings are used and translated; the orphan rows ("City ground", the decision rail's and the controls' rows) come from another session's work.
+
+## Gold HUD — 4 October 2026
+
+- The theme (`build_ui_theme.gd`: `gold_frame`, `gold_face`) replaces the teal "Nova Roma" frames. Covered: the status
+  strip, the resource ribbon, mini panels, the dock, the floating tray, cards, tools, category medallions, building
+  cards, notice chips, the map pill and fold, the escape card, placement verdicts, progress bars, and the minimap ring
+  (`minimap.gd` reads `MapCard` `rim`).
+- No validator checks style colours. `--objectives-review gold` captures every panel: closed, open, housing,
+  inspector, build and messages (`captures/hud-gold-before-after.jpg`).
+
+## Gold dialogs and escape menu — 4 October 2026
+
+- The dialog frame now contains the title bar and close cross, and the escape menu has new heading, rule and action styles.
+- `tools/review_escape_menu.py`:
+  - RU passes all 67 checks; captures in `captures/escape-dialogs-gold.jpg`.
+  - EN passes all 67 checks, then Godot crashed at exit in `BaseMaterial3D::~BaseMaterial3D` (the known
+    material race).
+- Windowed runs before the dialog changes: EN 610/611 (only the known aid check fails). The RU run's 610 checks all
+  passed, then shutdown flooded `Parameter "material" is null` (123 MB) until stopped. That is the same threaded
+  GLB-loading bug.
+
+## Playable-loop slice 29: requests, box selection, the view on attacks, rowing, rioters, building workers — 4 October 2026
+
+- `validate_requests_units.gd` **17**, `validate_attack.gd` **53** (the view sent once to the attacked city), `validate_building_activity.gd` **219** (47 buildings), `validate_characters.gd` **208** (102 human walkers), `validate_assets.gd` 423, `validate_poses.gd`, `validate_naval_race.gd` 65, `validate_leaders_cities.gd` 52, `validate_fight.gd` 31: PASS.
+- Windowed `run_godot_pilot.py --validate`: EN and RU **617 pass**, each with the one long-standing failure (the world map's aid-regard check). The new checks: the summary's request row and Send button; three placed banners boxed on screen, each with its ring, sent together (they stand spaced around the tile, the farthest about seven tiles off, as the engine places a group); Escape lets them go. The windowed checks raise fresh companies first (earlier checks send the city's own abroad) and place their banners (a flag is drawn only for a placed banner).
+- Review: `--menu-rest-review anim` (the trireme rowing at two moments, the two rioters in their own dress, the college, dairy and armory at work), `captures/menu-rest-naval-anim-*.png`.

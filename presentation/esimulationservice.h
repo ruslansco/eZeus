@@ -91,6 +91,10 @@ private:
     std::string buildable();
     // The SDL side panel's data pages, finances and workforce allocation for the city in view (`city_data`).
     std::string cityData();
+    // The player's city the pages follow: the city in view when it is the player's, else the last of theirs in view.
+    eCityId playerCity() const;
+    // Every district of the board: owner, whether it can be bought and for how much, where it lies (`cities`).
+    std::string citiesJson();
     std::string inspect(int x, int y);
     // Drag-to-place roads: the tiles of the native drag path (the same path finder and ground rules as the
     // SDL view) between two tiles, the placement verdict for each, and the one-step build.
@@ -118,6 +122,12 @@ private:
     bool mPaused = true, mBlocked = false, mSentTerrain = false, mTerminal = false;
     bool mVictory = false, mAwaiting = false, mColonyChosen = false, mAllowTestCommands = false;
     int mSpeed = 0, mX = 0, mY = 0, mW = 0, mH = 0, mFocusX = 0, mFocusY = 0;
+    // The district under the middle of the view (the SDL view's viewed city) and the last of the player's own cities viewed:
+    // the pages, the Build menu and the header follow the player's city in view. The leader's name fills the messages.
+    eCityId mViewedCity = eCityId::neutralFriendly, mPlayerCity = eCityId::neutralFriendly;
+    std::string mPlayerName = "Hippodamus";
+    // Where the view should go once (the SDL view's viewTile on the player's own invasion or god attack of a city on the map).
+    bool mViewRequest = false; int mViewRequestX = 0, mViewRequestY = 0;
     double mAccumulator = 0;
     uint64_t mSequence = 0, mNextId = 1, mTicks = 0, mNextEvent = 1;
     std::map<const void*, uint64_t> mIds;

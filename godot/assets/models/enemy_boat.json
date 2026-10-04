@@ -2,7 +2,7 @@
   "asset": "enemy_boat",
   "source": "art/ships/trireme/source.blend",
   "file": "enemy_boat.glb",
-  "bytes": 8227396,
+  "bytes": 3825620,
   "vertices": 34976,
   "surfaces": 3,
   "source_surfaces": 24,
@@ -18,11 +18,17 @@
       2.62921404838562
     ]
   ],
-  "walk_samples": 0,
-  "idle_samples": 0,
-  "stride_tiles": null,
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
   "draw_batching": "vertex_palette_compatible_PBR",
-  "idle_mode": null
+  "idle_mode": "static_authored_held_pose",
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 49,
+    "uv_attributes_removed": 0
+  }
 }

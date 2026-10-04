@@ -1,0 +1,115 @@
+{
+  "asset": "walker_taxcollector",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_taxcollector.glb",
+  "bytes": 6658160,
+  "vertices": 92121,
+  "surfaces": 3,
+  "source_surfaces": 15,
+  "bounds_blender": [
+    [
+      -0.19398638606071472,
+      -0.16505607962608337,
+      0.0004999544471502304
+    ],
+    [
+      0.2070990651845932,
+      0.20693224668502808,
+      0.849088191986084
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Tax collector",
+        "sex": "male",
+        "profile": {
+          "age": 49,
+          "jaw": 1.0999999999999999,
+          "cheek": 1.05,
+          "nose": 0.002,
+          "chin": 0.003,
+          "eye": 0.99,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0,
+          "grey": 0.08,
+          "seed": 2898562914,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ],
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.24,
+              0.16,
+              0.1
+            ],
+            "age": 49,
+            "laurel": false,
+            "headwear": false
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "21c5fa52c96696cbed6aab1fabc0bb55377f950b95f9a3dcb8f423ea5030f4a4",
+        "clavi_srgb": [
+          0.33,
+          0.065,
+          0.27
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 92085,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.24,
+          0.16,
+          0.1
+        ],
+        "age": 49,
+        "laurel": false,
+        "headwear": false
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      0.8101,
+      -0.0117
+    ],
+    "head_height": 0.13
+  }
+}

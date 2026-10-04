@@ -3,7 +3,8 @@ extends RefCounted
 # Captures the objectives panel (ui/objective_card.gd, ui/objective_wreath.gd) over the designated city: closed, open with
 # the city's own objectives, and open with a sample housing objective that falls short (the shortfall of a new Sparta:
 # 27 Hovels lacking fleece and appeal), so its need chips can be reviewed. The sample is presentation only; nothing is
-# sent to the core. Files: captures/objectives-<name>-*.png.
+# sent to the core. Then the other panels in the shared gold frame: the inspector with the minimap, the build tray and
+# the message log. Files: captures/objectives-<name>-*.png.
 
 func shot(city: Node3D, name: String) -> void:
 	DisplayServer.window_move_to_foreground()
@@ -35,5 +36,27 @@ func run(city: Node3D, phase: String) -> void:
 	hud.set_goals(sample)
 	await shot(city, phase + "-housing")
 	okay = okay and hud.goals_list.get_child_count() == sample.goals.size()
+	# The other panels in the same gold frame: an inspected building with the minimap open, the build tray,
+	# the message log.
+	hud.set_goals_expanded(false)
+	var house: Dictionary = {}
+	for building in city.state.buildings:
+		if str(building.asset).begins_with("elite_house") or str(building.asset).begins_with("common_house"):
+			house = building
+			break
+	if not house.is_empty():
+		city.inspected = Vector2i(int(house.x), int(house.y))
+		city.refresh_inspection()
+	hud.set_minimap_open(true)
+	await shot(city, phase + "-inspector")
+	okay = okay and (house.is_empty() or city.inspector.visible)
+	city.close_inspection()
+	hud.set_minimap_open(false)
+	hud.open_category("Industry")
+	await shot(city, phase + "-build")
+	hud.close_build_tray()
+	hud.toggle_messages()
+	await shot(city, phase + "-messages")
+	hud.toggle_messages()
 	print("OBJECTIVES_REVIEW ", "PASS" if okay else "FAIL")
 	city.get_tree().quit(0 if okay else 1)

@@ -47,7 +47,7 @@ func run() -> void:
 			if manifest.has("character"):
 				names.append(file.trim_suffix(".json"))
 	names.sort()
-	check(names.size() == 93,"all 93 human walker assets are refined (the 31 townspeople, heroes and gods, the archer, the 52 soldiers, gods and heroes of the fighting slice, the eight monsters with human bodies, and the altar's priestess)")
+	check(names.size() == 102,"all 102 human walker assets are refined (the 31 townspeople, heroes and gods, the archer, the 52 soldiers, gods and heroes of the fighting slice, the eight monsters with human bodies, the altar's priestess, the Greek chariot, the four racing teams, the silver and orichalc miners and the two rioters) (%d)" % names.size())
 	var appearance := Appearance.new()
 	var bodies := {}
 	for asset in names:

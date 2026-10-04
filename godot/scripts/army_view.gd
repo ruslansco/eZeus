@@ -32,6 +32,8 @@ void fragment() {
 var root := Node3D.new()
 var flags: Dictionary = {}
 var selected := -1
+# Companies chosen together by a box (scripts/unit_selection.gd); their rings show beside the one selected.
+var group: Dictionary = {}
 var shader: Shader
 var pole_mesh: CylinderMesh
 var finial_mesh: SphereMesh
@@ -164,7 +166,7 @@ func update(main: Node, banners: Array) -> void:
 		if entry.cell != cell:
 			entry.cell = cell
 			entry.node.position = main.walker_surface_position(main.world_position(cell.x, cell.y, 0), 0.0, true)
-		entry.ring.visible = id == selected
+		entry.ring.visible = id == selected or group.has(id)
 	for id in flags.keys():
 		if not alive.has(id):
 			flags[id].node.queue_free()
@@ -172,8 +174,17 @@ func update(main: Node, banners: Array) -> void:
 
 func select(id: int) -> void:
 	selected = id
+	group.clear()
 	for key in flags:
 		flags[key].ring.visible = key == id
+
+func select_group(ids: Array) -> void:
+	selected = -1
+	group.clear()
+	for id in ids:
+		group[int(id)] = true
+	for key in flags:
+		flags[key].ring.visible = group.has(key)
 
 func banner_at(cell: Vector2i) -> int:
 	for id in flags:
@@ -186,6 +197,7 @@ func clear() -> void:
 		flags[id].node.queue_free()
 	flags.clear()
 	selected = -1
+	group.clear()
 
 func process(dt: float) -> void:
 	elapsed += dt

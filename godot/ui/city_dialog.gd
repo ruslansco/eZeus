@@ -6,6 +6,7 @@ extends AcceptDialog
 # (engine/ecitydata), so the values follow its language; the tab titles are this interface's. Each page's "See …" buttons
 # open its overlay. The window refreshes while it is open; a change is a queued command whose answer is the new data.
 
+const Goods = preload("res://scripts/goods.gd")
 const PAGES := [["overview", "Summary"], ["population", "Population"], ["employment", "Employment"], ["administration", "Administration"],
 	["husbandry", "Husbandry"], ["storage", "Storage"], ["hygiene", "Hygiene and safety"], ["appeal", "Appeal"], ["culture", "Culture"],
 	["science", "Science"], ["military", "Military"], ["mythology", "Mythology"]]
@@ -205,7 +206,69 @@ func fill() -> void:
 		_:
 			for item in page.get("lines", []):
 				line(column, str(item.label), str(item.value), int(item.severity))
+			if id == "overview":
+				fill_requests(column)
 	views(column, page)
+
+# The SDL overview's requests: the goods the cities of the world ask for (sent from a city of the player's that has them),
+# the heroes the gods ask for (sent once arrived) and the troops allies ask for, worded as on the world map.
+func fill_requests(column: VBoxContainer) -> void:
+	var world: Dictionary = core.query("world")
+	var requests: Array = world.get("requests", [])
+	var quests: Array = world.get("quests", [])
+	var troops := int(world.get("troop_requests", 0))
+	column.add_child(HSeparator.new())
+	heading(column, str(data.get("requests_title", "")))
+	if requests.is_empty() and quests.is_empty() and troops == 0:
+		caption(column, tr("No one asks anything of you."))
+		return
+	var cities: Array = world.get("cities", [])
+	var mine: Array = world.get("mine", [])
+	for request in requests:
+		var row := HBoxContainer.new()
+		row.name = "Request"
+		row.add_theme_constant_override("separation", 8)
+		var asker := int(request.city)
+		var name_label := Label.new()
+		name_label.text = "%s:  %d  %s" % [str(cities[asker].name) if asker >= 0 and asker < cities.size() else "?", int(request.count), Goods.name_of(int(request.resource))]
+		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(name_label)
+		var senders: Array = request.from.map(func(id): return int(id))
+		if senders.is_empty():
+			var none := Label.new()
+			none.theme_type_variation = "Caption"
+			none.text = tr("You do not have enough.")
+			row.add_child(none)
+		for entry in mine:
+			if not int(entry.id) in senders:
+				continue
+			var button := Button.new()
+			button.text = tr("Send from %s") % entry.name if mine.size() > 1 else tr("Send")
+			button.focus_mode = Control.FOCUS_NONE
+			var command := "world_fulfil %d %d" % [int(request.id), int(entry.id)]
+			button.pressed.connect(func(): send(command); refresh())
+			row.add_child(button)
+		column.add_child(row)
+	for quest in quests:
+		var row := HBoxContainer.new()
+		row.name = "Quest"
+		row.add_theme_constant_override("separation", 8)
+		var text := Label.new()
+		text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var state := tr("You have no hall for %s.") if not bool(quest.hall) else (tr("%s has not arrived yet.") if not bool(quest.ready) else tr("%s waits in the city."))
+		text.text = "%s — %s  ·  %s" % [str(quest.god_name), str(quest.name), state % str(quest.hero_name)]
+		row.add_child(text)
+		var go := Button.new()
+		go.text = tr("Send %s") % str(quest.hero_name)
+		go.disabled = not bool(quest.ready)
+		go.focus_mode = Control.FOCUS_NONE
+		var command := "world_quest %d" % int(quest.id)
+		go.pressed.connect(func(): send(command); refresh())
+		row.add_child(go)
+		column.add_child(row)
+	if troops > 0:
+		caption(column, tr("%d of the world's cities ask you for troops: answer them on the world map.") % troops)
 
 func fill_employment(column: VBoxContainer, page: Dictionary) -> void:
 	var wage: Dictionary = data.get("wage", {})

@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 395,
+ "parts": {
+  "podium_1": {
+   "row": 0,
+   "rows": 23,
+   "poses": 9,
+   "vertices": 23233,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "podium_2": {
+   "row": 207,
+   "rows": 20,
+   "poses": 9,
+   "vertices": 20317,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "podium_24": {
+   "row": 387,
+   "rows": 1,
+   "poses": 8,
+   "vertices": 64,
+   "frames": {
+    "work_00": 0,
+    "inactive": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7
+   },
+   "max_error": 7.510185241699219e-06
+  }
+ },
+ "source": {
+  "file": "podium.glb",
+  "bytes": 7758860,
+  "mtime": 1791092673
+ }
+}

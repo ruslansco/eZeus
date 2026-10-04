@@ -116,7 +116,7 @@ const ROTATION := PI / 4.0
 
 func map_scale() -> float:
 	# Cover the circular viewport with the upright native chart; the shader crops its corners.
-	return maxf(1.0,minf(size.x,size.y)-8.0) / (occupied_radius*sqrt(2.0))
+	return maxf(1.0, minf(size.x, size.y)) / (occupied_radius * 1.25)
 
 func cell_to_point(cell: Vector2) -> Vector2:
 	var local := Vector2(cell.x - origin.x + .5 - extent.x * .5, -(cell.y - origin.y + .5 - extent.y * .5))
@@ -129,10 +129,9 @@ func point_to_cell(point: Vector2) -> Vector2:
 func _draw() -> void:
 	draws += 1
 	if material != null:
-		material.set_shader_parameter("canvas_size",get_viewport_rect().size)
-		material.set_shader_parameter("center",get_global_rect().get_center())
-		material.set_shader_parameter("radius",minf(size.x,size.y)*.5)
-	draw_circle(size*.5,minf(size.x,size.y)*.5,Color(.055,.18,.24,.96))
+		material.set_shader_parameter("center", get_global_rect().get_center())
+		material.set_shader_parameter("radius", minf(size.x, size.y) * .5)
+	draw_circle(size * .5, minf(size.x, size.y) * .5, Color(.055, .18, .24, .96))
 	if texture == null:
 		return
 	draw_set_transform(size * .5, ROTATION, Vector2.ONE * map_scale())
@@ -156,6 +155,10 @@ func _draw() -> void:
 		draw_polyline(edge, Color(.025, .10, .14, .92), 3, true)
 		draw_colored_polygon(marker, Color(.87, .98, 1))
 		draw_polyline(edge, Color(.62, .90, .98), .8, true)
+	# The gold rim of the round map, inside the circular mask (colours from the theme's MapCard).
+	var radius := minf(size.x, size.y) * .5
+	draw_arc(size * .5, radius - 3.5, 0, TAU, 128, get_theme_color("rim_shadow", "MapCard"), 2.0, true)
+	draw_arc(size * .5, radius - 1.6, 0, TAU, 128, get_theme_color("rim", "MapCard"), 2.6, true)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:

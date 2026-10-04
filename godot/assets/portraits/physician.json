@@ -1,0 +1,115 @@
+{
+  "asset": "physician",
+  "source": "art/characters/physician/build_sprites.py",
+  "file": "physician.glb",
+  "bytes": 6523856,
+  "vertices": 90363,
+  "surfaces": 3,
+  "source_surfaces": 13,
+  "bounds_blender": [
+    [
+      -0.1906590759754181,
+      -0.2086508572101593,
+      -0.0012793061323463917
+    ],
+    [
+      0.2114950269460678,
+      0.240614116191864,
+      0.8306049704551697
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Greek physician",
+        "sex": "male",
+        "profile": {
+          "age": 36,
+          "jaw": 1.08,
+          "cheek": 0.97,
+          "nose": 0.003,
+          "chin": 0.004,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0.004,
+          "grey": 0.06,
+          "seed": 963107943,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.24,
+              0.16,
+              0.1
+            ],
+            "age": 36,
+            "laurel": false,
+            "headwear": false
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "661084529735d7f64f7edad818325794131cb3aa1cf90628603197fa2c405331",
+        "clavi_srgb": [
+          0.45,
+          0.075,
+          0.16
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 90136,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.24,
+          0.16,
+          0.1
+        ],
+        "age": 36,
+        "laurel": false,
+        "headwear": false
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      0.8101,
+      -0.0121
+    ],
+    "head_height": 0.13
+  }
+}

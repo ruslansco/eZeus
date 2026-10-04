@@ -459,7 +459,8 @@ func set_goals(episode: Dictionary) -> void:
 	for goal in goals:
 		share += 1.0 if goal.met else float(goal.get("progress", 0.0))
 	share = share / maxf(goals.size(), 1)
-	goals_title.text = tr("Objectives") + "  %d / %d" % [met, total]
+	# The count lives on the summary line under the title ("1 of 4 achieved"), not in the title itself.
+	goals_title.text = tr("Objectives")
 	%GoalsSummary.text = tr("%d of %d achieved") % [met, total]
 	%GoalsProgress.value = share
 	%GoalsProgress.theme_type_variation = "ObjectiveBarDone" if met == total and total > 0 else "ObjectiveBar"
@@ -886,7 +887,7 @@ func set_placement_feedback(text: String, valid: bool, active := true) -> void:
 func set_inspection_header(data: Dictionary) -> void:
 	%InspectionSummary.show_data(data)
 	inspector_text.visible=not data.has("footprint")
-	%InspectorTitle.text = str(data.get("name", tr("City ground")))
+	%InspectorTitle.text = str(data.get("name", ""))
 	%InspectorSubtitle.text = tr("City: %s") % str(data.city)
 	%Workforce.visible = data.has("employees") and int(data.get("max_employees", 0)) > 0
 	if %Workforce.visible:
@@ -1006,8 +1007,8 @@ func _layout_panels() -> void:
 	%MinimapPanel.visible=%MapToggle.button_pressed and not %BuildTray.visible and not message_panel.visible and not decision_expanded
 	%MapPeek.visible=not %MinimapPanel.visible and not %BuildTray.visible and not message_panel.visible
 	var map_bottom: float=%TimeGroup.offset_top-8
-	var map_height:=maxf(200,%MinimapPanel.get_combined_minimum_size().y)
-	var map_width:=maxf(200,%MinimapPanel.get_combined_minimum_size().x)
+	var map_height:=maxf(192,%MinimapPanel.get_combined_minimum_size().y)
+	var map_width:=maxf(192,%MinimapPanel.get_combined_minimum_size().x)
 	%MinimapPanel.anchor_left=0; %MinimapPanel.anchor_right=0
 	%MinimapPanel.offset_left=16; %MinimapPanel.offset_right=16+map_width
 	%MinimapPanel.offset_bottom=map_bottom; %MinimapPanel.offset_top=map_bottom-map_height

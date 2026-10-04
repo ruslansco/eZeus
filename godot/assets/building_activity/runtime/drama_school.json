@@ -1,0 +1,38 @@
+{
+  "asset": "drama_school",
+  "source": "art/drama_school/build_sprites.py",
+  "file": "drama_school.glb",
+  "bytes": 6770268,
+  "vertices": 34893,
+  "surfaces": 5,
+  "source_surfaces": 34,
+  "bounds_blender": [
+    [
+      -1.523040771484375,
+      -1.496999979019165,
+      0.0
+    ],
+    [
+      1.5,
+      1.5,
+      2.2820003032684326
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 51,
+    "allocation_target": 35000,
+    "base_sha256": "58218c76ad50438a5135d14b75e3a06e91ec5b5fc1c1204e6d37e400b4fdd107",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

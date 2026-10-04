@@ -1,0 +1,38 @@
+{
+  "asset": "dairy",
+  "source": "art/dairy/build_sprites.py",
+  "file": "dairy.glb",
+  "bytes": 5870896,
+  "vertices": 30453,
+  "surfaces": 5,
+  "source_surfaces": 47,
+  "bounds_blender": [
+    [
+      -1.0152666568756104,
+      -0.9950000047683716,
+      -0.004299327731132507
+    ],
+    [
+      0.9900000095367432,
+      0.9900000095367432,
+      1.097000002861023
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 69,
+    "allocation_target": 35000,
+    "base_sha256": "0508368888d95dd910d8622650deb3c89aebcde488628b855262bf9f78697e07",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

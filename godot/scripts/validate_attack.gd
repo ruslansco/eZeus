@@ -142,8 +142,12 @@ func run_language(lang: String, engine: String, scratch: String) -> void:
 	check(core.command("mythology").gods_attacking.is_empty(), lang + " the mythology page, which lists the gods attacking this city, does not list one sent away")
 
 	# ------------------------------------------------- the god is in the rival's city, the invasion is announced
-	core.command("speed 3")
-	core.command("pause 0")
+	# The view the attack asks for (the SDL view goes to the attacked city): sent once, in the next snapshot, which may be the
+	# answer to the next command (as here).
+	var view_at := []
+	for answer in [core.command("speed 3"), core.command("pause 0")]:
+		if answer.has("view_tile") and view_at.is_empty():
+			view_at = answer.view_tile
 	var announced := false
 	var god_seen := false
 	var started := Time.get_ticks_msec()
@@ -152,6 +156,8 @@ func run_language(lang: String, engine: String, scratch: String) -> void:
 			break
 		core.advance(.2)
 		var running: Dictionary = core.snapshot(false)
+		if running.has("view_tile") and view_at.is_empty():
+			view_at = running.view_tile
 		for event in running.get("events", []):
 			announced = announced or str(event.title).length() > 2 and (str(event.text).contains(god_name) or lang == "ru")
 			var choices: Array = event.get("actions", [])
@@ -162,6 +168,9 @@ func run_language(lang: String, engine: String, scratch: String) -> void:
 	core.command("pause 1")
 	check(announced, lang + " the god's invasion is announced")
 	check(god_seen, lang + " the god walks the rival's land")
+	var viewed: Dictionary = core.command("view_tile %d %d" % [int(view_at[0]), int(view_at[1])]) if not view_at.is_empty() else {}
+	var rival: Array = viewed.get("cities", []).filter(func(c): return int(c.id) == int(viewed.get("viewed", -1)) and str(c.owner) == "rival")
+	check(not view_at.is_empty() and rival.size() == 1, lang + " the view is sent to the attacked city once, as the SDL view goes there (%s)" % str(view_at))
 	core.close_city()
 
 func run() -> void:

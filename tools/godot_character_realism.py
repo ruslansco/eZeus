@@ -16,7 +16,7 @@ from mathutils.kdtree import KDTree
 REVISION = 'natural_people_v1'
 ROOT = Path(__file__).resolve().parents[2]
 HUMANS = []
-ASSETS = {'philosopher', 'physician', 'transporter', 'settlers1'}
+ASSETS = {'philosopher', 'walker_philosopher', 'physician', 'transporter', 'settlers1'}
 from godot_asset_sources import PEOPLE
 ASSETS.update('walker_' + role for role in PEOPLE)
 
@@ -33,11 +33,11 @@ AGES = {'Grower':29, 'Trader':46, 'Firefighter':32, 'Shepherd':54,
 def profile(name, previous=None):
     seed = int.from_bytes(hashlib.sha256(name.encode()).digest()[:4], 'little')
     p = copy.deepcopy(previous) if previous else dict(
-        age=AGES.get(name, 30 + seed % 24), jaw=.94 + (seed % 19)/100,
+        age=AGES.get(name, 60 + seed % 24), jaw=.94 + (seed % 19)/100,
         cheek=.95 + ((seed >> 4) % 12)/100, nose=.001 + ((seed >> 8)%6)*.001,
         chin=-.001 + ((seed >> 12)%6)*.001, eye=.97 + ((seed >> 16)%6)*.01,
         hair=((.027,.016,.009),(.095,.048,.022)), hair_length=.015,
-        beard_length=.013 if seed%3 else 0, grey=.08, seed=seed)
+        beard_length=.02 if not name.startswith('walker_') or 'woman' not in name.lower() else 0, grey=.65, seed=seed)
     p['skin'] = SKINS[seed % len(SKINS)]
     if name == 'Philosopher':
         p.update(skin=SKINS[0], hair=((.28,.26,.23),(.53,.51,.47)), grey=.65)

@@ -1,0 +1,6 @@
+Godot Engine v4.6.3.stable.official.7d41c59c4 - https://godotengine.org
+
+--- INSPECT EMPTY GROUND ---
+{ "kind": "inspection", "x": 10.0, "y": 10.0, "altitude": 0.0, "city": "Atlantis", "owned": true }
+{ "kind": "inspection", "x": 20.0, "y": 20.0, "altitude": 0.0, "city": "Atlantis", "owned": true }
+{ "kind": "inspection", "x": 30.0, "y": 30.0, "altitude": 0.0, "city": "Atlantis", "owned": true }

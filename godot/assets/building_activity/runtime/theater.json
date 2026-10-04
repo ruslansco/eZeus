@@ -1,0 +1,38 @@
+{
+  "asset": "theater",
+  "source": "art/theater/build_sprites.py",
+  "file": "theater.glb",
+  "bytes": 5778652,
+  "vertices": 38704,
+  "surfaces": 5,
+  "source_surfaces": 37,
+  "bounds_blender": [
+    [
+      -2.4900002479553223,
+      -2.4900002479553223,
+      -0.0019063844811171293
+    ],
+    [
+      2.4900002479553223,
+      2.4900002479553223,
+      2.4901278018951416
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 300,
+    "allocation_target": 35000,
+    "base_sha256": "b75dbc76ae6f5b5c65361b7ee5b3be9725df7415bbfbcae60a6ddc3903a05ef1",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

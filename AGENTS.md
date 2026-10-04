@@ -124,6 +124,8 @@ modes, native timing, map coordinates or real preferences during reviews. Use
 48 scoped Metal checks each, 23 headless; controls 59, menu 17 each. Wider high-DPI/mixed-display,
 platform and performance coverage remains pending. Read interface/validation docs.
 
+**Character window (3 October 2026):** right click on a walker opens `ui/character_panel.gd` (3D model on a plinth, name, occupation, the native spoken line typed with its voice, errand, others on the tile, Go to), pausing the city. Words come from `character_info` via `engine/echaracterinfotext` (shared with the SDL window; cosmetic randomness). Use `tools/review_character_panel.py --lang en` (or `ru`): 26 checks each.
+
 ## Read before continuing
 
 - [Godot README](godot/README.md): launch, controls, implemented scope and build.
@@ -194,7 +196,17 @@ Objectives panel (3 October): the `episode` query adds per goal `kind`, `current
 housing goal, `housing` (houses below the level by level, their people, and per need how many houses lack it, from
 `eHouseNeeds`). `ui/objective_card.gd` draws a card per goal (icon, bar with the count or the core's status, need chips
 with advice tooltips); `ui/objective_wreath.gd` is a 3D gold laurel in the header whose leaves grow with the share met
-and which turns once when a goal is met. Styles are the theme's `Objective*` variations; `--objectives-review <name>`. The initial city has 3,746 detail instances in 239 spatial
+and which turns once when a goal is met. Styles are the theme's `Objective*` variations; `--objectives-review <name>`.
+Gold HUD (4 October): every HUD surface now uses the objectives panel's look. `build_ui_theme.gd` has `gold_frame()`
+(lapis, gold rim, rounded corners, soft shadow) and `gold_face()` (button rest/hover/chosen), and the slim teal "Nova Roma"
+frames are gone. Categories are round gold medallions; tools and build cards are gold tiles; progress bars are gold.
+The minimap draws a gold rim from the theme's `MapCard` `rim`/`rim_shadow` colours. `--objectives-review` also
+captures the inspector with the minimap, the build tray and the message log.
+Dialogs and the escape menu match it: embedded windows use a gold frame grown upward by the title height
+(`expand_margin_top` = `title_height` 40, so the title and close cross sit inside it; Godot draws `embedded_border` under the
+content only), a 3 px gold top line, pale-gold bold titles, and a content panel with no second border. The escape menu
+uses `EscapeHeading`, `EscapeRule` and `EscapeAction`, with Primary for "Return to city". `review_escape_menu.gd` captures
+every dialog it opens (`captures/escape-dialog-<action>-<lang>.png`). The initial city has 3,746 detail instances in 239 spatial
 batches. Preserve native flags, foundation/road/field/water buffers, height anchors,
 per-section caps and distance fading; props have no collision or native RNG.
 Resource ground inspectors identify deposits in EN/RU. Construction, undo and
@@ -485,6 +497,12 @@ answer is the snapshot of what changed and nobody else sees it). Not ported: the
 The rest of the SDL build menu (3 October): `withMenuRest()` rows in `buildSpecs` for orchards, livestock, fishery, urchin quay, trireme wharf, horse ranch, palace, stadium, bridge, roadblock, the three columns, avenue, boulevard, water park, hippodrome (plates), crosswalk, `monument_<id>` (9 commemoratives) and `god_monument_<god>` (14). Their placement rules are shared with the SDL view in `engine/ebuildplacement.{h,cpp}`; change a rule there, never in one view only, and rebuild and sign `Bin/eZeus` too. Anchors: shore buildings and hippodrome plates take their first tile like a pier (the SDL view's tile is one further on), the palace, stadium, ranch and god monument the SDL pointer tile; the turn (T) picks the hippodrome plate and the water park's variant. Orchards and livestock are `build_area` tools; columns, avenues and boulevards `preview_path` / `build_path` (a click is a one-tile path). Monuments and crosswalks are not undoable. Test with `validate_menu_rest.gd`; review with `run_godot_pilot.py --menu-rest-review menu|build`. A building taken away by undo or demolition leaves the board at the next simulation step: validators that rebuild on the same site first `core.replay(4)`.
 
 City data, taxes, wages and priorities (3 October): `city_data` answers the SDL side panel's pages, the tax and wage rates, the workforce allocation and the finances; `set_tax`, `set_wage`, `set_priority`, `man_towers` change them (answer: the new data). The pages' verdicts live in `engine/ecitydata` and the SDL data widgets call it: change a threshold or a string there, not in one view. Tax rates must be stepped with `eCityData::stepTaxRate` / `taxRatesInOrder` (the enum's veryLow is 7%, low 3%). Godot's window is `ui/city_dialog.gd` (F7, Game, City…); test with `validate_city_data.gd`.
+
+Triremes, races and the two pages (4 October): race chariots are missiles; the snapshot adds them to the walkers from the hippodrome plates' tiles (no `+.5`: missiles and walkers share the tile space). `trireme_move`, `building_switch` and the inspection's `notes`/`switch`/`hippodrome` are described in slice 27 of the migration document; the page texts live in `engine/ebuildinginfotext` (shared with the SDL widgets). The hippodrome tool turns 0-7 in `preview`/`build` and in `turn_placement`. When recolouring an export, set the material's `diffuse_color` too: the vertex palette is read from it. Test with `validate_naval_race.gd` (`test_trireme`, `test_race`).
+
+Leaders and cities (4 October): saves live in `user://saves/<leader>` (`scripts/leaders.gd`, `SaveFiles.directory()`); older root saves are listed, never moved. Tests and reviews must set Engine meta `ezeus_save_directory` and `ezeus_settings_path` to scratch paths so the player's profile is untouched. The core's pages follow `playerCity()` (the player's district in view, reported by `view_tile`); use it rather than `currentCityId()` for anything the player governs. `--start-review leaders` drives the start menu and then a two-city adventure.
+
+Requests, groups, rowing (4 October): `banners_move` takes several companies (`eSoldierBanner::sPlace`); `scripts/unit_selection.gd` draws the selection box. `view_tile` in a snapshot moves the camera once (player invasions and god attacks; the event fires inside the sending command, so validators must read that command's next answers). Person exports take their clothing colours from `art/characters/roman/wardrobe.py` by the person's name: a new people-kit entry needs a row there, or it wears the default cream and red. Ships keep a 35,000-vertex budget when posed. Building workers: add a building to `tools/building_activity_assets.json` and run `tools/export_building_activity.py --assets <name>`.
 
 Controls and settings (3 October): `scripts/key_bindings.gd` (static, `KeyBindings`) is the one table of rebindable controls (33: eight held camera keys, the city overview, the placement turn, the demolition tool, undo, pause, quick save and load, the world map, army and mythology keys, mute, the details panel, fullscreen (default Alt+Enter) and the overlays' keys) with their defaults, kinds and rules. A binding is one code, the physical key plus Ctrl/Cmd and Alt (Shift is never part of one: it stays the fast-pan and wall-fill modifier, and a key matches with or without it;
 the SDL game's own Ctrl/Cmd+Z for undo is one of the defaults). Held camera keys (`orbit_*`, `tilt_*`, `pan_*`, no modifier allowed) are InputMap actions kept in step by `apply_input_map()`; every other handler asks `KeyBindings.matches(event, id)` (`main.gd`'s `_unhandled_input`, `ui/world_map.gd`), and `overlay_for(event)` names the overlay of a digit, Tab or the back quote. `assign(id, code)` hands a key over and gives the control that had it the key the first one leaves (refused: `reserved` for Escape, Delete and the modifier keys, `modifier` for a held, overview or overlay key

@@ -78,6 +78,9 @@ const ArmyView = preload("res://scripts/army_view.gd")
 const MythologyDialog = preload("res://ui/mythology_dialog.gd")
 const CityDialog = preload("res://ui/city_dialog.gd")
 const TriremeOrders = preload("res://scripts/trireme_orders.gd")
+const CitySwitch = preload("res://ui/city_switch.gd")
+const UnitSelection = preload("res://scripts/unit_selection.gd")
+const Leaders = preload("res://scripts/leaders.gd")
 const ArmyPanelScene = preload("res://ui/army_panel.tscn")
 const InvasionBanner = preload("res://ui/invasion_banner.gd")
 const EnlistDialog = preload("res://ui/enlist_dialog.gd")
@@ -124,6 +127,8 @@ var forest_batches = TerrainForest.new()
 var street_trees = TerrainAvenues.new()
 var terrain_bridges = TerrainBridges.new()
 var trireme_orders = TriremeOrders.new()
+var city_switch = CitySwitch.new()
+var unit_selection = UnitSelection.new()
 var extent := Vector2i(32, 32)
 var chunks: Dictionary = {}
 var terrain_levels: Dictionary = {}
@@ -343,6 +348,10 @@ func _ready() -> void:
 			# A save that cannot be opened must not leave an empty world: fall back to the test city.
 			core.start_embedded(engine, designated, core_language, save_directory())
 			hint.text = tr("That save could not be opened; the test city was loaded instead")
+		# The leader's name, which the city's messages address (validation keeps the designated save's own).
+		if core.simulation != null and not validate and not Leaders.current().is_empty():
+			core.query("player_name " + Leaders.current())
+		city_switch.attach(self)
 		# What the city may build is the core's answer, so the menu is filled once the city is open.
 		refresh_catalog()
 		if core.simulation != null and state.get("paused", true):
@@ -607,6 +616,7 @@ func reason_text(code: String) -> String:
 		"needs_hippodrome_straight": "Place this on a straight piece of the hippodrome",
 		"animal_limit": "Build more sheds, dairies or corrals for more animals",
 		"invalid_city_setting": "That setting is not one the city offers",
+		"not_for_sale": "That city is not for sale",
 		"no_trireme": "That trireme cannot be given orders now",
 		"invalid_trireme_order": "Choose a trireme, then the water to send it to",
 		"invalid_switch": "This building has no such switch",
@@ -808,8 +818,15 @@ func refresh_inspection() -> void:
 		return
 	var value: Dictionary = core.query("inspect %d %d" % [inspected.x, inspected.y])
 	if value.has("error"):
-		inspector.visible = false
+		close_inspection()
 		return
+	if not value.has("footprint"):
+		var kind: String = terrain_details.resource(tiles[inspected]) if tiles.has(inspected) else ""
+		var labels := {"stone":"Stone","tall_stone":"Rock outcrop","copper":"Copper","silver":"Silver","marble":"Marble","black_marble":"Black marble","orichalcum":"Orichalcum"}
+		if not labels.has(kind):
+			close_inspection()
+			return
+		value["name"] = labels[kind]
 	inspector.visible = not hud.message_panel.visible
 	hud.set_inspection_header(value)
 	var lines: Array[String] = []
@@ -854,6 +871,10 @@ func command_finished(command: String, result: Dictionary) -> void:
 		hint.text = tr("The city's industry and workforce have been updated.")
 	elif command.begins_with("trade "):
 		hint.text = tr("Trade orders updated. Traders will follow them.")
+	elif command.begins_with("buy_city"):
+		city_switch.bought(result)
+	elif command.begins_with("banners_move"):
+		hint.text = tr("The companies march there.") if not result.has("error") else reason_text(str(result.error))
 	elif command.begins_with("trireme_move"):
 		hint.text = tr("The trireme sails there.") if not result.has("error") else reason_text(str(result.error))
 	elif command.begins_with("building_switch"):
@@ -1127,6 +1148,9 @@ func receive_state(value: Dictionary) -> void:
 	# What the native rules asked to be heard since the last snapshot, and whether the music should be a battle's.
 	GameAudio.play_native(value.get("sounds", []))
 	GameAudio.play_music("battle" if str(value.get("music", "city")) == "battle" else "city")
+	# The player's own invasion or god attack of a city on the map: the view goes to it, as the SDL view does.
+	if value.has("view_tile") and not initial:
+		jump_to_cell(Vector2(int(value.view_tile[0]), int(value.view_tile[1])))
 	static_batches.activity.receive(state)
 	if initial:
 		# Model files are the largest share of city load; read them on worker threads
@@ -1777,6 +1801,8 @@ func _process(dt: float) -> void:
 	if frame_count % CitizenLod.CHECK_FRAMES == 0 and not walkers.is_empty():
 		citizen_lod.update(walkers, orbit.camera.global_position, static_batches, models)
 	if not state.is_empty():
+		if not world_map.visible and city_switch.city != null:
+			city_switch.update(dt)
 		placement_age += dt
 		inspection_age += dt
 		if inspection_age >= .5:
@@ -1832,6 +1858,10 @@ func _process(dt: float) -> void:
 		elif not pyramid_review.is_empty() and not captured and frame_count > 80:
 			captured = true
 			await preload("res://scripts/review_pyramids.gd").new().run(self, pyramid_review)
+		elif Engine.has_meta("ezeus_cities_review") and not captured and frame_count > 120:
+			captured = true
+			Engine.remove_meta("ezeus_cities_review")
+			await preload("res://scripts/review_menu_rest.gd").new().run(self, "cities")
 		elif not menu_rest_review.is_empty() and not captured and frame_count > 80:
 			captured = true
 			await preload("res://scripts/review_menu_rest.gd").new().run(self, menu_rest_review)
@@ -1997,9 +2027,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		road_drag.cancel(self)
 		update_hint()
 		return
+	# The selection box: dragging with the selection tool, finished on release.
+	if event is InputEventMouseMotion and unit_selection.pressing and mode == "select":
+		unit_selection.drag(self, event.position)
+	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and unit_selection.pressing:
+		if unit_selection.release(self, event.position):
+			return
 	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and road_drag.active:
 		pick_tile(event.position)
 		road_drag.finish(self, picked if tiles.has(picked) else Vector2i(99999, 99999))
+		return
+	# A group chosen with a box goes there together (the SDL view's right click on a selection).
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT and mode == "select" and unit_selection.has_group(self):
+		pick_tile(event.position)
+		if tiles.has(picked):
+			hint.text = tr("The chosen units are on their way.") if unit_selection.order(self, picked) else reason_text("command_queue_full")
 		return
 	# A selected trireme sails to the water under the pointer (the SDL view's right click).
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT and mode == "select" and trireme_orders.selected >= 0:
@@ -2025,11 +2067,14 @@ func _unhandled_input(event: InputEvent) -> void:
 			road_drag.begin(self, picked, mode)
 			return
 		if mode == "select":
+			unit_selection.press(self, event.position)
+			if unit_selection.has_group(self):
+				unit_selection.clear(self)
 			if placing_banner >= 0:
 				place_banner(picked)
 				return
 			# A click on one of the player's triremes selects it for orders; any other click lets it go.
-			var trireme := trireme_orders.trireme_at(walkers, picked)
+			var trireme := trireme_orders.trireme_at(self, picked)
 			if trireme >= 0:
 				trireme_orders.select(self, trireme)
 				close_inspection()
@@ -2048,7 +2093,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				army_panel.close()
 			inspected = picked
 			refresh_inspection()
-			GameAudio.request_building_sound(core, picked)
+			if inspected != Vector2i(99999, 99999):
+				GameAudio.request_building_sound(core, picked)
 		else:
 			placement_key = ""
 			refresh_placement()
@@ -2099,7 +2145,7 @@ func right_click_city(event: InputEventMouseButton) -> bool:
 			return true
 		if child is Window and child.visible: return false
 	# Selected armies retain native right-click orders on terrain; clicks on UI go back.
-	var army_map_click: bool = mode == "select" and ((army_panel.visible and army_panel.selected_id >= 0 and not army_panel.get_global_rect().has_point(event.position)) or trireme_orders.selected >= 0) and not hud.message_panel.visible and not hud.decision_expanded and not hud.get_node("%BuildTray").visible
+	var army_map_click: bool = mode == "select" and ((army_panel.visible and army_panel.selected_id >= 0 and not army_panel.get_global_rect().has_point(event.position)) or trireme_orders.selected >= 0 or unit_selection.has_group(self)) and not hud.message_panel.visible and not hud.decision_expanded and not hud.get_node("%BuildTray").visible
 	for name in ["EventRail", "ResourceRibbon", "ResourcesReveal", "MinimapPanel", "GoalsPanel", "BottomBar", "TimeGroup"]:
 		var panel: Control = hud.get_node("%" + name)
 		if panel.is_visible_in_tree() and panel.get_global_rect().has_point(event.position): army_map_click = false
@@ -2142,6 +2188,7 @@ func _input(event: InputEvent) -> void:
 	if hud.get_node("%BuildTray").visible:hud.close_build_tray();return
 	if road_drag.active:road_drag.cancel(self);update_hint();return
 	if placing_banner>=0:end_banner_placement();return
+	if unit_selection.has_group(self):unit_selection.clear(self);update_hint();return
 	if trireme_orders.selected>=0:trireme_orders.clear();update_hint();return
 	if army_panel.visible:army_panel.close();return
 	if inspector.visible:close_inspection();return
@@ -2207,6 +2254,10 @@ func open_character(walker_id: int) -> void:
 	var answer: Dictionary = core.query("character_info %d" % walker_id)
 	if answer.has("error"):
 		return
+	open_character_info(answer)
+
+# Opens the window on a `character_info` answer (reviews pass one of their own).
+func open_character_info(answer: Dictionary) -> void:
 	close_character()
 	if inspector.visible: close_inspection()
 	var observed: Dictionary = core.simulation.snapshot(false)

@@ -41,13 +41,15 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation",16)
 	panel.add_child(column)
 	add_heading(column,"Game menu","Heading")
+	var rule:=HSeparator.new();rule.theme_type_variation="EscapeRule"
+	column.add_child(rule)
 	caption=Label.new();caption.theme_type_variation="Caption"
 	caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;caption.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	column.add_child(caption)
 	var body:=GridContainer.new();body.columns=2
 	body.add_theme_constant_override("h_separation",20);body.add_theme_constant_override("v_separation",6)
 	column.add_child(body)
-	add_heading(body,"Your city","ToolHeading");add_heading(body,"Settings","ToolHeading")
+	add_heading(body,"Your city","EscapeHeading");add_heading(body,"Settings","EscapeHeading")
 	for pair in [["resume","display"],["save","interface"],["load","controls"],["quick_save","sound"],["quick_load","settings"],["main_menu","language"]]:
 		for action in pair:
 			if action=="language":
@@ -59,7 +61,7 @@ func _ready() -> void:
 					retranslate())
 				body.add_child(language_choice)
 			else:add_action(body,action)
-	add_heading(column,"City views","ToolHeading")
+	add_heading(column,"City views","EscapeHeading")
 	var views:=GridContainer.new();views.columns=2
 	views.add_theme_constant_override("h_separation",20);views.add_theme_constant_override("v_separation",6)
 	column.add_child(views)
@@ -78,7 +80,7 @@ func add_action(parent: Control, action: String) -> void:
 	button.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button.custom_minimum_size.y=34
 	button.alignment=HORIZONTAL_ALIGNMENT_LEFT
-	if action=="resume":button.theme_type_variation="Primary"
+	button.theme_type_variation="Primary" if action=="resume" else "EscapeAction"
 	button.pressed.connect(func():
 		if action=="resume":closed.emit()
 		else:action_requested.emit(action))

@@ -20,6 +20,8 @@ RITE_PEOPLE = ['priestess']
 # The Greek war chariot, the hippodrome's four racing teams and the silver and orichalc miners (3 October).
 RACERS = ['racechariot0','racechariot1','racechariot2','racechariot3']
 PEOPLE += ['greekchariot','silverminer','orichalcminer'] + RACERS
+# The rioters, with their own fight and die clips (4 October).
+PEOPLE += ['disgruntled','elitecitizen']
 PEOPLE += GODS + HEROES + MONSTER_PEOPLE + RITE_PEOPLE
 CREATURES = MONSTER_BEASTS
 # Soldiers (the player's, the allies' and every invading nationality): their models also carry the fight, fight2 and die clips of
@@ -32,7 +34,7 @@ COMBAT = ['archer','archerposeidon','hopliteposeidon','chariotposeidon','greekho
           'phoenicianhorseman','phoenicianarcher','mayanhoplite','mayanarcher','amazonspear','amazonarcher','areswarrior']
 # The gods and heroes fight beside them (the gods also bless, vanish and appear); aphrodite and theseus were exported before the clips existed.
 COMBAT += ['aphrodite','theseus'] + GODS + HEROES + MONSTER_PEOPLE + MONSTER_BEASTS + RITE_PEOPLE
-COMBAT += ['greekchariot']
+COMBAT += ['greekchariot','disgruntled','elitecitizen']
 # Riders, charioteers and centaurs carry their horses: a larger vertex allowance than a person on foot.
 MOUNTED = ['walker_' + n for n in ['chariotposeidon','greekhorseman','horseman','trojanhorseman','centaurhorseman','centaurarcher',
                                     'persianhorseman','egyptianchariot','atlanteanchariot','phoenicianhorseman','bellerophon',

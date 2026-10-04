@@ -1,0 +1,38 @@
+{
+  "asset": "armory",
+  "source": "art/armory/build_sprites.py",
+  "file": "armory.glb",
+  "bytes": 5506664,
+  "vertices": 33224,
+  "surfaces": 6,
+  "source_surfaces": 42,
+  "bounds_blender": [
+    [
+      -1.026280164718628,
+      -0.9954612851142883,
+      -0.07000000029802322
+    ],
+    [
+      0.9954612851142883,
+      0.9954612851142883,
+      2.0295135974884033
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "building_activity": {
+    "revision": "authored_work_v1",
+    "frames": 8,
+    "inactive": "inactive",
+    "fps_at_normal_speed": 10,
+    "dynamic_source_objects": 54,
+    "allocation_target": 35000,
+    "base_sha256": "162bf85e3a87651d5ff1e90b65e30728c5defe95728e353eeace8416be804a7e",
+    "state": "native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG"
+  }
+}

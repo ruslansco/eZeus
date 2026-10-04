@@ -1,0 +1,115 @@
+{
+  "asset": "walker_bellerophon",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_bellerophon.glb",
+  "bytes": 4328652,
+  "vertices": 68269,
+  "surfaces": 3,
+  "source_surfaces": 25,
+  "bounds_blender": [
+    [
+      -0.6883398294448853,
+      -0.5766094326972961,
+      -0.006734237540513277
+    ],
+    [
+      0.6883398294448853,
+      0.5998237729072571,
+      1.2560615539550781
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Bellerophon",
+        "sex": "male",
+        "profile": {
+          "age": 24,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ],
+          "jaw": 1.04,
+          "cheek": 1.02,
+          "nose": 0.002,
+          "chin": 0.004,
+          "eye": 1.01,
+          "hair": [
+            [
+              0.22,
+              0.15,
+              0.06
+            ],
+            [
+              0.48,
+              0.36,
+              0.16
+            ]
+          ],
+          "hair_length": 0.02,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 51808,
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.13,
+              0.1,
+              0.085
+            ],
+            "age": 24,
+            "laurel": false,
+            "headwear": true
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "c65862d598d0112c87c6f872d66d983aa919367f01605d4d1c41ee92b11ee02e",
+        "clavi_srgb": [
+          0.16,
+          0.3,
+          0.62
+        ]
+      }
+    ],
+    "vertex_budget": 45000,
+    "allocation_target": 67335,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.13,
+          0.1,
+          0.085
+        ],
+        "age": 24,
+        "laurel": false,
+        "headwear": true
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      0.8101,
+      -0.0117
+    ],
+    "head_height": 0.13
+  }
+}

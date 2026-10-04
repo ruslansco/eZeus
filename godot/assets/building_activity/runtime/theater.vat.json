@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 567,
+ "parts": {
+  "theater_0": {
+   "row": 0,
+   "rows": 33,
+   "poses": 9,
+   "vertices": 33323,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  },
+  "theater_1": {
+   "row": 297,
+   "rows": 30,
+   "poses": 9,
+   "vertices": 30290,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048828125
+  }
+ },
+ "source": {
+  "file": "theater.glb",
+  "bytes": 5778652,
+  "mtime": 1791092805
+ }
+}

@@ -6,11 +6,12 @@ extends Control
 signal closed
 signal focus_requested(walker_id: int)
 
-const PORTRAIT_SIZE := Vector2(268, 348)
+const PORTRAIT_SIZE := Vector2(296, 380)
 const TYPE_RATE := 0.028       # Seconds per letter when the line has no voice to keep time with.
 const TURN_SWAY := 0.32        # Radians the figure turns either way while idle.
 const VOICE_ICON := preload("res://ui/icons/voice.svg")
 const STOP_ICON := preload("res://ui/icons/stop.svg")
+const PORTRAIT_DIR := "res://assets/portraits/"
 const KIND_TEXT := {"god": "Olympian", "hero": "Hero", "monster": "Monster"}
 
 var city: Node                 # main.gd: models, walker poses and the core link.
@@ -51,6 +52,14 @@ var typed := 0.0
 var dragging := false
 var drag_turn := 0.0
 var speaking := false
+var full_look := Vector3.ZERO
+var full_offset := Vector3(0, 0, 3)
+var bust_look := Vector3.ZERO
+var bust_local := Vector3.ZERO  # the head in the figure's frame; the bust follows it as the figure turns
+var bust_offset := Vector3(0, 0, 1)
+var zoom := 0.0           # 0 the whole figure, 1 head and shoulders.
+var zoom_target := 0.0
+var can_zoom := false
 
 func _ready() -> void:
 	name = "CharacterPanel"
@@ -119,7 +128,7 @@ func build_portrait() -> Control:
 	holder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	holder.mouse_filter = Control.MOUSE_FILTER_STOP
 	holder.mouse_default_cursor_shape = Control.CURSOR_DRAG
-	holder.tooltip_text = tr("Drag to turn")
+	holder.tooltip_text = tr("Drag to turn · wheel or double-click to zoom")
 	holder.gui_input.connect(portrait_input)
 	layers.add_child(holder)
 	viewport.own_world_3d = true
@@ -147,7 +156,7 @@ func build_stage() -> void:
 	environment.background_mode = Environment.BG_CLEAR_COLOR
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color(.62, .68, .74)
-	environment.ambient_light_energy = .55
+	environment.ambient_light_energy = .42
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	var world_environment := WorldEnvironment.new()
 	world_environment.environment = environment
@@ -155,7 +164,7 @@ func build_stage() -> void:
 	# Key light from the upper left (the city's afternoon sun), a cool fill and a warm rim behind.
 	var key := DirectionalLight3D.new()
 	key.light_color = Color(1.0, .93, .82)
-	key.light_energy = 1.35
+	key.light_energy = 1.25
 	key.shadow_enabled = true
 	key.rotation = Vector3(deg_to_rad(-38), deg_to_rad(-34), 0)
 	stage.add_child(key)
@@ -174,7 +183,7 @@ func build_stage() -> void:
 	drum.top_radius = .5; drum.bottom_radius = .54; drum.height = .12; drum.radial_segments = 48
 	plinth.mesh = drum
 	var marble := StandardMaterial3D.new()
-	marble.albedo_color = Color(.86, .84, .78)
+	marble.albedo_color = Color(.70, .68, .63)
 	marble.roughness = .42
 	plinth.material_override = marble
 	plinth.position.y = -.06
@@ -333,7 +342,9 @@ func set_figure(asset: String) -> void:
 	entry = {}
 	if asset.is_empty():
 		return
-	figure = city.model(asset)
+	figure = portrait_model(asset)
+	if figure == null:
+		figure = city.model(asset)
 	if figure == null:
 		return
 	turntable.add_child(figure)
@@ -345,6 +356,26 @@ func set_figure(asset: String) -> void:
 	floating = entry.god
 	entry.god = false
 	frame_figure()
+
+# A man's portrait model (tools/godot_portrait_export.py): the same walker with a designed Greek face, curly hair and beard,
+# in one held pose. Only this window shows it; the city keeps the crowd model. Null when the role has none.
+func portrait_model(asset: String) -> Node3D:
+	var path := PORTRAIT_DIR + asset + ".glb"
+	if not ResourceLoader.exists(path):
+		return null
+	var scene: PackedScene = load(path)
+	if scene == null:
+		return null
+	var node: Node3D = scene.instantiate()
+	city.character_appearance.apply(node, asset, city.model_contract(asset))
+	var manifest := PORTRAIT_DIR + asset + ".json"
+	if FileAccess.file_exists(manifest):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(manifest))
+		if parsed is Dictionary and parsed.get("portrait", {}).has("eye"):
+			var eye: Array = parsed.portrait.eye
+			node.set_meta("portrait_eye", Vector3(eye[0], eye[1], eye[2]))
+			node.set_meta("portrait_head", float(parsed.portrait.get("head_height", .26)))
+	return node
 
 # Frames the figure: its bounds decide the camera's distance, so a child and a giant both fill the portrait.
 func frame_figure() -> void:
@@ -375,11 +406,37 @@ func frame_figure() -> void:
 	var top := height * (1.1 if floating else 1.06)
 	var visible_height := maxf(top - bottom, (maxf(width, spread * 1.1)) * 1.15 / aspect)
 	var distance := visible_height * .5 / tan(deg_to_rad(camera.fov * .5)) * 1.04
-	var look := Vector3(0, (top + bottom) * .5, 0)
-	camera.position = look + Vector3(0, sin(pitch), cos(pitch)) * distance
+	full_look = Vector3(0, (top + bottom) * .5, 0)
+	full_offset = Vector3(0, sin(pitch), cos(pitch)) * distance
+	# Head and shoulders: about two and a half heads around the eyes, a little from above.
+	var person: bool = entry.get("human", false) or entry.get("lod_role", false) or figure.has_meta("portrait_eye")
+	var eye := Vector3(0, height * .92, 0)
+	var head := height * .13
+	if figure.has_meta("portrait_eye"):
+		# The man's own eyes (a rider or a charioteer is not at the middle of his horse or chariot).
+		eye = figure.get_meta("portrait_eye") + figure_base
+		head = figure.get_meta("portrait_head")
+	var bust_height := head * 2.7
+	var bust_distance := bust_height * .5 / tan(deg_to_rad(camera.fov * .5))
+	if floating:
+		eye.y += height * .035   # the gentle hover's mean lift (see _process)
+	bust_local = eye + Vector3(0, -head * .42, 0)
+	bust_look = bust_local
+	bust_offset = Vector3(0, sin(deg_to_rad(4.0)), cos(deg_to_rad(4.0))) * bust_distance
+	zoom_target = 1.0 if person else 0.0
+	can_zoom = person
+	zoom = zoom_target
+	place_camera()
+
+func place_camera() -> void:
+	bust_look = turntable.transform * bust_local
+	var t := zoom * zoom * (3.0 - 2.0 * zoom)
+	var look := full_look.lerp(bust_look, t)
+	var offset := full_offset.lerp(bust_offset, t)
+	camera.position = look + offset
 	camera.look_at(look, Vector3.UP)
-	camera.near = maxf(.01, distance * .05)
-	camera.far = distance * 6.0
+	camera.near = maxf(.005, offset.length() * .05)
+	camera.far = offset.length() * 8.0
 
 func _process(dt: float) -> void:
 	time += dt
@@ -387,6 +444,10 @@ func _process(dt: float) -> void:
 	if not dragging:
 		drag_turn = lerpf(drag_turn, 0.0, 1.0 - exp(-dt * 1.4))
 	turntable.rotation.y = PI + sin(time * .55) * TURN_SWAY + drag_turn
+	if absf(zoom - zoom_target) > .0005:
+		zoom = move_toward(zoom, zoom_target, dt * (100.0 if access.reduced_motion else 2.6))
+	if zoom > 0.0 or absf(zoom - zoom_target) > .0005:
+		place_camera()
 	if figure != null and not entry.is_empty():
 		figure.position = figure_base
 		city.animate_walker(entry, dt, 0.0)
@@ -411,7 +472,13 @@ func _process(dt: float) -> void:
 			voice_time.text = clock(maxf(0.0, length - player.get_playback_position()))
 
 func portrait_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	# The wheel (or a double click) moves between the head and shoulders and the whole figure.
+	if event is InputEventMouseButton and event.pressed and can_zoom and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		zoom_target = 1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 0.0
+		accept_event()
+	elif event is InputEventMouseButton and event.pressed and event.double_click and can_zoom and event.button_index == MOUSE_BUTTON_LEFT:
+		zoom_target = 0.0 if zoom_target > .5 else 1.0
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		dragging = event.pressed
 	elif event is InputEventMouseMotion and dragging:
 		drag_turn += event.relative.x * .012

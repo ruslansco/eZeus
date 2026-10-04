@@ -407,3 +407,29 @@ The seventeen monsters of the engine use the same pipeline as the soldiers and g
 
 Every person of the people kit whose wardrobe profile has a cloak colour (`art/characters/roman/wardrobe.py`, `PROFILES`; a name that is not listed gets the default cloak) wears the "Roman draped cloak". It was a rigid half-tube whose side edges lay on the body's middle plane, exactly where the arms hang, narrower than the arms and skinned to the torso only: every arm swing went through it, most visibly the right arm from behind, and it read as a board. `_cloak_shape(h, hem)` now fits it to each person: it is measured on the dressed body in the rest pose (body and garments, not hair or props) in bands of height; across the back it is the width of the deltoids plus .03, flaring .05 to the hem; its side edges lie .04 behind the arms' back surface (the walk swings the arms mostly forward, away from it) and its middle .045 behind the torso; over the shoulders it wraps forward as a yoke onto the shoulder tops; vertical folds deepen toward the hem with a per-person phase; the profile is smoothed down the cape. Only the yoke follows the upper arms (half weight) so a deltoid cannot push through, while the rest hangs from chest, spine and pelvis; the right shoulder's pin sits at the yoke's front corner. 59 Godot models carry it and were re-exported: 49 walkers of the townspeople, soldiers, gods and heroes, the cyclops, Hector, Medusa, the maenads, the harpies, the priestess, the astronomer, inventor and curator, the philosopher (his cape stays hidden under his blue himation) and the settler family. The SDL sprite renders under `art/characters/people/<who>/` were not re-rendered. Check a cape with a scratch render that never writes the art folders (renders of the walk from four sides); `build_person.py --validate-only` passes for every spec with it.
 
+
+## Greek portrait faces for the character window — 4 October 2026
+
+The user asked for more Greek-looking men, at least in the character window, with the stylised philosopher as a mood
+reference (curly grey hair and beard, laurel). The crowd walkers are unchanged; the window shows a separate portrait model.
+
+- `tools/godot_portrait_faces.py` (revision `greek_portrait_faces_v1`) rebuilds each grown man's head inside a disposable
+  export, reusing `godot_god_face` (sculpt, occlusion, eyes): a Greek profile (filled nasion so the nose continues the
+  forehead, firm brow, fuller lower lip, strong chin and square jaw), fair warm skin with baked occlusion and warm blood
+  tones, brown eyes, brows of short hairs, hair as snail-shell curls over a dark cap with a fringe at the hairline, and a
+  beard of snail curls on the cheeks, corkscrew locks from the jaw and a drooping moustache over a dragged shell. Colour by
+  age or role: black or dark brown, grey from about 52, white from 66 (scholar, astronomer, Zeus white; philosopher,
+  inventor, curator, Poseidon grey). Laurel for the philosopher, scholar, astronomer, Zeus, Apollo and the competitor.
+  Men in helmets or hats keep the crowd scalp groom (curls would push through) and get the face and beard.
+- `tools/godot_portrait_export.py` loads `export_godot_pilot.py`'s source unchanged and patches it in memory: one held
+  pose, no walk/idle/clip samples or shape keys, `--budget` (26,000) for everything but the protected face parts
+  (`Portrait …`, eyeballs). It writes `godot/assets/portraits/<asset>.glb` and a manifest with the eye position and head
+  height. `--preview DIR` renders Blender close-ups instead (about 20 s). `tools/export_portraits.py` batches every Greek
+  male role (citizens, the player's and Trojan/Atlantean soldiers, charioteers, male heroes and gods except Hades);
+  assets without a grown Greek man are skipped. Women, foreign armies and creatures keep the crowd model.
+- Typical portrait: 68–95K vertices, 4–7 MB (portrait GLBs are git-ignored like the crowd GLBs; manifests are tracked).
+- `ui/character_panel.gd` loads the portrait when it exists (with the role's character finish) and opens people on their
+  head and shoulders; the wheel or a double click eases to the whole figure and back.
+
+Limits: static held pose in the window (no breathing or blinking); curls are geometry, not groomed strands; skin is
+painted vertex colour; one face per role, not per walker; provenance stays `needs_evidence`. Visual acceptance pending.

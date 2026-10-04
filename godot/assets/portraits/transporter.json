@@ -1,0 +1,115 @@
+{
+  "asset": "transporter",
+  "source": "art/characters/transporter/build_sprites.py",
+  "file": "transporter.glb",
+  "bytes": 4209268,
+  "vertices": 66353,
+  "surfaces": 3,
+  "source_surfaces": 20,
+  "bounds_blender": [
+    [
+      -0.3050999641418457,
+      -0.18517442047595978,
+      -0.002700015902519226
+    ],
+    [
+      0.3050999641418457,
+      1.0575001239776611,
+      0.8419385552406311
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Greek transporter",
+        "sex": "male",
+        "profile": {
+          "age": 41,
+          "jaw": 0.99,
+          "cheek": 1.03,
+          "nose": 0.006,
+          "chin": 0.002,
+          "eye": 0.98,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0,
+          "grey": 0.06,
+          "seed": 950098881,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.24,
+              0.16,
+              0.1
+            ],
+            "age": 41,
+            "laurel": false,
+            "headwear": true
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "c64f214ccc78f2f2c6d3720297f4d464e733281a3c72dd8a5d404fb0ce8fd4ce",
+        "clavi_srgb": [
+          0.48,
+          0.14,
+          0.075
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 65773,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.24,
+          0.16,
+          0.1
+        ],
+        "age": 41,
+        "laurel": false,
+        "headwear": true
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      0.8101,
+      -0.0133
+    ],
+    "head_height": 0.13
+  }
+}

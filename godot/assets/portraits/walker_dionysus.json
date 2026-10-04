@@ -1,0 +1,116 @@
+{
+  "asset": "walker_dionysus",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_dionysus.glb",
+  "bytes": 6419380,
+  "vertices": 88944,
+  "surfaces": 3,
+  "source_surfaces": 17,
+  "bounds_blender": [
+    [
+      -0.6410768628120422,
+      -0.4571903645992279,
+      0.06532302498817444
+    ],
+    [
+      0.6135096549987793,
+      0.5760000348091125,
+      2.879889726638794
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Dionysus",
+        "sex": "male",
+        "profile": {
+          "age": 28,
+          "skin": [
+            0.61,
+            0.425,
+            0.315
+          ],
+          "jaw": 0.98,
+          "cheek": 1.04,
+          "nose": 0.001,
+          "chin": 0.002,
+          "eye": 1.02,
+          "hair": [
+            [
+              0.04,
+              0.02,
+              0.03
+            ],
+            [
+              0.12,
+              0.06,
+              0.08
+            ]
+          ],
+          "hair_length": 0.03,
+          "beard_length": 0.012,
+          "grey": 0,
+          "seed": 62304,
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.13,
+              0.1,
+              0.085
+            ],
+            "age": 28,
+            "laurel": false,
+            "headwear": false
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "195918afa50c4a171addaf7530f195e87688cf1246450c39f5e5b97545b98fe5",
+        "clavi_srgb": [
+          0.3,
+          0.4,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 89039,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG",
+    "floating": "floating_gods_v1"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.13,
+          0.1,
+          0.085
+        ],
+        "age": 28,
+        "laurel": false,
+        "headwear": false
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      2.4304,
+      -0.0341
+    ],
+    "head_height": 0.39
+  }
+}

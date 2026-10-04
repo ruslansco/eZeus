@@ -6,17 +6,20 @@ extends RefCounted
 const PICK_RADIUS := 1.6
 var selected := -1
 var ring: MeshInstance3D
+# More triremes chosen together by a box (scripts/unit_selection.gd), each with its ring; `selected` is the first of them.
+var group: Array = []
+var rings: Array = []
 
 # The selectable trireme nearest to the clicked tile, within reach of a click; -1 for none.
-func trireme_at(walkers: Dictionary, cell: Vector2i) -> int:
+func trireme_at(city, cell: Vector2i) -> int:
 	var best := -1
 	var best_distance := PICK_RADIUS
-	for id in walkers:
-		var entry: Dictionary = walkers[id]
+	for id in city.walkers:
+		var entry: Dictionary = city.walkers[id]
 		if entry.asset != "trireme" or not entry.get("selectable", false):
 			continue
-		var at: Vector3 = entry.native_position
-		var distance := Vector2(at.x, at.z).distance_to(Vector2(cell.x, cell.y))
+		# The walker's position is in world space; the click is a tile.
+		var distance: float = city.tile_coordinates(entry.native_position).distance_to(Vector2(cell.x, cell.y))
 		if distance < best_distance:
 			best_distance = distance
 			best = int(id)
@@ -27,7 +30,21 @@ func select(city, id: int) -> void:
 	if id < 0 or not city.walkers.has(id):
 		return
 	selected = id
-	ring = MeshInstance3D.new()
+	group = [id]
+	ring = make_ring(city, id)
+	rings = [ring]
+
+func select_many(city, ids: Array) -> void:
+	clear()
+	for id in ids:
+		if city.walkers.has(int(id)):
+			group.append(int(id))
+			rings.append(make_ring(city, int(id)))
+	selected = group[0] if not group.is_empty() else -1
+	ring = rings[0] if not rings.is_empty() else null
+
+func make_ring(city, id: int) -> MeshInstance3D:
+	var ring := MeshInstance3D.new()
 	var torus := TorusMesh.new()
 	torus.inner_radius = .9
 	torus.outer_radius = 1.05
@@ -41,19 +58,27 @@ func select(city, id: int) -> void:
 	ring.material_override = gold
 	ring.position = Vector3(0, .05, 0)
 	city.walkers[id].node.add_child(ring)
+	return ring
 
 func clear() -> void:
 	selected = -1
-	if ring != null and is_instance_valid(ring):
-		ring.queue_free()
+	for each in rings:
+		if each != null and is_instance_valid(each):
+			each.queue_free()
+	rings.clear()
+	group.clear()
 	ring = null
 
 # Called after each snapshot: a trireme that left, or may no longer be ordered, is let go.
 func refresh(city) -> void:
-	if selected >= 0 and (not city.walkers.has(selected) or not city.walkers[selected].get("selectable", false)):
-		clear()
+	var kept := group.filter(func(id): return city.walkers.has(id) and city.walkers[id].get("selectable", false))
+	if kept.size() != group.size():
+		if kept.is_empty():
+			clear()
+		else:
+			select_many(city, kept)
 
 func order(city, cell: Vector2i) -> bool:
-	if selected < 0:
+	if group.is_empty():
 		return false
-	return city.core.send("trireme_move %d %d %d" % [cell.x, cell.y, selected])
+	return city.core.send("trireme_move %d %d %s" % [cell.x, cell.y, " ".join(group.map(func(id): return str(id)))])

@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 474,
+ "parts": {
+  "stadium_8": {
+   "row": 0,
+   "rows": 35,
+   "poses": 9,
+   "vertices": 35145,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0019526481628417969
+  },
+  "stadium_17": {
+   "row": 315,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 17340,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004881620407104492
+  },
+  "stadium_23": {
+   "row": 468,
+   "rows": 1,
+   "poses": 6,
+   "vertices": 464,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_05": 3,
+    "work_07": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 0.0004737377166748047
+  }
+ },
+ "source": {
+  "file": "stadium.glb",
+  "bytes": 6746964,
+  "mtime": 1791092723
+ }
+}

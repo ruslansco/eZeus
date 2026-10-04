@@ -31,6 +31,25 @@ func box(background: Color, border: Color, border_width := 1, radius := 6, margi
 	style.anti_aliasing = true
 	return style
 
+# The gold-rimmed lapis frame every HUD surface shares (the objectives panel's look): a soft shadow lifts it
+# off the city, and the rim is brighter on top, as if lit from above.
+func gold_frame(background_alpha := .97, rim := .55, radius := 10, margin_x := 12, margin_y := 8, shadow := 8) -> StyleBoxFlat:
+	var frame := box(Color(LAPIS, background_alpha), Color(GOLD, rim), 1, radius, margin_x, margin_y)
+	if shadow > 0:
+		frame.shadow_color = Color(0, 0, 0, .28)
+		frame.shadow_size = shadow
+		frame.shadow_offset = Vector2(0, 3)
+	return frame
+
+# A gold-rimmed button face: `lit` 0 resting, 1 hovered, 2 chosen.
+func gold_face(lit: int, radius := 8, margin_x := 8, margin_y := 6) -> StyleBoxFlat:
+	var fill: Color = [Color(LAPIS_RAISED, .9), Color(LAPIS_HOVER, 1), Color(.27, .22, .12, 1)][lit]
+	var rim: Color = [Color(GOLD, .22), Color(GOLD, .7), GOLD_PALE][lit]
+	var face := box(fill, rim, 1, radius, margin_x, margin_y)
+	if lit == 2:
+		face.border_width_top = 2
+	return face
+
 func _initialize() -> void:
 	call_deferred("run")
 
@@ -89,17 +108,16 @@ func run() -> void:
 		theme.set_font_size("font_size",variant,12 if variant=="CardName" else 13)
 		theme.set_color("font_color",variant,IVORY if variant=="CardName" else GOLD_PALE)
 
-	# Panels share the squared teal city frame.
-	var panel := box(Color(LAPIS, .985), Color(ACCENT, .42), 1, 2, 12, 10)
-	panel.shadow_color = Color(0, 0, 0, .22); panel.shadow_size = 8; panel.shadow_offset = Vector2(0, 3)
+	# Panels share the gold-rimmed lapis frame of the objectives panel.
+	var panel := gold_frame(.985, .5, 10, 12, 10)
 	theme.set_stylebox("panel", "PanelContainer", panel)
 	theme.set_stylebox("panel", "Panel", panel)
 	theme.set_type_variation("Card", "PanelContainer")
-	theme.set_stylebox("panel", "Card", box(Color(LAPIS_RAISED, .9), Color(MUTED, .15), 1, 6, 12, 10))
+	theme.set_stylebox("panel", "Card", box(Color(LAPIS_RAISED, .92), Color(GOLD, .3), 1, 8, 12, 10))
 
 	# Buttons.
 	var button_states := {
-		"normal": box(Color(LAPIS_RAISED, .96), Color(MUTED, .18)),
+		"normal": box(Color(LAPIS_RAISED, .96), Color(GOLD, .28)),
 		"hover": box(Color(LAPIS_HOVER, .98), Color(GOLD, .6)),
 		"pressed": box(Color(.22, .25, .19, .98), GOLD_PALE),
 		"disabled": box(Color(LAPIS, .75), Color(GOLD_DEEP, .3)),
@@ -117,8 +135,7 @@ func run() -> void:
 		theme.set_font_size("font_size", type_name, 14)
 		theme.set_constant("icon_max_width", type_name, 22)
 	theme.set_type_variation("Primary", "Button")
-	theme.set_stylebox("normal", "Primary", box(Color(GOLD_DEEP, .85), GOLD))
-	theme.set_stylebox("hover", "Primary", box(Color(GOLD_DEEP.lightened(.15), .95), GOLD_PALE))
+	# Its faces are set with the escape menu's below.
 	theme.set_color("font_color", "Primary", IVORY)
 	theme.set_color("font_hover_color", "Primary", IVORY)
 
@@ -145,22 +162,22 @@ func run() -> void:
 	theme.set_stylebox("panel","FloatingTray",floating)
 	for type_name in ["PlacementGood","PlacementBad"]:
 		theme.set_type_variation(type_name,"PanelContainer")
-		theme.set_stylebox("panel",type_name,box(Color(.035,.065,.09,.96),ACCENT if type_name=="PlacementGood" else Color(.95,.40,.30),1,5,10,7))
+		theme.set_stylebox("panel",type_name,box(Color(LAPIS,.96),Color(GOLD,.8) if type_name=="PlacementGood" else Color(.95,.40,.30),1,8,10,7))
 	for type_name in ["Tool", "Category", "BuildingCard", "Quiet"]:
 		theme.set_type_variation(type_name, "Button")
 		theme.set_stylebox("normal", type_name, box(Color(LAPIS_RAISED, .5 if type_name == "BuildingCard" else 0), Color(MUTED, .16 if type_name == "BuildingCard" else 0), 1, 5, 8, 6))
-		theme.set_stylebox("hover", type_name, box(Color(LAPIS_HOVER, 1), Color(MUTED, .35), 1, 5, 8, 6))
+		theme.set_stylebox("hover", type_name, box(Color(LAPIS_HOVER, 1), Color(GOLD, .6), 1, 8, 8, 6))
 		theme.set_stylebox("pressed", type_name, box(Color(.24,.22,.19,1), GOLD, 1, 8, 8, 6))
 		theme.set_constant("icon_max_width", type_name, 24)
 		theme.set_font_size("font_size", type_name, 12 if type_name == "Category" else 14)
 	# News chips and the map use shared, scalable Theme entries, never baked font overrides.
 	for kind in ["NoticeCard", "DecisionCard", "MapCard"]:
 		theme.set_type_variation(kind, "PanelContainer")
-		var edge:=Color(GOLD,.65) if kind=="DecisionCard" else Color(ACCENT,.38)
+		var edge:=Color(GOLD,.65) if kind=="DecisionCard" else Color(GOLD,.45)
 		var surface:=box(Color(LAPIS,.99),edge,1,10,8 if kind!="MapCard" else 10,5 if kind!="MapCard" else 8)
 		if kind == "MapCard":
-			surface.content_margin_left = 4; surface.content_margin_right = 4
-			surface.content_margin_top = 4; surface.content_margin_bottom = 4
+			surface.content_margin_left = 0; surface.content_margin_right = 0
+			surface.content_margin_top = 0; surface.content_margin_bottom = 0
 		surface.shadow_color=Color(0,0,0,.22);surface.shadow_size=6
 		theme.set_stylebox("panel",kind,surface)
 	var correspondence := box(Color("202d39"), Color("a39578"), 1, 3, 18, 12)
@@ -173,7 +190,7 @@ func run() -> void:
 	for kind in ["NoticeButton", "DecisionButton", "MapPill"]:
 		theme.set_type_variation(kind, "Quiet")
 		theme.set_font_size("font_size",kind,14)
-		theme.set_color("icon_normal_color",kind,GOLD_PALE if kind=="DecisionButton" else ACCENT)
+		theme.set_color("icon_normal_color",kind,GOLD_PALE)
 		if kind=="MapPill":
 			theme.set_stylebox("normal",kind,box(Color(LAPIS,.99),Color(GOLD,.32),1,18,12,6))
 			theme.set_stylebox("hover",kind,box(Color(LAPIS_HOVER,1),GOLD,1,18,12,6))
@@ -181,9 +198,9 @@ func run() -> void:
 	theme.set_font_size("font_size", "MapFold", 11)
 	theme.set_constant("icon_max_width", "MapFold", 12)
 	for state in ["normal", "hover", "pressed"]:
-		theme.set_stylebox(state, "MapFold", box(Color(.035,.065,.09,.86), Color(ACCENT,.8 if state != "normal" else .24), 1, 4, 4, 2))
+		theme.set_stylebox(state, "MapFold", box(Color(LAPIS,.9), Color(GOLD,.85 if state != "normal" else .4), 1, 6, 4, 2))
 	theme.set_type_variation("NoticeProgress","ProgressBar")
-	theme.set_stylebox("fill","NoticeProgress",box(Color(ACCENT,.65),Color.TRANSPARENT,0,1,0,0))
+	theme.set_stylebox("fill","NoticeProgress",box(Color(GOLD,.75),Color.TRANSPARENT,0,1,0,0))
 	theme.set_type_variation("NoticeCaption","Eyebrow")
 	theme.set_color("font_color","NoticeCaption",GOLD_PALE)
 	for pair in [["homes",Color(.60,.82,.59)],["food",Color(.78,.74,.42)],["industry",Color(.67,.73,.77)],["storage",Color(.76,.73,.60)],["trade",Color(.56,.78,.83)],["markets",Color(.88,.69,.44)],["water",Color(.36,.76,.89)],["civic",Color(.86,.74,.54)],["defence",Color(.86,.51,.43)],["culture",Color(.76,.65,.84)],["science",Color(.56,.83,.74)],["gardens",Color(.45,.76,.52)],["sanctuaries",Color(.89,.81,.56)],["pyramids",Color(.86,.76,.52)],["shrines",Color(.90,.72,.50)],["heroes",Color(.88,.66,.48)],["build",IVORY]]:
@@ -201,20 +218,21 @@ func run() -> void:
 	for kind in ["JournalRow"]:
 		theme.set_type_variation(kind, "PanelContainer")
 		theme.set_stylebox("panel",kind,box(Color(LAPIS_RAISED,.8),Color(GOLD,.12),1,8,8,7))
-	# Nova Roma reference: slim teal ribbons and squared, individually framed controls.
-	for kind in ["ResourceRibbon", "StatusStrip", "Dock", "MiniPanel", "FloatingTray"]:
-		theme.set_type_variation(kind,"PanelContainer")
-		var surface := box(Color(LAPIS,.97),Color(ACCENT,.52),1,2,6,4)
-		surface.border_width_top = 2
-		theme.set_stylebox("panel",kind,surface)
-	theme.set_stylebox("panel","ResourceRibbon",box(Color(LAPIS,.95),Color(GOLD,.6),1,3,8,6))
+	# The HUD's frames, ribbons and controls all wear the objectives panel's gold rim (they replaced the slim teal
+	# "Nova Roma" frames on 4 October 2026).
+	for kind in ["StatusStrip", "Dock", "MiniPanel", "FloatingTray"]:
+		theme.set_type_variation(kind, "PanelContainer")
+		theme.set_stylebox("panel", kind, gold_frame(.97, .55, 12 if kind != "StatusStrip" else 10, 10, 6 if kind != "FloatingTray" else 12))
+	theme.set_stylebox("panel", "StatusStrip", gold_frame(.97, .55, 10, 12, 4))
+	theme.set_stylebox("panel", "ResourceRibbon", gold_frame(.95, .55, 10, 10, 6))
 	theme.set_type_variation("OverviewInset","PanelContainer")
 	theme.set_stylebox("panel","OverviewInset",StyleBoxEmpty.new())
 	theme.set_type_variation("CityPlaque","PanelContainer")
-	theme.set_stylebox("panel","CityPlaque",box(LAPIS_RAISED,Color(ACCENT,.7),1,2,12,3))
+	theme.set_stylebox("panel","CityPlaque",box(Color(GOLD_DEEP, .35),Color(GOLD,.7),1,8,12,3))
 	theme.set_type_variation("CityName","Label")
-	theme.set_font_size("font_size","CityName",14)
-	theme.set_color("font_color","CityName",IVORY)
+	theme.set_font("font","CityName",bold)
+	theme.set_font_size("font_size","CityName",15)
+	theme.set_color("font_color","CityName",GOLD_PALE)
 	for kind in ["ResourcePill","WelfareButton","RailButton"]:
 		theme.set_type_variation(kind,"Button")
 		theme.set_constant("icon_max_width",kind,28 if kind=="ResourcePill" else 21)
@@ -224,28 +242,51 @@ func run() -> void:
 			theme.set_color("icon_hover_color",kind,Color.WHITE)
 			theme.set_color("icon_pressed_color",kind,Color.WHITE)
 		for state in ["normal","hover","pressed","hover_pressed","focus","disabled"]:
-			var surface := box(Color(LAPIS_RAISED,0 if kind=="ResourcePill" and state=="normal" else .95),Color(ACCENT,.15 if state=="normal" else .8),0 if kind=="ResourcePill" and state=="normal" else 1,2,5,3)
-			theme.set_stylebox(state,kind,surface)
-	for kind in ["Tool","Category"]:
-		theme.set_constant("icon_max_width",kind,22)
-		for state in ["normal","hover","pressed","hover_pressed","disabled"]:
-			var selected: bool = state in ["pressed","hover_pressed"]
-			var surface := box(LAPIS_HOVER if selected else LAPIS_RAISED,Color(ACCENT,.95 if selected else .45),1,2,4,4)
-			surface.border_width_top = 2
-			theme.set_stylebox(state,kind,surface)
+			var lit := 0 if state in ["normal","disabled","focus"] else (2 if state in ["pressed","hover_pressed"] else 1)
+			var face := gold_face(lit, 6, 5, 3)
+			if kind == "ResourcePill" and state == "normal":
+				face = box(Color.TRANSPARENT, Color.TRANSPARENT, 0, 6, 5, 3)
+			theme.set_stylebox(state,kind,face)
+	# Tools: gold-rimmed tiles; categories: round gold medallions, lit when chosen.
+	theme.set_constant("icon_max_width","Tool",22)
+	theme.set_constant("icon_max_width","Category",22)
+	for state in ["normal","hover","pressed","hover_pressed","disabled","focus"]:
+		var lit := 0 if state in ["normal","disabled","focus"] else (2 if state in ["pressed","hover_pressed"] else 1)
+		theme.set_stylebox(state,"Tool",gold_face(lit, 8, 4, 4))
+		var medallion := gold_face(lit, 24, 4, 4)
+		medallion.shadow_color = Color(0,0,0,.25); medallion.shadow_size = 3; medallion.shadow_offset = Vector2(0,2)
+		theme.set_stylebox(state,"Category",medallion)
 	for variant in theme.get_type_list():
 		if str(variant).begins_with("Category_"):
-			theme.set_color("icon_normal_color",variant,IVORY)
+			theme.set_color("icon_normal_color",variant,GOLD_PALE)
+			theme.set_color("icon_hover_color",variant,IVORY)
+			theme.set_color("icon_pressed_color",variant,IVORY)
+	for kind in ["Tool","Quiet","StatusTool"]:
+		theme.set_color("icon_normal_color",kind,GOLD_PALE)
+		theme.set_color("icon_hover_color",kind,IVORY)
+		theme.set_color("icon_pressed_color",kind,IVORY)
+	# Building cards in the build tray: gold-rimmed tiles, lit when chosen.
+	for state in ["normal","hover","pressed","hover_pressed","disabled","focus"]:
+		var lit := 0 if state in ["normal","disabled","focus"] else (2 if state in ["pressed","hover_pressed"] else 1)
+		var card := gold_face(lit, 8, 8, 6)
+		if lit == 0:
+			card.border_color = Color(GOLD, .3)
+		theme.set_stylebox(state,"BuildingCard",card)
 	theme.set_type_variation("EscapeCard","PanelContainer")
-	theme.set_stylebox("panel","EscapeCard",box(Color(LAPIS,.99),Color(ACCENT,.7),1,4,24,22))
+	theme.set_stylebox("panel","EscapeCard",gold_frame(.99,.7,12,24,22,12))
 	theme.set_type_variation("Rail","PanelContainer")
 	theme.set_stylebox("panel","Rail",box(Color.TRANSPARENT,Color.TRANSPARENT,0,0,0,0))
-	theme.set_stylebox("panel","MapCard",box(Color(LAPIS,.95),Color(ACCENT,.65),1,112,4,4))
+	# The round minimap frame: a gold ring.
+	var map_ring := box(Color(LAPIS,.95),Color(GOLD,.75),2,112,0,0)
+	map_ring.shadow_color = Color(0,0,0,.3); map_ring.shadow_size = 8; map_ring.shadow_offset = Vector2(0,3)
+	theme.set_stylebox("panel","MapCard",map_ring)
+	theme.set_color("rim","MapCard",GOLD)
+	theme.set_color("rim_shadow","MapCard",Color(0,0,0,.45))
 	theme.set_type_variation("Eyebrow", "Label")
 	theme.set_font_size("font_size", "Eyebrow", 11)
 	theme.set_color("font_color", "Eyebrow", MUTED)
-	theme.set_stylebox("background", "ProgressBar", box(Color(.03, .06, .065), Color(0, 0, 0, 0), 0, 3, 0, 0))
-	theme.set_stylebox("fill", "ProgressBar", box(Color(.37, .64, .55), Color(0, 0, 0, 0), 0, 3, 0, 0))
+	theme.set_stylebox("background", "ProgressBar", box(Color(0, 0, 0, .35), Color(GOLD, .22), 1, 4, 0, 0))
+	theme.set_stylebox("fill", "ProgressBar", box(GOLD, Color(GOLD_PALE, .5), 1, 4, 0, 0))
 
 	# Menus and pop-ups.
 	theme.set_stylebox("panel", "PopupMenu", box(Color(LAPIS, .98), Color(GOLD, .7), 1, 7, 6, 6))
@@ -258,17 +299,67 @@ func run() -> void:
 	theme.set_color("font_color", "TooltipLabel", IVORY)
 	theme.set_font_size("font_size", "TooltipLabel", 15)
 
-	# Dialogs (embedded windows draw their own border and title).
-	var dialog := box(Color(LAPIS, .985), Color(GOLD, .8), 2, 10, 18, 14)
+	# Dialogs (embedded windows draw their own border and title): the HUD's gold frame with a deeper shadow and a
+	# bright gold line along the top of the title bar; the content inside has no second border.
+	var dialog := box(Color(LAPIS, .99), Color(GOLD, .7), 1, 12, 18, 14)
+	dialog.border_width_top = 3
+	dialog.border_color = Color(GOLD, .75)
+	dialog.shadow_color = Color(0, 0, 0, .45)
+	dialog.shadow_size = 18
+	dialog.shadow_offset = Vector2(0, 6)
+	# Godot draws the border under the content only; growing it upward by the title height takes the title bar and
+	# the close button inside the frame.
+	dialog.expand_margin_top = 40
+	dialog.expand_margin_left = 2
+	dialog.expand_margin_right = 2
+	dialog.expand_margin_bottom = 2
 	for type_name in ["Window", "AcceptDialog", "ConfirmationDialog"]:
 		theme.set_stylebox("embedded_border", type_name, dialog)
 		theme.set_stylebox("embedded_unfocused_border", type_name, dialog)
-		theme.set_color("title_color", type_name, GOLD)
+		theme.set_color("title_color", type_name, GOLD_PALE)
+		theme.set_color("title_outline_modulate", type_name, Color(0, 0, 0, .6))
+		theme.set_constant("title_outline_size", type_name, 0)
 		theme.set_font("title_font", type_name, bold)
 		theme.set_font_size("title_font_size", type_name, 20)
-		theme.set_constant("title_height", type_name, 38)
-	theme.set_stylebox("panel", "AcceptDialog", dialog)
-	theme.set_stylebox("panel", "ConfirmationDialog", dialog)
+		theme.set_constant("title_height", type_name, 40)
+		# The close cross sits inside the frame, centred in the title bar.
+		theme.set_constant("close_h_offset", type_name, 30)
+		theme.set_constant("close_v_offset", type_name, 26)
+	var content := box(Color.TRANSPARENT, Color.TRANSPARENT, 0, 0, 18, 14)
+	theme.set_stylebox("panel", "AcceptDialog", content)
+	theme.set_stylebox("panel", "ConfirmationDialog", content)
+	theme.set_constant("buttons_separation", "AcceptDialog", 12)
+	theme.set_constant("buttons_separation", "ConfirmationDialog", 12)
+
+	# The escape menu (ui/escape_menu.gd): the gold card, its title over a gold rule, the section headings in pale gold
+	# and the actions as gold tiles (the "Return to city" action is Primary).
+	theme.set_type_variation("EscapeHeading", "ToolHeading")
+	theme.set_font("font", "EscapeHeading", bold)
+	theme.set_font_size("font_size", "EscapeHeading", 15)
+	theme.set_color("font_color", "EscapeHeading", GOLD_PALE)
+	theme.set_type_variation("EscapeRule", "HSeparator")
+	var rule := StyleBoxLine.new()
+	rule.color = Color(GOLD, .55)
+	rule.thickness = 1
+	theme.set_stylebox("separator", "EscapeRule", rule)
+	theme.set_constant("separation", "EscapeRule", 4)
+	theme.set_type_variation("EscapeAction", "Button")
+	for state in ["normal","hover","pressed","hover_pressed","disabled","focus"]:
+		var lit := 0 if state in ["normal","disabled"] else (2 if state in ["pressed","hover_pressed"] else 1)
+		var face := gold_face(lit, 8, 12, 6)
+		if state == "focus":
+			face = box(Color.TRANSPARENT, Color(GOLD_PALE, .9), 1, 8, 12, 6)
+		theme.set_stylebox(state, "EscapeAction", face)
+	theme.set_font_size("font_size", "EscapeAction", 15)
+	theme.set_color("font_color", "EscapeAction", IVORY)
+	theme.set_color("font_hover_color", "EscapeAction", GOLD_PALE)
+	theme.set_color("font_pressed_color", "EscapeAction", GOLD_PALE)
+	theme.set_color("font_focus_color", "EscapeAction", IVORY)
+	theme.set_color("font_disabled_color", "EscapeAction", DISABLED)
+	for state in ["normal","hover","pressed","focus"]:
+		var face := box(Color(GOLD_DEEP, .9) if state == "normal" else Color(GOLD_DEEP.lightened(.15), .97), GOLD if state == "normal" else GOLD_PALE, 1, 8, 12, 6)
+		face.border_width_top = 2
+		theme.set_stylebox(state, "Primary", face)
 
 	# Text entry (the inspector's stock limits).
 	for type_name in ["LineEdit", "SpinBox"]:
@@ -300,7 +391,7 @@ func run() -> void:
 	# (green when met), the round medallion with the kind's icon, the need chips and the progress bars.
 	var achieved := Color(.55, .83, .66)
 	theme.set_type_variation("ObjectivesPanel", "PanelContainer")
-	theme.set_stylebox("panel", "ObjectivesPanel", box(Color(LAPIS, .97), Color(GOLD, .55), 1, 12, 12, 10))
+	theme.set_stylebox("panel", "ObjectivesPanel", gold_frame(.97, .55, 12, 12, 10))
 	for entry in [["ObjectiveCard", Color(LAPIS_RAISED, .92), Color(GOLD, .3), 8, 10, 8],
 			["ObjectiveCardDone", Color(.10, .25, .22, .92), Color(achieved, .6), 8, 10, 8],
 			["ObjectiveMedal", Color(LAPIS, .9), GOLD, 18, 7, 7],

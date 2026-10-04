@@ -1,0 +1,115 @@
+{
+  "asset": "walker_greekrockthrower",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_greekrockthrower.glb",
+  "bytes": 4192920,
+  "vertices": 66007,
+  "surfaces": 2,
+  "source_surfaces": 11,
+  "bounds_blender": [
+    [
+      -0.1753455400466919,
+      -0.17907774448394775,
+      0.0004999842494726181
+    ],
+    [
+      0.18474788963794708,
+      0.18007685244083405,
+      0.9103758931159973
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null,
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Greek slinger",
+        "sex": "male",
+        "profile": {
+          "age": 19,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ],
+          "jaw": 1.093,
+          "cheek": 0.994,
+          "nose": 0.0053,
+          "chin": 0.0001,
+          "eye": 0.984,
+          "hair": [
+            [
+              0.03,
+              0.02,
+              0.012
+            ],
+            [
+              0.09,
+              0.05,
+              0.025
+            ]
+          ],
+          "hair_length": 0.012,
+          "beard_length": 0,
+          "grey": 0,
+          "seed": 93001,
+          "portrait": {
+            "revision": "greek_portrait_faces_v1",
+            "hair": [
+              0.24,
+              0.16,
+              0.1
+            ],
+            "age": 19,
+            "laurel": false,
+            "headwear": true
+          }
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "eb441992e583e1b6b549aefe374c2d7340e9a4acaf507507226a7fa206746f93",
+        "clavi_srgb": [
+          0.62,
+          0.54,
+          0.4
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 65767,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "portrait": {
+    "revision": "greek_portrait_faces_v1",
+    "adapter": "eZeus/tools/godot_portrait_faces.py",
+    "use": "character window only (ui/character_panel.gd); the city keeps the crowd model",
+    "people": [
+      {
+        "revision": "greek_portrait_faces_v1",
+        "hair": [
+          0.24,
+          0.16,
+          0.1
+        ],
+        "age": 19,
+        "laurel": false,
+        "headwear": true
+      }
+    ],
+    "reference": "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used",
+    "eye": [
+      0.0,
+      0.8101,
+      -0.013
+    ],
+    "head_height": 0.13
+  }
+}

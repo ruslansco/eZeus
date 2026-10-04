@@ -1290,6 +1290,172 @@ func run_city_data_checks() -> bool:
 		dialog.queue_free()
 	return okay
 
+# The trireme wharf and its trireme through the real interface: the inspector shows the SDL page's lines and its switch, which shuts
+# the wharf down through the command queue and sets it working again; a launched trireme is picked by a click near it, wears the
+# gold ring, sails toward the water a right click names, and Escape lets it go.
+func run_naval_checks() -> bool:
+	var okay := true
+	city.core.simulation.enable_test_commands()
+	var site := Vector2i(99999, 99999)
+	for point in city.tiles:
+		if city.core.query("preview trireme_wharf %d %d 0" % [point.x, point.y]).get("valid", false):
+			site = point
+			break
+	okay = city.check(site.x != 99999, "a shore site for a trireme wharf") and okay
+	if site.x == 99999:
+		return okay
+	city.core.send("build trireme_wharf %d %d 0" % [site.x, site.y])
+	await city.get_tree().create_timer(.6).timeout
+	city.inspected = site + Vector2i(1, 1)
+	city.refresh_inspection()
+	await city.get_tree().process_frame
+	var controls = city.inspector_controls
+	okay = city.check(controls.notes_label != null and not controls.notes_label.text.is_empty() and controls.switch_button != null, "the wharf's inspector shows the SDL page's lines and its switch: %s" % (controls.notes_label.text.replace("\n", " / ") if controls.notes_label != null else "-")) and okay
+	if controls.switch_button != null:
+		var working: String = controls.switch_button.text
+		controls.switch_button.pressed.emit()
+		await city.get_tree().create_timer(.6).timeout
+		city.refresh_inspection()
+		okay = city.check(bool(city.core.query("inspect %d %d" % [site.x + 1, site.y + 1]).shut_down) and controls.switch_button.text != working, "the switch shuts the wharf down and names its new state: %s" % controls.switch_button.text) and okay
+		controls.switch_button.pressed.emit()
+		await city.get_tree().create_timer(.6).timeout
+		city.refresh_inspection()
+		okay = city.check(not bool(city.core.query("inspect %d %d" % [site.x + 1, site.y + 1]).shut_down) and controls.switch_button.text == working, "and sets it working again") and okay
+	city.close_inspection()
+	city.core.query("set_priority 7 5")
+	city.core.simulation.replay(200, 7)
+	var launched: Dictionary = city.core.query("test_trireme %d %d" % [site.x + 1, site.y + 1])
+	if launched.has("protocol"):
+		city.receive_state(launched)
+	await city.get_tree().create_timer(.5).timeout
+	var ships: Array = launched.get("walkers", []).filter(func(w): return w.asset == "trireme")
+	okay = city.check(ships.size() == 1 and city.walkers.has(int(ships[0].id)) and city.walkers[int(ships[0].id)].waterborne, "the launched trireme sails on the water in the city (%d)" % ships.size()) and okay
+	if ships.size() != 1:
+		return okay
+	var ship: Dictionary = ships[0]
+	var cell := Vector2i(roundi(float(ship.x) - .5), roundi(float(ship.y) - .5))
+	city.set_tool("select")
+	var id: int = city.trireme_orders.trireme_at(city, cell)
+	okay = city.check(id == int(ship.id), "a click by the trireme picks it") and okay
+	city.trireme_orders.select(city, id)
+	okay = city.check(city.trireme_orders.ring != null and city.trireme_orders.ring.get_parent() == city.walkers[id].node, "the selected trireme wears the gold ring") and okay
+	var target := Vector2i(99999, 99999)
+	for point in city.tiles:
+		var tile: Array = city.tiles[point]
+		var distance := Vector2(point).distance_to(Vector2(cell))
+		if int(tile[3]) & 4 and not int(tile[4]) and distance > 6.0 and distance < 14.0:
+			target = point
+			break
+	if target.x != 99999:
+		var start := Vector2(float(ship.x), float(ship.y))
+		okay = city.check(city.trireme_orders.order(city, target), "a right click's order goes through the command queue") and okay
+		await city.get_tree().create_timer(.4).timeout
+		city.core.simulation.replay(120, 7)
+		var after: Array = city.core.simulation.snapshot(false).walkers.filter(func(w): return int(w.id) == id)
+		okay = city.check(after.size() == 1 and Vector2(float(after[0].x), float(after[0].y)).distance_to(Vector2(target)) < start.distance_to(Vector2(target)), "the trireme sails toward the water it was sent to") and okay
+	var escape := InputEventKey.new()
+	escape.physical_keycode = KEY_ESCAPE
+	escape.pressed = true
+	city._input(escape)
+	okay = city.check(city.trireme_orders.selected == -1, "Escape lets the trireme go") and okay
+	return okay
+
+# The overview's requests and choosing several companies through the real interface: a world city's request shows on the
+# City window's summary with a Send button that fulfils it; a box drawn around company banners chooses them (their rings show)
+# and a right click's order sends them all; Escape lets them go.
+func run_requests_units_checks() -> bool:
+	var okay := true
+	city.core.simulation.enable_test_commands()
+	var world: Dictionary = city.core.query("world")
+	var partner := -1
+	for index in world.cities.size():
+		if bool(world.cities[index].get("can_fulfil", false)):
+			partner = index
+			break
+	if partner >= 0:
+		city.core.query("test_stock 64 40")
+		var asked: Dictionary = city.core.query("test_request %d 64 8" % partner)
+		var before: int = asked.get("requests", []).size()
+		city.game_action("city")
+		await city.get_tree().create_timer(.6).timeout
+		var dialogs: Array = city.hud.get_children().filter(func(child): return child is AcceptDialog and child.title == city.tr("City"))
+		var rows: Array = dialogs[0].bodies.overview.find_children("Request", "HBoxContainer", true, false) if dialogs.size() == 1 else []
+		okay = city.check(rows.size() >= 1, "the City window's summary lists the request (%d)" % rows.size()) and okay
+		var buttons: Array = rows[-1].find_children("*", "Button", true, false) if not rows.is_empty() else []
+		if not buttons.is_empty():
+			buttons[0].pressed.emit()
+			await city.get_tree().create_timer(.6).timeout
+			okay = city.check(city.core.query("world").get("requests", []).size() == before - 1, "its Send button fulfils it") and okay
+		for dialog in dialogs:
+			if is_instance_valid(dialog):
+				dialog.queue_free()
+		await city.get_tree().process_frame
+	# Companies chosen by a box. Earlier checks send the city's own companies abroad, so fresh ones are raised at home first, and
+	# three of them have their banners placed near one another (a flag is drawn for a placed banner).
+	city.core.query("test_soldiers hoplite 48")
+	var home_companies: Array = city.core.query("army").get("banners", []).filter(func(b): return not bool(b.get("abroad", false)))
+	var spot := Vector2i(99999, 99999)
+	for point in city.tiles:
+		var tile: Array = city.tiles[point]
+		if int(tile[5]) and not int(tile[4]) and city.core.query("preview park %d %d 0" % [point.x, point.y]).get("valid", false) and city.core.query("preview park %d %d 0" % [point.x + 6, point.y]).get("valid", false):
+			spot = point
+			break
+	for index in mini(3, home_companies.size()):
+		city.core.query("banner_move %d %d %d" % [int(home_companies[index].id), spot.x + index * 3, spot.y])
+	city.receive_state(city.core.simulation.snapshot(true))
+	await city.get_tree().create_timer(1.2).timeout
+	var flags: Array = city.army_view.flags.keys()
+	okay = city.check(flags.size() >= 2, "company banners stand in the city (%d)" % flags.size()) and okay
+	if flags.size() < 2:
+		return okay
+	var first: Node3D = city.army_view.flags[flags[0]].node
+	city.orbit.target = first.global_position
+	city.orbit.distance = 30.0
+	city.orbit.refresh()
+	await city.get_tree().create_timer(.5).timeout
+	var camera: Camera3D = city.orbit.camera
+	var rect := Rect2()
+	var inside := []
+	for id in flags:
+		var node: Node3D = city.army_view.flags[id].node
+		if camera.is_position_behind(node.global_position):
+			continue
+		var at := camera.unproject_position(node.global_position)
+		if city.get_viewport().get_visible_rect().has_point(at):
+			rect = Rect2(at, Vector2.ZERO) if inside.is_empty() else rect.expand(at)
+			inside.append(int(id))
+	rect = rect.grow(12.0)
+	city.set_tool("select")
+	city.unit_selection.press(city, rect.position)
+	city.unit_selection.drag(city, rect.position + rect.size * .5)
+	city.unit_selection.drag(city, rect.end)
+	var boxed: bool = city.unit_selection.release(city, rect.end)
+	okay = city.check(boxed and city.unit_selection.banners.size() == inside.size() and inside.size() >= 2 and city.unit_selection.banners.all(func(id): return city.army_view.flags[id].ring.visible),
+		"a box around %d banners chooses them all, each with its ring (%d)" % [inside.size(), city.unit_selection.banners.size()]) and okay
+	var target := Vector2i(99999, 99999)
+	var home: Vector3 = first.global_position
+	for point in city.tiles:
+		var tile: Array = city.tiles[point]
+		var away := Vector2(point).distance_to(city.tile_coordinates(home))
+		if int(tile[5]) and not int(tile[4]) and away > 12.0 and away < 25.0:
+			target = point
+			break
+	if target.x != 99999 and boxed:
+		okay = city.check(city.unit_selection.order(city, target), "a right click's order for the group goes through the command queue") and okay
+		await city.get_tree().create_timer(.8).timeout
+		# The engine spaces a group three tiles apart around the tile and avoids blocked ground, so the farthest may stand a little off.
+		var group: Array = city.core.query("army").banners.filter(func(b): return int(b.id) in inside)
+		var moved: Array = group.filter(func(b): return Vector2(float(b.x), float(b.y)).distance_to(Vector2(target)) <= 9.0)
+		okay = city.check(moved.size() == inside.size(), "every chosen company goes there (%d of %d near %s: %s)" % [moved.size(), inside.size(), str(target), str(group.map(func(b): return [int(b.x), int(b.y)]))]) and okay
+	var escape := InputEventKey.new()
+	escape.physical_keycode = KEY_ESCAPE
+	escape.pressed = true
+	city._input(escape)
+	okay = city.check(not city.unit_selection.has_group(city) and city.army_view.group.is_empty(), "Escape lets the group go") and okay
+	city.core.send("army_home")
+	await city.get_tree().create_timer(.4).timeout
+	return okay
+
 func run_controls_checks() -> bool:
 	var okay := true
 	var KeyBindings = preload("res://scripts/key_bindings.gd")
@@ -1729,7 +1895,8 @@ func run_objective_checks() -> bool:
 	var episode: Dictionary = city.core.query("episode")
 	var goals: Array = episode.get("goals", [])
 	okay = city.check(goals.size() == 4 and city.hud.goals_panel.visible and city.hud.goals_list.get_child_count() == 4, "the objectives panel lists the episode's four objectives") and okay
-	okay = city.check(city.hud.goals_title.text == city.tr("Objectives") + "  %d / %d" % [int(episode.met), int(episode.total)], "its title counts the objectives met (%s)" % city.hud.goals_title.text) and okay
+	var summary: Label = city.hud.get_node("%GoalsSummary")
+	okay = city.check(city.hud.goals_title.text == city.tr("Objectives") and summary.text == city.tr("%d of %d achieved") % [int(episode.met), int(episode.total)], "its header counts the objectives met (%s)" % summary.text) and okay
 	var met := 0
 	for goal in goals:
 		met += 1 if goal.met else 0
@@ -2164,6 +2331,8 @@ func run_checks() -> void:
 		okay = await run_pyramid_checks() and okay
 		okay = await run_controls_checks() and okay
 		okay = await run_city_data_checks() and okay
+		okay = await run_naval_checks() and okay
+		okay = await run_requests_units_checks() and okay
 	city.update_hint()
 	city.update_details()
 	if not city.capture_path.is_empty():

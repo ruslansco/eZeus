@@ -27,6 +27,10 @@ func click(control: Control) -> void:
 	await frames()
 
 func ground_cell() -> Vector2i:
+	for section in city.terrain_details.records.values():
+		for item in section:
+			if item.kind in ["stone", "tall_stone", "copper", "silver", "marble", "black_marble", "orichalcum"]:
+				return item.cell
 	for cell in city.tiles:
 		if not city.core.query("inspect %d %d" % [cell.x, cell.y]).has("footprint"):
 			return cell

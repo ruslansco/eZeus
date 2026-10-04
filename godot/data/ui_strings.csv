@@ -732,9 +732,37 @@ Paused · Awaiting your reply,Пауза · Ожидается ваш ответ
 Olympian,Олимпиец
 Hero,Герой
 Monster,Чудовище
-Drag to turn,Перетащите, чтобы повернуть
 Also here,Также здесь
 Listen,Слушать
 Stop,Стоп
 This character has no recorded voice.,У этого персонажа нет озвучки.
 Sound is muted (M).,Звук выключен (M).
+Roster of leaders,Список правителей
+New leader's name,Имя нового правителя
+Create leader,Создать правителя
+Delete leader,Удалить правителя
+Proceed,Продолжить
+Change leader,Сменить правителя
+No leader chosen,Правитель не выбран
+"Name a leader to begin","Назовите правителя, чтобы начать"
+Enter a name,Введите имя
+That name is too long,Это имя слишком длинное
+That name cannot be used,Это имя нельзя использовать
+There is a leader of that name already,Правитель с таким именем уже есть
+Leader %s is ready,Правитель %s готов
+Delete %s and all of that leader's saved games?,Удалить правителя %s и все его сохранённые игры?
+%s was deleted,Правитель %s удалён
+From before leaders,Сохранено до появления правителей
+Your cities,Ваши города
+%s has no ruler. It can be bought for %d drachmas.,У города %s нет правителя. Его можно купить за %d драхм.
+Buy,Купить
+Now governing %s,Теперь вы управляете городом %s
+%s is yours.,Город %s теперь ваш.
+"There are not enough drachmas to buy this city","Не хватает драхм, чтобы купить этот город"
+That city is not for sale,Этот город не продаётся
+Drag to turn · wheel or double-click to zoom,"Перетащите, чтобы повернуть · колесо или двойной щелчок — приблизить"
+No one asks anything of you.,Никто ничего у вас не просит.
+%d of the world's cities ask you for troops: answer them on the world map.,%d городов мира просят у вас войска: ответьте им на карте мира.
+"%d companies and %d triremes chosen  •  right-click to send them  •  Escape lets them go","Выбрано отрядов: %d, трирем: %d  •  щёлкните правой кнопкой, чтобы отправить их  •  Escape отменяет выбор"
+The chosen units are on their way.,Выбранные отряды выступили.
+The companies march there.,Отряды выступают туда.

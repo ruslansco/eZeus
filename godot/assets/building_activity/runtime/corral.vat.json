@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 198,
+ "parts": {
+  "corral_0": {
+   "row": 0,
+   "rows": 12,
+   "poses": 9,
+   "vertices": 11458,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048720836639404297
+  },
+  "corral_1": {
+   "row": 108,
+   "rows": 9,
+   "poses": 9,
+   "vertices": 9043,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00048792362213134766
+  },
+  "corral_7": {
+   "row": 189,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 96,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0002421736717224121
+  }
+ },
+ "source": {
+  "file": "corral.glb",
+  "bytes": 7833108,
+  "mtime": 1791092608
+ }
+}

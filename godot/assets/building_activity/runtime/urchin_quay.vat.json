@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 357,
+ "parts": {
+  "urchin_quay_10": {
+   "row": 0,
+   "rows": 1,
+   "poses": 6,
+   "vertices": 96,
+   "frames": {
+    "work_00": 0,
+    "work_04": 0,
+    "work_01": 1,
+    "work_03": 1,
+    "work_02": 2,
+    "work_07": 2,
+    "work_05": 3,
+    "work_06": 4,
+    "inactive": 5
+   },
+   "max_error": 2.9712915420532227e-05
+  },
+  "urchin_quay_11": {
+   "row": 6,
+   "rows": 20,
+   "poses": 9,
+   "vertices": 19985,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0002440810203552246
+  },
+  "urchin_quay_20": {
+   "row": 186,
+   "rows": 19,
+   "poses": 9,
+   "vertices": 18449,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024402141571044922
+  }
+ },
+ "source": {
+  "file": "urchin_quay.glb",
+  "bytes": 4160160,
+  "mtime": 1791092776
+ }
+}

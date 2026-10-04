@@ -1,0 +1,66 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 306,
+ "parts": {
+  "horse_ranch_3": {
+   "row": 0,
+   "rows": 16,
+   "poses": 9,
+   "vertices": 15861,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0004876852035522461
+  },
+  "horse_ranch_4": {
+   "row": 144,
+   "rows": 17,
+   "poses": 9,
+   "vertices": 17210,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.000244140625
+  },
+  "horse_ranch_18": {
+   "row": 297,
+   "rows": 1,
+   "poses": 9,
+   "vertices": 92,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.0002161264419555664
+  }
+ },
+ "source": {
+  "file": "horse_ranch.glb",
+  "bytes": 6303312,
+  "mtime": 1791092756
+ }
+}

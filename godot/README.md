@@ -79,7 +79,7 @@ rendering while hidden. Review: `python3 tools/review_world_atlas.py --flight
 | Mouse wheel / trackpad pinch | Cursor-anchored city zoom, in to a closest view of about ten tiles (`MINIMUM_DISTANCE` in `orbit_camera.gd`); beyond the outward limit, fly into the world atlas |
 | F2 | Fly to the world map / return to the city |
 | Middle drag | Camera yaw and tilt |
-| Right click | Cancel construction or close the current panel; inspect a tile when idle. Selected army banners retain move orders |
+| Right click | Cancel construction or close the current panel; on a walker, open its character window (paused, with its spoken line and voice); inspect a tile when idle. Selected army banners retain move orders |
 | Home | Show the full city |
 | T | Turn the placement preview; R is now reserved for camera tilt |
 | Space | Pause / resume |
@@ -533,3 +533,22 @@ below the icon and shares the right edge. Height remains content-bounded above
 construction/time controls, with scrolling, retained reading Controls, full
 history and unread semantics unchanged. Resource disclosure/scaling move both
 icon and journal together. The right-click back behavior also closes the journal.
+
+## Character window — 3 October 2026
+
+A right click on a walker (the ringed person, or any god, hero, monster, animal, cart or boat near the pointer, never
+through a HUD panel) opens `ui/character_panel.gd`, the SDL game's character window: the walker's own 3D model on a lit
+marble plinth (it sways and can be dragged round; hovering Olympians get a soft glow), its name and occupation, the line it
+speaks typed out in time with its recorded voice, Listen/Stop with a progress bar, a cart's errand, the other people on its
+tile and Go to. The city pauses while it is open and resumes only if it was running; Escape, a right click or a click
+outside closes it and stops the voice. The core's `character_info <walker id>` words it through
+`engine/echaracterinfotext.{h,cpp}`, now shared with the SDL window (which line is spoken uses cosmetic randomness, so
+looking at a walker never moves the simulation generator); a trailer speaks for its driver. Review with
+`tools/review_character_panel.py --lang en` (or `ru`).
+
+## Greek portrait faces — 4 October 2026
+
+The character window shows men with a designed Greek face and curly hair and beard (black, grey or white): portrait
+models in `assets/portraits/` made by `tools/export_portraits.py` (Blender, about 20 s each, then `godot --import`), opened
+on the head and shoulders (wheel or double click for the whole figure). The city keeps the crowd models. Contract:
+`docs/GODOT_CHARACTER_ART.md`; capture with `scripts/review_portraits.gd` (`--only=walker_a,walker_b`).
