@@ -1245,7 +1245,7 @@ func run_city_data_checks() -> bool:
 		if dialogs.size() != 1:
 			return okay
 	var dialog = dialogs[0]
-	okay = city.check(dialog.tabs.get_tab_count() == 12 and dialog.tabs.get_tab_title(0) == city.tr("Summary") and dialog.tabs.get_tab_title(11) == city.tr("Mythology"), "it has the SDL panel's twelve pages as tabs") and okay
+	okay = city.check(dialog.tabs.get_tab_count() >= 12 and dialog.tabs.get_tab_title(0) == city.tr("Summary") and dialog.tabs.get_tab_title(11) == city.tr("Mythology"), "it has the SDL panel's twelve pages as tabs") and okay
 	var values: Array = dialog.bodies.overview.find_children("Value", "Label", true, false)
 	okay = city.check(values.size() >= 5 and values.all(func(v): return v.has_theme_color_override("font_color")), "the summary shows the core's verdicts, each tinted by how serious it is (%d)" % values.size()) and okay
 	dialog.show_page("employment")
@@ -1456,6 +1456,198 @@ func run_requests_units_checks() -> bool:
 	await city.get_tree().create_timer(.4).timeout
 	return okay
 
+# The SDL remaster's extras: the City window's advisor, history and trade pages, walker route editing from the inspector, and the
+# house card under the pointer.
+func city_window() -> Array:
+	return city.hud.get_children().filter(func(child): return child is AcceptDialog and child.title == city.tr("City") and not child.is_queued_for_deletion())
+
+func run_city_extras_checks() -> bool:
+	var okay := true
+	for dialog in city_window():
+		dialog.queue_free()
+	await city.get_tree().process_frame
+	city.game_action("city")
+	await city.get_tree().create_timer(.6).timeout
+	var dialogs := city_window()
+	okay = city.check(dialogs.size() == 1, "the City window opens for the remaster's pages") and okay
+	if dialogs.size() == 1:
+		var dialog = dialogs[0]
+		okay = city.check(dialog.tabs.get_tab_count() == 15 and dialog.tabs.get_tab_title(12) == city.tr("Advisor") and dialog.tabs.get_tab_title(13) == city.tr("History")
+			and dialog.tabs.get_tab_title(14) == city.tr("Trade"), "it adds the advisor, history and trade pages") and okay
+		var open_advisor = dialog.bodies.overview.find_child("OpenAdvisor", true, false)
+		okay = city.check(open_advisor != null and dialog.bodies.overview.find_child("OpenHistory", true, false) != null, "the summary opens the advisor and the history, as the SDL overview's buttons do") and okay
+		if open_advisor != null:
+			open_advisor.pressed.emit()
+		await city.get_tree().process_frame
+		# Same-named siblings are renamed by Godot, so the cards are counted as the page's panels.
+		var cards: Array = dialog.bodies.advisor.get_children().filter(func(c): return c is PanelContainer)
+		var advice: Array = city.core.query("city_advisor").get("advice", [])
+		okay = city.check(dialog.current_page() == "advisor" and cards.size() == advice.size() and cards.size() >= 1, "the advisor shows a card per problem (%d)" % cards.size()) and okay
+		dialog.show_page("history")
+		await city.get_tree().process_frame
+		var chart = dialog.history_chart
+		var samples: Array = city.core.query("city_history").get("samples", [])
+		okay = city.check(is_instance_valid(chart) and chart.visible_samples().size() == mini(24, samples.size()), "the history chart shows the last two years of the record (%d of %d months)" % [chart.visible_samples().size() if is_instance_valid(chart) else -1, samples.size()]) and okay
+		var buttons: Array = dialog.bodies.history.get_node("HistoryChoices").get_children().filter(func(b): return b is Button)
+		if buttons.size() == 9:
+			buttons[1].pressed.emit()
+			buttons[8].pressed.emit()
+		dialog.refresh()
+		await city.get_tree().process_frame
+		okay = city.check(dialog.history_chart == chart and chart.series == 1 and chart.visible_samples().size() == samples.size() and not dialog.bodies.history.get_node("HistorySummary").text.is_empty(),
+			"a series and a range are chosen, and a refresh keeps the chart") and okay
+		dialog.show_page("storage")
+		await city.get_tree().process_frame
+		var open_trade = dialog.bodies.storage.find_child("OpenTrade", true, false)
+		okay = city.check(open_trade != null, "the storage page opens the trade summary, as the SDL distribution page's scales do") and okay
+		if open_trade != null:
+			open_trade.pressed.emit()
+		await city.get_tree().process_frame
+		var lines: Array = city.core.query("trade_summary").get("lines", [])
+		var partners: Array = dialog.bodies.trade.get_children().filter(func(c): return c is PanelContainer)
+		okay = city.check(dialog.current_page() == "trade" and partners.size() == lines.filter(func(l): return bool(l.card)).size(), "the trade page has a card per partner (%d)" % partners.size()) and okay
+		# "Go there" takes the view to the first place of the first problem that has places, and closes the window.
+		dialog.show_page("advisor")
+		await city.get_tree().process_frame
+		var go: Array = dialog.bodies.advisor.find_children("GoThere", "Button", true, false)
+		var place: Array = []
+		for item in advice:
+			if not item.places.is_empty():
+				place = item.places[int(dialog.advisor_steps.get(str(item.key), 0)) % item.places.size()]
+				break
+		if not go.is_empty() and not place.is_empty():
+			go[0].pressed.emit()
+			await city.get_tree().process_frame
+			var expected: Vector3 = city.world_position(float(place[0]), float(place[1]), 0)
+			okay = city.check(Vector2(city.orbit.target.x, city.orbit.target.z).distance_to(Vector2(expected.x, expected.z)) < 1.5 and city_window().is_empty(), "Go there takes the view to the place and closes the window") and okay
+		for left in city_window():
+			left.queue_free()
+		await city.get_tree().process_frame
+	# Walker route editing from the inspector of a walker building.
+	var snapshot: Dictionary = city.core.simulation.snapshot(true)
+	var walker_building := {}
+	var house := Vector2i(99999, 99999)
+	for building in snapshot.get("buildings", []):
+		if walker_building.is_empty():
+			var seen: Dictionary = city.core.query("inspect %d %d" % [int(building.x), int(building.y)])
+			if seen.has("route") and int(seen.route.guides) == 0:
+				walker_building = seen
+		if house.x == 99999 and bool(city.core.query("house_card %d %d" % [int(building.x), int(building.y)]).get("valid", false)):
+			house = Vector2i(int(building.x), int(building.y))
+		if not walker_building.is_empty() and house.x != 99999:
+			break
+	okay = city.check(not walker_building.is_empty(), "a walker building of the player's to lead (%s)" % walker_building.get("name", "")) and okay
+	if not walker_building.is_empty():
+		var at := Vector2i(int(walker_building.x), int(walker_building.y))
+		city.set_tool("select")
+		city.inspected = at
+		city.refresh_inspection()
+		var button: Button = city.inspector_controls.route_button
+		okay = city.check(button != null and button.visible and not button.disabled, "its inspector offers the walker route (%s)" % (button.text if button != null else "")) and okay
+		if button != null:
+			button.pressed.emit()
+			await city.get_tree().create_timer(.5).timeout
+		okay = city.check(city.route_editor.active and city.route_editor.bar.visible and not city.inspector.visible, "the route editor opens with its bar, in place of the inspector") and okay
+		okay = city.check(city.route_editor.buttons.both.text == city.route_editor.value.labels.one, "the bar's direction button names the way the walkers walk now (%s)" % city.route_editor.buttons.both.text) and okay
+		# A click on a road a few tiles away adds the first guide.
+		var centre := Vector2(float(city.route_editor.value.centre[0]), float(city.route_editor.value.centre[1]))
+		var road := Vector2i(99999, 99999)
+		for point in city.tiles:
+			var away := Vector2(point).distance_to(centre)
+			if int(city.tiles[point][4]) and away >= 4.0 and away <= 8.0:
+				road = point
+				break
+		if road.x != 99999 and city.route_editor.active:
+			var ground: Vector3 = city.route_editor.ground(Vector2(road))
+			city.orbit.target = ground
+			city.orbit.distance = 28.0
+			city.orbit.refresh()
+			await city.get_tree().create_timer(.4).timeout
+			var click := InputEventMouseButton.new()
+			click.button_index = MOUSE_BUTTON_LEFT
+			click.pressed = true
+			click.position = city.orbit.camera.unproject_position(ground)
+			city._unhandled_input(click)
+			await city.get_tree().create_timer(.5).timeout
+			var guides: Array = city.route_editor.value.get("guides", [])
+			okay = city.check(guides.size() == 1 and Vector2(float(guides[0][0]), float(guides[0][1])).distance_to(Vector2(road)) <= 1.0, "a click on a road sets a guide (%s for %s)" % [str(guides), str(road)]) and okay
+			var walked := false
+			for step in 30:
+				await city.get_tree().create_timer(.1).timeout
+				if not city.route_editor.value.get("path", []).is_empty():
+					walked = true
+					break
+			okay = city.check(walked and city.route_editor.markers.get_child_count() >= 3, "the walk through the guide is drawn with its numbered post (%d tiles)" % city.route_editor.value.get("path", []).size()) and okay
+			city.route_editor.press("both")
+			await city.get_tree().create_timer(.4).timeout
+			okay = city.check(bool(city.route_editor.value.both) and city.route_editor.buttons.both.text == city.route_editor.value.labels.both, "the direction button makes them walk both ways") and okay
+			city.route_editor.press("both")
+			city.route_editor.press("restore")
+			await city.get_tree().create_timer(.4).timeout
+			okay = city.check(city.route_editor.value.get("guides", []).is_empty() and not bool(city.route_editor.value.both), "restore brings back the guides it had") and okay
+		var escape := InputEventKey.new()
+		escape.pressed = true
+		escape.keycode = KEY_ESCAPE
+		escape.physical_keycode = KEY_ESCAPE
+		city._input(escape)
+		await city.get_tree().create_timer(.3).timeout
+		okay = city.check(not city.route_editor.active and not city.route_editor.bar.visible and not city.route_editor.markers.visible and not bool(city.core.query("route").active), "Escape closes the route editor") and okay
+	# The house card. Resting the real pointer is the review's (--menu-rest-review extras): a windowed run cannot hold the
+	# pointer still, so the card is asked for the house directly, and a chosen tool must then hide it.
+	okay = city.check(house.x != 99999, "an inhabited house for the card") and okay
+	if house.x != 99999:
+		city.set_tool("select")
+		city.house_card.show_at(house)
+		var labels: Array = city.house_card.column.find_children("*", "Label", true, false)
+		okay = city.check(city.house_card.panel.visible and labels.size() >= 4, "the house card names its level, residents and next step (%s)" % ", ".join(labels.slice(0, 3).map(func(l): return l.text))) and okay
+		city.set_tool("road")
+		city.house_card.update(.1)
+		okay = city.check(not city.house_card.panel.visible, "a chosen tool hides the card") and okay
+		city.set_tool("select")
+	return okay
+
+# Disasters: a burning house gets flames and smoke, a collapse leaves the ruins models, and lava marks the ground's pattern.
+func run_disaster_checks() -> bool:
+	var okay := true
+	city.core.simulation.enable_test_commands()
+	var snapshot: Dictionary = city.core.simulation.snapshot(true)
+	var houses: Array = snapshot.buildings.filter(func(b): return str(b.asset).begins_with("common_house"))
+	okay = city.check(not houses.is_empty(), "a house for the fire checks") and okay
+	if houses.is_empty():
+		return okay
+	var house: Dictionary = houses[-1]
+	var before: int = city.building_fires.count()
+	city.core.query("test_fire %d %d" % [int(house.x), int(house.y)])
+	await city.get_tree().create_timer(.6).timeout
+	var node: Node3D = city.building_fires.fires.get("%d,%d" % [int(house.x), int(house.y)])
+	var flames := 0
+	var smoke := 0
+	if node != null:
+		for child in node.get_children():
+			if child is MeshInstance3D and child.mesh is ArrayMesh:
+				flames += 1
+			elif child is MeshInstance3D and child.mesh is QuadMesh:
+				smoke += 1
+	okay = city.check(city.building_fires.count() == before + 1 and flames >= 2 and smoke >= 1, "a burning house gets flames (%d) and smoke (%d)" % [flames, smoke]) and okay
+	city.core.query("test_collapse %d %d" % [int(house.x), int(house.y)])
+	await city.get_tree().create_timer(.6).timeout
+	var ruins: Array = city.building_index.values().filter(func(b): return str(b.asset).begins_with("ruins_") and int(b.x) >= int(house.x) and int(b.x) < int(house.x) + int(house.w) and int(b.y) >= int(house.y) and int(b.y) < int(house.y) + int(house.h))
+	# (A ruin may go on smouldering on the house's corner tile, so the fire list is not checked here; validate_disasters.gd does.)
+	okay = city.check(not ruins.is_empty() and ruins.all(func(b): return city.model_file_exists(str(b.asset))), "the collapse leaves ruins with their models (%s)" % str(ruins.map(func(b): return b.asset))) and okay
+	# Lava on free ground marks the ground's pattern texture.
+	var spot := Vector2i(99999, 99999)
+	for cell in city.tiles:
+		var tile: Array = city.tiles[cell]
+		if int(tile[5]) and not int(tile[4]) and Vector2(cell).distance_to(Vector2(int(house.x), int(house.y))) > 12.0:
+			spot = cell
+			break
+	if spot.x != 99999:
+		city.core.query("test_terrain lava %d %d 1" % [spot.x, spot.y])
+		await city.get_tree().create_timer(.6).timeout
+		var mark: Color = city.terrain_style.pattern_image.get_pixelv(spot - city.origin)
+		okay = city.check(int(city.tiles[spot][3]) & 32768 and mark.b > .5, "lava reaches the ground's pattern (%s)" % str(mark)) and okay
+	return okay
+
 func run_controls_checks() -> bool:
 	var okay := true
 	var KeyBindings = preload("res://scripts/key_bindings.gd")
@@ -1639,36 +1831,70 @@ func run_hero_checks() -> bool:
 	await city.get_tree().create_timer(.3).timeout
 	return okay
 
-# A monster loose in the city through the real interface (run after the fights, as it leaves the monster at large): the red notice
-# names it and takes the camera to it, its model carries walk, fight and die clips that play through the pose shader, and the
-# notice follows the interface language. A land monster and a sea monster (which stands in the water, not on the shore).
+# A monster loose in the city through the real interface (run after the fights, as it leaves the monster at large): a red button
+# appears in the rail under the journal (the top notice stays for invaders), its card gives the monster's own message and the hero who
+# can slay it, goes to the monster, and offers the hero's hall as soon as the city may build it (the Build menu follows at once, without
+# reopening the city); the card follows the interface language. The model carries walk, fight and die clips that play through the pose
+# shader. A land monster and a sea monster (which stands in the water, not on the shore).
 func run_monster_checks() -> bool:
 	var okay := true
 	var WalkerCombat = preload("res://scripts/walker_combat.gd")
 	city.core.simulation.enable_test_commands()
 	city.core.send("pause 1")
 	await city.get_tree().create_timer(.3).timeout
-	okay = city.check(not city.invasion_banner.visible, "before a monster comes the notice is hidden") and okay
+	var card = city.monster_card
+	okay = city.check(not card.button.visible and not card.visible, "before a monster comes there is no monster button") and okay
 	var landed: Dictionary = city.core.query("test_monster minotaur")
 	okay = city.check(int(landed.get("monsters", 0)) == 1, "a minotaur is let loose (%s)" % str(landed.get("error", "ok"))) and okay
 	await city.get_tree().create_timer(.6).timeout
-	var notice: String = city.invasion_banner.label.text
-	okay = city.check(city.invasion_banner.visible and notice.begins_with(city.tr("A monster stalks the city: %s").split("%s")[0]) and notice.length() > 22, "the notice names the monster: %s" % notice) and okay
-	var at: Vector2i = city.invasion_banner.at
+	okay = city.check(card.button.visible and card.button.text == "1" and card.button.is_visible_in_tree(), "a red monster button with its count shows in the rail (%s)" % card.button.text) and okay
+	var rail: Control = city.hud.get_node("%EventRail")
+	okay = city.check(rail.get_global_rect().encloses(card.button.get_global_rect()), "the button sits in the rail beside the journal") and okay
+	okay = city.check(not city.invasion_banner.visible, "the notice at the top stays for invaders, not monsters") and okay
+	card.button.pressed.emit()
+	await city.get_tree().create_timer(.4).timeout
+	var shown: Dictionary = card.monsters[0] if not card.monsters.is_empty() else {}
+	okay = city.check(card.visible and not city.hud.message_panel.visible and not str(shown.get("name", "")).is_empty() and str(shown.get("text", "")).length() > 20, "the button opens the card with the monster's own message: %s" % str(shown.get("title", ""))) and okay
+	okay = city.check(card.get_global_rect().position.y >= rail.get_global_rect().end.y and card.get_global_rect().end.y <= city.hud.size.y, "the card hangs under the rail, within the screen") and okay
+	okay = city.check(str(shown.get("hero", "")) != "" and str(shown.get("hall_tool", "")).begins_with("hero_hall_"), "the card names the hero who can slay it (%s, %s)" % [str(shown.get("hero", "")), str(shown.get("hall_tool", ""))]) and okay
+	var at := Vector2i(int(shown.get("x", 0)), int(shown.get("y", 0)))
 	var home_target: Vector3 = city.orbit.target
 	city.orbit.target = Vector3(home_target.x + 40.0, home_target.y, home_target.z)
-	city.invasion_banner.show_button.pressed.emit()
+	card.go_requested.emit(at)
 	await city.get_tree().create_timer(.3).timeout
 	var seen: Vector2 = city.tile_coordinates(city.orbit.target)
-	okay = city.check(city.invasion_banner.show_button.text == city.tr("Go to the monster") and seen.distance_to(Vector2(at)) < 2.0, "its button takes the camera to the monster (%s, the camera at %s)" % [str(at), str(seen)]) and okay
+	okay = city.check(seen.distance_to(Vector2(at)) < 2.0, "its Go button takes the camera to the monster (%s, the camera at %s)" % [str(at), str(seen)]) and okay
 	city.orbit.target = home_target
 	city.orbit.refresh()
+	# The engine makes the slayer's hall buildable when a monster comes (`allowHero`); the test monster comes without that, so the
+	# hall is allowed here as the event would, mid-game: the Build menu must offer it without reopening the city.
+	var hall_tool := str(shown.get("hall_tool", ""))
+	city.core.query("test_allow " + hall_tool)
+	await city.get_tree().create_timer(.6).timeout
+	var offered := false
+	for group in city.hud.build_groups:
+		for item in group.items:
+			offered = offered or (item.name == hall_tool and group.title == "Heroes' halls")
+	okay = city.check(offered, "a hall allowed mid-game appears in the Build menu at once (%s)" % hall_tool) and okay
+	city.refresh_monster_card()
+	var build_button: Button = null
+	for node in card.list.find_children("*", "Button", true, false):
+		if node.text == city.tr("Build the hero's hall"): build_button = node
+	okay = city.check(build_button != null, "the card offers to build the hero's hall") and okay
+	if build_button != null:
+		build_button.pressed.emit()
+		await city.get_tree().create_timer(.3).timeout
+		okay = city.check(not card.visible and city.hud.get_node("%BuildTray").visible and city.hud.active_category == "Heroes' halls" and city.mode == hall_tool, "building the hall opens the Build menu on it with the hall chosen (%s)" % city.mode) and okay
+		city.hud.close_build_tray()
+		city.set_tool("select")
+	card.set_open(true)
+	await city.get_tree().create_timer(.2).timeout
 	city.change_language()
 	await city.get_tree().create_timer(.3).timeout
-	var other_language: String = city.invasion_banner.label.text
+	var other_language: String = card.heading.text
 	city.change_language()
 	await city.get_tree().create_timer(.3).timeout
-	okay = city.check(other_language != city.invasion_banner.label.text, "the notice follows the interface language") and okay
+	okay = city.check(other_language != card.heading.text, "the card follows the interface language") and okay
 	var minotaurs: Array = city.walkers.values().filter(func(e): return e.asset == "walker_minotaur")
 	okay = city.check(minotaurs.size() == 1 and minotaurs[0].clips.has("fight") and minotaurs[0].clips.has("fight2") and minotaurs[0].clips.has("die") and not minotaurs[0].morphs.is_empty(), "the minotaur's model carries its fight and die clips (%d walkers)" % minotaurs.size()) and okay
 	if minotaurs.size() == 1:
@@ -1690,7 +1916,9 @@ func run_monster_checks() -> bool:
 	await city.get_tree().create_timer(.6).timeout
 	var krakens: Array = city.walkers.values().filter(func(e): return e.asset == "walker_kraken")
 	okay = city.check(krakens.size() == 1, "the kraken has its own model (%d walkers)" % krakens.size()) and okay
-	okay = city.check(city.invasion_banner.label.text.contains("2") or city.invasion_banner.label.text.length() > 10, "two monsters are announced together: %s" % city.invasion_banner.label.text) and okay
+	city.refresh_monster_card()
+	okay = city.check(card.button.text == "2" and card.monsters.size() == 2, "two monsters are counted and listed together (%s)" % card.button.text) and okay
+	card.set_open(false)
 	city.core.send("pause 1")
 	await city.get_tree().create_timer(.4).timeout
 	return okay
@@ -1755,7 +1983,8 @@ func run_military_checks() -> bool:
 	wm.select_city(5)
 	await city.get_tree().process_frame
 	okay = city.check(not wm.aid_button.disabled, "Aid is on for a city that regards the player") and okay
-	var regard_before: int = int(wm.find_city(5).attitude)
+	# The core's regard right now: the map reopened just after closing may still be flying out and keep its old data.
+	var regard_before: int = int(city.core.query("world").cities.filter(func(c): return int(c.index) == 5)[0].attitude)
 	wm.aid_button.pressed.emit()
 	await city.get_tree().process_frame
 	var request_aid: Array = wm.dialog.find_children("*", "Button", true, false).filter(func(b): return b.text == city.tr("Request defensive aid"))
@@ -2215,6 +2444,26 @@ func run_camera_checks(screen: Vector2) -> bool:
 	okay = city.check(city.orbit.distance > closest, "zooming out works from the closest view") and okay
 	city.orbit.distance = distance_before
 	city.orbit.refresh()
+	# The wheel over the build tray scrolls only the cards: at the start of the row the scroll
+	# container passes the wheel on, and the map must not zoom with it.
+	city.hud.open_category(city.hud.category_buttons.keys()[0])
+	await city.get_tree().process_frame
+	var tray: Control = city.hud.get_node("%BuildTray")
+	var over_tray := InputEventMouseMotion.new()
+	over_tray.position = tray.get_global_rect().get_center()
+	city.get_viewport().push_input(over_tray, true)
+	for pressed in [true, false]:
+		var wheel := InputEventMouseButton.new()
+		wheel.position = over_tray.position
+		wheel.button_index = MOUSE_BUTTON_WHEEL_UP
+		wheel.pressed = pressed
+		city.get_viewport().push_input(wheel, true)
+	await city.get_tree().process_frame
+	okay = city.check(is_equal_approx(city.orbit.distance, distance_before), "the wheel over the build tray does not zoom the map") and okay
+	city.hud.close_build_tray()
+	var away := InputEventMouseMotion.new()
+	away.position = screen
+	city.get_viewport().push_input(away, true)
 	city.orbit.enabled = false
 	return okay
 
@@ -2333,6 +2582,8 @@ func run_checks() -> void:
 		okay = await run_city_data_checks() and okay
 		okay = await run_naval_checks() and okay
 		okay = await run_requests_units_checks() and okay
+		okay = await run_city_extras_checks() and okay
+		okay = await run_disaster_checks() and okay
 	city.update_hint()
 	city.update_details()
 	if not city.capture_path.is_empty():

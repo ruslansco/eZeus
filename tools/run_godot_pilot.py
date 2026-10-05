@@ -47,7 +47,8 @@ def main():
     parser.add_argument('--sanctuary-review', help='Capture the designated city\'s sanctuaries from several angles into captures/sanctuary-<name>-*.png, then exit')
     parser.add_argument('--pyramid-review', help='Capture the designated city\'s pyramids from several angles into captures/pyramid-<name>-*.png, then exit')
     parser.add_argument('--start-review', choices=['leaders'], help='Capture the start menu\'s roster of leaders in a scratch profile, then The Sands of Betrayal\'s city for sale and the city menu (captures/start-review-*, menu-rest-cities-*), then exit')
-    parser.add_argument('--menu-rest-review', choices=['menu', 'build', 'city', 'naval', 'anim'], help='Capture the Build menu trays that gained the rest of the SDL buildings, or build each new kind and capture it (captures/menu-rest-*.png), then exit')
+    parser.add_argument('--menu-rest-review', choices=['menu', 'build', 'city', 'naval', 'anim', 'extras', 'disasters'], help='Capture the Build menu trays that gained the rest of the SDL buildings, or build each new kind and capture it (captures/menu-rest-*.png), then exit')
+    parser.add_argument('--street-review', help='Open a COPY of a save (in a scratch folder) and capture its densest blocks of houses into captures/street-*.png, then exit')
     parser.add_argument('--objectives-review', help='Capture the objectives panel closed, open and with a sample housing shortfall into captures/objectives-<name>-*.png, then exit')
     parser.add_argument('--controls-review', help='Capture the Controls and Game settings dialogs into captures/controls-<name>-*.png, then exit')
     parser.add_argument('--rite-review', help='Capture the rite on a sanctuary altar (sheep, bull, goods) in the designated city into captures/rite-<name>-*.png, then exit')
@@ -77,7 +78,7 @@ def main():
         command += ['--rendering-method', 'mobile', '--rendering-driver', 'metal'] if args.renderer == 'metal' else ['--rendering-method', 'gl_compatibility']
         if args.headless:
             command.append('--headless')
-        automated = args.skip_start or args.validate or args.asset_review or args.garden_review or args.sanctuary_review or args.pyramid_review or args.menu_rest_review or args.start_review or args.controls_review or args.objectives_review or args.attack_review or args.rite_review or args.character_review or args.terrain_review or args.capture
+        automated = args.skip_start or args.validate or args.asset_review or args.garden_review or args.sanctuary_review or args.pyramid_review or args.menu_rest_review or args.start_review or args.controls_review or args.objectives_review or args.street_review or args.attack_review or args.rite_review or args.character_review or args.terrain_review or args.capture
         language = args.lang or ('en' if automated else None)
         command.append('--')
         if language:
@@ -102,6 +103,8 @@ def main():
             command.append('--controls-review=' + args.controls_review)
         if args.objectives_review:
             command.append('--objectives-review=' + args.objectives_review)
+        if args.street_review:
+            command.append('--street-review=' + args.street_review)
         if args.attack_review:
             command.append('--attack-review=' + args.attack_review)
         if args.rite_review:

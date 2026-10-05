@@ -18,6 +18,7 @@ public:
     eAnimalAction(eCharacter* const c);
 
     bool decide();
+    void startWalking();
 
     void setLayTime(const int l) { mLayTime = l; }
     void setWalkTime(const int w) { mWalkTime = w; }

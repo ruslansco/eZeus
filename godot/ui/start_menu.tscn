@@ -153,77 +153,185 @@ layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"Quiet"
 
-[node name="AdventurePage" type="PanelContainer" parent="Center" unique_id=1230281658]
+[node name="AdventurePage" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(1040, 560)
+custom_minimum_size = Vector2(1140, 720)
 layout_mode = 2
+theme_type_variation = &"AdventureShell"
 
-[node name="AdventureColumn" type="VBoxContainer" parent="Center/AdventurePage" unique_id=2043656256]
+[node name="AdventureColumn" type="VBoxContainer" parent="Center/AdventurePage"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 16
 
-[node name="AdventureHeading" type="Label" parent="Center/AdventurePage/AdventureColumn" unique_id=685555511]
+[node name="AdventureHeading" type="Label" parent="Center/AdventurePage/AdventureColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Heading"
 
-[node name="AdventureBody" type="HBoxContainer" parent="Center/AdventurePage/AdventureColumn" unique_id=586241034]
+[node name="AdventureBody" type="HBoxContainer" parent="Center/AdventurePage/AdventureColumn"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 14
+theme_override_constants/separation = 22
 
-[node name="AdventureList" type="ItemList" parent="Center/AdventurePage/AdventureColumn/AdventureBody" unique_id=1352051041]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(380, 0)
+[node name="AdventureLibrary" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody"]
 layout_mode = 2
+theme_override_constants/separation = 12
 
-[node name="AdventureDetail" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody" unique_id=1593110738]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="AdventureTitle" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail" unique_id=1840845871]
+[node name="AdventureCount" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureLibrary"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"Subheading"
-autowrap_mode = 3
+theme_type_variation = &"Caption"
 
-[node name="AdventureScroll" type="ScrollContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail" unique_id=1586842538]
+[node name="AdventureList" type="ItemList" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureLibrary"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(330, 0)
 layout_mode = 2
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
+theme_type_variation = &"AdventureList"
 
-[node name="AdventureText" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/AdventureScroll" unique_id=9036652]
+[node name="AdventureHint" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureLibrary"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-autowrap_mode = 3
-
-[node name="AdventureStatus" type="Label" parent="Center/AdventurePage/AdventureColumn" unique_id=606761480]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
 theme_type_variation = &"Detail"
 autowrap_mode = 3
 
-[node name="AdventureButtons" type="HBoxContainer" parent="Center/AdventurePage/AdventureColumn" unique_id=2116655268]
+[node name="AdventureDetail" type="PanelContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"AdventureCard"
+
+[node name="CardColumn" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="AdventureHero" type="Control" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 230)
+layout_mode = 2
+clip_contents = true
+mouse_filter = 2
+
+[node name="AdventureImage" type="TextureRect" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/AdventureHero"]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="AdventureArtFallback" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/AdventureHero"]
+unique_name_in_owner = true
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_type_variation = &"Caption"
+
+[node name="AdventureBadge" type="PanelContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/AdventureHero"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 14.0
+theme_type_variation = &"AdventureBadge"
+mouse_filter = 2
+
+[node name="AdventureMode" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/AdventureHero/AdventureBadge"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AdventureBadgeText"
+
+[node name="TitleBand" type="PanelContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn"]
+layout_mode = 2
+theme_type_variation = &"AdventureRibbon"
+
+[node name="BandColumn" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/TitleBand"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="AdventureTitle" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/TitleBand/BandColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Subheading"
+autowrap_mode = 3
+
+[node name="AdventureEpisodes" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/TitleBand/BandColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+
+[node name="Paper" type="PanelContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"AdventurePaper"
+
+[node name="AdventureScroll" type="ScrollContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Details" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="AdventureText" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AdventureBodyText"
+autowrap_mode = 3
+
+[node name="Rule" type="HSeparator" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll/Details"]
+layout_mode = 2
+theme_type_variation = &"AdventureRule"
+
+[node name="AdventureGoalsHeading" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AdventurePaperHeading"
+
+[node name="AdventureEpisode" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AdventureBodyText"
+autowrap_mode = 3
+
+[node name="AdventureGoals" type="VBoxContainer" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AdventureEmptyGoals" type="Label" parent="Center/AdventurePage/AdventureColumn/AdventureBody/AdventureDetail/CardColumn/Paper/AdventureScroll/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AdventureBodyText"
+autowrap_mode = 3
+
+[node name="AdventureStatus" type="Label" parent="Center/AdventurePage/AdventureColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+
+[node name="AdventureButtons" type="HBoxContainer" parent="Center/AdventurePage/AdventureColumn"]
 layout_mode = 2
 theme_override_constants/separation = 14
 
-[node name="AdventureSpacer" type="Control" parent="Center/AdventurePage/AdventureColumn/AdventureButtons" unique_id=1931269865]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AdventureBack" type="Button" parent="Center/AdventurePage/AdventureColumn/AdventureButtons" unique_id=1939678820]
+[node name="AdventureBack" type="Button" parent="Center/AdventurePage/AdventureColumn/AdventureButtons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(140, 46)
 layout_mode = 2
 
-[node name="AdventureStart" type="Button" parent="Center/AdventurePage/AdventureColumn/AdventureButtons" unique_id=1139078989]
+[node name="AdventureSpacer" type="Control" parent="Center/AdventurePage/AdventureColumn/AdventureButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AdventureStart" type="Button" parent="Center/AdventurePage/AdventureColumn/AdventureButtons"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 46)
+custom_minimum_size = Vector2(220, 46)
 layout_mode = 2
 theme_type_variation = &"Primary"
 

@@ -1,5 +1,318 @@
 # Godot embedding validation — 4 October 2026
 
+## Hydra reference model — 4 October 2026
+
+**Implemented and technically verified; user visual acceptance pending.**
+The new `hydra_reference_v1` replaces only the Godot `walker_hydra` asset.
+Three arched necks and expressive heads join a four-legged muscular body, with
+charcoal scales, crimson eyes, black hooked spines, ivory teeth and one tail.
+The reproducible background Blender adapter and editable scene are retained.
+Native sprite recipes, coordinates, rules, RNG, saves and timing are unchanged.
+
+Measured decoded geometry:
+
+- **17,046 authored vertices**, **27,860 imported vertices**, **24,160 triangles**,
+  **two surfaces**. Allocations: 24,000 / 32,000 / 30,000 respectively.
+  Imported meshes have **9 LOD entries**, with **112 terminal triangles** in total.
+  Only `walker_hydra` is deliberately updated by this slice in the existing
+  geometry baseline; other prior workspace entries are preserved.
+- Neutral vertical bounds **0.021592–2.006921** Godot units; body height
+  **1.985329**. Displayed tax collector body height **0.949020** (1.12 multiplier),
+  Zeus body height **2.455466**. Hydra ratios: **2.091977** citizen / **0.808534**
+  Zeus. The comparison excludes held props through UV2 and excludes god hover.
+- All **114 authored samples** have a vertical envelope **0.010414–2.082220**;
+  the fallen body finishes below **0.737922**. These are flat-ground geometry
+  checks, not per-paw terrain IK. 24 walk / 12 idle / 24 fight / 24 fight2 /
+  30 die samples retain an in-place root, independent necks and .64-tile native
+  stride. Support paw velocity cancels native travel rather than merely matching
+  a manifest number.
+- UV-preserving optimization proves **226 part-frame aliases**, two primitives,
+  **zero differences** to the fresh backup. Both UV sets, palette, indices and
+  positions are preserved. The runtime bake has **205 distinct part poses**,
+  **23.5 MiB** of half-float pose texture and maximum component error **0.000488**.
+  This is an allocation measurement, not a matched GPU performance result.
+
+Verification:
+
+| Check | Result | Evidence under `godot/captures/` |
+| --- | --- | --- |
+| Decoded scale/contact/clip/stride gate | 25 PASS | `hydra-asset-validation.json`, `hydra-asset-validation.log` |
+| Imported LOD/finish/VAT/mouth/clock gate | 17 PASS | `hydra-runtime-validation.json`, `hydra-runtime-engine.log` |
+| Exact source optimization | zero differences | `hydra-optimization-verification.log` |
+| Runtime/source pose proof | 205 part poses PASS, no stale derivative | `hydra-poses-engine.log`; worst fingerprint gap 0.000562 |
+| Whole development asset catalog | 431 PASS | `hydra-assets-engine.log` |
+| Native monster gate, including Hydra roaming | 36 PASS | `hydra-monsters-engine.log`; Hydra travels 4.8 tiles |
+| Native effect contract | 77 PASS | `hydra-effects-engine.log` |
+| Whole geometry/LOD gate | PASS | `hydra-geometry-engine.log` |
+| Studio model/scale review | eight captures PASS | `hydra-model-engine.log`, `hydra-model-*.png` |
+| English native-city combat | 14 PASS | `monster-effects-en-engine.log`, `monster-effects-en.json` |
+| Russian native-city combat | 14 PASS | `monster-effects-ru-engine.log`, `monster-effects-ru.json` |
+
+The general asset gate now recognizes only manifest-declared collect/carry/deposit
+samples with exact contiguous counts, correcting false failures for the already
+authored skiff/diver clips. The pose gate's optional `--only=` runs the unchanged
+texel/position proof on selected re-exported assets; its default remains all assets.
+
+The studio captures inspect front, side, rear, three-quarter, bite, venom, fallen
+and citizen/Zeus comparison views. City reviews use the actual native three-shot
+obstacle-destruction action, native facing and terrain-following root. Venom
+origins interpolate three sampled mouths through the displayed model transform.
+The English GIF `hydra-combat-en.gif` records 66 frames at 10 fps. Both languages
+capture breath, impact and real native ruin creation, hold particle/native time
+while paused, and preserve save/preferences fingerprints. Reviews are sequential
+and close their owned windows. An initial recording timed out while large model
+checks were running; the isolated rerun passed. Final desktop logs have no
+Hydra-specific script/shader errors; existing ObjectDB cleanup, missing native
+voice/adventure and sandbox certificate/editor-settings warnings remain separate.
+
+User art acceptance, full painted material baking, slope/stair foot IK,
+multiple combatants, wider campaign coverage and minimum-Mac profiling remain
+pending. Other monsters keep their earlier bodies. Provenance remains
+`needs_evidence`; source/asset hashes are in `assets/monsters/hydra_sources.json`.
+Read [monster art contracts](GODOT_MONSTER_ART.md).
+
+
+## World-map water, keyboard and interface refinement — 4 October 2026
+
+The submerged rectangular relief grid used to show through the coarser sea
+sphere. Coast-coverage clipping now removes those fragments and their shadows;
+sea curvature, ripple normals/materials, weathered terrain, woodland scale and
+soft cloud density were refined. The atlas shares held city camera bindings and
+speeds, with fixed arrow-key pan; on-screen arrows select cities. Layout uses
+shared Theme/CSV, a responsive toolbar/heading, circular portraits and existing
+native owned-city stock. Native fields, positions, callbacks, rules and saves
+remain authoritative. See `GODOT_WORLD_ATLAS.md`.
+
+- `python3 tools/review_world_atlas.py --lang en --size 1600x1000` and sequential
+  `--lang ru --size 1280x800`: **61 PASS each**, no script/shader errors in final
+  runs. Includes all earlier 31 checks, exact native stock rows, held WASD/arrows,
+  camera-relative direction, Q/E/R/F signs, cancellation/release, Shift, pitch/pan
+  limits, flight/modal/typing/modifier/focus guards, rebinding and 125%/150% layout
+  bounds. Scene remains **35 meshes / 185,640 triangles**, below 100 / 220K.
+- A real-render comparison hides only the relief mesh and compares deep water
+  to the ordinary scene: **180/180 samples** remain within 0.025 RGB tolerance
+  in each final language run. This catches the original rectangular plate;
+  normal cosmetic wave/cloud motion is tolerated. Overview, city, Greece and
+  enlarged-interface PNGs were opened and inspected. This proves the designated
+  view, not all angles or every campaign's coast.
+- Headless `validate_world.gd`: **32 PASS**. `validate_controls.gd`: **59 PASS**.
+  `validate_ui_text.gd`: **6 PASS / 1 FAIL**, solely the existing orphan rows
+  `City ground`, `Decision required · Click to review`, `%d pending decisions ·
+  Click to review`, `Cancel a drag; send the selected banner to a tile`, and
+  `Paused · Awaiting your reply`. Every used literal has a Russian translation;
+  the three new hint/tooltip rows are used and translated. Unrelated rows remain.
+- Final standalone first builds measured **434 ms EN / 382 ms RU**, cached
+  revisits **37 / 41 ms** on the local M4. These are short setup observations,
+  not sustained GPU or minimum-Mac performance evidence.
+- The reviewer foregrounds its owned window and forces capture draws to avoid
+  waiting indefinitely for `frame_post_draw` when macOS occludes the preview.
+  Initial review-only parse/focus/recording issues were repaired before the
+  final 61-check runs. The flight's moved-toolbar reference was repaired to
+  `%AtlasToolbar`.
+- `python3 tools/review_world_atlas.py --flight --lang en` and sequential
+  `--flight --lang ru --size 1280x800`: **37 PASS each**, with exact city pose,
+  visibility, running/paused state, pending-command ordering and native snapshot
+  restoration. Both use the unchanged 1.55 / 1.20-second animation constants.
+  The existing six-second wait excludes measured synchronous capture storage:
+  **17,741 ms EN / 11,505 ms RU** across 25 / 24 saved images. The helper's
+  overall 150-second deadline remains. These recorded runs are not FPS benchmarks.
+- `--native-ui --lang en` and `--native-ui --lang ru --size 1280x800`: **16
+  retained native assertions + 5 integration checks each**. Native requests,
+  regard, 500-drachma gift, fulfilment, city selection, F2/Escape, pause/resume,
+  covered-city rendering and Space suppression pass. The panel and whole toolbar
+  are visible after ascent; `world-atlas-{en,ru}-integrated.png` was opened for
+  visual review. Native economic mutations stay inside disposable memory runs.
+  The city-scene reviews retain an ObjectDB cleanup warning after reporting zero
+  outstanding batch loads; standalone map reviews have no such warning.
+- Every final visible run verifies designated-save, workspace-settings and
+  per-user preference hashes. Missing legacy voice/Atlantis-text notices persist;
+  headless startup retains the macOS certificate/editor-settings sandbox notices.
+  No C++ rebuild, source-map/field rebake or live Blender edit was needed.
+
+Remaining: user visual acceptance, label crowding at accessibility extremes,
+wider native campaigns/armies, surveyed geographic elevation, further terrain
+and character art, minimum-Mac profiling and release-source clearance. Terrain
+is still artistic and city landmarks symbolic.
+
+## Fishing spots and authored gathering — 4 October 2026
+
+**Implemented and technically verified; revised art awaits user visual review.**
+The finalized/signed embedded extension appends native `hasFish`/`hasUrchin`
+flags at tile column 9 through the existing terrain delta cache. Procedural fish
+schools and spiny urchin clusters render in spatial MultiMeshes. Fishing skiffs
+and urchin workers now use authored 40-sample collect clips; the diver also has
+12 bag-carry and 12 deposit samples. Cast nets follow solved hand positions;
+a Godot-only timing adapter shortens the submerged dip and extends recovery.
+Work-state changes blend from the previous work pose. Small surface glints and
+three diver bubbles replace the first pass's root tilt and separate floating net.
+
+Verified:
+
+- `validate_water_life.gd`: **33/33**, including native deposit observations,
+  idle delta stability, legacy rows, incremental spatial rebuild/removal,
+  paused/blocked clocks, visible fin/spine indices, LODs and 128-worker/384-bubble
+  caps. Evidence: `godot/captures/gather-final-water-engine.log`.
+- `validate_gathering_motion.gd`: **18/18**, complete clip samples, normalized
+  weights, native-clock progression/pause, entry/exit, no root tilt, carry/deposit
+  transition continuity and death priority. Evidence: `gather-final-motion-engine.log`.
+- Source optimization: both models retain exact geometry/morph positions and both
+  UV sets. Final runtime/source pose gate verifies **2 models / 328 distinct
+  part-poses**, no stale derivatives, worst fingerprint gap **0.000460**.
+  Evidence: `gather-final-poses-engine.log` (the standard pose gate scoped to these
+  two changed assets). The full geometry/LOD gate passes:
+  `gather-geometry-engine.log`. Imported full-detail triangles: diver **29,625**,
+  skiff **27,071**; terminal LODs: **485** and **1,518** respectively. Only these
+  two geometry baseline entries were changed by this slice.
+- Retained embedded engine: **101 checks**; replay: **200 ticks**; map polish:
+  **16**; elevation: **22**; locomotion: **35**. All pass. The elevation gate
+  accepts the appended resource mask while retaining earlier column checks.
+  Logs: `validate_<embedded|replay|map_polish|elevation|locomotion>-water-engine.log`.
+- Separate Metal/Mobile English and Russian previews pass using scratch
+  preferences. The designated save, native settings and per-user preferences
+  fingerprints remain unchanged; no pending threaded model requests remain.
+  Evidence: `water-life-en-engine.log`, `water-life-ru-engine.log`.
+- Captures: `godot/captures/water-life-spots.png`, `water-life-urchins.png`,
+  `water-life-fish.png`; the revised animated close-up is `water-life.gif`.
+
+Scope: the designated city has **4 native fish / 0 native urchin deposits**.
+The urchin visual fixture adds bit 2 only to a copied presentation tile on real
+water. Both collectors are render-only fixtures; these captures do not prove a
+complete native gatherer journey or broader campaign coverage. Opaque water uses
+surface-tinted wildlife. Underwater refraction, user visual acceptance and
+minimum-Mac profiling remain pending. Development art retains `needs_evidence`
+provenance. Existing missing voice/adventure warnings and the sandboxed headless
+certificate warning remain unrelated to these checks. Some preview exits also
+report an ObjectDB cleanup warning; neither visible language review reports
+shader/script errors or uncollected threaded model loads.
+See [water-life contracts](GODOT_WATER_LIFE.md) for sources and reproducible steps.
+
+## Monster combat effects — 4 October 2026
+
+**Implemented and technically verified; user visual acceptance pending.** Hydra
+has green venom breath/trails, visible facade contacts, impact rings/splashes,
+and dust with stone debris after its target becomes native ruins. All 17 native
+monster kinds have the shared launch/impact renderer; other species currently
+use a generic warm finish. Fight/fight2/die poses and building fire/smoke already
+existed. This effects slice originally used the old mesh; the subsequent
+three-headed replacement is verified in the model section above.
+Contracts/provenance: [GODOT_MONSTER_EFFECTS.md](GODOT_MONSTER_EFFECTS.md).
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Signed extension helper build | PASS | `godot/captures/monster-effects-build.log` |
+| `validate_monster_effects.gd` | 77 PASS | `godot/captures/monster-effects-contract-output.log` |
+| Actual-city English Metal/Mobile review | 14 PASS | `godot/captures/monster-effects-en-engine.log` and `monster-effects-en.json` |
+| Actual-city Russian Metal/Mobile review | 14 PASS | `godot/captures/monster-effects-ru-engine.log` and `monster-effects-ru.json` |
+| Retained `validate_monsters.gd` | 34 PASS | `godot/captures/monster-effects-monsters-output.log` |
+| Retained `validate_embedded.gd` | 101 PASS | `godot/captures/monster-effects-embedded-output.log` |
+| Native/embedded seeded replay | 6 cases PASS | `godot/captures/monster-effects-replay-parity.log`; ticks 0/200/1200, seeds 7/11 |
+| Python syntax, source JSON and scoped whitespace check | PASS | Preview wrapper/manifest parse and `git diff --check` |
+
+The 77-check suite covers renderer budgets, native-time interpolation, pause and
+decision blocking, duplicate/cancel handling, transient expiry and city/session
+reset. Hydra runs the original native three-shot obstacle-destruction action in
+EN/RU. Launch and impact events survive an entire short flight between snapshots;
+snapshots do not mutate native state or replay consumed impacts. Every other
+monster kind independently produces matching native launch/impact records.
+Sea creatures use a disposable land-side strike solely to test event transport;
+this is not sea navigation or species-specific art evidence.
+
+Sequential visible reviews use the designated city, scratch preferences and
+scratch save directories. They capture real native breath, impact and collapse,
+verify held native time/particle transforms while paused, and observe three
+launches, three impacts, one collapse and two shared drawing nodes. Final saved
+images `godot/captures/monster-effects-{breath,impact,collapse}-{en,ru}.png` show
+the head-cluster breath, visible wall contact, dust and debris. English recording:
+`godot/captures/hydra-combat-en.gif` (66 captured frames, 10 fps). Screenshots were
+visually inspected. Save/preference hashes stayed unchanged. All replay cases
+match native gameplay-state digests and native reproducibility, with no
+worker-thread RNG draws. This proves the tested cases, not all campaign/combat parity.
+
+The first desktop run inside the filesystem sandbox aborted before logging;
+the final desktop reviews ran with approved desktop access. Final visible runs
+have no effect-specific script/shader errors. Headless sandbox runs emit a macOS
+certificate-lookup warning; existing missing voice-file and Atlantis-description
+warnings remain outside this slice. Individual art beyond
+Hydra, same-tile attacks without missiles, mouth/socket tracking for other species,
+loaded in-flight visual review, simultaneous combat stress and minimum-Mac
+profiling remain pending. The effects introduce no persistent poison or damage rule.
+
+## Historical Hydra concept pass — 4 October 2026
+
+Reference-only art work: a built-in imagegen concept sheet, with a primary
+three-quarter rendering, side/rear studies and a citizen/Hydra/god size guide.
+Selected PNG and the preserved user input have hashes in the accompanying
+provenance record; exact initial and scale-refinement prompts are retained.
+The proposed height relationship is 1.0 / 2.1 / about 2.7; actual runtime mesh
+measurement and city-camera comparison were pending at that stage; the model
+pass above supplies measured geometry and city evidence.
+
+Visual review covers three distinct heads, arched necks, four weight-bearing
+legs, a single tail, dark scales, pale belly scutes and red eyes. The generated
+views are concept studies, not exact orthographic projections. No runtime code,
+model, native sprite, save or preference was changed, and no game run/build or
+gameplay validator was needed for this document/image task. This is not evidence
+of model integration, animation, performance or user art acceptance. Handoff:
+[GODOT_MONSTER_ART.md](GODOT_MONSTER_ART.md).
+
+## Curator eyebrow correction — 4 October 2026
+
+At the user's request, shortened the brow root span from .030 to .022 units,
+widened the brow body with tapered tails, and increased fine hairs from 650 to
+1,000 per eyebrow. Only the curator portrait was re-exported. Manifest records
+`eyebrows: compact_full_v1`; updated reference guide preserves this direction.
+Current export is 506,830 vertices / 37,123,320 bytes. Static portrait validation
+and the final English Character-panel review pass (33 checks); front/three-quarter
+captures in `godot/captures/character-curator-*-en.png` show the updated brows.
+Native time, save and preference hashes remained unchanged. The first review
+passed portrait checks but failed two pointer-picking assertions; its evidence
+is retained in `godot/captures/curator-brows-first-review.log`. The unchanged
+review passed on rerun; this is not a claimed pointer-picking fix. Russian UI
+was not rerun for this geometry-only adjustment. Visual approval remains pending.
+
+## Elder curator Character-panel benchmark — 4 October 2026
+
+**Implemented and technically verified; user visual acceptance pending.** One
+68-year-old curator portrait replaces the previous thick curl geometry with
+surface-sampled tapered hair, eyebrows and a short salt-and-pepper beard, and
+uses corrected facial landmarks and an aging sculpt/paint pass. Only this
+on-demand portrait enables a private close-up material, full mesh detail, 1.5×
+render scale, softer key and closer framing. The crowd and C++ simulation are
+unchanged. Source/workflow: [GODOT_PORTRAIT_REFERENCE.md](GODOT_PORTRAIT_REFERENCE.md).
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| `python3 tools/validate_curator_portrait.py` | PASS | 498,433 exported vertices, 36,518,832 bytes; both UVs, palette and normals; no skeleton, morph targets or animations; revision/age/provenance checks |
+| `python3 tools/review_character_panel.py --lang en` | 33 PASS | `godot/captures/character-en-engine.log` |
+| `python3 tools/review_character_panel.py --lang ru` | 33 PASS | `godot/captures/character-ru-engine.log` |
+| Source syntax and `git diff --check` | PASS | Python compile checks, no whitespace errors |
+
+Visible reviews ran sequentially with scratch preferences and the designated test
+city. They cover native lines/voices, person/god/hero/animal panels, paused-clock
+and queued-command holding, Escape/Go to, large UI layout, native curator model
+selection, private material identity, unchanged city finish, portrait quality
+reset when switching roles, and native money/buildings/events preservation.
+Native time remained 4486720.0 throughout each final review. Wrapper hashes prove
+the designated save and protected preferences stayed unchanged.
+
+Actual final Godot captures: `godot/captures/character-curator-{front,three,side,full}-{en,ru}.png`.
+Front, three-quarter, side and full-figure geometry/framing were inspected; Blender
+source close-ups are under `godot/captures/curator-reference/`. The earlier portrait
+pair is retained there in `before/`. GLBs/captures remain ignored generated files;
+the paired portrait manifest and reusable source are retained in the repository.
+
+An initial reviewer type-inference error was corrected before passing runs.
+Headless import completed; the sandbox denied unrelated global editor-settings
+writes. The subsequent visible Metal/Mobile runs loaded the imported asset and
+shader without errors. No extension/native executable rebuild was needed.
+
+Limits: static held pose, no facial performance/blinking; vertex-painted skin and
+procedural microrelief rather than scanned/painted skin textures; one face per
+role. The 600K-vertex/40-MiB ceiling is for one panel model, not a crowd allocation.
+Minimum-hardware profiling, photorealism, user approval and production provenance
+clearance are not established. Do not propagate this candidate across the catalog
+without the requested visual review.
+
 ## Storage building goods display validation — 4 October 2026
 
 **Implemented.** Warehouses, trade posts, and granaries now render their stored items
@@ -2448,3 +2761,85 @@ pending; these results do not establish whole-game parity or minimum-Mac speed.
 - `validate_requests_units.gd` **17**, `validate_attack.gd` **53** (the view sent once to the attacked city), `validate_building_activity.gd` **219** (47 buildings), `validate_characters.gd` **208** (102 human walkers), `validate_assets.gd` 423, `validate_poses.gd`, `validate_naval_race.gd` 65, `validate_leaders_cities.gd` 52, `validate_fight.gd` 31: PASS.
 - Windowed `run_godot_pilot.py --validate`: EN and RU **617 pass**, each with the one long-standing failure (the world map's aid-regard check). The new checks: the summary's request row and Send button; three placed banners boxed on screen, each with its ring, sent together (they stand spaced around the tile, the farthest about seven tiles off, as the engine places a group); Escape lets them go. The windowed checks raise fresh companies first (earlier checks send the city's own abroad) and place their banners (a flag is drawn only for a placed banner).
 - Review: `--menu-rest-review anim` (the trireme rowing at two moments, the two rioters in their own dress, the college, dairy and armory at work), `captures/menu-rest-naval-anim-*.png`.
+
+## Character window portraits as images — 4 October 2026
+
+- `python3 tools/render_portraits.py`: PASS, curator rendered 592×760 (301,673 bytes, transparent), designated save and
+  preferences unchanged.
+- `python3 tools/review_character_panel.py --lang en` and `--lang ru`: **PASS, 31 checks each** (curator still shown with
+  no 3D figure and the viewport disabled; switching to a role without an image restores the live figure; city material
+  unchanged). Capture: `godot/captures/character-curator-{en,ru}.png`.
+- Removed: 68 curled portrait GLBs/manifests, their `.import` files and 70 imported cache files (443 MB in the project).
+
+## Playable-loop slice 30: City History, Trade Summary, City Advisor, walker routes, house card — 4 October 2026
+
+- `validate_city_extras.gd` **52** (headless, EN and RU), `validate_city_data.gd` 64, `validate_naval_race.gd` 65, `validate_embedded.gd`: PASS.
+- Windowed `run_godot_pilot.py --validate`: EN and RU **638 pass** each, with the one long-standing failure (the world map's aid-regard check); test save and settings unchanged. The 21 new checks: the window's Advisor/History/Trade pages and the summary's and storage page's buttons, a card per problem and per partner, the chart's last two years, a series and range kept across a refresh, "Go there" moving the view and closing the window, the inspector's route button opening the bar, a click on a road setting a guide, the walk drawn with its post, both ways, restore, Escape closing the editor, and the house card filled and hidden for a tool. Earlier runs on the same code each failed one different older check once (a free sanctuary site, the six-tile road drag, the husbandry no-priority share-out), all passing in the final runs: treat them as flaky.
+- SDL: `Bin/eZeus` rebuilt and signed; `EZEUS_SHOT_PANEL=trade` and `advisor` render as before from the shared engine code.
+- Review: `--menu-rest-review extras` in EN and RU (`captures/menu-rest-extras-<lang>-{advisor,history,trade,route,house}.png`): 5 of 5 captured.
+- Dock width (4 October): `hud.gd` now measures the dock's full row: every control, the categories unscrolled, and the
+  frame margins. This replaces the fixed 166 px allowance. When the dock and the objectives panel don't fit side by
+  side, the objectives move up instead of the dock scrolling. At 1280×800 all 12 categories and the utility buttons
+  show without scrolling (`captures/objectives-dock-closed.png`).
+- While another session was editing it, `scripts/orbit_camera.gd:170` failed to compile (`var scroll :=` with an
+  untyped `in` expression), which stopped `main.gd` from loading. It is now typed `var scroll: bool =`.
+
+## Playable-loop slice 31: fires, ruins, chasm, lava and marsh — 4 October 2026
+
+- `validate_disasters.gd` **22** (headless), `validate_assets.gd` 431, `validate_geometry.gd` PASS (68 missing baselines merged in: the eight ruins and the assets of slices 25–29; existing entries unchanged).
+- Windowed `run_godot_pilot.py --validate`: EN and RU **643 pass** each, with the one long-standing failure (aid regard); test save and settings unchanged. The four new checks: flames (4) and smoke (2) on a burning house, ruins models after its collapse, lava in the ground's pattern texture. One earlier EN run on the same code failed three known-flaky older checks at once (the soldier's die clip, a free sanctuary site, whose script error then skipped the rest of the sanctuary checks, and the husbandry priority share-out); the re-run passed them.
+- Review: `--menu-rest-review disasters` (`captures/menu-rest-disasters-{fire,fire-near,ruins-burning,ruins,quake,lava,marsh}.png`): 7 of 7.
+
+## Model-loading crash and log flood fixed — 4 October 2026
+
+- Cause: `building_batches.gd` requested GLBs with `ResourceLoader.load_threaded_request` and collected
+  only the ones it used. Two failures followed:
+  - Loads that were never collected kept their meshes and materials until engine exit, after the renderer was
+    gone. That gave the `~BaseMaterial3D` → `shader_free` crashes and the endless `Parameter "material" is null`
+    flood that filled the disk on 3 October.
+  - Loader threads set up BaseMaterial3D shaders while the main thread rendered or built terrain, which caused
+    the crash inside `material_set_shader` on a WorkerThreadPool thread.
+- Fix: `prefetch_paths` still starts every load in parallel, then `join()` waits for all of them at once,
+  so no loader thread runs during a frame. Every result is kept in `loaded`, released in `_exit_tree`, and
+  `citizen_lod.gd` uses `warmed()`. `walker_vat.gd` joins its pose reads on teardown.
+- Rejected:
+  - Loading on the main thread: the buildings stage went from about 0.2 s to 1.0–1.3 s.
+  - `rendering/driver/threads/thread_model=2`: Godot calls it experimental, and it added `_texture_2d_update`
+    errors.
+- Load time with the fix: buildings 0.13–0.22 s and walkers 0.07–0.12 s (before: 0.18–0.25 s and 0.15–0.59 s).
+  `--objectives-review` prints `STARTUP_TIMING`.
+- Stress run, with no crash, no flood and no new crash report:
+  - `review_escape_menu.py` EN and RU: 67/67 each.
+  - `--validate` EN and RU: 643/644 each (only the known aid-regard check fails).
+  - Four objectives reviews.
+
+## Aid check, gold decision cards and confirm buttons, Sparta street — 4 October 2026
+
+- Aid regard: the core is right. A probe gave 90 → 70: 10 from every foreign city plus 10 from the city asked,
+  as in the SDL game. `validate_main.gd` read "before" from the world map just after `wm.close()`.
+  `open_world` returns early while the map is still visible or flying out, so the map kept stale data (80). The
+  check now reads "before" from the core.
+- The decision card and `EnvoyAction` buttons use `gold_frame`/`gold_face`. Every AcceptDialog's OK button is
+  Primary. `hud._attach_right_click_back` is untyped, so a dialog freed before the deferred call no longer
+  errors ("Cannot convert argument 1 from Object to Object"). `review_envoys.py` passes 21/21 and the EN escape
+  review 67/67.
+- Street facing on the player's Sparta street, opened from a scratch copy of the 3 October 23:35 autosave with
+  `--street-review` (copy deleted afterwards; the original is untouched): 19 of 27 Hovels turned, and doors and
+  yards face the road on both sides and at corners (`captures/sparta-street-facing.jpg`).
+
+## Monster card, heroes' halls offered mid-game, wheel over panels — 4 October 2026
+
+- Extension rebuilt and finalized with `tools/build_godot_extension.sh` (new `monster_info` query, `buildable_revision` in the
+  snapshot); new icon and strings imported with `--import`.
+- Windowed EN: **GODOT_VALIDATION PASS**, 652 checks. Windowed RU: 651 pass, **one fails**: "a fallen soldier plays its die clip
+  and then holds its last frame (no fall seen)", a timing-dependent fight check that passed in the EN run of the same build and
+  does not touch the changed code.
+- `validate_main.gd` monster checks rewritten for the card (13, all passing in both languages): no button before a monster, a red
+  button with its count in the rail, the top notice left to invaders, the card with the monster's own message under the rail and
+  within the screen, its slaying hero and hall, Go to the monster, a hall allowed mid-game (`test_allow`) in the Build menu without
+  reopening the city, Build the hero's hall opening the Build menu on it with the hall chosen, the card following the language, two
+  monsters counted and listed. A new camera check: the wheel over the Build tray at the start of its row does not zoom the map.
+- The player's Thebes autosave (4 October 16:52, a hydra at large) was opened read-only from a scratch copy (deleted afterwards; the
+  original is untouched) to find why no hall was offered: the core allowed Hercules' hall, the menu had not been refreshed.
+- Scratch capture over the designated city (hydra let loose, hall allowed): the button, the card in English, with the build
+  button, and with the Russian interface.

@@ -3,7 +3,7 @@
 
 python3 tools/export_portraits.py [--assets walker_trader ...] [--jobs 2]
 
-Writes godot/assets/portraits/<asset>.glb + .json for each walker with a grown Greek man (tools/godot_portrait_export.py);
+Writes build-portraits/<asset>.glb + .json (render sources; then tools/render_portraits.py) for each walker with a grown Greek man (tools/godot_portrait_export.py);
 assets without one are skipped. Never touches the crowd models; import with Godot afterwards.
 """
 import argparse, concurrent.futures, json, subprocess, time
@@ -25,7 +25,7 @@ def main():
     ap.add_argument('--budget', type=int, default=26000)
     args = ap.parse_args()
     logs = REPO / 'godot/captures/portrait-exports'; logs.mkdir(parents=True, exist_ok=True)
-    out = REPO / 'godot/assets/portraits'
+    out = REPO / 'build-portraits'
     def run(name):
         start = time.monotonic()
         with (logs / (name + '.log')).open('w') as log:

@@ -113,11 +113,13 @@ func mineral_color(flags: int) -> Color:
 		return Color(.74,.73,.68,1)
 	return Color(0,0,0,0)
 
+const QUAKE := 2048
+const MARSH := 16384
+const LAVA := 32768
+
 func mineral_pattern(flags: int) -> Color:
-	# R marks the sawn quarry blocks in ground.gdshader.
-	if flags & (1024|8192):
-		return Color(1,0,0,0)
-	return Color(0,0,0,0)
+	# R marks the sawn quarry blocks in ground.gdshader; G an earthquake's chasm, B lava and A marsh (the native terrain bits).
+	return Color(1 if flags & (1024|8192) else 0, 1 if flags & QUAKE else 0, 1 if flags & LAVA else 0, 1 if flags & MARSH else 0)
 
 func rebuild_coast(tiles: Dictionary) -> void:
 	coastline_rebuilds += 1

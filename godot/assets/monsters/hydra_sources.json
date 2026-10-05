@@ -1,0 +1,69 @@
+{
+  "revision": "hydra_reference_v1",
+  "created": "2026-10-04",
+  "scope": "Godot-only Hydra reference model, authored poses and custom finish; native simulation and sprite recipe unchanged.",
+  "rights_status": "needs_evidence",
+  "visual_acceptance": "pending",
+  "sources": [
+    {
+      "path": "eZeus/tools/godot_hydra.py",
+      "role": "reproducible Blender geometry and poses",
+      "sha256": "d42b859621ec8bc83f4765c36c6e0a55e29fcb337b1e26e3f1b5ad04cd79bd33"
+    },
+    {
+      "path": "art/monsters/hydra/hydra-reference-v1.blend",
+      "role": "editable source scene",
+      "sha256": "ae513a36ab665cdf9831784365cbe2cc0deeb827831a98bcde3111199b7ca6ad"
+    },
+    {
+      "path": "eZeus/godot/shaders/hydra.gdshader",
+      "role": "procedural skin/eye finish",
+      "sha256": "1f06b1c5523ed549a2d0bbfa6ab5e72e6f72c0e88cf53a4114869f3addd59701"
+    },
+    {
+      "path": "art/monsters/hydra/hydra-concept-v1.png",
+      "role": "selected generated concept",
+      "sha256": "c0cb104962c9ead33a7b279422fe34c8f806be320fe1846994b57d2d9a78dd95"
+    },
+    {
+      "path": "art/monsters/hydra/references/user-hydra-inspiration.webp",
+      "role": "user-supplied inspiration",
+      "sha256": "fffccc8ce6b3a4dae9bb392b5d54c85606b655d521a45ed50b1a35b63973bc69"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "eZeus/godot/assets/models/walker_hydra.glb",
+      "role": "optimized source GLB",
+      "sha256": "50a2d455e35e2df11318f14ec3a4c0b4a68b8bfb46143efe9f431e052807daa1"
+    },
+    {
+      "path": "eZeus/godot/assets/models/walker_hydra.json",
+      "role": "pose and mouth/contact contract",
+      "sha256": "b10bc7e0adba73edb1aa1d7be8485891ed53ce824088fc8c873442c892a149ce"
+    }
+  ],
+  "budgets": {
+    "authored_vertices": 24000,
+    "imported_vertices": 32000,
+    "triangles": 30000,
+    "surfaces": 2
+  },
+  "measured_geometry": {
+    "last_lod_tris": 112,
+    "lods": 9,
+    "tris": 24160,
+    "verts": 27860
+  },
+  "pose_count": 114,
+  "neutral_height": 1.9853290766477585,
+  "pose_height_bounds": [
+    0.010413646697998047,
+    2.0822196006774902
+  ],
+  "displayed_citizen_ratio": 2.091977253137535,
+  "zeus_body_ratio": 0.8085344991293654,
+  "native_source_preserved": "art/characters/people/people9.py",
+  "previous_model_preserved": "art/monsters/hydra/previous-runtime",
+  "release_status": "Development candidate. User art acceptance, source-rights evidence, full material baking, slope foot IK and minimum-Mac GPU profiling remain pending."
+}

@@ -531,6 +531,10 @@ def adapt(h, K, groom, alone=True):
     for ob in list(K.scene.objects):
         if ob.type == 'CURVE' and ob.name.startswith(h.name) and any(t in ob.name.lower() for t in ('beard lock', 'eyebrow')):
             ob.hide_render = True
+    if h.name == 'Curator':
+        import godot_curator_portrait
+        godot_curator_portrait.adapt(__import__(__name__), h, K)
+        return
     sculpt(h, s)
     beard_w = beard_zone(h)
     scalp_w = scalp_zone(h) if not covered else np.zeros(len(h.body_rest))

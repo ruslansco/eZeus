@@ -195,6 +195,12 @@ public:
     void registerMissile(eMissile* const m);
     bool unregisterMissile(eMissile* const m);
 
+    // Read-only presentation events: 0 launch, 1 native impact, 2 cancellation.
+    // Not serialized and empty in the SDL reference. Observers must not alter rules or RNG.
+    void setMissileObserver(std::function<void(eMissile*,int)> observer) { mMissileObserver = std::move(observer); }
+    void observeMissile(eMissile* m, int phase) const { if(mMissileObserver) mMissileObserver(m,phase); }
+    const std::vector<eMissile*>& missiles() const { return mMissiles; }
+
     bool hasStadium(const eCityId cid) const;
     bool hasMuseum(const eCityId cid) const;
     eStadium* stadium(const eCityId cid) const;
@@ -733,6 +739,11 @@ public:
 
     using eDA = eCharacter;
     using eAnimalCreator = std::function<stdsptr<eDA>(eGameBoard&)>;
+    bool canBuildAnimal(const int tx, const int ty,
+                        const eBuildingType type,
+                        const eCityId cid,
+                        const ePlayerId pid,
+                        const bool editorDisplay = false) const;
     bool buildAnimal(eTile* const tile,
                      const eBuildingType type,
                      const eAnimalCreator& creator,
@@ -848,6 +859,7 @@ private:
     std::vector<eCharacter*> mCharacters;
     std::vector<eSoldier*> mSoldiers;
     std::vector<eMissile*> mMissiles;
+    std::function<void(eMissile*,int)> mMissileObserver;
 
     std::vector<eSoldierBanner*> mSelectedBanners;
     std::vector<eTrireme*> mSelectedTriremes;

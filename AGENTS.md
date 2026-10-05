@@ -1,5 +1,32 @@
 # eZeus / Godot 3D development instructions
 
+## World-map refinement — 4 October 2026
+
+The atlas clips submerged relief at the coast and uses a 192×96 sea sphere;
+current designated-world geometry is 35 meshes / 185,640 triangles (retain the
+100 / 220K caps). Arrow/WASD pan, Q/E orbit and R/F tilt share the city bindings
+and camera speeds, with Shift boost and modal/typing/cinematic/focus guards.
+On-screen arrows still select cities. Keep native UV/height fields and stock
+observations authoritative. The responsive framed toolbar is `%AtlasToolbar`;
+`world_flight.gd` fades that whole surface and must keep its unique scene reference
+when layout changes. Read `docs/GODOT_WORLD_ATLAS.md` and current validation.
+Visible reviews run sequentially with scratch preferences and the designated save;
+the reviewer foregrounds only its owned preview for captures.
+
+## Water-life presentation — 4 October 2026
+
+Native fish/urchin flags are appended tile column 9 (bits 1/2), feeding procedural
+fish schools and spiny urchin clusters. Fishing skiffs and urchin workers use
+native-action-gated authored collection clips; the diver also has bag-carry and
+deposit clips. Preserve gameplay-clock transitions, UVs/VAT freshness, source
+geometry/LODs, the nine earlier tile columns, terrain delta cache and bounded
+surface glints/three bubbles. Use background-only asset exports; keep native art
+and the live Blender scene intact. See [water-life contracts](docs/GODOT_WATER_LIFE.md).
+The designated city has four native fish deposits and no urchins; reviewers use
+a copied presentation-only urchin tile and temporary collectors, never an
+altered save/core or live role. Run both water-life and gathering-motion gates
+and visible language reviews sequentially with scratch preferences.
+
 Current handoff: **3 October 2026**. This is the Git repository; its parent is
 the local installation/art workspace. When available, read the parent
 [AGENTS.md](../AGENTS.md) for detailed native-engine knowledge and art benchmarks.
@@ -64,6 +91,22 @@ and food items on top of their yards/drums matching native simulation inventorie
 goods models and 8 granary food models exported with vertex-palette PBR materials; MultiMesh
 spatial batching; `EZeusSimulation` detects inventory changes and emits updates only when
 bay quantities change. Automated test suite `validate_storage_goods.gd` passes 204/204 checks.
+
+**Monster combat effects (4 October):** `monster_effects.gd` draws Hydra venom and
+the shared native projectile/impact pipeline for all 17 monsters. The optional
+missile observer is presentation-only, empty in SDL and nonserialized; preserve
+native timing, damage, collapse, sounds and RNG. Effects freeze on pause/decisions
+and use two bounded MultiMeshes. Read `docs/GODOT_MONSTER_EFFECTS.md`; the native
+contract passes 77, sequential EN/RU city reviews 14 each, and six seeded replay
+cases match. Use `tools/review_monster_effects.py` only on the designated city with
+scratch preferences. The new three-headed Godot Hydra is implemented through
+`tools/godot_hydra.py`, with .64-tile paws, in-place walk/idle/fight/fight2/die,
+UV2 surface semantics and three interpolated mouth anchors. Read
+`docs/GODOT_MONSTER_ART.md`; preserve the native recipe and live Blender scene.
+After re-export, verify both UVs, VAT freshness, flat-ground pose bounds, measured
+citizen/god size and LODs. `validate_hydra.gd -- --update-hydra-baseline` edits only
+that model's entry. User visual acceptance, individual art for other monsters,
+slope foot IK and minimum-Mac GPU profiling remain pending.
 
 Historical fourth interface pass (superseded layout) folds the minimap into a bottom-right City map pill
 (default folded), remembers explicit visibility choices, and shows a small camera
@@ -206,7 +249,11 @@ Dialogs and the escape menu match it: embedded windows use a gold frame grown up
 (`expand_margin_top` = `title_height` 40, so the title and close cross sit inside it; Godot draws `embedded_border` under the
 content only), a 3 px gold top line, pale-gold bold titles, and a content panel with no second border. The escape menu
 uses `EscapeHeading`, `EscapeRule` and `EscapeAction`, with Primary for "Return to city". `review_escape_menu.gd` captures
-every dialog it opens (`captures/escape-dialog-<action>-<lang>.png`). The initial city has 3,746 detail instances in 239 spatial
+every dialog it opens (`captures/escape-dialog-<action>-<lang>.png`).
+A dialog's OK button is Primary (set where `hud.gd` attaches RightClickBack to each Window), and the decision card and
+`EnvoyAction` buttons use the gold frame and faces. `--street-review <save copy>` opens a COPY of a save from a scratch
+folder (used as the save directory), pauses, and captures its densest blocks of houses (`captures/street-*.png`) to
+judge `street_facing.gd`; never point it at a player's own save folder. The initial city has 3,746 detail instances in 239 spatial
 batches. Preserve native flags, foundation/road/field/water buffers, height anchors,
 per-section caps and distance fading; props have no collision or native RNG.
 Resource ground inspectors identify deposits in EN/RU. Construction, undo and
@@ -288,6 +335,20 @@ motion remain pending; do not claim those are complete or clear provenance.
   placement and default C clones a building. Preserve custom-binding migration.
 - Retain original event callbacks and pending decisions. Do not silently invent
   outcomes for military/campaign interfaces awaiting migration. Preserve EN/RU.
+
+## Panel-only elder curator reference — 4 October 2026
+
+Read [GODOT_PORTRAIT_REFERENCE.md](docs/GODOT_PORTRAIT_REFERENCE.md) before further
+portrait work. The user requested one older, more realistic character only in the
+Character panel. `tools/godot_curator_portrait.py` builds the 68-year-old curator
+(`elder_curator_portrait_v2`); it replaces the rejected thick curls with fine
+surface-sampled fibers and corrects face landmarks. Portrait finish, full mesh
+quality, 1.5× render scale and framing are isolated to the panel. Keep native
+words/voice, city crowd assets and the physician benchmark intact. The one-model
+budget is 600K vertices/40 MiB, not a walker budget. Rebuild only `walker_curator`
+with `godot_portrait_export.py`, run `validate_curator_portrait.py` and sequential
+EN/RU `review_character_panel.py` reviews. User visual acceptance remains pending;
+do not call it production-approved or roll it across the catalog automatically.
 
 ## Character art review status — 30 September 2026
 
@@ -382,7 +443,10 @@ per building, and keep two shadow cascades and the 3-pixel mesh LOD threshold un
 new measurement justifies a change. New models need a LOD ladder and a
 `--write-baseline` entry in `data/geometry_baseline.json`. Startup contracts: the embedded
 backend must not fully decode sprite images (only their size), model GLBs are requested on
-worker threads before terrain is built, and exported walkers must go through
+worker threads before terrain is built and joined at once (`building_batches.gd` `join()`: the main thread
+waits, so no loading thread sets up a BaseMaterial3D while a frame renders; every load is collected into
+`loaded`, released with the node; an uncollected threaded load outlives the renderer and crashes or floods
+`Parameter "material" is null` at exit; never leave a `load_threaded_request` uncollected), and exported walkers must go through
 `tools/optimize_glb_memory.py` (then import and `tools/verify_glb_optimization.py`). Never
 drop UVs to save memory (it stripped foliage LODs), and resolve `idle_00|idle_01` style shape
 names through `morph_table` in `main.gd`. Animated models are baked by `tools/bake_walker_vat.py`
@@ -467,7 +531,7 @@ The Godot side: `ui/enlist_dialog.gd` (the dialog: companies by kind, heroes, al
 Monsters: all seventeen of the engine's `eMonsterType`s have a model, chosen in `walkerAsset` by character type (`walker_calydonianboar`, `walker_cerberus`, `walker_chimera`, `walker_cyclops`, `walker_dragon`, `walker_echidna`, `walker_harpies`, `walker_hector`, `walker_hydra`, `walker_kraken`, `walker_maenads`, `walker_medusa`, `walker_minotaur`, `walker_scylla`, `walker_sphinx`, `walker_talos`, `walker_satyr`),
 with the same `fight_NN`, `fight2_NN` and `die_NN` clips as the soldiers (`COMBAT` in `tools/godot_asset_sources.py`; `walker_combat.gd` plays them unchanged). Eight have a human body from the people kit and take the human adapter (`MONSTER_PEOPLE`: cyclops, talos, hector, minotaur, satyr, medusa, maenads, harpies; the harpies hover about half a metre above the ground, and `validate_characters.gd` expects that);
 nine are creatures from the animal kit (`MONSTER_BEASTS`, exported by the `CREATURES` path of `tools/export_godot_pilot.py`: no human adapter, 32,000 vertices at most, the kit's per-point `Coat colour` carried as the vertex palette so a Cerberus is black and not white). The snapshot says while a monster is loose in the city `monsters` (how many), `monster` (the first one's name, from the SDL string table, so it follows the language) and
-`monster_at` (its tile); `army` carries `monsters` too. `main.gd` shows them in the invasion notice (`ui/invasion_banner.gd`: "A monster stalks the city: Minotaur", or "N monsters stalk the city" with a "Go to the monster" button; invaders come first when both are present). The monster's own behaviour is the engine's (`eMonsterAction`: it waits, goes out to attack, patrols, goes back; the kraken and Scylla roam the deep water, the others the roads); the music turns to battle while one is out,
+`monster_at` (its tile); `army` carries `monsters` too. `main.gd` shows them with a red button in the rail under the journal and its card (`ui/monster_card.gd`, from the core's `monster_info`: the monster's own message, its slaying hero, the hall's state, Go / Build / Show buttons); the top notice (`ui/invasion_banner.gd`) is for invaders only. The snapshot's `buildable_revision` moves whenever the engine changes what may be built (a monster or quest allowing a hall); `main.gd` then refreshes the Build menu. The monster's own behaviour is the engine's (`eMonsterAction`: it waits, goes out to attack, patrols, goes back; the kraken and Scylla roam the deep water, the others the roads); the music turns to battle while one is out,
 as it does in the SDL game. `test_monster <kind>` (validators only; `calydonian_boar`, `cerberus`, `chimera`, `cyclops`, `dragon`, `echidna`, `harpies`, `hector`, `hydra`, `kraken`, `maenads`, `medusa`, `minotaur`, `scylla`, `sphinx`, `talos`, `satyr`) lets one loose the way a monster event does (`eMonster::sCreateMonster`, `registerMonster`, the aggressive neutral team, an aggressive `eMonsterAction`):
 at the entry point, or in the deep water nearest to it for the kraken and Scylla. Not ported: a monster's health or the damage it takes (the engine gives a monster none: only a hero can slay one, see Heroes below) and the god-sent timeline of a campaign beyond what the engine does by itself.
 Heroes: the eight heroes' halls are `buildSpecs` rows (`hero_hall_achilles` ... `hero_hall_theseus`, 4x4, built through `buildBase` and then recorded with `eGameBoard::built`, as the SDL view does, so a hero has one hall) under the Build menu's "Heroes' halls" heading (`build_catalog.gd`; the dock's icon is `ui/icons/heroes.svg`). A hall is offered only when the scenario allows its hero: a god's quest (`eGodQuestEvent::trigger`) calls the engine's `allowHero` and says so in a message ("Perseus' Hall"). Each has a model (`art/hero_hall/build_sprites.py --hero <name>`, a Roman heroon with the hero's colours and statue; `RECIPES` in `tools/godot_asset_sources.py`).
@@ -503,6 +567,10 @@ Triremes, races and the two pages (4 October): race chariots are missiles; the s
 Leaders and cities (4 October): saves live in `user://saves/<leader>` (`scripts/leaders.gd`, `SaveFiles.directory()`); older root saves are listed, never moved. Tests and reviews must set Engine meta `ezeus_save_directory` and `ezeus_settings_path` to scratch paths so the player's profile is untouched. The core's pages follow `playerCity()` (the player's district in view, reported by `view_tile`); use it rather than `currentCityId()` for anything the player governs. `--start-review leaders` drives the start menu and then a two-city adventure.
 
 Requests, groups, rowing (4 October): `banners_move` takes several companies (`eSoldierBanner::sPlace`); `scripts/unit_selection.gd` draws the selection box. `view_tile` in a snapshot moves the camera once (player invasions and god attacks; the event fires inside the sending command, so validators must read that command's next answers). Person exports take their clothing colours from `art/characters/roman/wardrobe.py` by the person's name: a new people-kit entry needs a row there, or it wears the default cream and red. Ships keep a 35,000-vertex budget when posed. Building workers: add a building to `tools/building_activity_assets.json` and run `tools/export_building_activity.py --assets <name>`.
+
+Remaster extras (4 October): the SDL remaster's City Advisor, Trade Summary and house card draw from shared engine code (`engine/ecityadvisor`, `engine/etradesummary`, `buildings/ehousecard`; keep the SDL widgets on them rather than adding logic back to the widgets). The core answers `city_history`, `city_advisor`, `trade_summary`, `house_card <x> <y>` and the route commands (`route_begin <x> <y> <token>`, `route_toggle`, `route_clear`, `route_restore`, `route_both`, `route_end`, `route`); a route's walk comes from the board's path-finder thread, so it appears only after the city advances (validators call `advance`, reviews unpause). The City window's Advisor/History/Trade pages sit after Mythology (tab indexes 12-14); `scripts/route_editor.gd` takes the map's left/right clicks while active and is ended by Escape, a right click or any tool; `ui/house_card.gd` shows only with the select tool and nothing under the pointer. Test with `validate_city_extras.gd`; review with `--menu-rest-review extras`.
+
+Disasters (4 October): burning buildings come in the snapshot's `fires` list (not the building records, so a fire does not rebuild the static batches); `scripts/building_fires.gd` draws them. Ruins are `ruins_<seed % 8>` from `art/lots/build_sprites.py` (recipes `ruins_0`..`ruins_7`). Chasm, lava and marsh are the G, B and A channels of `terrain_presentation.gd`'s pattern texture, drawn in `ground.gdshader` (R stays the quarry blocks). Validator commands `test_fire`, `test_collapse`, `test_earthquake`, `test_terrain` answer briefly; any command that answers with a snapshot (including `pause` sent as a query) consumes that delta, so tests that need the view to see a change must not query such commands in between (send them through the queue). New GLBs need a `data/geometry_baseline.json` entry: merge new assets in rather than rewriting existing counts. Test with `validate_disasters.gd`; review with `--menu-rest-review disasters`.
 
 Controls and settings (3 October): `scripts/key_bindings.gd` (static, `KeyBindings`) is the one table of rebindable controls (33: eight held camera keys, the city overview, the placement turn, the demolition tool, undo, pause, quick save and load, the world map, army and mythology keys, mute, the details panel, fullscreen (default Alt+Enter) and the overlays' keys) with their defaults, kinds and rules. A binding is one code, the physical key plus Ctrl/Cmd and Alt (Shift is never part of one: it stays the fast-pan and wall-fill modifier, and a key matches with or without it;
 the SDL game's own Ctrl/Cmd+Z for undo is one of the defaults). Held camera keys (`orbit_*`, `tilt_*`, `pan_*`, no modifier allowed) are InputMap actions kept in step by `apply_input_map()`; every other handler asks `KeyBindings.matches(event, id)` (`main.gd`'s `_unhandled_input`, `ui/world_map.gd`), and `overlay_for(event)` names the overlay of a digit, Tab or the back quote. `assign(id, code)` hands a key over and gives the control that had it the key the first one leaves (refused: `reserved` for Escape, Delete and the modifier keys, `modifier` for a held, overview or overlay key

@@ -31,7 +31,7 @@ func run() -> void:
 		tiles[cell] = tile.duplicate()
 		cells.append(cell)
 		# Column 8 (appended): road kind 0 none, 1 road, 2 avenue, 3 boulevard; it agrees with column 4.
-		schema = schema and tile.size() == 9 and int(tile[6]) >= 0 and int(tile[6]) <= 15 and int(tile[8]) in [0,1,2,3] and (int(tile[8]) > 0) == bool(int(tile[4]))
+		schema = schema and tile.size() >= 10 and int(tile[9]) in [0,1,2,3] and int(tile[6]) >= 0 and int(tile[6]) <= 15 and int(tile[8]) in [0,1,2,3] and (int(tile[8]) > 0) == bool(int(tile[4]))
 		if int(tile[6]) & 1:
 			if int(tile[6]) & 8:
 				protected_slopes += 1

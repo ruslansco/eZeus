@@ -1,17 +1,32 @@
 #include "eanimalbuilding.h"
+#include "engine/egameboard.h"
+#include "engine/etile.h"
 
 eAnimalBuilding::eAnimalBuilding(
          eGameBoard& board,
          eCharacter* const a,
          const eBuildingType type,
          const eCityId cid) :
-    eBuilding(board, type, 1, 2, cid),
+    eBuilding(board, type, 1, 1, cid),
     mA(a) {
 
 }
 
 eAnimalBuilding::~eAnimalBuilding() {
     if(mA) mA->kill();
+}
+
+void eAnimalBuilding::erase() {
+    if(mA) {
+        mA->kill();
+        mA = nullptr;
+    }
+    const auto tiles = tilesUnder();
+    getBoard().buildingErased(this);
+    deleteLater();
+    for(const auto t : tiles) {
+        t->removeAnimalBuilding(this);
+    }
 }
 
 void eAnimalBuilding::nextMonth() {

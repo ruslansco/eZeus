@@ -8,6 +8,7 @@ var size := Vector2i(1600, 1000)
 var city: Node
 var images := 0
 var captured: Array[String] = []
+var recording_ms := 0
 
 func _initialize() -> void: call_deferred("run")
 func check(value: bool, description: String) -> void:
@@ -38,15 +39,21 @@ func click(control: Control) -> void:
 		event.position = point; event.button_index = MOUSE_BUTTON_LEFT; event.pressed = pressed
 		root.push_input(event, true)
 func capture(suffix: String) -> void:
-	await RenderingServer.frame_post_draw
+	var began:=Time.get_ticks_msec()
+	DisplayServer.window_move_to_foreground()
+	RenderingServer.force_draw(true,.016)
 	var path := "res://captures/world-flight-%s-%s.png" % [language, suffix]
 	root.get_texture().get_image().save_png(path)
 	captured.append(path)
 	images += 1
+	recording_ms+=Time.get_ticks_msec()-began
 func finish_flight(record := "") -> void:
 	var last := -1
 	var began := Time.get_ticks_msec()
-	while city.world_flight.busy() and Time.get_ticks_msec() - began < 6000:
+	var recorded_at_start:=recording_ms
+	# Synchronous GPU readback/PNG writing is review-only work. Retain the
+	# six-second flight bound without charging screenshot storage to the game.
+	while city.world_flight.busy() and Time.get_ticks_msec() - began - (recording_ms-recorded_at_start) < 6000:
 		await process_frame
 		var slot := mini(14, int(city.world_flight.progress * 15.0))
 		if record != "" and slot != last:
@@ -69,6 +76,7 @@ func run() -> void:
 	if OS.has_environment("EZEUS_REVIEW_SETTINGS_PATH"): Engine.set_meta("ezeus_settings_path", OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH"))
 	TranslationServer.set_locale(language)
 	root.size = size; root.content_scale_size = Vector2i(1440, 900)
+	DisplayServer.window_move_to_foreground()
 	city = load("res://main.tscn").instantiate(); root.add_child(city); current_scene = city
 	while city.state.is_empty() or city.frame_count < 60: await process_frame
 	city.core.snapshot_received.emit(city.core.query("pause 1"))
@@ -162,5 +170,5 @@ func run() -> void:
 	await finish_flight()
 	check(not city.core.simulation.snapshot(true).paused and pose_matches(saved), "running state resumes only after the exact city view returns")
 	city.core.snapshot_received.emit(city.core.query("pause 1"))
-	print("WORLD_ATLAS_REVIEW ", JSON.stringify({"passed": okay, "checks": checks, "language": language, "mode": "flight", "captures": images, "capture_files": captured, "renderer": RenderingServer.get_current_rendering_method()}))
+	print("WORLD_ATLAS_REVIEW ", JSON.stringify({"passed": okay, "checks": checks, "language": language, "mode": "flight", "captures": images, "capture_files": captured, "recording_ms":recording_ms,"renderer": RenderingServer.get_current_rendering_method()}))
 	city.free(); await frames(2); quit(0 if okay else 1)

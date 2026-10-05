@@ -23,7 +23,12 @@ public:
     Dictionary open_city(const String& engine, const String& save, const String& lang);
     // New game: the listed adventures, and one of them opened paused (kind "pak" or "folder", and its reference).
     Dictionary adventures(const String& engine, const String& lang);
+    Dictionary adventure_preview(const String& engine, const String& kind, const String& ref, const String& lang);
     Dictionary open_adventure(const String& engine, const String& kind, const String& ref, const String& lang);
+    // The adventure editor: an adventure opened for editing, a new one made, and (validators) another adventures folder.
+    Dictionary open_editor(const String& engine, const String& kind, const String& ref, const String& lang);
+    Dictionary new_adventure(const String& engine, const String& name, const String& lang);
+    void set_adventures_directory(const String& directory);
     void advance(double delta);
     Dictionary replay(int ticks, int64_t seed);
     void set_save_directory(const String& directory);

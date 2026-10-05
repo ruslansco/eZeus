@@ -447,7 +447,37 @@ bool eTile::hasAvenue() const {
 }
 
 void eTile::setUnderBuilding(const stdsptr<eBuilding>& b) {
+    if(!b && !mAnimalBuildings.empty()) {
+        mUnderBuilding = mAnimalBuildings.back();
+    } else {
+        if(b && (b->type() == eBuildingType::sheep || b->type() == eBuildingType::goat || b->type() == eBuildingType::cattle)) {
+            bool found = false;
+            for(const auto& ab : mAnimalBuildings) {
+                if(ab == b) { found = true; break; }
+            }
+            if(!found) mAnimalBuildings.push_back(b);
+        }
+        mUnderBuilding = b;
+    }
+    scheduleTerrainUpdate();
+}
+
+void eTile::addAnimalBuilding(const stdsptr<eBuilding>& b) {
+    mAnimalBuildings.push_back(b);
     mUnderBuilding = b;
+    scheduleTerrainUpdate();
+}
+
+void eTile::removeAnimalBuilding(eBuilding* const b) {
+    for(auto it = mAnimalBuildings.begin(); it != mAnimalBuildings.end(); ++it) {
+        if(it->get() == b) {
+            mAnimalBuildings.erase(it);
+            break;
+        }
+    }
+    if(mUnderBuilding.get() == b) {
+        mUnderBuilding = mAnimalBuildings.empty() ? nullptr : mAnimalBuildings.back();
+    }
     scheduleTerrainUpdate();
 }
 

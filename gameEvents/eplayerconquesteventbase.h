@@ -11,7 +11,8 @@ public:
                              eGameBoard& board);
     ~ePlayerConquestEventBase();
 
-    void addAres();
+    // Ares marches with the army; he comes home to his sanctuary in city `aresCity`.
+    void addAres(const eCityId aresCity);
 protected:
     void removeConquestEvent();
 };

@@ -1,5 +1,7 @@
 
 #include "egameboard.h"
+#include <cmath>
+#include <algorithm>
 
 #include "buildings/eagorabase.h"
 #include "characters/echaracter.h"
@@ -3869,28 +3871,76 @@ bool eGameBoard::build(const int tx, const int ty,
                      bc, pid, cid, editorDisplay, fertile, flat);
 }
 
+bool eGameBoard::canBuildAnimal(const int tx, const int ty,
+                                const eBuildingType type,
+                                const eCityId cid,
+                                const ePlayerId pid,
+                                const bool editorDisplay) const {
+    if(pid != cityIdToPlayerId(cid) && !mEditorMode && !editorDisplay) return false;
+    const auto t = tile(tx, ty);
+    if(!t) return false;
+    if(t->cityId() != cid) return false;
+    if(t->underBuilding()) {
+        if(t->underBuildingType() != type) return false;
+    }
+    const auto& banners = t->banners();
+    for(const auto& b : banners) {
+        if(!b->buildable()) return false;
+    }
+    const auto ttt = t->terrain();
+    if(ttt != eTerrain::fertile) return false;
+    if(!static_cast<bool>(ttt & eTerrain::buildable)) return false;
+    if(!t->walkableElev() && t->isElevationTile()) return false;
+    return true;
+}
+
 bool eGameBoard::buildAnimal(eTile* const tile,
                              const eBuildingType type,
                              const eAnimalCreator& creator,
                              const eCityId cid,
                              const ePlayerId pid,
                              const bool editorDisplay) {
+    if(!tile) return false;
     const int tx = tile->x();
     const int ty = tile->y();
-    const bool cb = canBuild(tx, ty, 1, 2, editorDisplay, cid, pid, true, true);
+    const bool cb = canBuildAnimal(tx, ty, type, cid, pid, editorDisplay);
     if(!cb) return false;
+    if(!editorDisplay) {
+        const int allowed = countAllowed(cid, type);
+        if(allowed <= 0) return false;
+    }
     const auto sh = creator(*this);
     sh->changeTile(tile);
+    const int existingCount = static_cast<int>(tile->animalBuildings().size());
+    if(existingCount > 0) {
+        // Disperse animals across the tile so they don't spawn stacked on top of each other
+        const double angle = existingCount * 2.39996323;
+        const double radius = 0.14 + (existingCount % 3) * 0.08;
+        const double offsetX = std::clamp(0.5 + std::cos(angle) * radius, 0.2, 0.8);
+        const double offsetY = std::clamp(0.5 + std::sin(angle) * radius, 0.2, 0.8);
+        sh->setX(offsetX);
+        sh->setY(offsetY);
+    }
     const auto o = static_cast<eOrientation>(eRand::rand() % 8);
     sh->setOrientation(o);
     const auto w = eWalkableObject::sCreateFertile();
     const auto a = e::make_shared<eAnimalAction>(sh.get(), tx, ty, w);
+    a->startWalking();
     sh->setAction(a);
 
-    return build(tx, ty, 1, 2, cid, pid, editorDisplay, [this, sh, type, cid]() {
-        return e::make_shared<eAnimalBuilding>(
-                    *this, sh.get(), type, cid);
-    }, true, true);
+    const auto b = e::make_shared<eAnimalBuilding>(
+                *this, sh.get(), type, cid);
+    b->setCenterTile(tile);
+    b->setTileRect({tx, ty, 1, 1});
+    b->addUnderBuilding(tile);
+    tile->addAnimalBuilding(b);
+
+    if(!editorDisplay) {
+        const auto diff = difficulty(pid);
+        const int cost = eDifficultyHelpers::buildingCost(diff, b->type());
+        incDrachmas(pid, -cost, eFinanceTarget::construction);
+    }
+    return true;
 }
 
 void eGameBoard::removeAllBuildings() {

@@ -11,7 +11,12 @@ const TYPE_RATE := 0.028       # Seconds per letter when the line has no voice t
 const TURN_SWAY := 0.32        # Radians the figure turns either way while idle.
 const VOICE_ICON := preload("res://ui/icons/voice.svg")
 const STOP_ICON := preload("res://ui/icons/stop.svg")
+# Portrait images: res://assets/portraits/<asset>.png (painted, art/ai_portraits) is shown instead of the 3D figure.
+# To go back to the live 3D model, list the role in portrait_models below (or set PORTRAIT_IMAGES false for every role);
+# the image files can stay. Roles without an image always show their 3D model.
 const PORTRAIT_DIR := "res://assets/portraits/"
+const PORTRAIT_IMAGES := true
+const POSE_TURN := .26         # The rendered portraits' three-quarter turn.
 const KIND_TEXT := {"god": "Olympian", "hero": "Hero", "monster": "Monster"}
 
 var city: Node                 # main.gd: models, walker poses and the core link.
@@ -23,6 +28,14 @@ var stage := Node3D.new()
 var turntable := Node3D.new()
 var camera := Camera3D.new()
 var figure: Node3D
+var holder := SubViewportContainer.new()
+var still := TextureRect.new()      # The role's pre-rendered portrait, when it has one.
+# Render-only (scripts/render_portraits.gd): a folder of portrait models outside the project, loaded at run time, and a
+# fixed three-quarter pose. Empty in the game, which never loads portrait models.
+var portrait_source := ""
+# Roles that show their 3D model even though they have a portrait image, e.g. ["walker_curator"].
+var portrait_models: Array[String] = []
+var posed := false
 var plinth := MeshInstance3D.new()
 var band := MeshInstance3D.new()
 var halo := MeshInstance3D.new()   # The light a hovering Olympian casts on the plinth.
@@ -123,7 +136,6 @@ func build_portrait() -> Control:
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layers.add_child(backdrop)
-	var holder := SubViewportContainer.new()
 	holder.stretch = true
 	holder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	holder.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -138,6 +150,13 @@ func build_portrait() -> Control:
 	holder.add_child(viewport)
 	build_stage()
 	viewport.add_child(stage)
+	still.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	still.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	still.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	still.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS  # 2x images stay smooth on 1x screens.
+	still.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	still.visible = false
+	layers.add_child(still)
 	# The kind of figure (Olympian, hero, monster) on a small plaque over the plinth.
 	badge.theme_type_variation = "CharacterBadge"
 	badge.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -163,6 +182,7 @@ func build_stage() -> void:
 	stage.add_child(world_environment)
 	# Key light from the upper left (the city's afternoon sun), a cool fill and a warm rim behind.
 	var key := DirectionalLight3D.new()
+	key.name = "PortraitKey"
 	key.light_color = Color(1.0, .93, .82)
 	key.light_energy = 1.25
 	key.shadow_enabled = true
@@ -340,6 +360,18 @@ func set_figure(asset: String) -> void:
 		figure.queue_free()
 		figure = null
 	entry = {}
+	viewport.mesh_lod_threshold = 1.0
+	viewport.scaling_3d_scale = 1.0
+	stage.get_node("PortraitKey").light_energy = 1.25
+	var image := PORTRAIT_DIR + asset + ".png"
+	var pictured := pictured_role(asset)
+	still.visible = pictured
+	holder.visible = not pictured
+	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED if pictured else SubViewport.UPDATE_ALWAYS
+	if pictured:
+		# A still portrait: no 3D figure, no viewport rendering while the window is open.
+		still.texture = load(image)
+		return
 	if asset.is_empty():
 		return
 	figure = portrait_model(asset)
@@ -357,20 +389,38 @@ func set_figure(asset: String) -> void:
 	entry.god = false
 	frame_figure()
 
-# A man's portrait model (tools/godot_portrait_export.py): the same walker with a designed Greek face, curly hair and beard,
-# in one held pose. Only this window shows it; the city keeps the crowd model. Null when the role has none.
+# Whether the window shows the role's portrait image rather than its 3D model.
+func pictured_role(asset: String) -> bool:
+	return PORTRAIT_IMAGES and portrait_source.is_empty() and not asset.is_empty() and not asset in portrait_models \
+		and ResourceLoader.exists(PORTRAIT_DIR + asset + ".png")
+
+# A man's portrait model (tools/godot_portrait_export.py), loaded only by the portrait renderer from `portrait_source`.
 func portrait_model(asset: String) -> Node3D:
-	var path := PORTRAIT_DIR + asset + ".glb"
-	if not ResourceLoader.exists(path):
+	if portrait_source.is_empty():
 		return null
-	var scene: PackedScene = load(path)
-	if scene == null:
+	var path := portrait_source.path_join(asset + ".glb")
+	if not FileAccess.file_exists(path):
 		return null
-	var node: Node3D = scene.instantiate()
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	if document.append_from_file(path, state) != OK:
+		return null
+	var node: Node3D = document.generate_scene(state)
 	city.character_appearance.apply(node, asset, city.model_contract(asset))
-	var manifest := PORTRAIT_DIR + asset + ".json"
+	var manifest := portrait_source.path_join(asset + ".json")
 	if FileAccess.file_exists(manifest):
 		var parsed = JSON.parse_string(FileAccess.get_file_as_string(manifest))
+		if parsed is Dictionary and parsed.get("portrait", {}).get("finish", "") == "elder_portrait_v2":
+			# Duplicate the cached finish: enabling close-up skin must never alter city walkers.
+			var finish: ShaderMaterial = city.character_appearance.materials[asset].duplicate()
+			finish.set_shader_parameter("elder_portrait", true)
+			city.character_appearance.apply_material(node, finish)
+			node.set_meta("portrait_revision", parsed.portrait.revision)
+			node.set_meta("portrait_bust_heads", 2.25)
+			# Subpixel fibers need full geometry and supersampling in this isolated close-up.
+			viewport.mesh_lod_threshold = 0.0
+			viewport.scaling_3d_scale = 1.5
+			stage.get_node("PortraitKey").light_energy = .95
 		if parsed is Dictionary and parsed.get("portrait", {}).has("eye"):
 			var eye: Array = parsed.portrait.eye
 			node.set_meta("portrait_eye", Vector3(eye[0], eye[1], eye[2]))
@@ -412,11 +462,17 @@ func frame_figure() -> void:
 	var person: bool = entry.get("human", false) or entry.get("lod_role", false) or figure.has_meta("portrait_eye")
 	var eye := Vector3(0, height * .92, 0)
 	var head := height * .13
+	# A crowd model: the skin surfaces (character shader kind 0 in UV2) give the body's height, so a spear, a raised
+	# arm or a helmet crest does not push the head-and-shoulders view above the face.
+	var skin := skin_bounds()
+	if skin.size.y > .05:
+		head = skin.size.y * .13
+		eye = Vector3(skin.get_center().x, skin.end.y - head * .42, skin.get_center().z) + figure_base
 	if figure.has_meta("portrait_eye"):
 		# The man's own eyes (a rider or a charioteer is not at the middle of his horse or chariot).
 		eye = figure.get_meta("portrait_eye") + figure_base
 		head = figure.get_meta("portrait_head")
-	var bust_height := head * 2.7
+	var bust_height := head * float(figure.get_meta("portrait_bust_heads", 2.7))
 	var bust_distance := bust_height * .5 / tan(deg_to_rad(camera.fov * .5))
 	if floating:
 		eye.y += height * .035   # the gentle hover's mean lift (see _process)
@@ -427,6 +483,30 @@ func frame_figure() -> void:
 	can_zoom = person
 	zoom = zoom_target
 	place_camera()
+
+# The bounds of the figure's skin in its own frame (empty when the model has no character surfaces).
+func skin_bounds() -> AABB:
+	var found := false
+	var box := AABB()
+	for node in figure.find_children("*", "MeshInstance3D", true, false):
+		var mesh: Mesh = node.mesh
+		if mesh == null:
+			continue
+		var into: Transform3D = figure.global_transform.affine_inverse() * node.global_transform
+		for surface in mesh.get_surface_count():
+			var arrays := mesh.surface_get_arrays(surface)
+			var uv2 = arrays[Mesh.ARRAY_TEX_UV2]
+			if uv2 == null or uv2.is_empty():
+				continue
+			# Surfaces are batched across kinds: test each vertex's kind.
+			var points: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			for i in points.size():
+				if uv2[i].x * 8.0 > .5:
+					continue
+				var p: Vector3 = into * points[i]
+				box = box.expand(p) if found else AABB(p, Vector3.ZERO)
+				found = true
+	return box
 
 func place_camera() -> void:
 	bust_look = turntable.transform * bust_local
@@ -443,7 +523,11 @@ func _process(dt: float) -> void:
 	# The figure faces the viewer and sways a little; a drag turns it freely.
 	if not dragging:
 		drag_turn = lerpf(drag_turn, 0.0, 1.0 - exp(-dt * 1.4))
-	turntable.rotation.y = PI + sin(time * .55) * TURN_SWAY + drag_turn
+	turntable.rotation.y = PI + (POSE_TURN if posed else sin(time * .55) * TURN_SWAY + drag_turn)
+	if still.visible and not access.reduced_motion:
+		# A slow breath of movement over the still portrait.
+		still.pivot_offset = still.size * Vector2(.5, .35)
+		still.scale = Vector2.ONE * (1.0 + .02 * (.5 - .5 * cos(time * .35)))
 	if absf(zoom - zoom_target) > .0005:
 		zoom = move_toward(zoom, zoom_target, dt * (100.0 if access.reduced_motion else 2.6))
 	if zoom > 0.0 or absf(zoom - zoom_target) > .0005:

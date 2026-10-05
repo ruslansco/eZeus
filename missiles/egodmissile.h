@@ -12,6 +12,8 @@ public:
 
     void setTexture(const eCharacterType ct,
                     const eCharacterActionType cat);
+    eCharacterType characterType() const { return mCharType; }
+    eCharacterActionType actionType() const { return mActionType; }
 
     void read(eReadStream& src);
     void write(eWriteStream& dst) const;

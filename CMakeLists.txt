@@ -3436,7 +3436,7 @@ target_link_libraries(eZeus PRIVATE SDL2_image::SDL2_image)
 target_link_libraries(eZeus PRIVATE SDL2_mixer::SDL2_mixer)
 
 # The headless simulation and legacy view share exactly the same stepping order.
-target_sources(eZeus PRIVATE engine/esimulationstep.cpp engine/estatedigest.cpp engine/eagoraplacement.cpp engine/eadventurelist.cpp engine/eshoreplacement.cpp engine/ebuildplacement.cpp engine/ecitydata.cpp engine/ebuildinginfotext.cpp engine/echaracterinfotext.cpp engine/etradepartners.cpp)
+target_sources(eZeus PRIVATE engine/esimulationstep.cpp engine/estatedigest.cpp engine/eagoraplacement.cpp engine/eadventurelist.cpp engine/eshoreplacement.cpp engine/ebuildplacement.cpp engine/ecitydata.cpp engine/ebuildinginfotext.cpp engine/echaracterinfotext.cpp engine/etradepartners.cpp engine/ecityadvisor.cpp engine/etradesummary.cpp buildings/ehousecard.cpp engine/eterrainedit.cpp)
 option(EZEUS_BUILD_GODOT_EXTENSION "Embed the existing simulation in Godot" OFF)
 if(EZEUS_BUILD_GODOT_EXTENSION)
     set(GODOTCPP_API_VERSION "4.6" CACHE STRING "" FORCE)
@@ -3447,7 +3447,7 @@ if(EZEUS_BUILD_GODOT_EXTENSION)
     list(FILTER EZEUS_SOURCES INCLUDE REGEX "\\.cpp$")
     list(FILTER EZEUS_SOURCES EXCLUDE REGEX "^main\\.cpp$")
     add_library(ezeus_godot SHARED ${EZEUS_SOURCES}
-        presentation/esimulationservice.cpp presentation/godot/register_types.cpp)
+        presentation/esimulationservice.cpp presentation/eeditorsession.cpp presentation/godot/register_types.cpp)
     target_include_directories(ezeus_godot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     get_target_property(EZEUS_SDL_INCLUDE SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
     target_include_directories(ezeus_godot SYSTEM PRIVATE ${EZEUS_SDL_INCLUDE})

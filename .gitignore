@@ -100,3 +100,5 @@ godot/captures/
 godot/bin/*.dylib
 # Portrait models for the character window (tools/godot_portrait_export.py); regenerate, manifests stay tracked.
 godot/assets/portraits/*.glb
+# Portrait models (tools/godot_portrait_export.py): render sources for the character window images, not shipped.
+build-portraits/

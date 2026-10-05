@@ -149,6 +149,15 @@ var resources_tween: Tween
 var automation := false
 
 func _ready() -> void:
+	# `hint` stays the city's message sink (hidden); the notice pill shows its own copy, since the placement line keeps
+	# rewriting `hint` while a notice is up.
+	hint.visible = false
+	notice_label.theme_type_variation = "Caption"
+	notice_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	notice_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	%Feedback.add_child(notice_label)
+	%Feedback.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	%Feedback.visible = false
 	get_tree().node_added.connect(func(child):
 		if child is Window and is_ancestor_of(child): _attach_right_click_back.call_deferred(child))
 	for child in get_children(): _attach_right_click_back(child)
@@ -880,6 +889,7 @@ func set_facing(value: int) -> void:
 
 func set_placement_feedback(text: String, valid: bool, active := true) -> void:
 	placement_feedback_active=active and not text.is_empty()
+	placement_source=text
 	%PlacementText.text=text.replace("  •  ","\n")
 	%PlacementBadge.theme_type_variation="PlacementGood" if valid else "PlacementBad"
 	%PlacementBadge.reset_size()
@@ -912,13 +922,17 @@ func visible_popup(node: Node = null) -> PopupMenu:
 		if found != null: return found
 	return null
 
-func _attach_right_click_back(child: Node) -> void:
+# Untyped: a dialog freed before this deferred call arrives must be skipped, not fail the call.
+func _attach_right_click_back(child) -> void:
 	if not is_instance_valid(child): return
 	for nested in child.get_children(true): _attach_right_click_back(nested)
 	if child is Window and not child.has_node("RightClickBack"):
 		var back := preload("res://ui/right_click_back.gd").new()
 		back.name = "RightClickBack"
 		child.add_child(back)
+	# A dialog's confirming button (Apply, Done, Main menu…) is the gold Primary one; Cancel stays plain.
+	if child is AcceptDialog and child.get_ok_button().theme_type_variation == &"":
+		child.get_ok_button().theme_type_variation = "Primary"
 
 func set_resources_open(open: bool) -> void:
 	resources_open = open
@@ -980,12 +994,14 @@ func _layout_panels() -> void:
 	goals_panel.offset_top=size.y-12-goals_height; goals_panel.offset_bottom=size.y-12
 	var dock_left: float=%TimeGroup.get_global_rect().end.x+12
 	var dock_right: float=goals_panel.position.x-12 if goals_panel.visible else size.x-16
-	var dock_min: float=%BottomBar.get_combined_minimum_size().x
-	if dock_right-dock_left < dock_min+64:
+	# The dock's full width without scrolling: every control in the row at its own size, the categories unscrolled,
+	# plus the frame's margins (measured, so the gold faces' padding is counted).
+	var wanted_width: float=%Tools.get_combined_minimum_size().x-%CategoryScroll.get_combined_minimum_size().x+%Categories.get_combined_minimum_size().x+%BottomBar.get_theme_stylebox("panel").get_minimum_size().x+2
+	# When the dock and the objectives do not fit side by side, the objectives move up rather than the dock scrolling.
+	if dock_right-dock_left < wanted_width:
 		goals_panel.offset_top=content_top; goals_panel.offset_bottom=content_top+goals_height
 		dock_right=size.x-16
 		if goals_panel.visible: content_top=goals_panel.get_global_rect().end.y+12
-	var wanted_width: float=%Categories.get_combined_minimum_size().x+%ToolButtons.get_combined_minimum_size().x+166
 	var dock_width: float=minf(wanted_width,dock_right-dock_left)
 	var dock_centre: float=(dock_left+dock_right)*.5
 	%BottomBar.offset_left=dock_centre-dock_width*.5-size.x*.5
@@ -1039,8 +1055,14 @@ func _layout_panels() -> void:
 	var journal_room: float = maxf(0,journal_end-journal_top)
 	var journal_height: float = %MessageHeader.get_combined_minimum_size().y + message_list.get_combined_minimum_size().y + 42
 	message_panel.offset_bottom = -size.y + journal_top + minf(journal_height,minf(journal_room,(size.y-journal_top)*.55))
-	%Feedback.offset_bottom=%BuildTray.offset_top-8 if %BuildTray.visible else map_bottom
-	%Feedback.offset_top=%Feedback.offset_bottom-maxf(36,%Feedback.get_combined_minimum_size().y)
+	# Notices hang as a short pill under the top bar (and under the invasion notice when it shows), centred.
+	var notice_top: float=header_bottom+10
+	var banner: Control=get_node_or_null("InvasionBanner")
+	if banner!=null and banner.visible:notice_top=maxf(notice_top,banner.get_global_rect().end.y+8)
+	var pill_width: float=minf(%Feedback.get_combined_minimum_size().x,minf(620,size.x-32))
+	%Feedback.anchor_left=.5; %Feedback.anchor_right=.5; %Feedback.anchor_top=0; %Feedback.anchor_bottom=0
+	%Feedback.offset_left=-pill_width*.5; %Feedback.offset_right=pill_width*.5
+	%Feedback.offset_top=notice_top; %Feedback.offset_bottom=notice_top+%Feedback.get_combined_minimum_size().y
 	%OverlayPanel.offset_top = header_bottom+12
 	%OverlayPanel.visible = current_overlay != "normal"
 	var overlay_end: float=%BuildTray.position.y-8 if %BuildTray.visible else %BottomBar.position.y-8
@@ -1092,9 +1114,51 @@ func _process(_delta: float) -> void:
 		var minimum:=Vector2(12,%StatusBar.size.y+8)
 		var maximum:=Vector2(size.x-12,minf(%BottomBar.position.y,%TimeGroup.position.y)-8)-badge.size
 		badge.position=(get_local_mouse_position()+Vector2(22,20)).clamp(minimum,maximum.max(minimum))
-	var idle := KeyBindings.idle_hint()
-	%Feedback.visible = not hint.text.is_empty() and hint.text!=idle and not badge.visible
-	hint.tooltip_text = KeyBindings.controls_hint() if hint.text == idle else hint.text
+	if hint.text != notice_seen:
+		notice_seen = hint.text
+		if is_notice(hint.text):
+			show_notice(hint.text)
+
+# ---- notices ----------------------------------------------------------------------------------------------
+# `hint` is where the city writes what just happened ("Autosaved", "The tax rate is set.", why a command was refused). Only real
+# notices are shown, briefly, as a pill under the top bar: not the placement line (the badge at the pointer shows it), not the idle
+# controls hint, not routine confirmations, and not the same words again within NOTICE_REPEAT seconds.
+const NOTICE_SECONDS := 3.5
+const NOTICE_REPEAT := 30.0
+const QUIET_NOTICES := ["Built. Undo is available for the last construction.", "Demolished using the city's rules.", "Loading…"]
+var notice_seen := ""
+var notice_text := ""
+var notice_at := -1000.0
+var notice_tween: Tween
+var placement_source := ""
+var notice_label := Label.new()
+
+func is_notice(text: String) -> bool:
+	if text.is_empty() or text == KeyBindings.idle_hint() or text == placement_source:
+		return false
+	for quiet in QUIET_NOTICES:
+		if text == tr(quiet):
+			return false
+	var now := Time.get_ticks_msec() / 1000.0
+	return text != notice_text or now - notice_at > NOTICE_REPEAT
+
+func show_notice(text: String) -> void:
+	notice_text = text
+	notice_at = Time.get_ticks_msec() / 1000.0
+	var font := notice_label.get_theme_font("font")
+	var wide := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, notice_label.get_theme_font_size("font_size")).x > 580
+	notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wide else TextServer.AUTOWRAP_OFF
+	notice_label.custom_minimum_size.x = 580 if wide else 0
+	notice_label.text = text
+	var pill: Control = %Feedback
+	if notice_tween != null: notice_tween.kill()
+	pill.modulate.a = 1.0
+	pill.visible = true
+	pill.reset_size()
+	notice_tween = pill.create_tween()
+	notice_tween.tween_interval(NOTICE_SECONDS)
+	notice_tween.tween_property(pill, "modulate:a", 0.0, .4)
+	notice_tween.tween_callback(pill.hide)
 
 # Shared Escape-menu labels preserve all native actions and rebindable shortcuts.
 func menu_action_text(action: String) -> String:

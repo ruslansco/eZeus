@@ -1,5 +1,31 @@
 # Living regional world atlas — 2–3 October 2026
 
+## Water and keyboard refinement — 4 October 2026
+
+`atlas_land.gdshader` discards coast coverage below 0.5, including the shadow pass.
+Submerged relief vertices remain for shared surface normals/UV projection, but
+cannot show as a rectangular plate through the faceted sea. The sphere now uses
+192 radial segments / 96 rings. Fragment ripple gradients are transformed from
+world X/Z to view space; sea metalness is zero. Shallows and modest foam retain
+the existing coast field. Rock/vegetation variation, strata, woodland scale and
+soft cloud density are cosmetic, with no native RNG or new source art.
+
+`world_atlas.gd` polls the shared `KeyBindings` InputMap and `PlaySettings` camera
+speeds. Arrow keys also pan; WASD pan relative to yaw, Q/E orbit at 65°/s, R/F tilt
+at 35°/s between 25° and 75°, and Shift doubles pan speed. Opposing held keys cancel.
+Pan clamps to the regional extent and follows the same sampled surface as landmarks.
+Typing, native world dialogs, cinematic flight, command modifiers and lost root
+window focus block camera movement. Focus cleanup releases only camera/arrow/Shift
+inputs through a deferred callback. Closed rendering remains disabled. The fixed
+arrows are not rebound; other camera controls follow the city's bindings.
+
+`world_map.tscn` owns the smaller panel, circular portrait, compact navigation
+buttons and responsive toolbar/heading. Styles are shared Theme variations in
+`build_ui_theme.gd`; hints/tooltips use CSV translations and current key names.
+Owned-city stock matches `world.mine` by native city ID and uses the existing
+response, without extra polling. `world_flight.gd` fades `%AtlasToolbar` as one
+surface, including both hints, and preserves exact city-return behavior.
+
 The world screen now embeds an independent Godot 3D viewport: curved globe,
 raised coast/relief, animated Aegean water, twelve drifting cloud cards, sparse
 cypress woodland, up to seven decorative sailboats, and miniature temple/town
@@ -80,10 +106,10 @@ travel; steady world view and closed atlas retain their rendering suspension.
 - R stores height divided by 3.6, G shoreline proximity, B coastline coverage,
   A ecology. Both CPU projection and terrain geometry sample the same field.
   Keep normalized native UVs, aspect and the terrain/sea boundary together.
-- Indexed 256 × 226 relief, 128-segment/64-ring sea sphere, one bounded woodland
+- Indexed 256 × 226 relief, 192-segment/96-ring sea sphere, one bounded woodland
   MultiMesh (cap 1,600), twelve cloud meshes, seven-ship cap, shared landmark
   mesh/materials, one directional shadow light with two cascades. Measured
-  designated-world geometry is 35 meshes / 165,032 triangles; gates are 100
+  designated-world geometry is 35 meshes / 185,640 triangles; gates are 100
   meshes / 220,000 triangles. No building/catalog geometry baseline was changed.
 - Metal/Forward Mobile stays the renderer. Sky reflections, ordinary fog,
   supported glow and additive beacon work; SSR, SSAO and volumetric fog stay off.

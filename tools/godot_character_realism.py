@@ -39,6 +39,9 @@ def profile(name, previous=None):
         hair=((.027,.016,.009),(.095,.048,.022)), hair_length=.015,
         beard_length=.02 if not name.startswith('walker_') or 'woman' not in name.lower() else 0, grey=.65, seed=seed)
     p['skin'] = SKINS[seed % len(SKINS)]
+    if name == 'Urchin gatherer':
+        # Preserve the clean-shaven city identity when exporting the newly connected work clips.
+        p.update(beard_length=0, grey=.08)
     if name == 'Philosopher':
         p.update(skin=SKINS[0], hair=((.28,.26,.23),(.53,.51,.47)), grey=.65)
     if name in ['Greek physician','Greek transporter']:

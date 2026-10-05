@@ -78,3 +78,5 @@ RECIPES['trireme_wharf']=('art/harbour/build_sprites.py',['--kind','wharf'])
 RECIPES.update({f'column_{k}':('art/columns/build_sprites.py',['--only',k]) for k in ['doric','ionic','corinthian']})
 RECIPES.update({f'hippodrome_{k}':('art/hippodrome/build_sprites.py',['--only',str(k)]) for k in range(8)})
 RECIPES['roadblock']=('art/roadblock/build_sprites.py',[])
+# The rubble a fire or collapse leaves on each tile (eRuins, 1x1): the SDL remaster's eight Roman ruins (art/lots), 4 October.
+RECIPES.update({f'ruins_{v}':('art/lots/build_sprites.py',['--part','ruins','--only',str(v)]) for v in range(8)})

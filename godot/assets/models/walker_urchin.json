@@ -2,19 +2,19 @@
   "asset": "walker_urchin",
   "source": "art/characters/people/build_person.py",
   "file": "walker_urchin.glb",
-  "bytes": 5173904,
-  "vertices": 15472,
+  "bytes": 15425428,
+  "vertices": 15475,
   "surfaces": 2,
-  "source_surfaces": 12,
+  "source_surfaces": 13,
   "bounds_blender": [
     [
       -0.22970016300678253,
-      -0.14541320502758026,
-      -0.299500048160553
+      -0.14522457122802734,
+      -0.710429310798645
     ],
     [
       0.21215324103832245,
-      0.2479664832353592,
+      0.36392080783843994,
       0.5418477058410645
     ]
   ],
@@ -25,6 +25,15 @@
   "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
+  "gathering": {
+    "revision": "authored_gather_v2",
+    "collect_samples": 40,
+    "period_seconds": 5.0,
+    "carry_samples": 12,
+    "deposit_samples": 12,
+    "source": "native dive/reach/bag cycle with Godot-only brief dip and prolonged recovery timing",
+    "state": "native collect/carry/deposit observations, presentation only, no root-motion"
+  },
   "character": {
     "revision": "natural_people_v1",
     "identities": [
@@ -78,8 +87,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 70,
-    "targets_after": 48,
+    "targets_before": 216,
+    "targets_after": 158,
     "uv_attributes_removed": 0
   }
 }

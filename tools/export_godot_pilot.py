@@ -73,6 +73,12 @@ def execute_source(source, args, stop=None, transform=None):
 
 def construct(name):
     global BUILDING_ANIMATE
+    EXTRA_CLIPS.clear()
+    if name == 'walker_hydra':
+        import godot_hydra
+        pose, idle, clips = godot_hydra.build(K)
+        EXTRA_CLIPS.extend(clips)
+        return 'eZeus/tools/godot_hydra.py', pose, idle
     if name in {'walker_astronomer','walker_inventor','walker_curator'}:
         source = Path(__file__).with_name('godot_science_walkers.py')
         ns = execute_source(source, ['--who', name.removeprefix('walker_')])
@@ -102,9 +108,12 @@ def construct(name):
             # samples are all its first frame (the optimizer merges identical poses). The native art is not touched.
             pose, idle = god_float.poses(fn)
         EXTRA_CLIPS.clear()
-        if name.removeprefix('walker_') in COMBAT:
+        if name.removeprefix('walker_') in COMBAT or name == 'walker_urchin':
             for state, count, _, state_fn, _ in namespace['STATES']:
-                if state in ('fight', 'fight2', 'die', 'bless', 'curse', 'disappear', 'appear'):
+                if state in ('fight', 'fight2', 'die', 'bless', 'curse', 'disappear', 'appear') or (name == 'walker_urchin' and state in ('collect','carry','deposit')):
+                    if name == 'walker_urchin' and state == 'collect':
+                        from godot_gathering_art import retime_urchin
+                        state_fn = retime_urchin(state_fn)
                     EXTRA_CLIPS.append((state, int(count), state_fn))
         pose(0); K.root.rotation_euler.z = 0
         return str(source.relative_to(ROOT)), pose, idle
@@ -166,8 +175,10 @@ def construct(name):
         return str(source.relative_to(ROOT)), row, lambda frame: row(0)
     if name == 'fishing_boat':
         source = Path(__file__).with_name('godot_fishing_boat.py')
-        execute_source(source, [])
-        return str(source.relative_to(ROOT)), None, None
+        ns = execute_source(source, [])
+        EXTRA_CLIPS.clear()
+        EXTRA_CLIPS.append(('collect',40,ns['collect']))
+        return str(source.relative_to(ROOT)), ns['row'], ns['idle']
     if name in RECIPES:
         relative, args = RECIPES[name]; source = ROOT / relative
         def adapt(tree):
@@ -335,7 +346,8 @@ def export(name):
     if root:
         root.rotation_euler.z = 0
     objects = sorted([o for o in bpy.context.scene.objects if o.type in {'MESH', 'CURVE'}
-                      and not o.hide_render and not o.is_holdout and 'shadow' not in o.name.lower()], key=lambda o: o.name)
+                      and not o.hide_render and not o.is_holdout and 'shadow' not in o.name.lower()
+                      and not (name == 'walker_urchin' and o.name.startswith('Ripple'))], key=lambda o: o.name)
     dynamic = set()
     if activity:
         # Include tools/particles visible in later work frames and the worker-free
@@ -360,8 +372,9 @@ def export(name):
     # Soldiers: props that the walk puts away (a sword, a club, a sling stone) are shown by the fight clips, so they belong to the model.
     # Their rest geometry is taken from the first clip frame that shows them; the poses that hide them fold them into the body.
     shown_in_clips = {}
-    if human_asset and EXTRA_CLIPS:
-        candidates = [o for o in bpy.context.scene.objects if o.type in {'MESH', 'CURVE'} and not o.is_holdout and 'shadow' not in o.name.lower()]
+    if EXTRA_CLIPS:
+        candidates = [o for o in bpy.context.scene.objects if o.type in {'MESH', 'CURVE'} and not o.is_holdout and 'shadow' not in o.name.lower()
+                      and not (name == 'walker_urchin' and o.name.startswith('Ripple'))]
         listed = set(objects)
         for label, count, fn in [('walk', 24, pose)] + EXTRA_CLIPS:
             for frame in range(count):
@@ -394,6 +407,9 @@ def export(name):
                         # grey. Carry their authored water colour into opaque PBR.
                         colour = tuple(round(float(v), 3) for v in p.inputs['Base Color'].default_value[:3])
             surface_kind = (0 if attributes['skin'] else character_art.kind(obj,material)) if human_asset else -1
+            if name == 'walker_hydra':
+                label = material.name if material else ''
+                surface_kind = next((i for i, term in enumerate(('skin','belly','horn','mouth','teeth','eyes')) if term in label),0)
             cloth_owner = next((i for i,h in enumerate(character_art.HUMANS) if obj.startswith(h.name)),0) if human_asset else 0
             if human_asset and 'RomanClothRest' in attributes:
                 surface_kind = 8
@@ -442,6 +458,8 @@ def export(name):
     exported, mappings = [], []
     total = sum(len(g['vertices']) for g in groups.values())
     budget = (26000 if name == 'settlers1' else 12000) if pose else (2500 if name.startswith(('tree_', 'olive_', 'orange_', 'vine_', 'wall_', 'sanctuary_court_')) else 35000)
+    if name == 'fishing_boat':
+        budget = 19500
     if name in ('trireme', 'enemy_boat'):
         # The galleys keep their static detail (crew, shields, rigging) while their oars row.
         budget = 35000
@@ -456,6 +474,9 @@ def export(name):
     if name.removeprefix('walker_') in CREATURES:
         # Beasts and sea monsters on the animal kit: a body, legs, several heads or coils, with no human anatomy to protect.
         budget = 32000
+    if name == 'walker_hydra':
+        from godot_hydra import VERTEX_BUDGET
+        budget = VERTEX_BUDGET
     if activity:
         # Respect each already-optimized building's geometry tier. A moving
         # worker must not restore render-source architecture to 35K vertices.
@@ -528,6 +549,8 @@ def export(name):
             colours = np.array(group['colours'],dtype=np.float32)[closest]
             palette = mesh.color_attributes.new(name='CityPalette',type='FLOAT_COLOR',domain='CORNER')
             ob['preserve_city_palette'] = True
+        if name == 'walker_hydra':
+            semantics = mesh.uv_layers.new(name='MonsterSurface')
         if human_asset:
             colours = np.array(group['colours'],dtype=np.float32)[closest]
             rest_coordinates = np.array(group['rest'],dtype=np.float32)[closest]
@@ -542,6 +565,8 @@ def export(name):
                 uv.data[index].uv = (coordinate[axes[0]], coordinate[axes[1]])
                 if name.removeprefix('walker_') in CREATURES and not human_asset:
                     palette.data[index].color = colours[mesh.loops[index].vertex_index]
+                if name == 'walker_hydra':
+                    semantics.data[index].uv = (key[5]/8.0,.5)
                 if human_asset:
                     vertex = mesh.loops[index].vertex_index
                     palette.data[index].color = colours[vertex]
@@ -605,6 +630,15 @@ def export(name):
               'material_mode': 'preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake',
               'draw_batching': 'vertex_palette_compatible_PBR',
               'idle_mode': ('breathing' if name == 'physician' else 'static_authored_held_pose') if idle else None}
+    if name in ('walker_urchin','fishing_boat'):
+        report['gathering'] = {'revision':'authored_gather_v2','collect_samples':40,'period_seconds':5.0,
+            'carry_samples':12 if name=='walker_urchin' else 0,'deposit_samples':12 if name=='walker_urchin' else 0,
+            'source':'native dive/reach/bag cycle with Godot-only brief dip and prolonged recovery timing' if name=='walker_urchin' else 'original cast-net gather, throw, sink, hand-over-hand haul and reset',
+            'state':'native collect/carry/deposit observations, presentation only, no root-motion'}
+    if name == 'walker_hydra':
+        from godot_hydra import manifest
+        report['monster'] = manifest()
+        report['idle_mode'] = 'breathing_and_independent_neck_sway'
     if activity:
         import hashlib
         base = ROOT/'eZeus/godot/assets/models'/path.name

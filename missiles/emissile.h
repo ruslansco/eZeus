@@ -67,6 +67,7 @@ public:
     const ePathPoint& pos() const { return mPos; }
     double angle() const { return mAngle; }
     double height() const { return mPos.fHeight; }
+    const std::vector<ePathPoint>& points() const { return mPts; }
 
     void read(eReadStream& src) {
         src >> mAngle;
@@ -140,6 +141,8 @@ public:
 
     double angle() const { return mPath.angle(); }
     double height() const { return mPath.height(); }
+    const std::vector<ePathPoint>& pathPoints() const { return mPath.points(); }
+    bool active() const { return mTile != nullptr && !mPath.finished(); }
 
     int textureTime() const { return mTime/20; }
     int time() const { return mTime; }

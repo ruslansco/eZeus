@@ -1,5 +1,96 @@
 # Preserve the simulation, replace the presentation
 
+## World-map realism and keyboard slice — 4 October 2026
+
+Implemented coastline clipping of the submerged relief sheet, finer sea-sphere
+geometry (192 segments / 96 rings), world-oriented ripple normals and a
+nonmetallic sea finish. Land uses varied vegetation/limestone/strata shading,
+woodland instances vary in size, and cloud cards use softer density. Coast/height
+fields and their native city anchors are retained.
+
+The atlas now shares held city camera bindings/speed preferences: arrow/WASD pan,
+Q/E orbit, R/F tilt (25–75°), Shift boost. Arrow keys no longer cycle cities;
+on-screen selection arrows retain that role. Modal/typing/cinematic/focus guards,
+bounds, projected labels and native command isolation are preserved. The authored
+scene has a compact framed heading/toolbar, narrower side panel, circular portraits
+and read-only native owned-city stock. The flight fades the complete toolbar by
+its unique scene name rather than its former layout path.
+
+Standalone EN/RU Metal reviews pass **61 each**, flight **37 each**, native-world
+UI **16 retained + 5 integration each**; current geometry is **35 meshes /
+185,640 triangles**, inside the retained 100 / 220K limits. Evidence and remaining
+limits are recorded in [validation](GODOT_VALIDATION.md). This is a presentation
+slice, not geographic reconstruction, art acceptance or a production performance
+gate.
+
+## Fishing spots and authored gathering — 4 October 2026
+
+Implemented read-only native fish/urchin deposit flags in appended tile column 9,
+procedural fish schools/urchin clusters and gameplay-timed surface movement.
+Fishing skiffs have an authored 40-sample cast/settle/hand-over-hand haul cycle,
+with net line linked to solved hands and oars stowed during collection. Urchin
+workers have 40 dive/reach/recovery samples, 12 bag-carry and 12 deposit samples.
+The Godot-only dip timing retains a longer visible recovery through opaque water.
+Work uses native action observations and 0.22-second transitions, shared by VAT
+and blend-shape fallback. Small glints and three phase-gated diver bubbles
+replace whole-body root tilting and a separate floating net.
+
+Native positions, travel stride, production, pathfinding, regrowth, RNG and save
+formats remain authoritative. Geometry LODs, 32-tile spatial batches and bounded
+worker effects are included. See [water-life contracts](GODOT_WATER_LIFE.md)
+for sources and reviewers; evidence belongs in [validation](GODOT_VALIDATION.md).
+Underwater refraction, wider campaign visuals, user visual acceptance and
+minimum-Mac profiling remain pending.
+
+## Monster combat effects slice — 4 October 2026
+
+Implemented a read-only native missile launch/impact/cancellation observer and
+a bounded Godot renderer for all 17 monster kinds. Hydra has green venom breath,
+a travelling trail, contact splash and native-collapse dust with stone debris;
+other monsters share a generic warm attack finish. The observer retains flights
+that begin and end between snapshots. Damage, attack delays, collapse, sound,
+coordinates, RNG, serialization and the 20 Hz native tick remain authoritative.
+
+The renderer uses two shared MultiMeshes and native game time; pause and decisions
+freeze every effect. Existing fight/die poses and building fire/smoke are retained.
+See [contracts](GODOT_MONSTER_EFFECTS.md) and scoped evidence in the validation
+document. The Hydra model and animated mouth anchors are implemented below.
+Individual effects for other species, same-tile hit bursts and minimum-hardware
+GPU profiling remain pending.
+
+## Hydra reference model — 4 October 2026
+
+Implemented the concept as a Godot-only three-headed quadruped with a heavy
+body, swept spines, charcoal scales, red eyes and fitted ventral bands. The
+stable `walker_hydra` identity now loads the new GLB. Measured neutral height
+is 2.1 times a displayed citizen and 81% of Zeus; raised poses remain below Zeus.
+
+Authored 24 walk, 12 idle, 24 fight, 24 fight2 and 30 collapse samples. Paws
+counter native .64-tile travel during support; roots remain in place. Three
+mouth samples per pose interpolate venom anchors through actual facing and
+terrain-following root height. Grouped palette materials, both UV sets, mesh
+LODs and the VAT/fallback workflow are retained. Only Hydra's baseline changes.
+Native art recipes, monster rules, timing, RNG and saved cities remain intact.
+
+The editable Blender source, reproducible adapter and provenance are described
+in [monster art](GODOT_MONSTER_ART.md); scoped evidence is in
+[validation](GODOT_VALIDATION.md). User art acceptance, full material baking,
+slope foot IK, wider campaign coverage and minimum-Mac profiling remain pending.
+
+## Elder curator panel-only benchmark — 4 October 2026
+
+Implemented one 68-year-old curator portrait (`elder_curator_portrait_v2`) with
+an anatomical aging pass, corrected facial landmarks, surface-sampled tapered
+hair/beard/brow fibers, and isolated close-up skin/eye finish. Character-panel
+framing and sampling are improved for this specimen only. Native identity,
+voice, decisions, clock, city crowd, and physician benchmark remain unchanged.
+Export after the eyebrow correction: 506,830 vertices, 37,123,320 bytes, three surfaces, no skeleton or clips.
+This budget applies to one on-demand portrait, never the crowd. Reusable source,
+visual direction, rebuild steps and transfer caveats are in
+[GODOT_PORTRAIT_REFERENCE.md](GODOT_PORTRAIT_REFERENCE.md). Scoped verification is
+in the validation document. User acceptance, facial animation, painted PBR skin
+textures and minimum-hardware profiling remain pending.
+
 ## Storage building goods display slice — 4 October 2026
 
 Warehouses, trading posts, and granaries now dynamically display their stored goods
@@ -1195,3 +1286,120 @@ contract for scope and limits.
 **Checks.** `validate_requests_units.gd` (17 headless, EN and RU): the requests heading in the game's words, a request listed with the city that can send it and fulfilled, three companies sent together to their own places around a tile, malformed and unknown groups refused. `validate_attack.gd` (53) now checks the view sent once to the attacked city. `validate_building_activity.gd` passes 219 checks for 47 buildings; `validate_characters.gd` (208) counts 102 human walkers; assets 423, poses, naval and leaders validators pass. `validate_main.gd` adds the summary's request row and its Send button, and a box drawn around banners on screen choosing them all and a right click's order moving them. `run_godot_pilot.py --menu-rest-review anim` captures the rowing trireme, the rioters and the new working buildings.
 
 **Limits.** The rowers' bodies do not move with the oars. Drag selection picks banners and triremes (as the SDL view), not other walkers. The view follows the player's own attacks; an attack on the player's city is announced as before.
+
+## Character window portraits as images — 4 October 2026
+
+At the user's choice the window shows pre-rendered portrait images instead of loading 3D portrait models: the portrait
+folder went from 443 MB of models to one 0.3 MB image (the curator); render sources live in git-ignored `build-portraits/`.
+The rejected curled portraits were removed. See the character art contract.
+
+## Playable-loop slice 30: the SDL remaster's City History, Trade Summary, City Advisor, walker routes and house card — 4 October 2026
+
+These are the SDL remaster's own additions (not in the 2001 game). The engine already kept their data in every save; Godot now
+shows and edits it, worded by the same engine code as the SDL windows.
+
+**Shared engine code.** The advisor's ranking moved out of the SDL widget into `engine/ecityadvisor` (`eCityAdvisor::collect`).
+The trade summary's lines are `engine/etradesummary` (`eTradeSummary::lines`: text, tone, indent, section and partner-card marks).
+The house card's content is `buildings/ehousecard` (`eHouseCards::card`, over `buildings/ehouseneeds`). The SDL advisor window,
+trade summary and hover card now draw from these, so the two views cannot disagree. The City History record is
+`engine/ecityhistory` as before.
+
+**Core commands.** `city_history` (six series with labels, each month's name and values, the range and empty-chart words),
+`city_advisor` (up to seven problems, most serious first, each with its places), `trade_summary` (the lines) and
+`house_card <x> <y>` are read-only queries for the player's city in view. Route editing follows the SDL route editor:
+`route_begin <x> <y> <token>` on an inspected walker building of the player's (a vendor or agora space edits its agora, as the
+SDL left click does), `route_toggle <x> <y>` adds a road tile as the next guide or removes a guide (`route_needs_road` off a
+road), `route_clear`, `route_restore` (the guides it had when editing began), `route_both` and `route_end`; `route` reads the
+guides, both-ways flag and the walk the engine found (`path`, `reverse`; the path finder runs on the board's threads, so the
+walk appears a moment after a change). The inspection carries `route: {guides, editing}`.
+
+**Godot.** The City window (F7) gains Advisor, History and Trade pages after Mythology, opened also from buttons on the summary
+(City advisor, City history) and storage pages (Trade summary), as the SDL panel's buttons. The advisor shows a card per
+problem with "Go there n/m", which steps through its places (remembered per problem while the game runs) and closes the
+window. The history page (`ui/history_chart.gd`) has a button per series and per range (2 years, 10 years, all), round
+gridlines, years along the bottom, the value under the pointer and a line with the latest value and its change in a year;
+the window's refresh keeps the chart. The trade page draws the summary's partner cards and goods lines in their tones.
+A walker building's inspector has a "Walker route" button (`scripts/route_editor.gd`): a bar replaces the inspector with
+Clear, Restore, the one-way/both-ways button (named for the current way, as the SDL button) and Close; left clicks on roads
+add numbered posts, the walk is drawn in gold and the way back in pale blue; Escape or a right click closes it, and choosing a
+tool ends it. Resting the pointer on an inhabited house for 0.35 s with no tool shows the house card (`ui/house_card.gd`):
+level name and pips, residents, the next level (or the decline warning in red) and each need ticked or crossed, missing
+first, with the venue kinds that do not reach it.
+
+**Checks.** `validate_city_extras.gd` (52 headless, EN and RU): six series and three ranges, every month named and in order,
+the advisor ranked with its places, the trade summary's two sections and tones, a house card and none on an empty tile, a
+stale inspector refused, guides set on roads in order and refused off them, the walk found, both ways, removal, restore and
+end. `validate_main.gd` adds the window's three pages and their buttons, the chart's choices kept across a refresh, "Go there"
+moving the view, the inspector's route button, a click on a road setting a guide and the walk drawn, both ways, restore and
+Escape, and the house card filled for a house and hidden for a tool (asked for directly: a windowed run cannot hold the real
+pointer still). `--menu-rest-review extras` captures the three pages, a route through two guides and the house card under a
+rested pointer (reviews move the pointer with the viewport's `warp_mouse`, which takes viewport coordinates; `Input.warp_mouse`
+takes window coordinates and lands off target in a scaled window).
+
+**Fixes on the way.** The English text for the SDL route editor's one-way button read "One directions" (`text/language.txt`).
+The start menu skipped itself for most review flags but not `--menu-rest-review`, `--attack-review` or `--rite-review`, so those
+reviews waited at the menu; they are now in its automation list.
+
+**Limits.** Seasons and weather and the map bookmarks were not part of this slice (weather would collide with the
+terrain work; F1–F4 are taken). The route editor does not show the SDL editor's dashed preview of the legs beyond the
+walkers' reach; a guide past it has its post but no walk. The house card names goods without their icons.
+
+## Playable-loop slice 31: fires, ruins, earthquake chasms, lava and marsh — 4 October 2026
+
+**Fires.** The snapshot carries `fires`: `[x, y, w, h, altitude, ruins]` for every burning building, sent whole when the list
+changes and in every full snapshot (like the banners). `scripts/building_fires.gd` lights each one: tongues of fire spread
+over the footprint at roof height (the model's height from its manifest), one or two smoke columns that face the camera and
+lean with the wind (`shaders/building_fire.gdshader`, `shaders/fire_smoke.gdshader`), and for the first six a flickering
+light. Smouldering ruins burn low with thin smoke. The fire itself, its spread, the collapse and the ruins are the engine's.
+
+**Ruins.** A building brought down by fire, collapse or an earthquake leaves `eRuins` on each of its buildable tiles; they were
+drawn with the "unconverted" placeholder. They are now `ruins_<seed % 8>`, the SDL remaster's eight Roman ruins exported from
+the same Blender source (`art/lots/build_sprites.py --part ruins`, recipes in `tools/godot_asset_sources.py`): scorched ground,
+a rubble mound of brick, roof tiles and stone, charred beams, and in some a stub of wall, a broken column or an amphora
+(822–950 vertices each).
+
+**Ground.** The ground's pattern texture (`terrain_presentation.gd`) gains three channels from the native terrain bits: G for an
+earthquake's chasm (2048), B for lava (32768), A for marsh (16384). `shaders/ground.gdshader` draws a chasm as a near-black
+rift sunk below the ground inside a rim of pale broken earth with fissures, lava as a dark crust with thin glowing seams and
+drifting molten pools (emissive, pulsing), and marsh as dark green tussocks with broad pools of still water. Edges are broken
+by noise so the tile grid does not show. Picking and collision are unchanged (the chasm's sink is in the shader only).
+
+**Core commands (validators only).** `test_fire <x> <y>` and `test_collapse <x> <y>` (eBuilding::setOnFire / collapse),
+`test_earthquake <x> <y> <size>` (eGameBoard::earthquake: it spreads as the city runs), `test_terrain <quake|lava|marsh> <x> <y>
+<radius>`. They answer briefly rather than with a snapshot, so the change reaches the view in its next snapshot.
+
+**Checks.** `validate_disasters.gd` (22 headless): the pattern channels, the eight ruins models, a 2x2 house listed burning with
+its footprint and not listed again unchanged, its collapse into ruins models (some smouldering), an earthquake opening chasm
+tiles that cannot be built on, chasm, lava and marsh tiles carrying their bits, and bad requests refused. `validate_main.gd` adds
+flames and smoke on a burning house, the ruins models after its collapse and lava reaching the ground's pattern.
+`validate_geometry.gd` passes again: the 68 assets without a recorded baseline (the ruins and those of slices 25–29) were added
+to `data/geometry_baseline.json` without changing the existing entries. `--menu-rest-review disasters` captures burning houses
+(two distances), the ruins smouldering and cold, a chasm with an earthquake's cracks beside it, lava and marsh.
+
+**Limits.** No fire sound in the Godot city yet, and burning buildings are not darkened. Marsh has no reeds. The earthquake's
+falling rocks, the lava flow's missiles and the tidal wave's surge are not drawn (the water and the tiles they leave are). A
+review's direct `pause` query answers with a snapshot and so swallows the terrain changes it carries; reviews queue their pauses.
+
+## Monster card, heroes' halls offered mid-game, wheel over panels — 4 October 2026
+
+**Monster card.** Monsters left the notice at the top of the city (`ui/invasion_banner.gd` is for invaders again). While a monster
+is at large a red button with the count stands in the right-hand rail under the journal (`ui/monster_card.gd`, icon
+`ui/icons/monster.svg`, pulsing three times when one arrives); it opens a card under the rail with, for each monster, the engine's
+own words for its coming (`eMonsterMessages::fInCity`, as the SDL view shows them), the hero who alone can slay it and where the
+city stands with him (hall to build, built, summoned, in the city), with "Go to the monster" and "Build the hero's hall" (opens
+the Build menu on Heroes' halls with the hall chosen) or "Show the hero's hall" (inspects it). Escape and the journal close it.
+The core's new `monster_info` query answers it (name, tile, title, text, hero, `hall_tool`, `hall_allowed`, `hall_built`,
+`hall_at`, `hero_stage`); the card refreshes every second while open.
+
+**Halls offered mid-game.** The engine makes the slayer's hall buildable when a monster comes (`eGameBoard::allowHero`, called by
+the monster events and gods' quests), but the Build menu was filled only when the city opened, so the hall appeared only after a
+reload. The core now sets the board's buttons-visibility hook (`setButtonsVisUpdater`, which the engine calls whenever what may be
+built changes: allowed, built, destroyed) to count a `buildable_revision` that every snapshot carries; `main.gd` asks `buildable`
+again when it moves (`hud.set_catalog` ignores an unchanged catalog, so hover and scroll are kept).
+
+**Wheel over panels.** Godot passes wheel and trackpad scroll/pinch events on from a panel whose list cannot scroll further
+(`mouse_force_pass_scroll_events`), so scrolling the Build tray at either end of its row also zoomed the map. `orbit_camera.gd`
+ignores wheel and gesture events while the pointer is over any HUD control (`gui_get_hovered_control()`).
+
+**Limits.** The card's monster words follow the language the city was opened in, as every core message does; the interface around
+them follows the EN/RU button. Six new strings in each language.

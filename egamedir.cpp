@@ -7,6 +7,7 @@
 
 std::string eGameDir::sPath;
 std::string eGameDir::sEmbeddedExeDir;
+std::string eGameDir::sAdventuresDirOverride;
 
 void eGameDir::initializeEmbedded(const std::string& engineDir) {
     const auto engine = std::filesystem::canonical(engineDir);
@@ -88,6 +89,7 @@ std::string eGameDir::exeDir() {
 }
 
 std::string eGameDir::adventuresDir() {
+    if(!sAdventuresDirOverride.empty()) return sAdventuresDirOverride;
     return exeDir() + "../Adventures/";
 }
 

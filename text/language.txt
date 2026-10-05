@@ -126,7 +126,7 @@ restore "Restore"
 cancel "Cancel"
 close "Close"
 both_directions "Both directions"
-one_direction "One directions"
+one_direction "One direction"
 
 can_accept "Can accept"
 

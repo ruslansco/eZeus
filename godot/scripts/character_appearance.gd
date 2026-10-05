@@ -2,9 +2,17 @@ extends RefCounted
 
 const FINISH := preload("res://shaders/character.gdshader")
 const HadesFire := preload("res://scripts/hades_hem_fire.gd")
+const HYDRA_FINISH := preload("res://shaders/hydra.gdshader")
 var materials: Dictionary = {}
 
 func apply(node: Node, asset: String, contract: Dictionary) -> void:
+	if asset == "walker_hydra" and contract.get("monster", {}).get("revision", "") == "hydra_reference_v1":
+		if not materials.has(asset):
+			var finish := ShaderMaterial.new()
+			finish.shader = HYDRA_FINISH
+			materials[asset] = finish
+		apply_material(node, materials[asset])
+		return
 	if not contract.has("character"):
 		return
 	if not materials.has(asset):

@@ -18,6 +18,8 @@ public:
     static std::string i60BinaryPath();
     static std::string exeDir();
     static std::string adventuresDir();
+    // Validators only: the folder of eZeus adventures is read and written elsewhere (the editor's tests edit copies).
+    static void setAdventuresDirOverride(const std::string& dir) { sAdventuresDirOverride = dir; }
     static std::string pakAdventuresDir();
     static std::string saveDir();
     static std::string texturesDir();
@@ -26,6 +28,7 @@ public:
 private:
     static std::string sPath;
     static std::string sEmbeddedExeDir;
+    static std::string sAdventuresDirOverride;
     static std::string sAudioLanguage;
 };
 

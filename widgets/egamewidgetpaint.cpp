@@ -2934,15 +2934,7 @@ void eGameWidget::paintEvent(ePainter &p) {
           const auto t = mBoard->tile(x, y);
           if (!t)
             continue;
-          if (t->underBuilding())
-            continue;
-          const auto t2 = mBoard->tile(x, y + 1);
-          if (!t2)
-            continue;
-          if (t2->underBuilding())
-            continue;
-          if (t2->terrain() != eTerrain::fertile &&
-              t->terrain() != eTerrain::fertile)
+          if (!mBoard->canBuildAnimal(x, y, bt, mViewedCityId, ppid, mEditorMode))
             continue;
           double rx;
           double ry;
@@ -2957,8 +2949,6 @@ void eGameWidget::paintEvent(ePainter &p) {
           }
           drawXY(x, y, rx, ry, 1, 1, a);
           tp.drawTexture(rx, ry, tex, eAlignment::top);
-          tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
-          y++;
           n++;
 
           buildCount++;
@@ -3248,8 +3238,8 @@ void eGameWidget::paintEvent(ePainter &p) {
     const int tx = t->x();
     const int ty = t->y();
     const bool cb =
-        allowed > 0 && mBoard->canBuild(tx, ty, 1, 2, mEditorMode,
-                                        mViewedCityId, ppid, true, true);
+        allowed > 0 && mBoard->canBuildAnimal(tx, ty, bt,
+                                              mViewedCityId, ppid, mEditorMode);
     const auto &tex = trrTexs.fSelectedBuildingBase
                           ? trrTexs.fSelectedBuildingBase
                           : trrTexs.fBuildingBase;
@@ -3258,7 +3248,6 @@ void eGameWidget::paintEvent(ePainter &p) {
     const int a = t->altitude();
     drawXY(mHoverTX, mHoverTY, rx, ry, 1, 1, a);
     tp.drawTexture(rx, ry, tex, eAlignment::top);
-    tp.drawTexture(rx, ry + 1, tex, eAlignment::top);
     tex->clearColorMod();
     tex->clearAlphaMod();
     return;

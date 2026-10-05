@@ -17,16 +17,22 @@ eAnimalAction::eAnimalAction(eCharacter* const c,
 eAnimalAction::eAnimalAction(eCharacter* const c) :
     eAnimalAction(c, 0, 0) {}
 
+void eAnimalAction::startWalking() {
+    const auto c = character();
+    if(!c) return;
+    c->setActionType(eCharacterActionType::walk);
+    const auto m = e::make_shared<eMoveAroundAction>(
+                       c, mSpawnerX, mSpawnerY,
+                       mTileWalkable);
+    m->setMaxDistance(eNumbers::sAnimalMoveRange);
+    m->setTime(mWalkTime);
+    setCurrentAction(m);
+}
+
 bool eAnimalAction::decide() {
     const auto c = character();
     if(eRand::rand() % 2 == 0) {
-        c->setActionType(eCharacterActionType::walk);
-        const auto m = e::make_shared<eMoveAroundAction>(
-                           c, mSpawnerX, mSpawnerY,
-                           mTileWalkable);
-        m->setMaxDistance(eNumbers::sAnimalMoveRange);
-        m->setTime(mWalkTime);
-        setCurrentAction(m);
+        startWalking();
     } else {
         c->setActionType(eCharacterActionType::lay);
         const auto w = e::make_shared<eWaitAction>(c);

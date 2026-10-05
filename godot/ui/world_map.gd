@@ -51,12 +51,17 @@ func _ready() -> void:
 	map.resized.connect(place_markers)
 	markers.resized.connect(place_markers)
 	atlas.camera_changed.connect(place_markers)
+	atlas.resized.connect(fit_atlas_controls)
+	fit_atlas_controls.call_deferred()
 	%AtlasCaption.text=tr("City states of the ancient world")
 	%AtlasOverview.text=tr("Overview")
 	%AtlasFocus.text=tr("Focus city")
 	%AtlasZoomIn.tooltip_text=tr("Zoom in")
 	%AtlasZoomOut.tooltip_text=tr("Zoom out")
 	%AtlasHint.text=tr("Drag to orbit · Wheel to zoom · Right drag to pan")
+	%AtlasKeys.text=tr("Arrows / %s pan · %s / %s orbit · %s / %s tilt · Shift faster") % [" ".join([KeyBindings.label("pan_forward"),KeyBindings.label("pan_left"),KeyBindings.label("pan_back"),KeyBindings.label("pan_right")]),KeyBindings.label("orbit_left"),KeyBindings.label("orbit_right"),KeyBindings.label("tilt_up"),KeyBindings.label("tilt_down")]
+	%Previous.tooltip_text=tr("Previous city")
+	%Next.tooltip_text=tr("Next city")
 	%AtlasOverview.pressed.connect(atlas.reset_view)
 	%AtlasZoomIn.pressed.connect(func(): atlas.zoom(.8))
 	%AtlasZoomOut.pressed.connect(func(): atlas.zoom(1.25))
@@ -64,7 +69,8 @@ func _ready() -> void:
 		var city:=find_city(selected)
 		if not city.is_empty():
 			atlas.target=atlas.surface_point(Vector2(float(city.x),float(city.y)))
-			atlas.zoom(16.0/atlas.desired_distance))
+			atlas.desired_distance=16.0
+			atlas.refresh_camera(); atlas.camera_changed.emit())
 	%Previous.pressed.connect(func(): step(-1))
 	%Next.pressed.connect(func(): step(1))
 	%Back.pressed.connect(close)
@@ -79,6 +85,13 @@ func _ready() -> void:
 	armies_layer = Armies.new()
 	markers.get_parent().add_child(armies_layer)
 	markers.get_parent().move_child(armies_layer, markers.get_index())
+
+func fit_atlas_controls() -> void:
+	var heading:Control=get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasHeading")
+	heading.offset_right=minf(460,atlas.size.x-24)
+	var toolbar:Control=%AtlasToolbar
+	var width:=minf(600,maxf(250,atlas.size.x-36))
+	toolbar.offset_left=-width*.5;toolbar.offset_right=width*.5
 
 # Shows the world of the city being played. Returns false when the core cannot tell (no city loaded).
 func prewarm(core_node: Node) -> void:
@@ -239,6 +252,9 @@ func show_city() -> void:
 		envoy_portrait = load("res://ui/envoy_portrait.gd").new()
 		leader.get_parent().add_child(envoy_portrait)
 		leader.get_parent().move_child(envoy_portrait, leader.get_index())
+		# Keep this portrait circular instead of stretching it across the header.
+		envoy_portrait.custom_minimum_size=Vector2(136,136)
+		envoy_portrait.size_flags_horizontal=Control.SIZE_SHRINK_CENTER
 	envoy_portrait.set_sender(int(city.index))
 	leader.text = tr("Leader: %s") % city.leader if String(city.leader) != "" and String(city.type) == "foreign" else ""
 	var named := String(city.attitude_name) != ""
@@ -248,6 +264,13 @@ func show_city() -> void:
 	regard.tooltip_text = tr("Regard: %d of 100") % int(city.attitude)
 	add_goods(tr("Sells to you"), city.sells)
 	add_goods(tr("Buys from you"), city.buys)
+	# The native world reply already includes stock for owned cities. Give the
+	# player's city useful context without another query or a simulation scan.
+	if bool(city.mine):
+		for own in world.get("mine",[]):
+			if int(own.id)==int(city.id):
+				add_stock(own.stock)
+				break
 	var due := requests_of(selected)
 	tribute.text = ""
 	if (String(city.type) == "colony" or String(city.relationship) == "vassal") and int(city.tribute.count) > 0:
@@ -276,6 +299,25 @@ func add_goods(title: String, list: Array) -> void:
 		line.theme_type_variation = "Caption"
 		line.text = "%s  —  %d  (%d / %d)" % [Goods.name_of(int(item.resource)), int(item.price), int(item.used), int(item.max)]
 		goods_box.add_child(line)
+
+func add_stock(stock: Array) -> void:
+	var heading:=Label.new()
+	heading.theme_type_variation="Subheading";heading.text=tr("Stored goods")
+	goods_box.add_child(heading)
+	var rows:=GridContainer.new()
+	rows.name="NativeStock";rows.columns=2
+	rows.add_theme_constant_override("h_separation",12)
+	goods_box.add_child(rows)
+	for item in stock:
+		var name_label:=Label.new()
+		name_label.text=Goods.name_of(int(item.resource));name_label.theme_type_variation="Caption"
+		name_label.size_flags_horizontal=Control.SIZE_EXPAND_FILL;name_label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+		rows.add_child(name_label)
+		var amount:=Label.new()
+		amount.name="Stock_%d"%int(item.resource)
+		amount.theme_type_variation="Value";amount.text="%d"%int(item.count)
+		amount.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
+		rows.add_child(amount)
 
 # ---------------------------------------------------------------------------------------------------------- dealings
 func reason(code: String) -> String:
@@ -327,8 +369,10 @@ func open_enlist(command: String) -> void:
 	var dismissed := func():
 		enlisting = null
 		dialog = null
+		atlas.input_blocked=false
 	enlisting = EnlistDialog.open(self, core, session, finished, dismissed)
 	dialog = enlisting.window
+	atlas.input_blocked=true
 
 func close_dialog() -> void:
 	if enlisting != null:
@@ -339,6 +383,7 @@ func close_dialog() -> void:
 		dialog.hide()   # an exclusive window frees its place at once; queue_free alone would keep it for a frame
 		dialog.queue_free()
 	dialog = null
+	atlas.input_blocked=false
 
 # A dialog over the map with a column to fill and a Close button.
 func open_dialog(title: String, size_hint := Vector2i(560, 420)) -> VBoxContainer:
@@ -362,6 +407,7 @@ func open_dialog(title: String, size_hint := Vector2i(560, 420)) -> VBoxContaine
 	window.close_requested.connect(close_dialog)
 	window.popup_centered(size_hint)
 	dialog = window
+	atlas.input_blocked=true
 	return column
 
 func caption(parent: Node, text: String) -> Label:
@@ -583,6 +629,10 @@ func _input(event: InputEvent) -> void:
 	if not visible or dialog != null or transitioning:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
+		for id in KeyBindings.HELD:
+			if KeyBindings.matches(event,id):
+				get_viewport().set_input_as_handled()
+				return
 		# City controls cannot change simulation/tools behind the atlas (the player's own keys for them, and Delete).
 		if KeyBindings.matches(event, "world_map"):
 			close()
@@ -596,11 +646,7 @@ func _input(event: InputEvent) -> void:
 			KEY_ESCAPE:
 				close()
 				get_viewport().set_input_as_handled()
-			KEY_LEFT:
-				step(-1)
-				get_viewport().set_input_as_handled()
-			KEY_RIGHT:
-				step(1)
+			KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN:
 				get_viewport().set_input_as_handled()
 			KEY_HOME:
 				atlas.reset_view()

@@ -114,9 +114,10 @@ func run() -> void:
 	check(city.core.simulation.snapshot(false).time == held_time, "the native clock holds while the window is open")
 	var info: Dictionary = panel.info
 	check(panel.name_label.text != "" and (panel.speech.text.contains(str(info.text)) or str(info.text).is_empty()), "name and spoken line are shown")
-	check(panel.figure != null, "the walker's 3D model stands in the portrait")
-	var portrait_path := "res://assets/portraits/%s.glb" % str(info.asset)
-	check(not ResourceLoader.exists(portrait_path) or (panel.figure.scene_file_path == portrait_path and panel.zoom_target == 1.0), "a man with a portrait model is shown with his Greek face, head and shoulders")
+	if panel.pictured_role(str(info.asset)):
+		check(panel.still.visible and panel.figure == null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED, "a role with a portrait image shows the still image, no 3D figure")
+	else:
+		check(panel.figure != null and panel.holder.visible, "the walker's 3D model stands in the portrait")
 	check(not str(info.voice).is_empty() and (panel.speaking or audio.muted() or not audio.enabled), "the voice line plays when the window opens")
 	await create_timer(1.2).timeout
 	await capture("person")
@@ -163,12 +164,59 @@ func run() -> void:
 			continue
 		city.open_character(id)
 		await create_timer(.8).timeout
-		check(is_instance_valid(city.character_panel) and city.character_panel.figure != null, "a " + str(other.asset) + " is shown too")
+		check(is_instance_valid(city.character_panel) and (city.character_panel.figure != null or city.character_panel.still.visible), "a " + str(other.asset) + " is shown too")
 		await capture("other")
 		city.character_panel.goto_button.pressed.emit()
 		await frames()
 		check(not is_instance_valid(city.character_panel), "Go to closes the window over the walker")
 		break
+	var curator_reviewed := false
+	# The one-character realism benchmark must load only in this panel, with a private finish.
+	for id in city.walkers:
+		var curator: Dictionary = city.core.query("character_info %d" % id)
+		if curator.get("asset", "") != "walker_curator":
+			continue
+		curator_reviewed = true
+		city.open_character(id)
+		await frames()
+		panel = city.character_panel
+		# The curator's realistic portrait ships as a pre-rendered image (tools/render_portraits.py): no model is loaded.
+		check(panel.still.visible and panel.still.texture != null and panel.figure == null, "curator shows his pre-rendered portrait image")
+		check(panel.viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED and not panel.holder.visible, "no 3D rendering while a portrait image is shown")
+		var cached: ShaderMaterial = city.character_appearance.materials.get("walker_curator")
+		check(cached == null or not cached.get_shader_parameter("elder_portrait"), "city material retains its ordinary finish")
+		panel.set_figure("walker_astronomer")
+		check(not panel.still.visible and panel.figure != null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_ALWAYS, "a role without an image returns to the live 3D figure")
+		panel.set_figure("walker_curator")
+		panel.typed = panel.typing; panel.speech.visible_ratio = 1.0
+		await capture("curator")
+		panel.close_button.pressed.emit()
+		await frames()
+		break
+	# Every portrait image the game ships is a whole 2x frame of a walker model, and each role can go back to its 3D model.
+	var images := Array(DirAccess.get_files_at("res://assets/portraits")).filter(func(file): return file.ends_with(".png"))
+	var shipped := 0
+	for file: String in images:
+		var picture: Texture2D = load("res://assets/portraits/" + file)
+		if picture != null and picture.get_size() == Vector2(592, 760) and city.model_file_exists(file.get_basename()):
+			shipped += 1
+		else:
+			print("CHARACTER_IMAGE odd ", file)
+	check(not images.is_empty() and shipped == images.size(), "every portrait image is 592x760 and belongs to a walker model (%d of %d)" % [shipped, images.size()])
+	city.open_character(person)
+	await frames()
+	panel = city.character_panel
+	for file: String in images:
+		var role := file.get_basename()
+		panel.portrait_models.append(role)
+		panel.set_figure(role)
+		var modelled: bool = panel.figure != null and not panel.still.visible and panel.viewport.render_target_update_mode == SubViewport.UPDATE_ALWAYS
+		panel.portrait_models.erase(role)
+		panel.set_figure(role)
+		check(modelled and panel.still.visible and panel.figure == null, role + " switches to its 3D model when listed in portrait_models, and back")
+	panel.close_button.pressed.emit()
+	await frames()
+	check(curator_reviewed, "the designated city provided a native curator for the portrait review")
 	var after: Dictionary = city.core.simulation.snapshot(true)
 	check(after.money == native_before.money and after.buildings == native_before.buildings and after.events == native_before.events, "looking at walkers leaves the city's money, buildings and decisions unchanged")
 	print("character time before ", time_before, " after ", after.time)

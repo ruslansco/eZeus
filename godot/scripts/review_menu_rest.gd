@@ -10,6 +10,9 @@ extends RefCounted
 #                              menu of the player's two cities, and the pages following the city in view
 #   --menu-rest-review=anim    a trireme rowing as it sails, the two rioters, and the newly animated buildings the city has at
 #                              work, each at two moments
+#   --menu-rest-review=extras  the SDL remaster's extras: the City window's advisor, history and trade pages, a walker route
+#                              being led through two guides, and the house card under the pointer
+#   --menu-rest-review=disasters  houses set burning, one brought down into ruins, an earthquake's chasm, lava and marsh
 #   --menu-rest-review=build   builds each new kind of building on a free site (the validators' allowance for those a
 #                              scenario grants) and captures it from two sides with its placement ghost shown first
 const TOOLS := ["stadium", "horse_ranch", "fishery", "trireme_wharf", "urchin_quay", "hippodrome", "water_park",
@@ -31,6 +34,10 @@ func run(city: Node3D, phase: String) -> void:
 		await capture_cities(city)
 	elif phase == "anim":
 		await capture_animation(city)
+	elif phase == "extras":
+		await capture_extras(city)
+	elif phase == "disasters":
+		await capture_disasters(city)
 	else:
 		await build_and_capture(city)
 
@@ -342,3 +349,152 @@ func road_site(city: Node3D, tool: String) -> Vector2i:
 		if touches and city.core.query("preview %s %d %d 0" % [tool, point.x, point.y]).get("valid", false):
 			return point
 	return Vector2i(99999, 99999)
+
+func capture_extras(city: Node3D) -> void:
+	city.ui_layer.visible = true
+	var taken := 0
+	city.game_action("city")
+	await city.get_tree().create_timer(.8).timeout
+	var dialogs: Array = city.hud.get_children().filter(func(child): return child is AcceptDialog and child.title == city.tr("City"))
+	if dialogs.size() == 1:
+		for page in ["advisor", "history", "trade"]:
+			dialogs[0].show_page(page)
+			await city.get_tree().create_timer(.6).timeout
+			if page == "history" and is_instance_valid(dialogs[0].history_chart):
+				var area: Rect2 = dialogs[0].history_chart.get_global_rect()
+				city.get_viewport().warp_mouse(area.position + area.size * Vector2(.7, .5))
+				await city.get_tree().create_timer(.3).timeout
+			city.capture_path = ProjectSettings.globalize_path("res://captures/menu-rest-extras-%s-%s.png" % [city.language, page])
+			await city.capture()
+			taken += 1
+		dialogs[0].queue_free()
+		await city.get_tree().process_frame
+	# A walker route through two guides (the path finder needs the city running).
+	var snapshot: Dictionary = city.core.simulation.snapshot(true)
+	var walker_building := {}
+	var house := Vector2i(99999, 99999)
+	for building in snapshot.get("buildings", []):
+		if walker_building.is_empty():
+			var seen: Dictionary = city.core.query("inspect %d %d" % [int(building.x), int(building.y)])
+			if seen.has("route") and int(seen.route.guides) == 0 and int(seen.type) != 0:
+				walker_building = seen
+		# A house that still needs something, so the card shows its checklist.
+		if house.x == 99999:
+			var card: Dictionary = city.core.query("house_card %d %d" % [int(building.x), int(building.y)])
+			if bool(card.get("valid", false)) and card.lines.size() >= 3 and card.lines.any(func(l): return not bool(l.met)):
+				house = Vector2i(int(building.x), int(building.y))
+	if not walker_building.is_empty():
+		city.core.query("pause 0")
+		var route: Dictionary = city.core.query("route_begin %d %d %d" % [int(walker_building.x), int(walker_building.y), int(walker_building.target_token)])
+		var centre := Vector2(float(route.centre[0]), float(route.centre[1]))
+		var picks: Array = []
+		for point in city.tiles:
+			var away := Vector2(point).distance_to(centre)
+			if int(city.tiles[point][4]) and away >= 5.0 and away <= 9.0 and picks.all(func(p): return Vector2(p).distance_to(Vector2(point)) >= 6.0):
+				picks.append(point)
+			if picks.size() == 2:
+				break
+		for point in picks:
+			city.core.query("route_toggle %d %d" % [point.x, point.y])
+		city.route_editor.apply(city.core.query("route"))
+		city.hint.text = city.tr("Click roads to lead the walkers  •  Escape or a right click closes the route")
+		await city.get_tree().create_timer(2.0).timeout
+		city.core.query("pause 1")
+		city.route_editor.apply(city.core.query("route"))
+		city.orbit.target = city.route_editor.ground(centre)
+		city.orbit.distance = 34.0
+		city.orbit.yaw = .6
+		city.orbit.pitch = 55.0
+		city.orbit.refresh()
+		await city.get_tree().create_timer(.8).timeout
+		city.capture_path = ProjectSettings.globalize_path("res://captures/menu-rest-extras-%s-route.png" % city.language)
+		await city.capture()
+		taken += 1
+		city.core.query("route_restore")
+		city.route_editor.end()
+	if house.x != 99999:
+		var ground: Vector3 = city.route_editor.ground(Vector2(house))
+		city.orbit.target = ground
+		city.orbit.distance = 26.0
+		city.orbit.refresh()
+		await city.get_tree().create_timer(.6).timeout
+		city.get_viewport().warp_mouse(city.orbit.camera.unproject_position(ground))
+		await city.get_tree().create_timer(1.2).timeout
+		print("MENU_REST_REVIEW house ", house, " picked ", city.picked, " hovered ", city.get_viewport().gui_get_hovered_control(), " mouse ", city.get_viewport().get_mouse_position(), " card ", city.house_card.shown)
+		city.capture_path = ProjectSettings.globalize_path("res://captures/menu-rest-extras-%s-house.png" % city.language)
+		await city.capture()
+		taken += 1
+	print("MENU_REST_REVIEW ", "PASS " if taken == 5 else "FAIL ", "extras=", taken)
+	city.get_tree().quit(0 if taken == 5 else 1)
+
+func disaster_shot(city: Node3D, name: String, cell: Vector2, distance: float, yaw: float, pitch: float) -> void:
+	city.close_inspection()
+	city.orbit.target = city.route_editor.ground(cell)
+	city.orbit.distance = distance
+	city.orbit.yaw = yaw
+	city.orbit.pitch = pitch
+	city.orbit.refresh()
+	await city.get_tree().create_timer(1.0).timeout
+	city.capture_path = ProjectSettings.globalize_path("res://captures/menu-rest-disasters-%s.png" % name)
+	await city.capture()
+
+func capture_disasters(city: Node3D) -> void:
+	var taken := 0
+	var snapshot: Dictionary = city.core.simulation.snapshot(true)
+	# Three neighbouring houses on fire.
+	var houses: Array = snapshot.buildings.filter(func(b): return str(b.asset).begins_with("common_house"))
+	var first: Dictionary = houses[0] if not houses.is_empty() else {}
+	var lit: Array = houses.filter(func(b): return not first.is_empty() and Vector2(float(b.x), float(b.y)).distance_to(Vector2(float(first.x), float(first.y))) < 7.0).slice(0, 3)
+	for house in lit:
+		city.core.query("test_fire %d %d" % [int(house.x), int(house.y)])
+	await city.get_tree().create_timer(.8).timeout
+	if not lit.is_empty():
+		print("MENU_REST_REVIEW fires ", city.building_fires.count())
+		await disaster_shot(city, "fire", Vector2(float(first.x) + .5, float(first.y) + .5), 16.0, .7, 42.0)
+		taken += 1
+		await disaster_shot(city, "fire-near", Vector2(float(first.x) + .5, float(first.y) + .5), 8.0, 2.2, 30.0)
+		taken += 1
+		# The first brought down: ruins, some still smouldering.
+		city.core.query("test_collapse %d %d" % [int(first.x), int(first.y)])
+		await city.get_tree().create_timer(.8).timeout
+		await disaster_shot(city, "ruins-burning", Vector2(float(first.x) + .5, float(first.y) + .5), 9.0, 1.2, 40.0)
+		taken += 1
+		# A house far from the fire brought down cold: the ruins alone.
+		var far: Array = houses.filter(func(b): return Vector2(float(b.x), float(b.y)).distance_to(Vector2(float(first.x), float(first.y))) > 14.0)
+		if not far.is_empty():
+			city.core.query("test_collapse %d %d" % [int(far[0].x), int(far[0].y)])
+			await city.get_tree().create_timer(.8).timeout
+			await disaster_shot(city, "ruins", Vector2(float(far[0].x) + .5, float(far[0].y) + .5), 7.0, 1.2, 45.0)
+			taken += 1
+	# Open ground for the earthquake, lava and marsh, away from the houses.
+	var tiles: Dictionary = city.tiles
+	var spots: Array = []
+	for cell in tiles:
+		var tile: Array = tiles[cell]
+		if not int(tile[5]) or int(tile[4]):
+			continue
+		var clear := true
+		for dy in range(-4, 5):
+			for dx in range(-4, 5):
+				var near: Array = tiles.get(cell + Vector2i(dx, dy), [])
+				clear = clear and not near.is_empty() and int(near[5]) == 1
+		if clear and spots.all(func(other): return Vector2(other).distance_to(Vector2(cell)) > 14.0):
+			spots.append(cell)
+		if spots.size() == 3:
+			break
+	if spots.size() == 3:
+		# The engine's earthquake spreads a tile or so a day; the review lays a full chasm at once, with a quake beside it.
+		# (Pauses go through the command queue: a direct query's answer is a snapshot, and the terrain it carries would not reach the view.)
+		city.core.query("test_terrain quake %d %d 3" % [spots[0].x, spots[0].y])
+		city.core.query("test_earthquake %d %d 40" % [spots[0].x + 4, spots[0].y])
+		city.core.send("pause 0")
+		await city.get_tree().create_timer(6.0).timeout
+		city.core.send("pause 1")
+		city.core.query("test_terrain lava %d %d 3" % [spots[1].x, spots[1].y])
+		city.core.query("test_terrain marsh %d %d 3" % [spots[2].x, spots[2].y])
+		await city.get_tree().create_timer(1.0).timeout
+		for index in 3:
+			await disaster_shot(city, ["quake", "lava", "marsh"][index], Vector2(spots[index]), 14.0, .7, 48.0)
+			taken += 1
+	print("MENU_REST_REVIEW ", "PASS " if taken == 7 else "FAIL ", "disasters=", taken)
+	city.get_tree().quit(0 if taken == 7 else 1)

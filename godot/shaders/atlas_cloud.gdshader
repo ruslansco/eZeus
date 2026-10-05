@@ -7,10 +7,11 @@ float noise(vec2 p) {
 	return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
 }
 void fragment() {
-	vec2 p=UV*6.0+seed;
-	float n=noise(p)+noise(p*2.1)*.45+noise(p*4.2)*.16;
-	float rim=1.0-smoothstep(.15,.49,length(UV-.5));
-	float density=smoothstep(.42,1.1,n)*rim;
-	ALBEDO=mix(vec3(.65,.74,.76),vec3(1.0,.93,.80),n*.55);
-	ALPHA=density*.45;
+	vec2 p=UV*vec2(5.0,3.5)+seed;
+	float n=(noise(p)+noise(p*2.1)*.45+noise(p*4.2)*.16)/1.61;
+	vec2 at=(UV-.5)*vec2(1.0,1.3);
+	float rim=1.0-smoothstep(.12,.49,length(at));
+	float density=smoothstep(.30,.68,n)*rim;
+	ALBEDO=mix(vec3(.71,.79,.82),vec3(.97,.98,.97),n);
+	ALPHA=density*.32;
 }

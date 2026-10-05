@@ -1,5 +1,17 @@
 # Natural people refinement — 30 September 2026
 
+## Current panel-only curator benchmark — 4 October 2026
+
+The user rejected the older curly portraits as doll-like and requested one older,
+more realistic reference confined to the Character panel. The new curator uses
+`tools/godot_curator_portrait.py`, revision `elder_curator_portrait_v2`, and is an
+invented 68-year-old with aged facial anatomy, swept-back receding hair, fine
+brows and a fitted salt-and-pepper beard. The rest of the portrait catalog and
+all crowd assets retain their prior appearance. Read
+[GODOT_PORTRAIT_REFERENCE.md](GODOT_PORTRAIT_REFERENCE.md) before extending it;
+**visual acceptance remains pending**. This supersedes the v1 curl recipe for
+the curator only and does not approve a physician/crowd rollout.
+
 **Visual status: not accepted.** After reviewing `natural_people_v1`, the user
 reported that the characters still look like dolls. The checks below establish
 technical compatibility, not realistic appearance. Treat these assets as working
@@ -408,28 +420,44 @@ The seventeen monsters of the engine use the same pipeline as the soldiers and g
 Every person of the people kit whose wardrobe profile has a cloak colour (`art/characters/roman/wardrobe.py`, `PROFILES`; a name that is not listed gets the default cloak) wears the "Roman draped cloak". It was a rigid half-tube whose side edges lay on the body's middle plane, exactly where the arms hang, narrower than the arms and skinned to the torso only: every arm swing went through it, most visibly the right arm from behind, and it read as a board. `_cloak_shape(h, hem)` now fits it to each person: it is measured on the dressed body in the rest pose (body and garments, not hair or props) in bands of height; across the back it is the width of the deltoids plus .03, flaring .05 to the hem; its side edges lie .04 behind the arms' back surface (the walk swings the arms mostly forward, away from it) and its middle .045 behind the torso; over the shoulders it wraps forward as a yoke onto the shoulder tops; vertical folds deepen toward the hem with a per-person phase; the profile is smoothed down the cape. Only the yoke follows the upper arms (half weight) so a deltoid cannot push through, while the rest hangs from chest, spine and pelvis; the right shoulder's pin sits at the yoke's front corner. 59 Godot models carry it and were re-exported: 49 walkers of the townspeople, soldiers, gods and heroes, the cyclops, Hector, Medusa, the maenads, the harpies, the priestess, the astronomer, inventor and curator, the philosopher (his cape stays hidden under his blue himation) and the settler family. The SDL sprite renders under `art/characters/people/<who>/` were not re-rendered. Check a cape with a scratch render that never writes the art folders (renders of the walk from four sides); `build_person.py --validate-only` passes for every spec with it.
 
 
-## Greek portrait faces for the character window — 4 October 2026
+## Character window portraits are pre-rendered images — 4 October 2026
 
-The user asked for more Greek-looking men, at least in the character window, with the stylised philosopher as a mood
-reference (curly grey hair and beard, laurel). The crowd walkers are unchanged; the window shows a separate portrait model.
+The user chose still images over live 3D portrait models (option B): the 3D portraits added 340 MB to 1.5 GB to the game
+for one small view. The window now shows `godot/assets/portraits/<asset>.png` when a role has one (592×760, transparent,
+about 0.1–0.3 MB), with a slow 2% drift (off with Reduce interface motion) and no 3D rendering while it is shown. Roles without
+an image keep the live crowd model (no extra cost: it is already loaded for the city).
 
-- `tools/godot_portrait_faces.py` (revision `greek_portrait_faces_v1`) rebuilds each grown man's head inside a disposable
-  export, reusing `godot_god_face` (sculpt, occlusion, eyes): a Greek profile (filled nasion so the nose continues the
-  forehead, firm brow, fuller lower lip, strong chin and square jaw), fair warm skin with baked occlusion and warm blood
-  tones, brown eyes, brows of short hairs, hair as snail-shell curls over a dark cap with a fringe at the hairline, and a
-  beard of snail curls on the cheeks, corkscrew locks from the jaw and a drooping moustache over a dragged shell. Colour by
-  age or role: black or dark brown, grey from about 52, white from 66 (scholar, astronomer, Zeus white; philosopher,
-  inventor, curator, Poseidon grey). Laurel for the philosopher, scholar, astronomer, Zeus, Apollo and the competitor.
-  Men in helmets or hats keep the crowd scalp groom (curls would push through) and get the face and beard.
-- `tools/godot_portrait_export.py` loads `export_godot_pilot.py`'s source unchanged and patches it in memory: one held
-  pose, no walk/idle/clip samples or shape keys, `--budget` (26,000) for everything but the protected face parts
-  (`Portrait …`, eyeballs). It writes `godot/assets/portraits/<asset>.glb` and a manifest with the eye position and head
-  height. `--preview DIR` renders Blender close-ups instead (about 20 s). `tools/export_portraits.py` batches every Greek
-  male role (citizens, the player's and Trojan/Atlantean soldiers, charioteers, male heroes and gods except Hades);
-  assets without a grown Greek man are skipped. Women, foreign armies and creatures keep the crowd model.
-- Typical portrait: 68–95K vertices, 4–7 MB (portrait GLBs are git-ignored like the crowd GLBs; manifests are tracked).
-- `ui/character_panel.gd` loads the portrait when it exists (with the role's character finish) and opens people on their
-  head and shoulders; the wheel or a double click eases to the whole figure and back.
+- Sources: `tools/godot_portrait_export.py` builds the portrait model in background Blender (the exporter's source loaded
+  and patched in memory; one held pose, no clips) into `build-portraits/<asset>.{glb,json}`, which is git-ignored and never
+  imported or loaded by the game. `tools/export_portraits.py` batches roles.
+- Rendering: `python3 tools/render_portraits.py [--only walker_a,walker_b]` opens the window offscreen in the designated
+  city (read-only, scratch preferences) with `character_portrait_source` set, loads each model at run time (GLTFDocument),
+  applies the role's finish (the curator's private `elder_portrait` material), poses it at a fixed three-quarter turn,
+  frames head and shoulders and saves the viewport at 2× with 8× MSAA. Then `godot --import`.
+- Art direction: the user rejected the snail-curl/corkscrew style (`tools/godot_portrait_faces.py` generic adapter); the
+  realistic elder curator (`docs/GODOT_PORTRAIT_REFERENCE.md`, awaiting acceptance) is the only image so far. The 68 curled
+  portrait models were deleted. Further roles need their own realistic adapter, then an export and a render.
+- Checks: `tools/review_character_panel.py --lang en|ru` (31 each: image shown, no figure or viewport rendering, city
+  material untouched, roles without images back to 3D); `tools/validate_curator_portrait.py` (source model and image).
 
-Limits: static held pose in the window (no breathing or blinking); curls are geometry, not groomed strands; skin is
-painted vertex colour; one face per role, not per walker; provenance stays `needs_evidence`. Visual acceptance pending.
+Limits: one still per role, no turning or zoom on images, no breathing; images must be re-rendered after a finish,
+lighting or panel-framing change.
+
+### Painted portraits in the window — 4 October 2026
+
+The user had another AI paint four portraits from the reference renders in `art/ai_portraits/references/` (brief
+`art/ai_portraits/PROMPT.md`; masters, candidates, notes and `PROVENANCE.md` in `art/ai_portraits/generated/<asset>/`).
+They replace the 3D-rendered curator still: `walker_curator`, `transporter`, `walker_hoplite` and `philosopher`
+(`godot/assets/portraits/<asset>.png`, 592×760 = 2× the 296×380 frame, opaque, painted dark teal background).
+
+- Import: lossy WebP at quality 0.9 with mipmaps (`<asset>.png.import`), about 95–155 KB each in the build instead of
+  0.7 MB lossless, about 2.4 MB of video memory for the one image shown. The still uses `LINEAR_WITH_MIPMAPS` so the 2×
+  image stays smooth on 1× screens. Keep the masters (896×1200) in `art/ai_portraits`; downscale with Lanczos to 592×760.
+- Back to 3D: list a role in `portrait_models` in `ui/character_panel.gd` (or set `PORTRAIT_IMAGES` false for every
+  role) and the window shows its live 3D model again; the image may stay. `pictured_role()` decides it. The review checks
+  every shipped image switches to its model and back.
+- `tools/render_portraits.py` now writes to `build-portraits/renders` unless `--out` is given, so a render never
+  overwrites a painted portrait; copy a render into `godot/assets/portraits` deliberately.
+- Provenance: the other AI did not use the brief's local SDXL pipeline; `PROVENANCE.md` names an agent
+  `generate_image` tool (a hosted image service). Its terms decide commercial use; resolve before release.
+- The test city is Atlantean (no Greek hoplites), so the hoplite image is checked by switching to it in the window.

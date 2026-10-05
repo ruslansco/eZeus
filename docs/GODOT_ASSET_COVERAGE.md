@@ -118,6 +118,8 @@ remaining species/bridge topology, performance and wider terrain work.
 
 **Sanctuary rites (3 October).** One more GLB (363 in all): `walker_priestess`, a people-kit woman (`art/characters/people/people11.py`; saffron chiton, cream veil, gilt fillet, bronze knife) with the combat clips `fight` (the sacrifice, 24 frames), `fight2` (the offering, 12) and `die` (8), 15,500 vertices, baked like the soldiers. She is shown only beside an altar with a rite on it (the walkers' list's `scene` records; see `eZeus/AGENTS.md`, "Sanctuary rites"); she is not a native walker type and never walks the city. The sacrificial sheep and bull are the existing `animal_sheep_fleeced` and `animal_ox`; the offering of goods (amphorae, a dish, fruit) is built in code (`scripts/altar_rite.gd`, no GLB); the braziers' flames are a Godot-only effect (`shaders/ritual_flame.gdshader`) over the altar GLB's static flame, which is unchanged.
 
+Ruins (4 October): `ruins_0`..`ruins_7` (1x1, 822–950 vertices) are the SDL remaster's Roman ruins, exported from `art/lots/build_sprites.py --part ruins --only <v>` through the generic recipe path (the source's `hide_render` loop is kept visible). The core picks one by the tile's seed (`eRuins`). Their triangle counts are in `data/geometry_baseline.json`.
+
 ## Garden foliage
 
 The eight garden recipes use `tools/godot_garden_foliage.py` revision 1 during

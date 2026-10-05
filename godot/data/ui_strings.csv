@@ -306,6 +306,7 @@ Walls and defence,Стены и оборона
 Wall: %d pieces  •  Cost: %d,Стена: звеньев %d  •  Стоимость: %d
 Drag to wall a rectangle's outline  •  hold Shift to fill it,"Тяните, чтобы обвести стеной прямоугольник  •  Shift — залить его целиком"
 Drag to fill an area  •  each plot is built where it fits,"Тяните, чтобы застроить область  •  каждый участок строится, где помещается"
+Click on fertile pasture to place livestock  •  click repeatedly to add more,"Нажмите на пастбище, чтобы разместить скот  •  нажимайте повторно, чтобы добавить больше"
 %s: %d  •  Cost: %d,%s: %d  •  Стоимость: %d
 Homes,Жильё
 Health,Здоровье
@@ -446,6 +447,12 @@ That cannot be done now,Сейчас этого сделать нельзя
 A monster stalks the city: %s,Чудовище бродит по городу: %s
 %d monsters stalk the city,Чудовищ в городе: %d
 Go to the monster,К чудовищу
+Monsters in the city,Чудовища в городе
+Only a hero can slay it: %s,Сразить его может только герой: %s
+Build the hero's hall,Построить замок героя
+Show the hero's hall,Показать замок героя
+"Build the hall of %s, meet its requirements and summon the hero.","Постройте замок героя (%s), выполните его требования и призовите героя."
+The hall of %s cannot be built in this city yet.,Замок героя (%s) пока нельзя построить в этом городе.
 Heroes' halls,Замки героев
 The hero asks of the city,Чего герой требует от города
 The hero has not been summoned yet.,Герой ещё не призван.
@@ -766,3 +773,136 @@ No one asks anything of you.,Никто ничего у вас не просит
 "%d companies and %d triremes chosen  •  right-click to send them  •  Escape lets them go","Выбрано отрядов: %d, трирем: %d  •  щёлкните правой кнопкой, чтобы отправить их  •  Escape отменяет выбор"
 The chosen units are on their way.,Выбранные отряды выступили.
 The companies march there.,Отряды выступают туда.
+Advisor,Советник
+History,Летопись
+City advisor,Советник города
+City history,Летопись города
+Trade summary,Сводка торговли
+Walker route,Маршрут обхода
+Walker route (%d guides),Маршрут обхода (вех: %d)
+Lead this building's walkers along the roads you choose,Провести работников этого здания по выбранным дорогам
+%s: click roads to lead its walkers; click a post to take it away.,"%s: щёлкайте по дорогам, чтобы проложить путь работникам; щелчок по вехе убирает её."
+Guides: %d,Вех: %d
+No guides: the walkers roam freely.,Вех нет: работники ходят где хотят.
+Click roads to lead the walkers  •  Escape or a right click closes the route,"Щёлкайте по дорогам, чтобы вести работников  •  Escape или правый щелчок закрывает маршрут"
+A route goes along roads: click a road,Маршрут идёт по дорогам: щёлкните по дороге
+This building's walkers have no route to edit,У работников этого здания нет маршрута для правки
+Ares is away with another army.,Арес ушёл с другим войском.
+Ares can march with this army: ask his sanctuary for help while it is on the way.,"Арес может выступить с этим войском: попросите о помощи в его святилище, пока войско в пути."
+"%s, from","%s, от"
+"%s, to","%s, до"
+Add,Добавить
+Add episode,Добавить эпизод
+Add event,Добавить событие
+Add goal,Добавить цель
+Adventure editor,Редактор приключений
+All changes saved,Все изменения сохранены
+Area,Область
+Assign all territory,Отдать всю территорию
+Beach,Пляж
+Boar spawn,Логово кабанов
+Brush,Кисть
+Brush size,Размер кисти
+Choose a city on the map,Выберите город на карте
+"Choose an event, or add one",Выберите событие или добавьте новое
+Colony %d,Колония %d
+Copper ore,Медная руда
+Copy,Копировать
+Copy from episode %d,Копировать из эпизода %d
+Cut forest,Вырубленный лес
+Deer spawn,Логово оленей
+Disaster point,Точка бедствия
+Disasters,Бедствия
+Disembark point,Точка высадки
+Dry land,Суша
+Earthquake chasm,Трещина землетрясения
+Edit,Править
+Entry point,Точка входа
+Episode %d,Эпизод %d
+Episodes,Эпизоды
+Exit point,Точка выхода
+Fire,Пожар
+Flat rock,Плоские камни
+Forest,Лес
+Give the adventure a name,Дайте приключению название
+Half slope,Полусклон
+Height,Высота
+Land,Земля
+Land invasion point,Точка вторжения по суше
+Landslide point,Точка оползня
+Landslide zone,Зона оползня
+Lava zone,Зона лавы
+Leader,Правитель
+Level out,Выровнять
+Lower,Понизить
+Lower high,Сильно понизить
+Marsh,Болото
+Meadow,Луг
+Monster point,Точка чудовища
+Name,Название
+Neutral territory,Ничья территория
+New adventure,Новое приключение
+New adventure's name,Название нового приключения
+Next map,Следующая карта
+No colony chosen,Колония не выбрана
+No goals yet: the episode is won by surviving its events.,"Целей пока нет: эпизод выигрывается, если пережить его события."
+Normal forest,Обычный лес
+Number,Номер
+Orichalc,Орихалк
+Points,Точки
+Quit without saving,Выйти без сохранения
+Rainforest,Тропический лес
+Raise,Поднять
+Raise high,Сильно поднять
+Remove,Убрать
+Remove event,Убрать событие
+Remove scrub,Убрать кустарник
+Reset height,Сбросить высоту
+River entry,Вход реки
+River exit,Выход реки
+Rocks and ores,Камни и руды
+Sanctuaries at most,Святилищ не больше
+Save and quit,Сохранить и выйти
+Save the adventure?,Сохранить приключение?
+Save your changes before quitting?,Сохранить изменения перед выходом?
+Scrub,Кустарник
+Scrub area,Кустарник по площади
+Sea invasion point,Точка вторжения с моря
+Silver ore,Серебряная руда
+Soften scrub,Сгладить кустарник
+Square,Квадрат
+Start date,Дата начала
+Tall rock,Высокие скалы
+Terrain,Местность
+Territory,Территория
+That cannot be painted there,Здесь так нельзя
+The adventure,Приключение
+The adventure %s was made,Приключение «%s» создано
+The adventure could not be saved,Не удалось сохранить приключение
+The editor could not read the adventure,Редактору не удалось прочитать приключение
+There is an adventure of that name already,Приключение с таким названием уже есть
+Tidal wave zone,Зона приливной волны
+Trees,Деревья
+Unsaved changes,Есть несохранённые изменения
+Urchins,Морские ежи
+Walkable slope,Проходимый склон
+"What follows this episode: the parent city again, or a colony",Что идёт после этого эпизода: снова родной город или колония
+Wildlife,Звери и рыба
+Years before Christ are negative,Годы до нашей эры — отрицательные
+Arrows / %s pan · %s / %s orbit · %s / %s tilt · Shift faster,Стрелки / %s — движение · %s / %s — вращение · %s / %s — наклон · Shift — быстрее
+Previous city,Предыдущий город
+Next city,Следующий город
+Select an adventure to explore its story and opening goals.,"Выберите приключение, чтобы узнать его историю и первые цели."
+Opening objectives,Первые цели
+Artwork unavailable,Иллюстрация недоступна
+%d adventures,Приключений: %d
+Adventure,Приключение
+Opening objectives could not be read.,Не удалось прочитать первые цели.
+Sandbox · Open play,Песочница · Свободная игра
+Campaign,Кампания
+No fixed victory objectives,Без заданных целей победы
+1 episode,1 эпизод
+%d episodes,Эпизодов: %d
+Episode 1 · %s,Эпизод 1 · %s
+Build at your own pace. This adventure has no fixed victory objectives.,Развивайте город в своём темпе. В этом приключении нет заданных целей победы.
+No opening objectives are specified for this episode.,Для этого эпизода первые цели не заданы.

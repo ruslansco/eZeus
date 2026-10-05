@@ -3,6 +3,7 @@ render_mode cull_disabled, diffuse_burley;
 
 // UV2 stores the surface type. UV and painted colour follow rest anatomy so
 // freckles, cloth weave and hair grain never swim during a morph walk cycle.
+uniform bool elder_portrait = false; // Only a private Character-panel material enables this.
 uniform bool greek_robe = false;
 uniform bool hades_flame = false;
 uniform vec3 robe_accent : source_color = vec3(0.24, 0.43, 0.64);
@@ -31,6 +32,15 @@ void fragment() {
 		ALBEDO *= 1.0+pore*.008*detail;
 		ROUGHNESS = .66+pore*.025*detail;
 		BACKLIGHT = ALBEDO*.055;
+		if (elder_portrait) {
+			// Restrained rest-space microrelief; derivative fade prevents sparkling when zoomed out.
+			float grain = sin(UV.x*7213.0+sin(UV.y*4351.0))*sin(UV.y*6899.0+sin(UV.x*3911.0));
+			float fine = 1.0-smoothstep(.0002,.0015,length(fwidth(UV)));
+			ALBEDO *= 1.0+grain*.016*fine;
+			ROUGHNESS = .62+grain*.045*fine;
+			SPECULAR = .28;
+			NORMAL = normalize(NORMAL + vec3(dFdx(grain),dFdy(grain),0.0)*.035*fine);
+		}
 		if (hades_flame) {
 			// Cold, slightly waxy skin: a soft pale rim and a little sheen on the brow, nose and cheekbones.
 			ROUGHNESS = .52+pore*.025*detail;
@@ -86,7 +96,7 @@ void fragment() {
 			EMISSION = vec3(.07);
 		}
 	} else if (kind == 3) {
-		ROUGHNESS = .26;
+		ROUGHNESS = elder_portrait ? .13 : .26;
 		SPECULAR = .4;
 		if (hades_flame) {
 			// Wet, glossy eyes. The amber iris burns faintly under the brow; the sclera and the pupil stay as painted.

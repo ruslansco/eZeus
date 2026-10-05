@@ -45,6 +45,13 @@ func prefetch(assets: Array) -> void:
 		read.task = WorkerThreadPool.add_task(func(): read.bytes = FileAccess.get_file_as_bytes(RUNTIME + asset + ".vat"))
 		reads[asset] = read
 
+# Pose reads still in flight are joined before this goes, so no worker task outlives the city.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		for asset in reads:
+			WorkerThreadPool.wait_for_task_completion(reads[asset].task)
+		reads.clear()
+
 func texture_for(asset: String) -> ImageTexture:
 	if not textures.has(asset):
 		var contract: Dictionary = contracts[asset]

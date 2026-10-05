@@ -165,6 +165,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if access!=null and access.dialog_open:return
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus is LineEdit or focus is TextEdit: return
+	# Godot passes wheel and gesture events on from a panel whose list cannot scroll any further
+	# (mouse_force_pass_scroll_events), so over the HUD they must not zoom or pan the map.
+	var scroll: bool = event is InputEventGesture or (event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_LEFT, MOUSE_BUTTON_WHEEL_RIGHT])
+	if scroll and get_viewport().gui_get_hovered_control() != null: return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			dragging = event.pressed

@@ -10,6 +10,11 @@ float noise(vec2 p) {
 float waves(vec2 p) {
 	return sin(p.x*.63+p.y*.47-TIME*.6)*.015+sin(p.x*.93-p.y*.51+TIME*.8)*.008;
 }
+float ripples(vec2 p) {
+	return sin(p.x*5.4+p.y*2.6-TIME*.9)*.008
+		+sin(p.x*2.9-p.y*6.1+TIME*.7)*.004
+		+(noise(p*2.3+vec2(TIME*.035,-TIME*.02))-.5)*.008;
+}
 void vertex() {
 	local_position=VERTEX;
 	VERTEX.y+=waves(VERTEX.xz);
@@ -21,16 +26,17 @@ void fragment() {
 	vec2 uv=local_position.xz/vec2(32.0,28.18)+.5;
 	vec4 data=texture(fields,uv);
 	float within=step(0.0,uv.x)*step(uv.x,1.0)*step(0.0,uv.y)*step(uv.y,1.0);
-	float shallow=smoothstep(.0,.5,data.g)*within;
-	vec3 sea=mix(vec3(.006,.055,.10),vec3(.015,.20,.23),shallow);
+	float shallow=smoothstep(.015,.6,data.g)*within;
+	vec3 sea=mix(vec3(.012,.085,.13),vec3(.055,.31,.29),shallow);
 	float shore=(1.0-smoothstep(.24,.55,abs(data.b-.5)))*within;
-	float foam=shore*pow(.5+.5*sin(TIME*1.1+data.g*48.0),5.0)*.16;
+	float foam=shore*pow(.5+.5*sin(TIME*.7+data.g*32.0+noise(local_position.xz*3.0)*2.0),5.0)*.12;
 	ALBEDO=sea+foam*vec3(.65,.83,.76);
-	vec2 p=local_position.xz*3.1+vec2(TIME*.07,-TIME*.04);
-	float chop=noise(p)*2.0-1.0;
-	float cross_chop=noise(p.yx+vec2(43.0,27.0))*2.0-1.0;
-	NORMAL=normalize(NORMAL+vec3(chop*.10,cross_chop*.08,0.0));
-	ROUGHNESS=.24;
-	SPECULAR=.65;
-	METALLIC=.16;
+	// Surface gradients belong to the world X/Z plane, regardless of orbit.
+	vec2 p=local_position.xz;
+	float dx=(ripples(p+vec2(.04,0))-ripples(p-vec2(.04,0)))/.08;
+	float dz=(ripples(p+vec2(0,.04))-ripples(p-vec2(0,.04)))/.08;
+	NORMAL=normalize(NORMAL+(VIEW_MATRIX*vec4(-dx,0,-dz,0)).xyz);
+	ROUGHNESS=mix(.30,.38,shallow);
+	SPECULAR=.5;
+	METALLIC=0.0;
 }

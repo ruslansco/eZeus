@@ -21,7 +21,7 @@ const AMBIENT_ODDS := 1.0 / 250.0
 const FADE := 1.0
 const MENU_TRACK := "Audio/Music/Setup.mp3"
 const BATTLE_TRACKS := ["Battle1", "Battle2", "Battle3", "Battle4", "Battle_long", "Battle_long2"]
-const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--capture=", "--terrain-review=", "--garden-review=", "--sanctuary-review=", "--pyramid-review=", "--controls-review=", "--objectives-review=",
+const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--capture=", "--terrain-review=", "--garden-review=", "--sanctuary-review=", "--pyramid-review=", "--controls-review=", "--objectives-review=", "--street-review=",
 	"--character-review=", "--silent"]
 
 signal music_changed(kind: String, track: String)

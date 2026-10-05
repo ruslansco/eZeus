@@ -5,8 +5,8 @@ blender -b --factory-startup --python-exit-code 1 -P tools/godot_portrait_export
 
 The walker is built exactly as tools/export_godot_pilot.py builds it (its source is loaded, not edited), then each grown
 man gets a Greek portrait face (tools/godot_portrait_faces.py). The export is one held pose with no walk/idle samples and
-a larger geometry allowance, written to godot/assets/portraits/<asset>.glb with its manifest. The city keeps the crowd
-model; only ui/character_panel.gd shows this one. Never saves a .blend or touches the crowd models.
+a larger geometry allowance, written to build-portraits/<asset>.glb with its manifest: the source that
+tools/render_portraits.py renders into the character window's still image. The game never loads it. Never saves a .blend or touches the crowd models.
 """
 import sys, os, math, json, argparse
 from pathlib import Path
@@ -74,7 +74,7 @@ def prepare(K_):
 character_art.prepare = prepare
 
 if args.preview is None:
-    out = args.out or (REPO / 'godot/assets/portraits')
+    out = args.out or (REPO / 'build-portraits')
     out.mkdir(parents=True, exist_ok=True)
     ns['OUT'] = out
     ns['export'](args.asset)
@@ -90,7 +90,14 @@ if args.preview is None:
                   portrait={'revision': portrait.REVISION, 'adapter': 'eZeus/tools/godot_portrait_faces.py',
                             'use': 'character window only (ui/character_panel.gd); the city keeps the crowd model',
                             'people': [h.godot_identity.get('portrait') for h in character_art.HUMANS if h.godot_identity.get('portrait')],
-                            'reference': "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used"})
+                            'reference': ('docs/GODOT_PORTRAIT_REFERENCE.md; original elder curator anatomy and fiber groom' if args.asset == 'walker_curator' else "user's stylised philosopher (curly beard and hair, laurel); original geometry, no pixels used")})
+    if args.asset == 'walker_curator':
+        import godot_curator_portrait
+        report['portrait']['revision'] = godot_curator_portrait.REVISION
+        report['portrait']['finish'] = 'elder_portrait_v2'
+        report['portrait']['adapter'] = 'eZeus/tools/godot_curator_portrait.py'
+        report['character']['vertex_budget'] = 600000
+        report['portrait']['byte_budget'] = 40 * 1024 * 1024
     # Where the first man's eyes are (Godot's Y is Blender's Z): the character window frames his head and shoulders there.
     man = next((h for h in character_art.HUMANS if h.godot_identity.get('portrait')), None)
     if man is not None:

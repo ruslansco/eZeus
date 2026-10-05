@@ -248,6 +248,24 @@ func run() -> void:
 			var built: Dictionary = core.command("build_area sheep %d %d %d %d 0" % [sheep_at.x, sheep_at.y, sheep_at.x + 2, sheep_at.y + 3])
 			check(int(plan.new) >= 1 and not built.has("error") and int(built.money) == money - int(plan.cost), lang + " a flock is dragged over a pasture (%d sheep) for the quoted cost" % int(plan.new))
 			undo(core, lang + " the flock", money)
+		# Multiple livestock can be stacked on the same farm square by clicking on it
+		if sheep_at != NONE:
+			var prev1: Dictionary = core.command("preview sheep %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(prev1.valid and prev1.w == 1 and prev1.h == 1, lang + " preview shows 1x1 tile for sheep")
+			var money_before: int = core.snapshot(false).money
+			var s1: Dictionary = core.command("build sheep %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(not s1.has("error"), lang + " first sheep built on farm square")
+			var prev2: Dictionary = core.command("preview sheep %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(prev2.valid, lang + " same square is still valid to place another sheep (stacking allowed)")
+			var s2: Dictionary = core.command("build sheep %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(not s2.has("error"), lang + " second sheep built on same farm square")
+			var diff_animal: Dictionary = core.command("preview goat %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(not diff_animal.valid, lang + " placing different animal on sheep square is rejected")
+			undo(core, lang + " second sheep", core.snapshot(false).money + int(prev1.cost))
+			var prev3: Dictionary = core.command("preview sheep %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(prev3.valid, lang + " square with first sheep still allows sheep placement after second sheep undo")
+			var demo: Dictionary = core.command("demolish %d %d 0" % [sheep_at.x, sheep_at.y])
+			check(not demo.has("error"), lang + " demolition removes remaining sheep from square")
 		var goat_reason: String = core.command("preview_area goat %d %d %d %d" % [ranch_at.x, ranch_at.y, ranch_at.x + 1, ranch_at.y + 1]).get("reason", "")
 		# Goats come with the dairy (the scenario's grant), and each dairy allows eight.
 		core.command("test_allow dairy")

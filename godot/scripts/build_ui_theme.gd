@@ -114,8 +114,41 @@ func run() -> void:
 	theme.set_stylebox("panel", "Panel", panel)
 	theme.set_type_variation("Card", "PanelContainer")
 	theme.set_stylebox("panel", "Card", box(Color(LAPIS_RAISED, .92), Color(GOLD, .3), 1, 8, 12, 10))
+	# Compact atlas surfaces leave the landscape visible and protect text contrast.
+	for kind in ["AtlasFrame", "AtlasPanel", "AtlasToolbar", "AtlasHeadingPanel"]:
+		theme.set_type_variation(kind, "PanelContainer")
+		theme.set_stylebox("panel", kind, gold_frame(.94 if kind=="AtlasHeadingPanel" else .985,.5,10,0 if kind=="AtlasFrame" else 12,0 if kind=="AtlasFrame" else 8,0 if kind=="AtlasFrame" else 6))
 
 	# Buttons.
+	# Adventure library and illustrated campaign card (original layout; installed campaign art).
+	for entry in [["AdventureShell",gold_frame(.97,.55,8,22,20,14)],
+		["AdventureCard",box(Color(.08,.12,.15),GOLD,1,3,1,1)],
+		["AdventureRibbon",box(Color(.24,.19,.105),Color(GOLD,.8),0,0,18,10)],
+		["AdventurePaper",box(Color(.90,.85,.73),Color(GOLD,.7),0,0,20,18)],
+		["AdventureBadge",box(Color(.025,.075,.095,.94),Color(GOLD,.8),1,3,10,6)]]:
+		theme.set_type_variation(entry[0],"PanelContainer")
+		theme.set_stylebox("panel",entry[0],entry[1])
+	theme.set_type_variation("AdventureBodyText","Label")
+	theme.set_color("font_color","AdventureBodyText",Color(.20,.18,.14))
+	theme.set_font_size("font_size","AdventureBodyText",14)
+	theme.set_type_variation("AdventureGoalText","AdventureBodyText")
+	theme.set_font_size("font_size","AdventureGoalText",15)
+	theme.set_type_variation("AdventurePaperHeading","Subheading")
+	theme.set_color("font_color","AdventurePaperHeading",Color(.25,.20,.11))
+	theme.set_font_size("font_size","AdventurePaperHeading",20)
+	theme.set_type_variation("AdventureBadgeText","Caption")
+	theme.set_color("font_color","AdventureBadgeText",GOLD_PALE)
+	theme.set_type_variation("AdventureRule","HSeparator")
+	theme.set_stylebox("separator","AdventureRule",box(Color(.4,.32,.17,.20),Color.TRANSPARENT,0,0,0,1))
+	theme.set_type_variation("AdventureList","ItemList")
+	theme.set_stylebox("panel","AdventureList",box(Color(.02,.055,.075,.8),Color(GOLD,.25),1,3,10,10))
+	theme.set_stylebox("selected","AdventureList",box(Color(.28,.23,.13),Color(GOLD,.75),1,3,8,6))
+	theme.set_stylebox("selected_focus","AdventureList",box(Color(.28,.23,.13),GOLD_PALE,1,3,8,6))
+	theme.set_stylebox("focus","AdventureList",box(Color.TRANSPARENT,Color(GOLD,.5),1,3,0,0))
+	theme.set_constant("v_separation","AdventureList",12)
+	theme.set_constant("outline_size","AdventureList",0)
+	theme.set_font_size("font_size","AdventureList",15)
+
 	var button_states := {
 		"normal": box(Color(LAPIS_RAISED, .96), Color(GOLD, .28)),
 		"hover": box(Color(LAPIS_HOVER, .98), Color(GOLD, .6)),
@@ -180,13 +213,18 @@ func run() -> void:
 			surface.content_margin_top = 0; surface.content_margin_bottom = 0
 		surface.shadow_color=Color(0,0,0,.22);surface.shadow_size=6
 		theme.set_stylebox("panel",kind,surface)
-	var correspondence := box(Color("202d39"), Color("a39578"), 1, 3, 18, 12)
-	correspondence.shadow_color = Color(0,0,0,.3)
-	correspondence.shadow_size = 10
+	# The decision card (an envoy awaiting the player's answer): the gold frame, brighter, with the top line of a dialog.
+	var correspondence := gold_frame(.99, .75, 12, 18, 12, 12)
+	correspondence.border_width_top = 3
 	theme.set_stylebox("panel", "DecisionCard", correspondence)
 	theme.set_type_variation("EnvoyAction", "Button")
 	for state in ["normal", "hover", "pressed", "focus"]:
-		theme.set_stylebox(state, "EnvoyAction", box(Color("344653") if state == "normal" else Color("4a5b64"), Color("a39578"), 1, 3, 12, 10))
+		var lit := 0 if state == "normal" else (2 if state == "pressed" else 1)
+		var face := gold_face(lit, 8, 12, 10)
+		if state == "focus":
+			face = box(Color.TRANSPARENT, Color(GOLD_PALE, .9), 1, 8, 12, 10)
+		theme.set_stylebox(state, "EnvoyAction", face)
+	theme.set_color("font_hover_color", "EnvoyAction", GOLD_PALE)
 	for kind in ["NoticeButton", "DecisionButton", "MapPill"]:
 		theme.set_type_variation(kind, "Quiet")
 		theme.set_font_size("font_size",kind,14)

@@ -16,6 +16,7 @@ public:
             const eTileSize) const override { return nullptr; };
 
     void nextMonth() override;
+    void erase() override;
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

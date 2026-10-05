@@ -29,6 +29,8 @@ var summon_button: Button
 # The SDL page's own lines (the hippodrome, the trireme wharf: engine/ebuildinginfotext) and the wharf's switch.
 var notes_label: Label
 var switch_button: Button
+# A walker building's route (the SDL route editor): the button that begins editing it (scripts/route_editor.gd).
+var route_button: Button
 var pending := false
 
 func resource_name(resource: int) -> String:
@@ -47,7 +49,7 @@ func label(text: String, heading := false) -> Label:
 func show_inspection(data: Dictionary) -> void:
 	value = data
 	var trade_shape := "%d/%d" % [data.get("trade", {}).get("imports", []).size(), data.get("trade", {}).get("exports", []).size()] if data.has("trade") else ""
-	var key := "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [data.get("target_token", 0), TranslationServer.get_locale(), data.get("storage", {}).get("resources", []).size(), data.has("production"), trade_shape, data.get("hall", {}).get("requirements", []).size(), data.get("monument", {}).get("finished", "-"), data.get("monument", {}).get("attack", {}).get("targets", []).size(), data.has("notes"), data.has("switch")]
+	var key := "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [data.get("target_token", 0), TranslationServer.get_locale(), data.get("storage", {}).get("resources", []).size(), data.has("production"), trade_shape, data.get("hall", {}).get("requirements", []).size(), data.get("monument", {}).get("finished", "-"), data.get("monument", {}).get("attack", {}).get("targets", []).size(), data.has("notes"), data.has("switch"), data.has("route")]
 	if key != schema:
 		schema = key
 		pending = false
@@ -59,6 +61,7 @@ func show_inspection(data: Dictionary) -> void:
 		summon_button = null
 		notes_label = null
 		switch_button = null
+		route_button = null
 		monument_lines = null
 		monument_halt_button = null
 		monument_help_button = null
@@ -98,6 +101,16 @@ func show_inspection(data: Dictionary) -> void:
 				pending = true
 				action_requested.emit("building_switch %d %d %d %d" % [int(value.x), int(value.y), int(value.target_token), 0 if value.switch.working else 1])
 				update_live_data())
+		if data.has("route"):
+			route_button = Button.new()
+			route_button.name = "WalkerRoute"
+			route_button.focus_mode = Control.FOCUS_NONE
+			route_button.tooltip_text = tr("Lead this building's walkers along the roads you choose")
+			add_child(route_button)
+			route_button.pressed.connect(func():
+				if not value.get("can_edit", false):
+					return
+				action_requested.emit("route_begin %d %d %d" % [int(value.x), int(value.y), int(value.target_token)]))
 		var native_text: Array[String] = []
 		for field in ["info", "employment_info", "additional_info"]:
 			if not str(data.get(field, "")).is_empty():
@@ -338,6 +351,10 @@ func update_live_data() -> void:
 		# As the SDL switch: it names the state the building is in; pressing it changes to the other.
 		switch_button.text = str(value.switch.labels[1 if value.switch.working else 0])
 		switch_button.disabled = not editable
+	if route_button != null and value.has("route"):
+		var guides := int(value.route.guides)
+		route_button.text = tr("Walker route (%d guides)") % guides if guides > 0 else tr("Walker route")
+		route_button.disabled = not editable
 	if native_notes != null:
 		var lines: Array[String] = []
 		for field in ["info", "employment_info", "additional_info"]:

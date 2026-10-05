@@ -75,7 +75,7 @@ func update(walkers: Dictionary, camera_position: Vector3, batches, models: Dict
 		if not active.has(id):
 			acquire(walkers[id], id, batches, models)
 	# Keep a few skeletal models instantiated ahead of need, one per call.
-	if pool.size() + active.size() < PREWARM and ResourceLoader.load_threaded_get_status(SkeletalCitizen.MODEL) != ResourceLoader.THREAD_LOAD_IN_PROGRESS:
+	if pool.size() + active.size() < PREWARM and batches.warmed(SkeletalCitizen.MODEL):
 		pool.append(instantiate_skeletal(batches, models))
 
 func acquire(entry: Dictionary, id: int, batches, models: Dictionary) -> void:

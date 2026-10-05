@@ -19,6 +19,8 @@ void vertex() {
 	// Only native water cells form a seabed; land heights come from the mesh.
 	float shore = max(coast_distance(world_xz), 0.0);
 	VERTEX.y -= UV2.x * smoothstep(0.0, 3.0, shore) * 0.48;
+	// An earthquake's chasm sinks below the ground around it (the pattern's G, see fragment()).
+	VERTEX.y -= smoothstep(0.55, 0.95, texture(mineral_pattern, map_uv(world_xz)).g) * 0.7;
 }
 
 void fragment() {
@@ -68,6 +70,46 @@ void fragment() {
 	float block_tone = fract(sin(dot(floor(course),vec2(12.9898,78.233)))*43758.5453);
 	deposit_ground = mix(deposit_ground,deposit_ground*(0.95+block_tone*0.08)*(1.0-seam*0.28),pattern.r);
 	ground = mix(ground,deposit_ground,deposit);
+	// Disasters and wet ground, from the pattern's other channels (terrain_presentation.gd): G an earthquake's chasm, B lava, A marsh.
+	vec4 hazard = texture(mineral_pattern, map_uv(world_xz));
+	vec3 glow = vec3(0.0);
+	if (hazard.g + hazard.b + hazard.a > 0.001) {
+		// Broad and fine noise break up the tile grid's outline.
+		float ragged_edge = (texture(surface_noise, world_xz / 2.6 + vec2(3.3, 8.1)).r - 0.5) * 0.7
+			+ (texture(surface_noise, world_xz / 0.8 + vec2(1.7, 4.4)).r - 0.5) * 0.12;
+		float chasm = smoothstep(0.42, 0.6, hazard.g + ragged_edge);
+		float lava = smoothstep(0.42, 0.6, hazard.b + ragged_edge);
+		float marsh = smoothstep(0.38, 0.6, hazard.a + ragged_edge);
+		// Chasm: a near-black rift inside a rim of pale, broken earth split by fissures (the ground also sinks there, see vertex()).
+		float crack_a = abs(texture(surface_noise, world_xz / 2.2 + vec2(5.0, 1.0)).r - 0.5);
+		float crack_b = abs(texture(surface_noise, world_xz / 0.9 + vec2(2.0, 9.0)).r - 0.5);
+		float fissure = 1.0 - smoothstep(0.0, 0.045, min(crack_a, crack_b * 1.4));
+		float depth = smoothstep(0.62, 0.9, hazard.g + ragged_edge * 0.5);
+		vec3 rim = mix(vec3(0.45, 0.37, 0.27), vec3(0.34, 0.27, 0.19), grain);
+		rim = mix(rim, vec3(0.06, 0.045, 0.035), fissure);
+		vec3 rift = mix(vec3(0.07, 0.055, 0.045), vec3(0.025, 0.015, 0.012), smoothstep(0.85, 1.0, hazard.g) + grain * 0.2);
+		ground = mix(ground, mix(rim, rift, depth), chasm);
+		// Lava: a dark cooling crust broken by thin glowing seams, with molten pools that slowly drift and pulse.
+		vec2 drift = vec2(TIME * 0.02, TIME * 0.013);
+		float plates = texture(surface_noise, world_xz / 3.2 + drift).r;
+		float seams = 1.0 - smoothstep(0.0, 0.03, abs(plates - 0.5));
+		float molten_pool = smoothstep(0.62, 0.78, texture(surface_noise, world_xz / 5.5 - drift).r);
+		float pulse = 0.8 + 0.2 * sin(TIME * 1.3 + plates * 7.0);
+		float heat = max(seams * 0.8, molten_pool) * pulse;
+		vec3 crust = mix(vec3(0.06, 0.05, 0.045), vec3(0.13, 0.09, 0.07), grain * 0.7 + patches * 0.3);
+		vec3 molten = mix(vec3(0.85, 0.22, 0.03), vec3(1.0, 0.6, 0.16), molten_pool);
+		ground = mix(ground, mix(crust, molten, heat), lava);
+		glow = (molten * heat * 1.3 + vec3(0.22, 0.05, 0.0) * 0.25) * lava;
+		// Marsh: sodden ground of rank green tussocks, with a few broad pools of still dark water.
+		float pool_noise = texture(surface_noise, world_xz / 6.0 + vec2(8.0, 4.0)).r * 0.75 + texture(surface_noise, world_xz / 1.9 + vec2(2.0, 6.0)).r * 0.25;
+		float pools = smoothstep(0.6, 0.66, pool_noise);
+		float tussock = texture(surface_noise, world_xz / 3.0 + vec2(1.0, 7.0)).r;
+		vec3 sodden = mix(vec3(0.15, 0.19, 0.08), vec3(0.24, 0.27, 0.11), tussock * 0.6 + grain * 0.4);
+		sodden = mix(sodden, vec3(0.13, 0.15, 0.08), smoothstep(0.5, 0.6, pool_noise) * (1.0 - pools));
+		sodden = mix(sodden, vec3(0.06, 0.10, 0.11), pools);
+		ground = mix(ground, sodden, marsh);
+		wet = max(wet, marsh * (0.4 + pools * 0.6));
+	}
 	// The road mask's 0.5 level is the tile edge: a straight road paves its whole tile,
 	// outer corners round off. inward = distance inside that edge, in tiles.
 	vec4 street = texture(road_data, map_uv(world_xz));
@@ -133,4 +175,5 @@ void fragment() {
 		NORMAL = normalize(mix(NORMAL, rocky_normal, rock_cover));
 	}
 	SPECULAR = 0.22;
+	EMISSION = tint_outside(glow, map_outside(world_xz));
 }

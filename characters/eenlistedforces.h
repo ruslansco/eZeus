@@ -10,7 +10,7 @@ struct eEnlistedForces {
     std::vector<std::pair<eCityId, eHeroType>> fHeroes;
     std::vector<stdsptr<eWorldCity>> fAllies;
     bool fAres = false;
-    eCityId fAresCity;
+    eCityId fAresCity = eCityId::neutralFriendly;
 
     std::map<eCityId, eEnlistedForces> splitIntoCities() const;
 

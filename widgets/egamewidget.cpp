@@ -2478,50 +2478,6 @@ bool eGameWidget::mousePressEvent(const eMouseEvent& e) {
     return true;
 }
 
-void brushTiles(eGameBoard* const board, const int bSize,
-                const int cx, const int cy,
-                std::vector<eTile*>& result) {
-    int cdx0;
-    int cdy0;
-    eTileHelper::tileIdToDTileId(cx, cy, cdx0, cdy0);
-    const int x0 = cx - bSize + 1;
-    const int y0 = cy;
-    int dx0;
-    int dy0;
-    eTileHelper::tileIdToDTileId(x0, y0, dx0, dy0);
-    for(int ddy = 0; ddy < 2*bSize - 1; ddy++) {
-        const int dy = dy0 + ddy;
-        const int w = (ddy % 2) ? bSize - 1 : bSize;
-        int dx = dx0;
-        if(ddy % 2) {
-            if(cdy0 % 2 == bSize % 2) {
-                dx += 1;
-            }
-        }
-        for(int ddx = 0; ddx < w; ddx++) {
-            const auto t = board->dtile(dx + ddx, dy);
-            if(!t) continue;
-            result.push_back(t);
-        }
-    }
-}
-
-void squareTiles(eGameBoard* const board, const int bSize,
-                 const int cx, const int cy,
-                 std::vector<eTile*>& result) {
-    const int x0 = cx - bSize/2;
-    const int y0 = cy - bSize/2;
-    for(int dx = 0; dx < bSize; dx++) {
-        for(int dy = 0; dy < bSize; dy++) {
-            const int x = x0 + dx;
-            const int y = y0 + dy;
-            const auto t = board->tile(x, y);
-            if(!t) continue;
-            result.push_back(t);
-        }
-    }
-}
-
 void eGameWidget::debugShowTerrainMenu() {
     if(!mTem) return;
     mGm->hide();
@@ -2746,9 +2702,9 @@ bool eGameWidget::mouseMoveEvent(const eMouseEvent& e) {
         const auto btype = mTem->brushType();
         const int bsize = mTem->brushSize();
         if(btype == eBrushType::brush) {
-            brushTiles(mBoard, bsize, mHoverTX, mHoverTY, mHoverTiles);
+            eTerrainEdit::brushTiles(mBoard, bsize, mHoverTX, mHoverTY, mHoverTiles);
         } else if(btype == eBrushType::square) {
-            squareTiles(mBoard, bsize, mHoverTX, mHoverTY, mHoverTiles);
+            eTerrainEdit::squareTiles(mBoard, bsize, mHoverTX, mHoverTY, mHoverTiles);
         }
     }
     if(mLocked) return true;

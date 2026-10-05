@@ -2,7 +2,7 @@ extends Control
 # The armies on their way between cities, drawn over the world map picture: a dashed road from the city they left to the city
 # they go to, and a disc on it at the part of the way they have covered (`frac`), with a head toward where they are going and a pip
 # for each step of their size. Raids are orange, conquests red, help green and armies coming home grey. The core reports them
-# (`armies` in the `world` query); nothing here decides anything.
+# (`armies` in the `world` query); nothing here decides anything. An army Ares marches with carries his gold spear over the disc.
 
 const COLORS := {"raid": Color(.96, .52, .22), "conquest": Color(.88, .22, .22), "help": Color(.38, .78, .48), "home": Color(.78, .8, .86)}
 
@@ -51,5 +51,11 @@ func _draw() -> void:
 		draw_circle(at, 8.5, color)
 		var normal := Vector2(-direction.y, direction.x)
 		draw_colored_polygon(PackedVector2Array([at + direction * 7.0, at - direction * 3.0 + normal * 5.0, at - direction * 3.0 - normal * 5.0]), Color(.05, .08, .14, .95))
+		if bool(army.get("ares", false)):
+			# The god of war's spear, slanting over the disc.
+			var tip := at + Vector2(9, -16)
+			draw_line(at + Vector2(-7, 9), tip, Color(.05, .08, .14, .95), 4.0)
+			draw_line(at + Vector2(-7, 9), tip, Color(1.0, .82, .32), 2.0)
+			draw_colored_polygon(PackedVector2Array([tip + Vector2(3, -4), tip + Vector2(-3, 1), tip + Vector2(2, 2)]), Color(1.0, .82, .32))
 		for pip in int(army.size):
 			draw_circle(at + normal * 15.0 + direction * (float(pip) - float(int(army.size) - 1) * .5) * 6.0, 2.2, color)

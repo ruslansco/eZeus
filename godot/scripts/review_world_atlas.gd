@@ -34,10 +34,100 @@ func geometry(node:Node) -> Vector2i:
 	for child in node.get_children(): total+=geometry(child)
 	return total
 func capture(suffix:String) -> void:
-	await frames(12);await RenderingServer.frame_post_draw
+	DisplayServer.window_move_to_foreground();await frames(12)
+	RenderingServer.force_draw(true,.016)
 	var output:="res://captures/world-atlas-%s-%s.png"%[language,suffix]
 	root.get_texture().get_image().save_png(output)
 	print("ATLAS_CAPTURE ",output)
+
+func key(code: int, pressed: bool) -> void:
+	var event:=InputEventKey.new()
+	event.physical_keycode=code;event.keycode=code;event.pressed=pressed
+	Input.parse_input_event(event)
+	Input.flush_buffered_events()
+
+func keyboard_checks() -> void:
+	DisplayServer.window_move_to_foreground();await frames(8)
+	var atlas=wm.atlas
+	var bindings=load("res://scripts/key_bindings.gd")
+	var selected:int=wm.selected
+	for code in [KEY_W,KEY_S,KEY_A,KEY_D,KEY_UP,KEY_DOWN,KEY_LEFT,KEY_RIGHT]:
+		atlas.reset_view()
+		var start:Vector3=atlas.target
+		key(code,true);atlas.keyboard_camera(.2);key(code,false)
+		var moved:Vector3=atlas.target-start
+		var axis:=Vector3.RIGHT if code in [KEY_D,KEY_RIGHT] else Vector3.LEFT if code in [KEY_A,KEY_LEFT] else Vector3.FORWARD if code in [KEY_W,KEY_UP] else Vector3.BACK
+		check(moved.dot(axis)>1 and wm.selected==selected,"held %s pans the camera without cycling cities"%OS.get_keycode_string(code))
+	atlas.reset_view();atlas.yaw=PI*.5
+	key(KEY_W,true);atlas.keyboard_camera(.2);key(KEY_W,false)
+	check(atlas.target.x< -1 and absf(atlas.target.z)<.001,"forward movement follows the camera after a quarter orbit")
+	for code in [KEY_Q,KEY_E,KEY_R,KEY_F]:
+		atlas.reset_view()
+		var yaw:float=atlas.yaw;var pitch:float=atlas.pitch
+		key(code,true);atlas.keyboard_camera(.2);key(code,false)
+		var change:float=angle_difference(yaw,atlas.yaw) if code in [KEY_Q,KEY_E] else atlas.pitch-pitch
+		check(change*(-1 if code in [KEY_Q,KEY_F] else 1)>.05,"held %s has the city-view orbit/tilt direction"%OS.get_keycode_string(code))
+	atlas.reset_view();key(KEY_Q,true);key(KEY_E,true)
+	check(not atlas.keyboard_camera(.2) and atlas.yaw==0,"opposite held orbit keys cancel")
+	key(KEY_Q,false);key(KEY_E,false)
+	atlas.reset_view();key(KEY_W,true);atlas.keyboard_camera(.2);key(KEY_W,false)
+	var normal:float=atlas.target.z
+	atlas.reset_view();key(KEY_SHIFT,true);key(KEY_W,true);atlas.keyboard_camera(.2);key(KEY_W,false);key(KEY_SHIFT,false)
+	check(absf(atlas.target.z-normal*2)<.001,"Shift doubles map pan speed")
+	var pose:Vector3=atlas.target;var yaw:float=atlas.yaw
+	check(not atlas.keyboard_camera(.2) and atlas.target==pose and atlas.yaw==yaw,"releasing keys stops camera movement")
+	atlas.reset_view();key(KEY_R,true);atlas.keyboard_camera(10);key(KEY_R,false)
+	check(is_equal_approx(atlas.pitch,deg_to_rad(75)),"keyboard tilt stops at the city-view upper limit")
+	key(KEY_F,true);atlas.keyboard_camera(10);key(KEY_F,false)
+	check(is_equal_approx(atlas.pitch,deg_to_rad(25)),"keyboard tilt stops at the city-view lower limit")
+	atlas.reset_view();key(KEY_W,true);atlas.keyboard_camera(100);key(KEY_W,false)
+	check(is_equal_approx(atlas.target.z,-atlas.EXTENT.y*.5),"pan remains within regional bounds")
+	atlas.reset_view();atlas.cinematic=true;key(KEY_W,true)
+	check(not atlas.keyboard_camera(.2) and atlas.target==Vector3.ZERO,"flight blocks held camera keys")
+	key(KEY_W,false);atlas.cinematic=false
+	wm.open_dialog("Camera input fixture");key(KEY_W,true)
+	check(not atlas.keyboard_camera(.2) and atlas.target==Vector3.ZERO,"native diplomacy dialogs block held camera keys")
+	key(KEY_W,false);wm.close_dialog();await frames(2)
+	var edit:=LineEdit.new();wm.get_node("Themed").add_child(edit);edit.grab_focus();key(KEY_W,true)
+	check(not atlas.keyboard_camera(.2) and atlas.target==Vector3.ZERO,"text editing blocks held camera keys")
+	key(KEY_W,false);edit.release_focus();edit.free()
+	key(KEY_CTRL,true);key(KEY_W,true)
+	check(not atlas.keyboard_camera(.2),"command modifiers do not pan the world")
+	key(KEY_W,false);key(KEY_CTRL,false)
+	key(KEY_W,true);root.focus_exited.emit();await frames(2)
+	check(not atlas.keyboard_camera(.2),"losing window focus clears held camera keys")
+	key(KEY_W,false)
+	check(bool(bindings.assign("pan_forward",KEY_Z).ok),"map uses the shared rebindable city controls")
+	key(KEY_Z,true);atlas.keyboard_camera(.2);key(KEY_Z,false)
+	check(atlas.target.z< -1,"a rebound city pan key moves the world camera")
+	bindings.reset("pan_forward")
+	atlas.reset_view()
+
+func water_checks() -> void:
+	var atlas=wm.atlas
+	# Compare deep sea against the same view with relief hidden. A submerged
+	# rectangular land sheet used to change these pixels across the map patch.
+	DisplayServer.window_move_to_foreground();await frames(3)
+	RenderingServer.force_draw(true,.016)
+	var with_land:Image=atlas.viewport.get_texture().get_image()
+	atlas.terrain.visible=false
+	await frames(2);RenderingServer.force_draw(true,.016)
+	var sea_only:Image=atlas.viewport.get_texture().get_image()
+	atlas.terrain.visible=true
+	var samples:=0;var identical:=0
+	for y in range(1,18):
+		for x in range(1,20):
+			var uv:=Vector2(x/20.0,y/18.0)
+			var field:Color=atlas.sample(uv)
+			if field.g>.01 or field.b>.01: continue
+			var at:=Vector2i(atlas.project(uv,0))
+			if at.x<0 or at.y<0 or at.x>=with_land.get_width() or at.y>=with_land.get_height(): continue
+			var a:Color=with_land.get_pixelv(at);var b:Color=sea_only.get_pixelv(at)
+			var difference:=maxf(absf(a.r-b.r),maxf(absf(a.g-b.g),absf(a.b-b.b)))
+			samples+=1
+			if difference<.025: identical+=1
+	check(samples>50 and identical>=samples*.95,"deep water stays continuous with relief present (%d/%d rendered samples)"%[identical,samples])
+	await frames(2)
 
 func run() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -48,6 +138,8 @@ func run() -> void:
 	if OS.has_environment("EZEUS_REVIEW_SETTINGS_PATH"): Engine.set_meta("ezeus_settings_path",OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH"))
 	TranslationServer.set_locale(language)
 	root.size=size;root.content_scale_size=Vector2i(1440,900)
+	root.grab_focus()
+	DisplayServer.window_move_to_foreground()
 	if OS.get_cmdline_user_args().has("--native-ui"):
 		await native_ui()
 		return
@@ -63,6 +155,7 @@ func run() -> void:
 	await frames(20)
 	var atlas=wm.atlas
 	var first_build_ms:int=atlas.build_ms
+	print("ATLAS_INPUT_DIAGNOSTIC ",{"active":atlas.active,"focus":root.has_focus(),"cinematic":atlas.cinematic,"blocked":atlas.input_blocked,"update":atlas.viewport.render_target_update_mode,"own":atlas.viewport.own_world_3d,"paused":paused})
 	var before:Dictionary=core.simulation.snapshot(true)
 	var world_before:Dictionary=core.query("world")
 	check(atlas.viewport.own_world_3d and atlas.viewport.render_target_update_mode==SubViewport.UPDATE_ALWAYS,"independent live 3D viewport")
@@ -80,7 +173,16 @@ func run() -> void:
 	var env:Environment=atlas.scene.get_node("WorldEnvironment").environment
 	check(not env.ssr_enabled and not env.ssao_enabled and not env.volumetric_fog_enabled,"Mobile uses supported effects")
 	check(atlas.clouds.size()==12 and atlas.ships.size()<=7,"bounded decorative clouds and ships")
+	var stocks:=true
+	for own in wm.world.mine:
+		if int(own.id)!=int(wm.find_city(wm.selected).id):continue
+		for item in own.stock:
+			var amount:Label=wm.goods_box.get_node_or_null("NativeStock/Stock_%d"%int(item.resource))
+			stocks=stocks and amount!=null and amount.text=="%d"%int(item.count)
+	check(stocks and wm.goods_box.has_node("NativeStock"),"own-city panel shows the exact native stored goods")
 	await capture("overview")
+	await water_checks()
+	await keyboard_checks()
 	var selected_before:int=wm.selected
 	var foreign:int=-1
 	for city in wm.world.cities:
@@ -128,6 +230,15 @@ func run() -> void:
 	var viewport_bounds:=Rect2(Vector2.ZERO,root.get_visible_rect().size)
 	for button in [wm.get_node("%AtlasOverview"),wm.get_node("%AtlasFocus"),wm.get_node("%AtlasZoomIn"),wm.get_node("%Back")]:
 		check(viewport_bounds.encloses(button.get_global_rect()),"control fits viewport: "+button.name)
+	for scale_size in [Vector2i(1152,720),Vector2i(960,600)]:
+		root.content_scale_size=scale_size;await frames(8)
+		var bounds:=Rect2(Vector2.ZERO,root.get_visible_rect().size)
+		var fit:=true
+		for control in [wm.get_node("%Back"),wm.get_node("Themed/Margin/Row/Side"),wm.get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar")]:
+			fit=fit and bounds.encloses(control.get_global_rect())
+		check(fit,"map controls and city panel fit at %d%% interface size"%int(144000/scale_size.x))
+		await capture("large-%d"%int(144000/scale_size.x))
+	root.content_scale_size=Vector2i(1440,900);await frames(8)
 	# Native army fractions are projected; presentation never invents their progress.
 	var a:Dictionary=wm.world.cities[0];var b:Dictionary=wm.world.cities[1]
 	wm.armies_layer.set_state([{"from":a.index,"to":b.index,"frac":.4,"reason":"raid","size":2}],wm.world.cities,wm.image_rect())
@@ -174,6 +285,9 @@ func native_ui() -> void:
 	while city.world_flight.busy(): await process_frame
 	await frames(8)
 	check(not city.world.visible and not city.horizon.visible and not city.orbit.enabled,"covered city geometry and camera are suspended behind the atlas")
+	var side:Control=city.world_map.get_node("Themed/Margin/Row/Side")
+	check(side.is_visible_in_tree() and is_equal_approx(side.modulate.a,1.0) and is_equal_approx(city.world_map.get_node("%AtlasToolbar").modulate.a,1.0),"city panel and complete toolbar restore their visibility after ascent")
+	await capture("integrated")
 	var native_before:Dictionary=city.core.simulation.snapshot(true)
 	var key:=InputEventKey.new();key.physical_keycode=KEY_SPACE;key.pressed=true
 	root.push_input(key,true);key=key.duplicate();key.pressed=false;root.push_input(key,true)

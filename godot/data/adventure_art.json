@@ -1,0 +1,197 @@
+{
+  "source": "Native eBitmapWidget bitmap IDs / esplitbinary.h 60-pixel UI artwork. Installed development art; no copied Anno imagery.",
+  "entries": [
+    {
+      "bitmap": 0,
+      "loose": "60/Zeus_Data_Images/Zeus_Load1.jpg",
+      "shared": "Zeus_Data_Images/Zeus_Load1.jpg",
+      "offset": 74420367,
+      "length": 540426,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 1,
+      "loose": "60/Zeus_Data_Images/Zeus_Load2.jpg",
+      "shared": "Zeus_Data_Images/Zeus_Load2.jpg",
+      "offset": 64843057,
+      "length": 257887,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 2,
+      "loose": "60/Zeus_Data_Images/Zeus_Load3.jpg",
+      "shared": "Zeus_Data_Images/Zeus_Load3.jpg",
+      "offset": 74034884,
+      "length": 385483,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 3,
+      "loose": "60/Zeus_Data_Images/Zeus_Load4.jpg",
+      "shared": "Zeus_Data_Images/Zeus_Load4.jpg",
+      "offset": 65716099,
+      "length": 270410,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 4,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load1.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load1.jpg",
+      "offset": 72722980,
+      "length": 420242,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 5,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load2.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load2.jpg",
+      "offset": 70507663,
+      "length": 433127,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 6,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load3.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load3.jpg",
+      "offset": 73143222,
+      "length": 293943,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 7,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load4.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load4.jpg",
+      "offset": 64086945,
+      "length": 756112,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 8,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load5.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load5.jpg",
+      "offset": 70940790,
+      "length": 371663,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 9,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load6.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load6.jpg",
+      "offset": 61427509,
+      "length": 355034,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 10,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load7.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load7.jpg",
+      "offset": 65986509,
+      "length": 339213,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 11,
+      "loose": "60/Zeus_Data_Images/Poseidon_Load8.jpg",
+      "shared": "Zeus_Data_Images/Poseidon_Load8.jpg",
+      "offset": 71785473,
+      "length": 329969,
+      "format": "jpg",
+      "crop": []
+    },
+    {
+      "bitmap": 12,
+      "loose": "60/poseidonCampaign1_1.png",
+      "shared": "",
+      "offset": 57069133,
+      "length": 951789,
+      "format": "png",
+      "crop": [
+        0,
+        0,
+        800,
+        600
+      ]
+    },
+    {
+      "bitmap": 13,
+      "loose": "60/poseidonCampaign2_1.png",
+      "shared": "",
+      "offset": 50110500,
+      "length": 868767,
+      "format": "png",
+      "crop": [
+        0,
+        0,
+        800,
+        600
+      ]
+    },
+    {
+      "bitmap": 14,
+      "loose": "60/poseidonCampaign3_1.png",
+      "shared": "",
+      "offset": 78959098,
+      "length": 903177,
+      "format": "png",
+      "crop": [
+        0,
+        0,
+        800,
+        600
+      ]
+    },
+    {
+      "bitmap": 15,
+      "loose": "60/poseidonCampaign4_1.png",
+      "shared": "",
+      "offset": 52696662,
+      "length": 895180,
+      "format": "png",
+      "crop": [
+        0,
+        0,
+        800,
+        600
+      ]
+    },
+    {
+      "bitmap": 16,
+      "loose": "60/poseidonCampaign5_1.png",
+      "shared": "",
+      "offset": 59891263,
+      "length": 914520,
+      "format": "png",
+      "crop": [
+        0,
+        0,
+        800,
+        600
+      ]
+    },
+    {
+      "bitmap": 17,
+      "loose": "60/poseidonCampaign6_1.png",
+      "shared": "",
+      "offset": 74960793,
+      "length": 965507,
+      "format": "png",
+      "crop": [
+        0,
+        0,
+        800,
+        600
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "asset": "ruins_4",
+  "source": "art/lots/build_sprites.py",
+  "file": "ruins_4.glb",
+  "bytes": 165020,
+  "vertices": 858,
+  "surfaces": 1,
+  "source_surfaces": 7,
+  "bounds_blender": [
+    [
+      -0.4975000023841858,
+      -0.4975000023841858,
+      -0.04608842730522156
+    ],
+    [
+      0.4975000023841858,
+      0.4975000023841858,
+      0.21541038155555725
+    ]
+  ],
+  "walk_samples": 0,
+  "idle_samples": 0,
+  "stride_tiles": null,
+  "rights_status": "needs_evidence",
+  "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": null
+}

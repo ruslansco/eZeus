@@ -90,7 +90,7 @@ func run() -> void:
 	check(KINDS.values().size() == 17 and KINDS.values().duplicate().size() == 17, "seventeen monsters, one model each")
 
 	# --------------------------------------------- a monster at large: it goes out, moves and fights
-	for kind in ["cerberus", "minotaur", "kraken"]:
+	for kind in ["cerberus", "minotaur", "kraken", "hydra"]:
 		core = ClassDB.instantiate("EZeusSimulation")
 		core.open_city(engine, engine.path_join("Save/Hippodamus/CLAUDE-TESTING-ADVENTURE.ez"), "en")
 		core.enable_test_commands()

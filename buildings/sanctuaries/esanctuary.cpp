@@ -606,7 +606,7 @@ bool eSanctuary::askForHelp(eHelpDenialReason& reason) {
         const auto pid = board.cityIdToPlayerId(cid);
         const auto& cs = board.conquests(pid);
         if(cs.empty()) return true;
-        cs[0]->addAres();
+        cs[0]->addAres(cid);
         mGodAbroad = true;
     }
     return true;

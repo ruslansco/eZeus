@@ -5,11 +5,20 @@ extends AcceptDialog
 # soldiers' and towers' buttons) and mythology. The core words every line (`city_data`) with the verdicts the SDL pages use
 # (engine/ecitydata), so the values follow its language; the tab titles are this interface's. Each page's "See …" buttons
 # open its overlay. The window refreshes while it is open; a change is a queued command whose answer is the new data.
+# The SDL remaster's extras follow as three more pages: the City Advisor's ranked problems with "Go there" (`city_advisor`), the
+# City History chart (`city_history`) and the Trade Summary (`trade_summary`), opened from the summary and storage pages as in
+# the SDL panel; the core words them with the same engine code as the SDL windows.
 
 const Goods = preload("res://scripts/goods.gd")
 const PAGES := [["overview", "Summary"], ["population", "Population"], ["employment", "Employment"], ["administration", "Administration"],
 	["husbandry", "Husbandry"], ["storage", "Storage"], ["hygiene", "Hygiene and safety"], ["appeal", "Appeal"], ["culture", "Culture"],
-	["science", "Science"], ["military", "Military"], ["mythology", "Mythology"]]
+	["science", "Science"], ["military", "Military"], ["mythology", "Mythology"], ["advisor", "Advisor"], ["history", "History"],
+	["trade", "Trade"]]
+const TONES := {"text": Color(.93, .90, .84), "dim": Color(.61, .67, .77), "green": Color(.50, .84, .57), "red": Color(.94, .43, .35),
+	"amber": Color(1.0, .77, .43), "gold": Color(1.0, .87, .55), "label": Color(.78, .82, .87)}
+const HistoryChart = preload("res://ui/history_chart.gd")
+# Where each advice's "Go there" goes next, by its key (kept while the game runs, as the SDL view remembers it per problem).
+static var advisor_steps := {}
 const SEVERITY := [Color(.27, .78, .43), Color(.94, .71, .24), Color(.93, .30, .24)]
 const REFRESH_SECONDS := 2.0
 
@@ -32,6 +41,9 @@ var tabs: TabContainer
 var bodies := {}
 var data: Dictionary = {}
 var age := 0.0
+var history_chart: Control
+var history_series := 0
+var history_span := 0
 
 func _ready() -> void:
 	title = tr("City")
@@ -189,6 +201,9 @@ func fill() -> void:
 		return
 	var id := current_page()
 	var column: VBoxContainer = bodies[id]
+	if id == "history" and is_instance_valid(history_chart) and history_chart.is_inside_tree():
+		fill_history(column)
+		return
 	clear(column)
 	var page := page_data(id)
 	match id:
@@ -203,10 +218,20 @@ func fill() -> void:
 		"mythology":
 			fill_mythology(column)
 			return
+		"advisor":
+			fill_advisor(column)
+			return
+		"history":
+			fill_history(column)
+			return
+		"trade":
+			fill_trade(column)
+			return
 		_:
 			for item in page.get("lines", []):
 				line(column, str(item.label), str(item.value), int(item.severity))
 			if id == "overview":
+				extras(column, [["advisor", "City advisor"], ["history", "City history"]])
 				fill_requests(column)
 	views(column, page)
 
@@ -355,6 +380,7 @@ func fill_administration(column: VBoxContainer, page: Dictionary) -> void:
 	column.add_child(grid)
 
 func fill_storage(column: VBoxContainer, page: Dictionary) -> void:
+	extras(column, [["trade", "Trade summary"]])
 	var grid := GridContainer.new()
 	grid.name = "Goods"
 	grid.columns = 4
@@ -429,3 +455,180 @@ func fill_mythology(column: VBoxContainer) -> void:
 			row.add_child(show)
 			column.add_child(row)
 	views(column, {"views": [{"label": str(data.get("mythology_view", "")), "overlay": "immortals"}]})
+
+# ---- the SDL remaster's extras -----------------------------------------------------------------------------------
+# Buttons that open other pages of this window (the SDL panel's advisor, chart and scales buttons).
+func extras(column: VBoxContainer, pages: Array) -> void:
+	var row := HFlowContainer.new()
+	row.name = "Extras"
+	row.add_theme_constant_override("h_separation", 6)
+	for page in pages:
+		var button := Button.new()
+		button.name = "Open" + str(page[0]).capitalize()
+		button.text = tr(page[1])
+		button.focus_mode = Control.FOCUS_NONE
+		var id := str(page[0])
+		button.pressed.connect(func(): show_page(id))
+		row.add_child(button)
+	column.add_child(row)
+
+func coloured(text: String, color: Color, variation := "") -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", color)
+	if variation != "":
+		label.theme_type_variation = variation
+	return label
+
+# The advisor: a card per problem, the most serious first, each with its detail, a hint and "Go there" stepping through the places.
+func fill_advisor(column: VBoxContainer) -> void:
+	var answer: Dictionary = core.query("city_advisor")
+	heading(column, str(answer.get("title", "")))
+	for advice in answer.get("advice", []):
+		var card := PanelContainer.new()
+		card.name = "Advice"
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+		card.add_child(row)
+		var severity := int(advice.severity)
+		var mark := ColorRect.new()
+		mark.custom_minimum_size = Vector2(6, 0)
+		mark.color = SEVERITY[clampi(severity, 0, 2)]
+		row.add_child(mark)
+		var text := VBoxContainer.new()
+		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text.add_theme_constant_override("separation", 2)
+		row.add_child(text)
+		text.add_child(coloured(str(advice.title), [Color(.59, .89, .67), Color(1.0, .87, .55), Color(1.0, .67, .55)][clampi(severity, 0, 2)], "Subheading"))
+		if not str(advice.detail).is_empty():
+			text.add_child(coloured(str(advice.detail), Color(.93, .90, .84)))
+		if not str(advice.hint).is_empty():
+			text.add_child(coloured(str(advice.hint), Color(.61, .67, .77), "Caption"))
+		var places: Array = advice.get("places", [])
+		if not places.is_empty():
+			var key := str(advice.key)
+			var next := int(advisor_steps.get(key, 0)) % places.size()
+			var go := Button.new()
+			go.name = "GoThere"
+			go.text = str(answer.get("go", "")) + ("  %d/%d" % [next + 1, places.size()] if places.size() > 1 else "")
+			go.focus_mode = Control.FOCUS_NONE
+			go.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+			go.pressed.connect(func():
+				var place: Array = places[next]
+				advisor_steps[key] = next + 1
+				if jump.is_valid():
+					jump.call(Vector2(float(place[0]), float(place[1])))
+				queue_free())
+			row.add_child(go)
+		column.add_child(card)
+
+# The chart: a button per series and per range above it; the chart keeps its pointer while the window refreshes.
+func fill_history(column: VBoxContainer) -> void:
+	var answer: Dictionary = core.query("city_history")
+	if answer.get("kind", "") != "city_history":
+		return
+	if not (is_instance_valid(history_chart) and history_chart.is_inside_tree() and history_chart.get_parent() == column):
+		clear(column)
+		heading(column, str(answer.title))
+		var choices := HBoxContainer.new()
+		choices.name = "HistoryChoices"
+		choices.add_theme_constant_override("separation", 6)
+		var series_group := ButtonGroup.new()
+		for index in answer.series.size():
+			var button := Button.new()
+			button.text = str(answer.series[index].label)
+			button.toggle_mode = true
+			button.button_group = series_group
+			button.button_pressed = index == history_series
+			button.focus_mode = Control.FOCUS_NONE
+			button.pressed.connect(func():
+				history_series = index
+				history_chart.choose(history_series, history_span)
+				summarize(column))
+			choices.add_child(button)
+		var gap := Control.new()
+		gap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		choices.add_child(gap)
+		var span_group := ButtonGroup.new()
+		for index in answer.ranges.size():
+			var button := Button.new()
+			button.text = str(answer.ranges[index])
+			button.toggle_mode = true
+			button.button_group = span_group
+			button.button_pressed = index == history_span
+			button.focus_mode = Control.FOCUS_NONE
+			button.pressed.connect(func():
+				history_span = index
+				history_chart.choose(history_series, history_span))
+			choices.add_child(button)
+		column.add_child(choices)
+		var summary := Label.new()
+		summary.name = "HistorySummary"
+		column.add_child(summary)
+		history_chart = HistoryChart.new()
+		history_chart.name = "HistoryChart"
+		history_chart.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		column.add_child(history_chart)
+		history_chart.choose(history_series, history_span)
+	history_chart.set_history(answer)
+	summarize(column)
+
+# The latest value of the series and how it changed over a year (or since the record began).
+func summarize(column: VBoxContainer) -> void:
+	var summary: Label = column.get_node_or_null("HistorySummary")
+	var history: Dictionary = history_chart.history
+	var samples: Array = history.get("samples", [])
+	if summary == null or samples.is_empty():
+		if summary != null:
+			summary.text = ""
+		return
+	var now := int(samples[-1].values[history_series])
+	var back := mini(12, samples.size() - 1)
+	var then := int(samples[-1 - back].values[history_series])
+	var change := now - then
+	var percent := bool(history.series[history_series].percent)
+	var sign := "+" if change > 0 else ""
+	summary.text = "%s: %s%s   (%s%s%s %s)" % [str(history.series[history_series].label), HistoryChart.grouped(now), "%" if percent else "",
+		sign, HistoryChart.grouped(change), "%" if percent else "", str(history.in_a_year if back == 12 else history.since_start)]
+	# Unrest is the one series that is better falling.
+	var better := change < 0 if history_series == 4 else change > 0
+	summary.add_theme_color_override("font_color", Color(.93, .90, .84) if change == 0 else (SEVERITY[0] if better else SEVERITY[2]))
+
+# The trade summary: a card per partner, then the goods in storage with who would buy them; the core judges each line.
+func fill_trade(column: VBoxContainer) -> void:
+	var answer: Dictionary = core.query("trade_summary")
+	heading(column, str(answer.get("title", "")))
+	var target: VBoxContainer = column
+	for item in answer.get("lines", []):
+		if bool(item.header):
+			target = column
+			column.add_child(HSeparator.new())
+			column.add_child(coloured(str(item.left), TONES.gold, "Subheading"))
+			continue
+		if bool(item.card):
+			var card := PanelContainer.new()
+			card.name = "Partner"
+			column.add_child(card)
+			target = VBoxContainer.new()
+			target.add_theme_constant_override("separation", 2)
+			card.add_child(target)
+		elif int(item.indent) == 0:
+			target = column
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+		var gap := Control.new()
+		gap.custom_minimum_size = Vector2(18 * int(item.indent), 0)
+		row.add_child(gap)
+		var left := coloured(str(item.left), TONES.get(str(item.left_tone), TONES.text), "Subheading" if bool(item.heading) else "")
+		left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(left)
+		if not str(item.right).is_empty():
+			var right := coloured(str(item.right), TONES.get(str(item.right_tone), TONES.text))
+			right.autowrap_mode = TextServer.AUTOWRAP_OFF
+			if right.text.length() > 40:
+				right.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				right.custom_minimum_size = Vector2(420, 0)
+			right.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+			row.add_child(right)
+		target.add_child(row)

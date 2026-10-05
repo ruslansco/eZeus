@@ -1,6 +1,6 @@
 extends PanelContainer
-# The red notice at the top of the city while an enemy force or a monster is in it: how many invaders still stand (or which monster stalks
-# the city), and a button that takes the camera to them. The core says so in every snapshot during an invasion (`invasion`, `invaders`,
+# The red notice at the top of the city while an enemy force is in it: how many invaders still stand, and a button that takes the camera
+# to them. (Monsters have their own button and card beside the journal, ui/monster_card.gd; main.gd passes no monster here.) The core says so in every snapshot during an invasion (`invasion`, `invaders`,
 # `invader_at`) or a monster's visit (`monsters`, `monster`, `monster_at`) and says nothing in peace. The army
 # does not defend by itself for a human player (the engine's own defence runs only for computer-controlled cities): the player calls the
 # companies out and places their banners with the army panel. Built by main.gd (no scene of its own).

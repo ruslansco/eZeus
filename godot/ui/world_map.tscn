@@ -38,7 +38,7 @@ theme_override_constants/separation = 14
 [node name="MapFrame" type="PanelContainer" parent="Themed/Margin/Row" unique_id=1301147352]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"Card"
+theme_type_variation = &"AtlasFrame"
 
 [node name="MapBox" type="Control" parent="Themed/Margin/Row/MapFrame" unique_id=674911477]
 unique_name_in_owner = true
@@ -71,14 +71,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 
-[node name="AtlasHeading" type="VBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
+[node name="AtlasHeading" type="PanelContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
 offset_left = 24.0
 offset_top = 20.0
-offset_right = 620.0
-offset_bottom = 95.0
+offset_right = 460.0
+offset_bottom = 98.0
+mouse_filter = 2
+theme_type_variation = &"AtlasHeadingPanel"
+
+[node name="Titles" type="VBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading"]
+layout_mode = 2
 mouse_filter = 2
 
-[node name="AtlasTitle" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading"]
+[node name="AtlasTitle" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading/Titles"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"AtlasTitle"
@@ -86,9 +91,10 @@ theme_override_colors/font_shadow_color = Color(0.01, 0.04, 0.07, 0.95)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 3
 text = "The Aegean world"
+autowrap_mode = 3
 mouse_filter = 2
 
-[node name="AtlasCaption" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading"]
+[node name="AtlasCaption" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasHeading/Titles"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Caption"
@@ -98,32 +104,45 @@ theme_override_constants/shadow_offset_y = 2
 text = "City states of the ancient world"
 mouse_filter = 2
 
-[node name="AtlasControls" type="HBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
+[node name="AtlasToolbar" type="PanelContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
+unique_name_in_owner = true
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -230.0
-offset_top = -101.0
-offset_right = 230.0
-offset_bottom = -55.0
+offset_left = -300.0
+offset_top = -134.0
+offset_right = 300.0
+offset_bottom = -18.0
+grow_vertical = 0
+theme_type_variation = &"AtlasToolbar"
+mouse_filter = 2
+
+[node name="Tools" type="VBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar"]
+layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="AtlasOverview" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+[node name="AtlasControls" type="HBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools"]
+layout_mode = 2
+theme_override_constants/separation = 6
+mouse_filter = 2
+
+[node name="AtlasOverview" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 size_flags_horizontal = 3
 text = "Overview"
 
-[node name="AtlasFocus" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+[node name="AtlasFocus" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 size_flags_horizontal = 3
 text = "Focus city"
 
-[node name="AtlasZoomOut" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+[node name="AtlasZoomOut" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -131,7 +150,7 @@ custom_minimum_size = Vector2(44, 0)
 text = "−"
 tooltip_text = "Zoom out"
 
-[node name="AtlasZoomIn" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasControls"]
+[node name="AtlasZoomIn" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
@@ -139,27 +158,27 @@ custom_minimum_size = Vector2(44, 0)
 text = "+"
 tooltip_text = "Zoom in"
 
-[node name="AtlasHint" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox"]
+[node name="AtlasHint" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools"]
 unique_name_in_owner = true
-anchor_left = 0.08
-anchor_top = 1.0
-anchor_right = 0.92
-anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = -50.0
-offset_right = 0.0
-offset_bottom = -8.0
+layout_mode = 2
 theme_type_variation = &"AtlasHint"
 horizontal_alignment = 1
-vertical_alignment = 1
 autowrap_mode = 3
 text = "Drag to orbit · Wheel to zoom · Right drag to pan"
 mouse_filter = 2
 
-[node name="Side" type="PanelContainer" parent="Themed/Margin/Row" unique_id=1705860603]
-custom_minimum_size = Vector2(380, 0)
+[node name="AtlasKeys" type="Label" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Card"
+theme_type_variation = &"AtlasHint"
+horizontal_alignment = 1
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="Side" type="PanelContainer" parent="Themed/Margin/Row" unique_id=1705860603]
+custom_minimum_size = Vector2(330, 0)
+layout_mode = 2
+theme_type_variation = &"AtlasPanel"
 
 [node name="Column" type="VBoxContainer" parent="Themed/Margin/Row/Side" unique_id=1953410824]
 layout_mode = 2
@@ -173,6 +192,7 @@ theme_override_constants/separation = 6
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 40)
 layout_mode = 2
+size_flags_vertical = 4
 focus_mode = 0
 text = "◀"
 
@@ -208,6 +228,7 @@ autowrap_mode = 3
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 40)
 layout_mode = 2
+size_flags_vertical = 4
 focus_mode = 0
 text = "▶"
 

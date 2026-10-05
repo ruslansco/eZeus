@@ -35,11 +35,13 @@ void eMissile::incTime(const int by) {
     const bool f = mPath.finished();
     if(f) {
         if(mFinish) mFinish->act();
+        mBoard.observeMissile(this,1);
         changeTile(nullptr);
     }
 }
 
 void eMissile::destroy() {
+    if(mTile) mBoard.observeMissile(this,2);
     changeTile(nullptr);
 }
 

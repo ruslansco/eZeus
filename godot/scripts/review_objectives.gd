@@ -15,6 +15,8 @@ func shot(city: Node3D, name: String) -> void:
 func run(city: Node3D, phase: String) -> void:
 	var hud: Control = city.hud
 	var okay := true
+	# City load stages in microseconds (main.receive_state's first snapshot), for model-loading changes.
+	print("STARTUP_TIMING ", JSON.stringify(city.startup_timing))
 	await city.get_tree().create_timer(2.5).timeout
 	var episode: Dictionary = city.core.query("episode")
 	okay = okay and not episode.has("error") and not episode.get("goals", []).is_empty()

@@ -15,8 +15,9 @@ ePlayerConquestEventBase::~ePlayerConquestEventBase() {
     removeConquestEvent();
 }
 
-void ePlayerConquestEventBase::addAres() {
+void ePlayerConquestEventBase::addAres(const eCityId aresCity) {
     mForces.fAres = true;
+    mForces.fAresCity = aresCity;
 }
 
 void ePlayerConquestEventBase::removeConquestEvent() {

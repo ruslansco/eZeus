@@ -1,0 +1,30 @@
+{
+  "content_id": "procedural_water_life_v1",
+  "created": "2026-10-04",
+  "authoring_source": "godot/scripts/water_life.gd",
+  "inputs": [
+    "original analytic fish spheres/fins and radial urchin spines",
+    "read-only native fish/urchin flags and collection action"
+  ],
+  "legacy_art_inputs": [],
+  "provenance_status": "needs_evidence",
+  "scale": "one world unit per native tile",
+  "budgets": {
+    "vertices_per_mesh_including_lod": 1200,
+    "spatial_section_tiles": 32,
+    "worker_effects": 128,
+    "bubbles_per_worker": 3
+  },
+  "animation": "interpolated native gameplay time; GPU swimming schools; authored 40-sample collect clips with 0.22-second entry, exit and work-state blends; phase-gated foam and three tiny diver bubbles",
+  "lod": "reduced fish and urchin geometry at projected error 0.015; batches hidden past 110 world units",
+  "limitations": [
+    "opaque sea uses a surface-tinted wildlife visualization rather than underwater refraction",
+    "urchins are attached clusters, not swimming animals"
+  ],
+  "gathering_sources": [
+    "eZeus/tools/godot_fishing_boat.py",
+    "art/characters/people/people2.py:urchin_gatherer",
+    "eZeus/tools/godot_gathering_art.py:retime_urchin"
+  ],
+  "runtime_motion_source": "godot/scripts/gathering_motion.gd"
+}

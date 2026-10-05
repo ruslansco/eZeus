@@ -2,7 +2,7 @@
 
 #include "buildings/esmallhouse.h"
 #include "buildings/eelitehousing.h"
-#include "buildings/ehouseneeds.h"
+#include "buildings/ehousecard.h"
 #include "engine/egameboard.h"
 #include "epanelstyle.h"
 #include "efonts.h"
@@ -16,21 +16,12 @@
 #include <cstdio>
 
 namespace {
-std::string tr(const std::string& key, const std::string& fallback) {
-    const auto& s = eLanguage::text(key);
-    return s.empty() ? fallback : s;
-}
 
 SDL_Color alpha(SDL_Color c, const double a) {
     c.a = static_cast<Uint8>(std::round(c.a*std::clamp(a, 0.0, 1.0)));
     return c;
 }
 
-std::string oneDecimal(const double v) {
-    char buf[32];
-    std::snprintf(buf, sizeof(buf), "%.1f", v);
-    return buf;
-}
 
 const SDL_Color kRed{240, 96, 74, 255};
 const SDL_Color kGreen{128, 214, 146, 255};
@@ -67,57 +58,12 @@ eHouseHoverCard::eText& eHouseHoverCard::addText(
 }
 
 bool eHouseHoverCard::setHouse(eHouseBase* const h) {
-    if(!h || h->people() <= 0) return false;
-    const bool elite = h->type() == eBuildingType::eliteHousing;
-    const int maxL = elite ? 4 : 6;
-    const int level = std::clamp(h->level(), 0, maxL);
-
-    const auto has = eHouseNeeds::has(h);
-    const auto needs = [elite](const int l) {
-        return eHouseNeeds::needs(elite, l);
-    };
-    const int supported = eHouseNeeds::supportedLevel(h);
-
-    // what to list: the next level's needs, or the current one's if it slips
-    int tone = 0;
-    std::string status;
-    int target = -1;
-    const auto name = [elite](const int l) {
-        return eLanguage::zeusText(29, elite ? 8 + l : l);
-    };
-    if(supported < level) {
-        tone = 1;
-        status = tr("house_card_decline", "Will decline, missing:");
-        target = level;
-    } else if(level >= maxL) {
-        tone = 2;
-        status = tr("house_card_top", "The finest home of its kind");
-    } else if(supported > level) {
-        tone = 2;
-        status = tr("house_card_improving", "Improving soon") + ": " + name(level + 1);
-        target = level + 1;
-    } else {
-        status = tr("house_card_next", "Next level") + ": " + name(level + 1);
-        target = level + 1;
-    }
-
-    const auto& board = h->getBoard();
-    const bool science = board.atlantean(h->cityId());
-    const int venuesNeed = target >= 0 ? needs(target).fVenues : 0;
-
-    std::string sig = std::to_string(level) + "|" + std::to_string(tone) + "|" +
-                      std::to_string(target) + "|" + std::to_string(h->people()) + "|" +
-                      std::to_string(has.fFood) + "," + std::to_string(has.fWater) + "," +
-                      std::to_string(has.fFleece) + "," + std::to_string(has.fOil) + "," +
-                      std::to_string(has.fArms) + "," + std::to_string(has.fWine) + "," +
-                      std::to_string(has.fHorse) + "," + std::to_string(has.fVenues) + "," +
-                      oneDecimal(has.fAppeal) + "|" + std::to_string(h->philosophersInventors() > 0) +
-                      std::to_string(h->actorsAstronomers() > 0) + std::to_string(h->athletesScholars() > 0) +
-                      std::to_string(h->competitorsCurators() > 0) + eLanguage::language();
+    const auto card = eHouseCards::card(h);
+    if(!card.fValid) return false;
+    const auto sig = card.signature();
     if(sig == mSignature) return true;
     mSignature = sig;
     clear();
-
     const auto res = resolution();
     const double m = res.multiplier();
     const auto u = [m](const double v) { return static_cast<int>(std::round(v*m)); };
@@ -127,21 +73,19 @@ bool eHouseHoverCard::setHouse(eHouseBase* const h) {
     const int noteF = std::max(8, static_cast<int>(std::round(textF*0.88)));
     int wMax = u(230);
 
-    mLevel = level;
-    mLevels = maxL + 1;
-    mTone = tone;
+    mLevel = card.fLevel;
+    mLevels = card.fLevels;
+    mTone = card.fTone;
 
     int y = pad;
     {
-        auto& t = addText(name(level), titleF, SDL_Color{255, 222, 140, 255}, pad, y,
+        auto& t = addText(card.fName, titleF, SDL_Color{255, 222, 140, 255}, pad, y,
                           eFontRole::display);
         wMax = std::max(wMax, t.fW + 2*pad);
         y += t.fH;
     }
     {
-        const auto people = std::to_string(h->people()) + " " +
-                            tr("house_card_residents", "residents");
-        auto& t = addText(people, textF, kDim, pad, y);
+        auto& t = addText(card.fResidents, textF, kDim, pad, y);
         mPipsX = pad + t.fW + u(10);
         mPipsY = y + t.fH/2;
         wMax = std::max(wMax, mPipsX + mLevels*u(10) + pad);
@@ -151,84 +95,19 @@ bool eHouseHoverCard::setHouse(eHouseBase* const h) {
     mRuleY = y;
     y += u(6);
     {
-        const SDL_Color c = tone == 1 ? kRed : tone == 2 ? kGreen : SDL_Color{236, 228, 208, 255};
-        auto& t = addText(status, textF, c, pad, y);
+        const SDL_Color c = card.fTone == 1 ? kRed : card.fTone == 2 ? kGreen : SDL_Color{236, 228, 208, 255};
+        auto& t = addText(card.fStatus, textF, c, pad, y);
         wMax = std::max(wMax, t.fW + 2*pad);
         y += t.fH + u(3);
     }
 
-    if(target >= 0) {
-        const auto n = needs(target);
+    if(!card.fLines.empty()) {
         const int markS = u(11);
         const int iconS = u(17);
         const int iconX = pad + markS + u(6);
         const int labelX = iconX + iconS + u(7);
         const int rowH = std::max(iconS, textF + u(2)) + u(5);
-        struct eLine {
-            std::string fSvg;
-            eResourceType fRes = eResourceType::none;
-            std::string fLabel;
-            std::string fDetail;
-            bool fMet = true;
-            std::string fNote;
-        };
-        std::vector<eLine> lines;
-        const auto good = [&](const bool need, const eResourceType type, const int n) {
-            if(!need) return;
-            auto& l = lines.emplace_back();
-            l.fRes = type;
-            l.fLabel = eResourceTypeHelpers::typeName(type);
-            l.fDetail = std::to_string(n);
-            l.fMet = n > 0;
-        };
-        good(n.fFood, eResourceType::food, has.fFood);
-        if(n.fWater) {
-            auto& l = lines.emplace_back();
-            l.fSvg = "water";
-            l.fLabel = tr("house_card_water", "Water");
-            l.fMet = has.fWater > 0;
-        }
-        good(n.fFleece, eResourceType::fleece, has.fFleece);
-        good(n.fOil, eResourceType::oliveOil, has.fOil);
-        good(n.fArms, eResourceType::armor, has.fArms);
-        good(n.fWine, eResourceType::wine, has.fWine);
-        good(n.fHorse, eResourceType::horse, has.fHorse);
-        if(n.fVenues > 0) {
-            auto& l = lines.emplace_back();
-            l.fSvg = science ? "science" : "culture";
-            l.fLabel = science ? tr("house_card_science", "Science venues") :
-                                 tr("house_card_culture", "Culture venues");
-            l.fDetail = std::to_string(has.fVenues) + " / " + std::to_string(venuesNeed);
-            l.fMet = has.fVenues >= n.fVenues;
-            if(!l.fMet) {
-                // the kinds that do not reach this house yet
-                const std::pair<bool, eBuildingType> kinds[] = {
-                    {h->philosophersInventors() > 0, science ? eBuildingType::inventorsWorkshop : eBuildingType::podium},
-                    {h->actorsAstronomers() > 0, science ? eBuildingType::observatory : eBuildingType::theater},
-                    {h->athletesScholars() > 0, science ? eBuildingType::university : eBuildingType::gymnasium},
-                    {h->competitorsCurators() > 0, science ? eBuildingType::museum : eBuildingType::stadium}};
-                std::string lack;
-                for(const auto& k : kinds) {
-                    if(k.first) continue;
-                    if(!lack.empty()) lack += ", ";
-                    lack += eBuilding::sNameForBuilding(k.second);
-                }
-                l.fNote = tr("house_card_reach", "Not reached by:") + " " + lack;
-            }
-        }
-        if(n.fAppeal >= 0) {
-            auto& l = lines.emplace_back();
-            l.fSvg = "aesthetics";
-            l.fLabel = tr("house_card_appeal", "Attractive surroundings");
-            l.fDetail = oneDecimal(has.fAppeal) + " / " + oneDecimal(n.fAppeal);
-            l.fMet = has.fAppeal > n.fAppeal;
-        }
-        // what is missing first
-        std::stable_sort(lines.begin(), lines.end(), [](const eLine& a, const eLine& b) {
-            return !a.fMet && b.fMet;
-        });
-
-        for(const auto& l : lines) {
+        for(const auto& l : card.fLines) {
             const int cy = y + rowH/2;
             auto& mark = mIcons.emplace_back();
             mark.fSvg = l.fMet ? "check" : "close";
@@ -237,11 +116,11 @@ bool eHouseHoverCard::setHouse(eHouseBase* const h) {
             mark.fY = cy;
             mark.fS = markS;
             auto& ic = mIcons.emplace_back();
-            if(!l.fSvg.empty()) {
-                ic.fSvg = l.fSvg;
+            if(!l.fIcon.empty()) {
+                ic.fSvg = l.fIcon;
                 ic.fColor = ePanel::kGoldPale;
             } else {
-                ic.fRes = eResourceTypeHelpers::icon(res.uiScale(), l.fRes);
+                ic.fRes = eResourceTypeHelpers::icon(res.uiScale(), l.fResource);
             }
             ic.fX = iconX + iconS/2;
             ic.fY = cy;

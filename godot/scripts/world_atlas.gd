@@ -9,6 +9,11 @@ const EXTENT := Vector2(32.0,28.18)
 const RADIUS := 100.0
 const GRID := Vector2i(256,226)
 const Marker = preload("res://ui/world_marker.gd")
+const KeyBindings = preload("res://scripts/key_bindings.gd")
+const PlaySettings = preload("res://scripts/play_settings.gd")
+const MIN_PITCH := PI * 25.0 / 180.0
+const MAX_PITCH := PI * 75.0 / 180.0
+var input_blocked := false
 var viewport: SubViewport
 var scene: Node3D
 var camera: Camera3D
@@ -66,6 +71,20 @@ func _ready() -> void:
 	scene.add_child(city_root)
 	resized.connect(func(): refresh_camera(); camera_changed.emit())
 	set_process(false)
+	KeyBindings.apply_input_map()
+	get_tree().root.focus_exited.connect(release_camera_input,CONNECT_DEFERRED)
+
+func release_camera_input() -> void:
+	dragging=false;pan_drag=false
+	var codes: Array=[KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN,KEY_SHIFT]
+	for id in KeyBindings.HELD:
+		Input.action_release(id)
+		codes.append(KeyBindings.code(id)&KEY_CODE_MASK)
+	for code in codes:
+		var released:=InputEventKey.new()
+		released.physical_keycode=code;released.pressed=false
+		Input.parse_input_event(released)
+	Input.flush_buffered_events()
 
 func _environment() -> void:
 	var world:=WorldEnvironment.new()
@@ -102,8 +121,8 @@ func _environment() -> void:
 	var sun:=DirectionalLight3D.new()
 	sun.name="AegeanSun"
 	sun.rotation_degrees=Vector3(-43,-38,0)
-	sun.light_color=Color(1,.85,.61)
-	sun.light_energy=1.25
+	sun.light_color=Color(1,.94,.83)
+	sun.light_energy=1.15
 	sun.shadow_enabled=true
 	sun.directional_shadow_mode=DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
 	sun.directional_shadow_max_distance=60
@@ -113,7 +132,7 @@ func set_active(value: bool) -> void:
 	active=value
 	viewport.render_target_update_mode=SubViewport.UPDATE_ALWAYS if value else SubViewport.UPDATE_DISABLED
 	set_process(value)
-	if not value: dragging=false
+	if not value: dragging=false; pan_drag=false
 
 func configure(world: Dictionary) -> void:
 	var key:="greece" if int(world.map)<10 else "poseidon%d"%(int(world.map)-9)
@@ -187,7 +206,7 @@ func _build_landscape() -> void:
 	ocean.name="LivingAegean"
 	var globe:=SphereMesh.new()
 	globe.radius=RADIUS;globe.height=RADIUS*2
-	globe.radial_segments=128;globe.rings=64
+	globe.radial_segments=192;globe.rings=96
 	ocean.mesh=globe
 	ocean.position.y=-RADIUS
 	var sea:=ShaderMaterial.new()
@@ -199,7 +218,7 @@ func _build_landscape() -> void:
 	_woodland()
 	_clouds()
 	_ships()
-	geometry_triangles=GRID.x*GRID.y*2+128*64*2+1600*24+12*2+7*92
+	geometry_triangles=GRID.x*GRID.y*2+192*96*2+1600*24+12*2+7*92
 
 func _woodland() -> void:
 	if tree_mesh==null:
@@ -225,7 +244,10 @@ func _woodland() -> void:
 		if data.b>.96 and data.a>.45 and data.r*3.6>.2 and data.r*3.6<1.2 and places.size()<1600:
 			places.append(surface_point(uv,.065))
 	multi.instance_count=places.size()
-	for i in places.size(): multi.set_instance_transform(i,Transform3D(Basis.IDENTITY,places[i]))
+	for i in places.size():
+		var width:=rng.randf_range(.7,1.65)
+		var height:=rng.randf_range(.75,1.65)
+		multi.set_instance_transform(i,Transform3D(Basis.IDENTITY.scaled(Vector3(width,height,width)),places[i]))
 	wood.multimesh=multi
 	wood.cast_shadow=GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	scene.add_child(wood)
@@ -355,7 +377,36 @@ func reset_view() -> void:
 	camera_changed.emit()
 
 func zoom(factor: float) -> void:
-	desired_distance=clampf(desired_distance*factor,12,55)
+	desired_distance=clampf(desired_distance*pow(factor,PlaySettings.zoom_scale()),12,55)
+
+func camera_input_allowed() -> bool:
+	if not active or cinematic or input_blocked or not get_tree().root.has_focus(): return false
+	var access:=get_tree().root.get_node_or_null("UiAccess")
+	if access!=null and access.dialog_open: return false
+	var focus:=get_viewport().gui_get_focus_owner()
+	return not (focus is LineEdit or focus is TextEdit) and not Input.is_key_pressed(KEY_CTRL) and not Input.is_key_pressed(KEY_META) and not Input.is_key_pressed(KEY_ALT)
+
+func pan_camera(move: Vector2, amount: float) -> void:
+	var right:=Vector3(cos(yaw),0,-sin(yaw))
+	var forward:=Vector3(-sin(yaw),0,-cos(yaw))
+	target+=(right*move.x+forward*move.y)*amount
+	target.x=clampf(target.x,-EXTENT.x*.5,EXTENT.x*.5)
+	target.z=clampf(target.z,-EXTENT.y*.5,EXTENT.y*.5)
+	# Orbit around the visible terrain, using the same field as city anchors.
+	target.y=surface_point(Vector2(target.x/EXTENT.x+.5,target.z/EXTENT.y+.5)).y
+
+func keyboard_camera(delta: float) -> bool:
+	if not camera_input_allowed(): return false
+	var turn:=Input.get_axis("orbit_left","orbit_right")
+	var tilt:=Input.get_axis("tilt_down","tilt_up")
+	var move:=Vector2(Input.get_axis("pan_left","pan_right"),Input.get_axis("pan_back","pan_forward"))
+	move.x+=float(Input.is_physical_key_pressed(KEY_RIGHT))-float(Input.is_physical_key_pressed(KEY_LEFT))
+	move.y+=float(Input.is_physical_key_pressed(KEY_UP))-float(Input.is_physical_key_pressed(KEY_DOWN))
+	if turn==0 and tilt==0 and move.is_zero_approx(): return false
+	yaw=fposmod(yaw+turn*deg_to_rad(65)*PlaySettings.turn_scale()*delta,TAU)
+	pitch=clampf(pitch+tilt*deg_to_rad(35)*PlaySettings.turn_scale()*delta,MIN_PITCH,MAX_PITCH)
+	if not move.is_zero_approx(): pan_camera(move.normalized(),distance*.42*PlaySettings.pan_scale()*delta*(2.0 if Input.is_key_pressed(KEY_SHIFT) else 1.0))
+	return true
 
 func refresh_camera() -> void:
 	if camera==null: return
@@ -365,7 +416,7 @@ func refresh_camera() -> void:
 	camera.look_at(target,Vector3.UP)
 
 func _gui_input(event: InputEvent) -> void:
-	if not active or cinematic: return
+	if not camera_input_allowed(): return
 	if event is InputEventMouseButton:
 		if event.button_index==MOUSE_BUTTON_WHEEL_UP and event.pressed: zoom(.88); accept_event()
 		if event.button_index==MOUSE_BUTTON_WHEEL_DOWN and event.pressed: zoom(1/.88); accept_event()
@@ -374,22 +425,21 @@ func _gui_input(event: InputEvent) -> void:
 			accept_event()
 	if event is InputEventMouseMotion and dragging:
 		if pan_drag:
-			var right:=Vector3(cos(yaw),0,-sin(yaw))
-			var forward:=Vector3(sin(yaw),0,cos(yaw))
-			target-=right*event.relative.x*distance*.0013+forward*event.relative.y*distance*.0013
-			target.x=clampf(target.x,-10,10); target.z=clampf(target.z,-9,9)
+			pan_camera(Vector2(-event.relative.x,event.relative.y),distance*.0013*PlaySettings.pan_scale())
 		else:
-			yaw-=event.relative.x*.004
-			pitch=clampf(pitch+event.relative.y*.003,.62,1.38)
+			yaw-=event.relative.x*.004*PlaySettings.turn_scale()
+			pitch=clampf(pitch+event.relative.y*.003*PlaySettings.turn_scale(),MIN_PITCH,MAX_PITCH)
 		refresh_camera(); camera_changed.emit(); accept_event()
 	if event is InputEventMagnifyGesture: zoom(1.0/event.factor); accept_event()
 	if event is InputEventPanGesture:
-		yaw-=event.delta.x*.012; pitch=clampf(pitch+event.delta.y*.008,.62,1.38)
+		yaw-=event.delta.x*.012*PlaySettings.turn_scale(); pitch=clampf(pitch+event.delta.y*.008*PlaySettings.turn_scale(),MIN_PITCH,MAX_PITCH)
 		refresh_camera(); camera_changed.emit(); accept_event()
 
 func _process(delta: float) -> void:
 	clock+=delta
 	var changed:=not cinematic and absf(distance-desired_distance)>.005
+	changed=keyboard_camera(delta) or changed
+	if not camera_input_allowed(): dragging=false
 	if not cinematic: distance=lerpf(distance,desired_distance,1-exp(-delta*9))
 	for cloud in clouds:
 		cloud.node.position.x=cloud.origin.x+sin(clock*.025+cloud.phase)*2.5

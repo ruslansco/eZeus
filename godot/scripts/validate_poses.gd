@@ -64,6 +64,11 @@ func run() -> void:
 			if manifest is Dictionary and int(manifest.get("walk_samples", 0)) > 0:
 				animated.append(file.trim_suffix(".json"))
 	animated.sort()
+	# Scope the same position/texel proof to deliberately re-exported assets.
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--only="):
+			var requested := argument.trim_prefix("--only=").split(",")
+			animated = animated.filter(func(asset): return asset in requested)
 	var stale: Array = []
 	var verified := 0
 	var frames_checked := 0

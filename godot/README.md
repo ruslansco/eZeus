@@ -1,5 +1,83 @@
 # Godot 3D city rebuild
 
+## World-map water, terrain and controls — 4 October 2026
+
+The regional map now has continuous water: the submerged rectangular relief sheet
+is clipped at the coast, and the sea mesh has finer curvature. Nonmetallic ripples,
+turquoise shallows, quieter foam, weathered limestone, varied woodland sizes and
+softer clouds refine the finish. The map keeps its existing artistic elevation.
+
+**Arrow keys or WASD** pan relative to the camera; **Q/E** orbit, **R/F** tilt
+25–75°, and **Shift** pans faster. These share the city's rebindable camera keys
+and speed settings. The on-screen previous/next buttons still select cities.
+Dialogs, text entry, flight and focus loss suppress camera input. Compact framed
+headings/controls and a narrower city panel leave more room for the map; portraits
+stay circular. Owned-city stock comes from the native world response.
+
+Sequential EN/RU map reviews pass **61 checks each**, including a 180-sample
+rendered water comparison and 125%/150% layout checks. Flight reviews pass **37
+each**, and native dealings retain 16 checks plus five integration checks. See
+[atlas contracts](../docs/GODOT_WORLD_ATLAS.md) and
+[validation evidence](../docs/GODOT_VALIDATION.md). Relaunch an existing game to
+load these changes. User art acceptance and sustained minimum-Mac profiling remain
+pending.
+
+## Fishing spots and authored gathering — 4 October 2026
+
+Animated fish schools and spiny urchin clusters identify native water deposits.
+Fishing skiffs now have a seated, hand-driven cast-net cycle: gather, throw,
+settle, haul and stow, with rowing tools put away during work. Urchin gatherers
+use authored dive/reach/recover, bag-carry and deposit clips. A Godot-only timing
+adapter shortens the submerged dip and holds the visible recovery; it does not
+change native collection timing. Entry, exit and work-state transitions blend.
+Small phase-matched surface glints and three diver bubbles replace the oversized
+effects. Motion follows native gameplay time, pause and required decisions.
+
+See [water-life contracts](../docs/GODOT_WATER_LIFE.md) for sources, budgets,
+opaque-water limits and reproducible export/review steps. Run
+`validate_water_life.gd`, `validate_gathering_motion.gd` and
+`python3 tools/review_water_life.py --lang en --record` (or `ru`) for scoped
+checks and designated-city captures. Wider campaign art review, user visual
+acceptance and minimum-Mac profiling remain pending.
+
+## Monster combat effects — 4 October 2026
+
+Hydra now emits green venom breath and travelling shots, visible contact splashes,
+and a dust/debris burst after native building destruction. All 17 monster kinds
+share the projectile/impact pipeline; other species currently use a warm generic
+finish. Effects obey native pause, speed and required decisions. Building fire
+and smoke retain their existing renderer. The new three-headed Hydra now uses
+pose-sampled mouth anchors; see the model handoff below.
+
+See [monster effects contracts](../docs/GODOT_MONSTER_EFFECTS.md) and
+[validation evidence](../docs/GODOT_VALIDATION.md). Review the real native Hydra
+attack with disposable preferences: `python3 tools/review_monster_effects.py
+--lang en --record` (also `--lang ru`; recording needs ffmpeg or Pillow).
+
+## Hydra reference model — 4 October 2026
+
+The new three-headed Hydra replaces the Godot model: heavy four-legged body,
+curving necks, dark scales, fitted belly bands, crimson eyes and black spines.
+It measures about 2.1 times a displayed citizen and 81% of Zeus body height.
+Walking, breathing, bites, venom and collapse use the existing native action
+and gameplay clock. Both UV sets, palette, reduced LODs and baked poses remain.
+
+Read [monster art contracts](../docs/GODOT_MONSTER_ART.md) for the reproducible
+Blender source, editable scene, measured budgets and validators. The previous
+runtime model is preserved in the parent art workspace. User visual acceptance,
+full material baking, slope foot IK and minimum-Mac profiling remain pending.
+
+## Elder curator portrait reference — 4 October 2026
+
+The Character panel now uses one detailed **68-year-old curator** candidate with
+aged facial structure, fine swept-back hair, shorter fuller eyebrows and a short salt-and-pepper
+beard. City walkers retain their existing assets. The panel gives this specimen
+its own material, full mesh detail, 1.5× rendering scale and closer framing;
+switching roles restores ordinary portrait quality settings.
+See [the reusable portrait reference](../docs/GODOT_PORTRAIT_REFERENCE.md) for
+source, rebuild commands, captures, budgets and limits. Visual acceptance remains
+pending; this is one static benchmark, not a catalog rollout.
+
 ## Hillside appearance — 3 October 2026
 
 Exposed slopes now use layered, weathered limestone with subtle surface relief
@@ -53,7 +131,7 @@ for rebuilding and the outstanding visual acceptance/provenance gates.
 
 The **World map (F2)** is now a living 3D regional globe with raised coastlines,
 mountains, animated water, drifting clouds, decorative sailing ships and small
-city landmarks. Drag to orbit, wheel/pinch to zoom, right drag to pan; Overview
+city landmarks. Arrow keys/WASD pan, Q/E orbit and R/F tilt; mouse drag orbits, wheel/pinch zooms and right drag pans. Overview
 and Focus city frame the region or selected city. Names, relationships, trade,
 requests and military actions still come from the native world. The city stays
 held while the atlas is open; closing restores its rendering and prior running
@@ -454,7 +532,7 @@ worker threads; set `EZEUS_DECODE_TEXTURES=1` only to compare against the old fu
 
 Interface: text is `tr()` keyed by English source from `data/ui_strings.csv` (godot's CSV import makes the `.translation` files named in
 `project.godot`); the HUD is `ui/hud.tscn` + `ui/hud.gd`, styled by `ui/lapis_gold.tres` (`scripts/build_ui_theme.gd`); F3 toggles the developer
-overlay. Drag the road tool to lay a road, or the wall tool to wall the outline of a rectangle (Shift fills it; T turns a gatehouse), or the housing, elite housing and park tools to fill an area; F2 (or Game, World map…) opens the world map: the cities on the map picture, their regard and goods, asking, giving and fulfilling, and the military dealings (Raid, Conquer or Reinforce, Aid and strikes, with an enlist-forces dialog and the armies drawn on their roads); a city's request for troops has a working "send troops" button; F4 (or Game, Army…) opens the army: the soldiers' companies with their size and state, Call all out / Send all home, per-company Call out / Send home / Go to / Place banner, flags on the map (a left click on one chooses its company, the right button moves the chosen banner); during an invasion a red notice counts the invaders and has a button that goes to them, and the player orders the defence with the army panel (the soldiers, heroes and gods fight and fall with their own clips); F5/F9 quick save and load, the Game menu lists saves (kept in the per-user
+overlay. Drag the road tool to lay a road, or the wall tool to wall the outline of a rectangle (Shift fills it; T turns a gatehouse), or the housing, elite housing and park tools to fill an area; F2 (or Game, World map…) opens the world map: the cities on the map picture, their regard and goods, asking, giving and fulfilling, and the military dealings (Raid, Conquer or Reinforce, Aid and strikes, with an enlist-forces dialog and the armies drawn on their roads); a city's request for troops has a working "send troops" button; F4 (or Game, Army…) opens the army: the soldiers' companies with their size and state, Call all out / Send all home, per-company Call out / Send home / Go to / Place banner, flags on the map (a left click on one chooses its company, the right button moves the chosen banner); during an invasion a red notice counts the invaders and has a button that goes to them, and the player orders the defence with the army panel (the soldiers, heroes and gods fight and fall with their own clips); while a monster is at large a red button with the count stands under the journal and opens a card with its message, the hero who can slay it and Go to the monster / Build the hero's hall / Show the hero's hall (a hall the engine allows mid-game appears in the Build menu at once); F5/F9 quick save and load, the Game menu lists saves (kept in the per-user
 `user://saves` directory, never in the repository); the minimap, messages and autosave are described in the migration document. Seeded replays: `EZEUS_SEED`, `tools/replay_parity.py` and `validate_replay.gd` compare the SDL executable and the embedded core.
 
 The build helper creates only the extension target and signs its private
@@ -546,9 +624,10 @@ outside closes it and stops the voice. The core's `character_info <walker id>` w
 looking at a walker never moves the simulation generator); a trailer speaks for its driver. Review with
 `tools/review_character_panel.py --lang en` (or `ru`).
 
-## Greek portrait faces — 4 October 2026
+## Character window portraits — 4 October 2026
 
-The character window shows men with a designed Greek face and curly hair and beard (black, grey or white): portrait
-models in `assets/portraits/` made by `tools/export_portraits.py` (Blender, about 20 s each, then `godot --import`), opened
-on the head and shoulders (wheel or double click for the whole figure). The city keeps the crowd models. Contract:
-`docs/GODOT_CHARACTER_ART.md`; capture with `scripts/review_portraits.gd` (`--only=walker_a,walker_b`).
+Roles with a portrait show a pre-rendered still (`assets/portraits/<asset>.png`, about 0.1 MB imported) instead of the live 3D
+figure; others keep the live crowd model. Sources are built outside the project (`build-portraits/`, git-ignored) by
+`tools/godot_portrait_export.py` and rendered by `tools/render_portraits.py`, then `godot --import`. The curator, storehouseman,
+hoplite and philosopher have painted images (from `art/ai_portraits`); listing a role in `portrait_models`
+(`ui/character_panel.gd`) shows its 3D model again. Contract: `docs/GODOT_CHARACTER_ART.md` and `docs/GODOT_PORTRAIT_REFERENCE.md`.

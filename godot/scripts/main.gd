@@ -80,9 +80,16 @@ const CityDialog = preload("res://ui/city_dialog.gd")
 const TriremeOrders = preload("res://scripts/trireme_orders.gd")
 const CitySwitch = preload("res://ui/city_switch.gd")
 const UnitSelection = preload("res://scripts/unit_selection.gd")
+const RouteEditor = preload("res://scripts/route_editor.gd")
+const EditorPanel = preload("res://ui/editor_panel.gd")
+const HouseCard = preload("res://ui/house_card.gd")
+const BuildingFires = preload("res://scripts/building_fires.gd")
+const WaterLife = preload("res://scripts/water_life.gd")
+const MonsterEffects = preload("res://scripts/monster_effects.gd")
 const Leaders = preload("res://scripts/leaders.gd")
 const ArmyPanelScene = preload("res://ui/army_panel.tscn")
 const InvasionBanner = preload("res://ui/invasion_banner.gd")
+const MonsterCard = preload("res://ui/monster_card.gd")
 const EnlistDialog = preload("res://ui/enlist_dialog.gd")
 const CharacterPanel = preload("res://ui/character_panel.gd")
 const START_MENU := "res://ui/start_menu.tscn"
@@ -129,6 +136,14 @@ var terrain_bridges = TerrainBridges.new()
 var trireme_orders = TriremeOrders.new()
 var city_switch = CitySwitch.new()
 var unit_selection = UnitSelection.new()
+var route_editor = RouteEditor.new()
+# The adventure editor (ui/editor_panel.gd), when the start menu opened an adventure for editing.
+var editor_panel = null
+var house_card = HouseCard.new()
+# Flames and smoke over the burning buildings (the snapshot's `fires`).
+var building_fires = BuildingFires.new()
+var water_life = WaterLife.new()
+var monster_effects = MonsterEffects.new()
 var extent := Vector2i(32, 32)
 var chunks: Dictionary = {}
 var terrain_levels: Dictionary = {}
@@ -158,6 +173,8 @@ var escape_menu: Control
 var menu_resume := false
 var menu_held_before := false
 var character_panel: Control
+# Render-only: where scripts/render_portraits.gd keeps the portrait models (never set in the game).
+var character_portrait_source := ""
 var character_resume := false
 var character_held_before := false
 var world_render_state:Dictionary={}
@@ -173,12 +190,15 @@ var placing_banner := -1
 var enlist_dialog
 # The red notice while an enemy force is in the city (the snapshot carries `invaders` only then).
 var invasion_banner
+var monster_card
+var monster_card_age := 0.0
 var building_index: Dictionary = {}
 # The partner city of the trade post or pier being placed (its number in the core's list), or -1.
 var trade_partner := -1
 # The tile the current placement preview was made for: the pointer tile, or a nearby fitting shore tile for a pier.
 var placement_cell := Vector2i.ZERO
 var trade_buildings := 0
+var buildable_revision := 0
 var plaza_material: StandardMaterial3D
 var placement_result: Dictionary = {}
 var placement_key := ""
@@ -238,6 +258,8 @@ var pyramid_review := ""
 var menu_rest_review := ""
 var controls_review := ""
 var objectives_review := ""
+# A copy of a save to photograph its streets (review_street.gd); its folder is the save directory.
+var street_review := ""
 var attack_review := ""
 var rite_review := ""
 var character_review := ""
@@ -269,6 +291,8 @@ func _ready() -> void:
 			controls_review = argument.trim_prefix("--controls-review=")
 		if argument.begins_with("--objectives-review="):
 			objectives_review = argument.trim_prefix("--objectives-review=")
+		if argument.begins_with("--street-review="):
+			street_review = argument.trim_prefix("--street-review=")
 		if argument.begins_with("--attack-review="):
 			attack_review = argument.trim_prefix("--attack-review=")
 		if argument.begins_with("--rite-review="):
@@ -312,6 +336,9 @@ func _ready() -> void:
 	world.add_child(footprint_cells)
 	world.add_child(plazas)
 	world.add_child(altar_fires)
+	world.add_child(building_fires)
+	world.add_child(monster_effects)
+	world.add_child(water_life)
 	world.add_child(army_view.root)
 	overlay_view.city = self
 	world.add_child(overlay_view)
@@ -335,8 +362,12 @@ func _ready() -> void:
 		if Engine.has_meta("ezeus_load"):
 			to_open = str(Engine.get_meta("ezeus_load"))
 			Engine.remove_meta("ezeus_load")
+		if not street_review.is_empty():
+			to_open = street_review
 		DirAccess.make_dir_recursive_absolute(save_directory())
 		var core_language := language if language in ["en", "ru"] else "en"
+		var editing := Engine.has_meta("ezeus_editor")
+		Engine.remove_meta("ezeus_editor")
 		if Engine.has_meta("ezeus_simulation"):
 			# The start menu already opened a new game's adventure; take it over instead of reading it again.
 			var adopted: RefCounted = Engine.get_meta("ezeus_simulation")
@@ -352,6 +383,11 @@ func _ready() -> void:
 		if core.simulation != null and not validate and not Leaders.current().is_empty():
 			core.query("player_name " + Leaders.current())
 		city_switch.attach(self)
+		route_editor.attach(self)
+		house_card.attach(self)
+		if editing and core.simulation != null:
+			editor_panel = EditorPanel.new()
+			editor_panel.attach(self)
 		# What the city may build is the core's answer, so the menu is filled once the city is open.
 		refresh_catalog()
 		if core.simulation != null and state.get("paused", true):
@@ -408,7 +444,9 @@ func setup_lighting() -> void:
 	sun.directional_shadow_max_distance = 70
 	add_child(sun)
 
-const TOOLS := [["select", "Inspect"], ["road", "Road"], ["house", "Housing"], ["demolish", "Demolish"]]
+# The quick tools. Inspecting is the city's resting mode, not a button: a right click, Escape or the tool card's close button
+# returns to it (as the SDL game's right click drops the building tool).
+const TOOLS := [["road", "Road"], ["house", "Housing"], ["demolish", "Demolish"]]
 
 func setup_ui() -> void:
 	var layer := CanvasLayer.new()
@@ -475,6 +513,26 @@ func setup_ui() -> void:
 	invasion_banner = InvasionBanner.new()
 	hud.add_child(invasion_banner)
 	invasion_banner.show_requested.connect(func(cell): jump_to_cell(Vector2(cell)))
+	# The monsters at large: a button in the rail under the journal and the card it opens (ui/monster_card.gd).
+	monster_card = MonsterCard.new()
+	hud.add_child(monster_card)
+	monster_card.attach(hud.get_node("EventRail/RailColumn"), hud.icon("close"), hud.icon("monster"))
+	monster_card.opened.connect(func():
+		hud.set_messages_open(false)
+		refresh_monster_card())
+	monster_card.visibility_changed.connect(place_monster_card)
+	monster_card.go_requested.connect(func(cell): jump_to_cell(Vector2(cell)))
+	monster_card.build_hall_requested.connect(func(tool_name):
+		monster_card.set_open(false)
+		close_inspection()
+		hud.open_category("Heroes' halls")
+		set_tool(tool_name))
+	monster_card.show_hall_requested.connect(func(cell):
+		monster_card.set_open(false)
+		set_tool("select")
+		inspected = cell
+		refresh_inspection()
+		jump_to_cell(Vector2(cell)))
 	army_panel.closed.connect(func():
 		army_view.select(-1)
 		placing_banner = -1
@@ -483,6 +541,7 @@ func setup_ui() -> void:
 	hud.load_requested.connect(load_game)
 	hud.messages_toggled.connect(func(open):
 		if open:
+			monster_card.set_open(false)
 			message_log.mark_read()
 			hud.set_unread(0)
 			hud.set_messages(message_log.entries)
@@ -507,6 +566,7 @@ func change_language() -> void:
 	hud.retranslate()
 	army_panel.retranslate()
 	invasion_banner.retranslate()
+	monster_card.retranslate()
 	placement_key = ""
 	update_hint()
 	if not state.is_empty():
@@ -534,10 +594,15 @@ func update_hint() -> void:
 	if mode in RoadDrag.PATH_TOOLS:
 		hint.text = tr("Drag to lay a row along a path")
 		return
+	if mode in ["goat", "sheep", "cattle"]:
+		hint.text = tr("Click on fertile pasture to place livestock  •  click repeatedly to add more")
+		return
 	hint.text = KeyBindings.idle_hint()
 
 func set_tool(value: String) -> void:
 	road_drag.cancel(self)
+	if route_editor.active and value != "select":
+		route_editor.end()
 	# A tool of a trade partner is "pier:3" or "trade_post:3": the building, then the partner city's number.
 	trade_partner = int(value.get_slice(":", 1)) if value.contains(":") else -1
 	mode = value.get_slice(":", 0)
@@ -551,6 +616,12 @@ func set_tool(value: String) -> void:
 	preview.visible = false
 	hud.select_tool(value)
 	update_hint()
+	if mode == "goat":
+		walker_vat.prefetch(["animal_goat"])
+	elif mode == "sheep":
+		walker_vat.prefetch(["animal_sheep_fleeced", "animal_sheep_nude"])
+	elif mode == "cattle":
+		walker_vat.prefetch(["animal_cattle"])
 
 func turn_placement(direction: int) -> void:
 	# The hippodrome's turn steps through up to eight plates (the core picks among those that fit); the rest turn four ways.
@@ -617,6 +688,8 @@ func reason_text(code: String) -> String:
 		"animal_limit": "Build more sheds, dairies or corrals for more animals",
 		"invalid_city_setting": "That setting is not one the city offers",
 		"not_for_sale": "That city is not for sale",
+		"route_needs_road": "A route goes along roads: click a road",
+		"no_route": "This building's walkers have no route to edit",
 		"no_trireme": "That trireme cannot be given orders now",
 		"invalid_trireme_order": "Choose a trireme, then the water to send it to",
 		"invalid_switch": "This building has no such switch",
@@ -877,6 +950,16 @@ func command_finished(command: String, result: Dictionary) -> void:
 		hint.text = tr("The companies march there.") if not result.has("error") else reason_text(str(result.error))
 	elif command.begins_with("trireme_move"):
 		hint.text = tr("The trireme sails there.") if not result.has("error") else reason_text(str(result.error))
+	elif command.begins_with("route"):
+		if result.get("kind", "") == "route":
+			route_editor.apply(result)
+			if command.begins_with("route_begin") and route_editor.active:
+				close_inspection()
+				hint.text = tr("Click roads to lead the walkers  •  Escape or a right click closes the route")
+			elif command == "route_end":
+				update_hint()
+		else:
+			hint.text = reason_text(str(result.get("error", "")))
 	elif command.begins_with("building_switch"):
 		hint.text = (tr("The wharf builds triremes again.") if command.ends_with(" 1") else tr("The wharf is shut down.")) if not result.has("error") else reason_text(str(result.error))
 	elif command.begins_with("set_tax"):
@@ -917,6 +1000,8 @@ func command_finished(command: String, result: Dictionary) -> void:
 # native .ez format. Loading restarts the scene around the chosen file: every piece of presentation state is
 # rebuilt from the first snapshot exactly as at launch.
 func save_directory() -> String:
+	if not street_review.is_empty():
+		return street_review.get_base_dir()
 	if validate:
 		if validation_save_directory.is_empty():
 			validation_save_directory = ProjectSettings.globalize_path("res://captures/validation-saves-%s-%d"%[language,Time.get_ticks_usec()])
@@ -1106,6 +1191,29 @@ func autosave() -> bool:
 	return saved
 
 # Moves the camera to a tile (the minimap's click): the orbit centre lands on that ground.
+# The core's words on the monsters at large (ui/monster_card.gd).
+func refresh_monster_card() -> void:
+	monster_card_age = 0.0
+	if core.simulation == null:
+		return
+	var answer: Dictionary = core.query("monster_info")
+	if answer.has("monsters"):
+		monster_card.set_monsters(answer.monsters)
+		place_monster_card()
+
+# The card hangs under the right-hand rail, as the journal does, no taller than the screen allows.
+func place_monster_card() -> void:
+	if monster_card == null or not monster_card.visible:
+		return
+	var rail: Control = hud.get_node("%EventRail")
+	var top := rail.offset_top + rail.get_combined_minimum_size().y + 8
+	var wanted: float = monster_card.list.get_combined_minimum_size().y + 80
+	var room := maxf(160, hud.size.y - top - 110)
+	monster_card.offset_right = -16
+	monster_card.offset_left = -16 - 400
+	monster_card.offset_top = top
+	monster_card.offset_bottom = top + minf(wanted, room)
+
 func jump_to_cell(cell: Vector2) -> void:
 	orbit.target = world_position(cell.x, cell.y, 0)
 	orbit.clamp_target()
@@ -1246,13 +1354,33 @@ func receive_state(value: Dictionary) -> void:
 		lap.call("details")
 		street_trees.update(tiles,origin,extent,terrain_geometry,changed)
 		lap.call("street_trees")
+	water_life.update_tiles(self, changed, initial)
+	water_life.receive(value)
 	update_buildings()
+	if value.has("fires"):
+		building_fires.update(value.fires, self)
 	lap.call("buildings")
 	update_walkers()
+	monster_effects.receive(value, self)
 	update_events()
+	# What the city may build changes while it is played (a monster unlocks its slayer's hall, an event allows a building):
+	# the core counts those changes and the Build menu asks again.
+	var revision := int(value.get("buildable_revision", buildable_revision))
+	if revision != buildable_revision:
+		buildable_revision = revision
+		if not initial and core.simulation != null:
+			refresh_catalog()
 	var invader_at: Array = value.get("invader_at", [0, 0])
 	var monster_at: Array = value.get("monster_at", [0, 0])
-	invasion_banner.set_invaders(int(value.get("invaders", 0)), Vector2i(int(invader_at[0]), int(invader_at[1])), int(value.get("monsters", 0)), str(value.get("monster", "")), Vector2i(int(monster_at[0]), int(monster_at[1])))
+	# Invaders keep the notice at the top of the city; monsters have their own button and card beside the journal.
+	invasion_banner.set_invaders(int(value.get("invaders", 0)), Vector2i(int(invader_at[0]), int(invader_at[1])))
+	var monsters_now := int(value.get("monsters", 0))
+	if monster_card != null and monsters_now != monster_card.count:
+		monster_card.set_count(monsters_now)
+		hud._layout_panels()
+		place_monster_card()
+		if monsters_now > 0:
+			refresh_monster_card()
 	if value.has("banners"):
 		banners = value.banners
 		army_view.update(self, banners)
@@ -1763,11 +1891,18 @@ func return_to_start() -> void:
 
 func _process(dt: float) -> void:
 	update_goals(dt)
+	# An open monster card follows the monsters (where they are) and the hero (hall built, summoned, arrived).
+	if monster_card != null and monster_card.visible:
+		monster_card_age += dt
+		if monster_card_age >= 1.0:
+			refresh_monster_card()
 	army_view.process(dt)
 	GameAudio.ambient_tick(dt, core, ambient_tile())
 	if overlay_view.tick(dt, core):
 		apply_overlay_visibility()
 	static_batches.activity.advance(dt)
+	monster_effects.advance(dt)
+	water_life.advance(dt)
 	frame_count += 1
 	if frame_count == 300:
 		print("GODOT_PERFORMANCE fps=", Engine.get_frames_per_second(), " draw_calls=", Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME), " frame=", frame_count)
@@ -1797,12 +1932,18 @@ func _process(dt: float) -> void:
 		if entry.has("roll"):
 			entry.node.rotation.z = entry.roll
 		animate_walker(entry, dt, WalkerMotion.planar_distance(delta))
+		water_life.animate_gatherer(entry, self)
+	water_life.update_workers(self)
 	walker_streets.hover(self)
 	if frame_count % CitizenLod.CHECK_FRAMES == 0 and not walkers.is_empty():
 		citizen_lod.update(walkers, orbit.camera.global_position, static_batches, models)
 	if not state.is_empty():
 		if not world_map.visible and city_switch.city != null:
 			city_switch.update(dt)
+		if route_editor.city != null:
+			route_editor.update(dt)
+		if house_card.city != null:
+			house_card.update(dt)
 		placement_age += dt
 		inspection_age += dt
 		if inspection_age >= .5:
@@ -1849,6 +1990,9 @@ func _process(dt: float) -> void:
 		elif not objectives_review.is_empty() and not captured and frame_count > 80:
 			captured = true
 			await preload("res://scripts/review_objectives.gd").new().run(self, objectives_review)
+		elif not street_review.is_empty() and not captured and frame_count > 80:
+			captured = true
+			await preload("res://scripts/review_street.gd").new().run(self)
 		elif not attack_review.is_empty() and not captured and frame_count > 80:
 			captured = true
 			await preload("res://scripts/review_attack.gd").new().run(self, attack_review)
@@ -1980,6 +2124,9 @@ func pick_tile(screen: Vector2) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if world_flight.busy(): return
+	if editor_panel != null and editor_panel.input(event):
+		get_viewport().set_input_as_handled()
+		return
 	# The atlas owns the city keys; audio's existing shortcut remains available.
 	if world_map.visible and not (event is InputEventKey and event.physical_keycode == KEY_M): return
 	if get_tree().root.get_node("UiAccess").dialog_open:return
@@ -2036,6 +2183,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT and road_drag.active:
 		pick_tile(event.position)
 		road_drag.finish(self, picked if tiles.has(picked) else Vector2i(99999, 99999))
+		return
+	# Route editing takes the map's clicks: a left click on a road adds a guide (or takes one away), the right button closes it.
+	if route_editor.active and event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] and mode == "select":
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			route_editor.end()
+			update_hint()
+		else:
+			pick_tile(event.position)
+			if tiles.has(picked) and not route_editor.toggle(picked):
+				hint.text = reason_text("command_queue_full")
+		get_viewport().set_input_as_handled()
 		return
 	# A group chosen with a box goes there together (the SDL view's right click on a selection).
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT and mode == "select" and unit_selection.has_group(self):
@@ -2150,6 +2308,7 @@ func right_click_city(event: InputEventMouseButton) -> bool:
 		var panel: Control = hud.get_node("%" + name)
 		if panel.is_visible_in_tree() and panel.get_global_rect().has_point(event.position): army_map_click = false
 	if army_map_click: return false
+	if route_editor.active and mode == "select" and not ui_at(hud, event.position): return false
 	get_viewport().set_input_as_handled()
 	if hud.message_panel.visible: hud.set_messages_open(false)
 	elif hud.decision_expanded: hud.set_decision_expanded(false)
@@ -2175,6 +2334,10 @@ func right_click_city(event: InputEventMouseButton) -> bool:
 	return true
 
 func _input(event: InputEvent) -> void:
+	# The editor's keys (Escape) and its right button (putting a tool down) come before the city's.
+	if editor_panel != null and (event is InputEventKey or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT)) and editor_panel.input(event):
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 		if right_click_city(event): return
 	if not (event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode==KEY_ESCAPE or event.keycode==KEY_ESCAPE)):return
@@ -2184,9 +2347,11 @@ func _input(event: InputEvent) -> void:
 		if child is Window and child.visible:return
 	get_viewport().set_input_as_handled()
 	if hud.message_panel.visible:hud.set_messages_open(false);return
+	if monster_card != null and monster_card.visible:monster_card.set_open(false);return
 	if hud.decision_expanded:hud.set_decision_expanded(false);return
 	if hud.get_node("%BuildTray").visible:hud.close_build_tray();return
 	if road_drag.active:road_drag.cancel(self);update_hint();return
+	if route_editor.active:route_editor.end();update_hint();return
 	if placing_banner>=0:end_banner_placement();return
 	if unit_selection.has_group(self):unit_selection.clear(self);update_hint();return
 	if trireme_orders.selected>=0:trireme_orders.clear();update_hint();return
@@ -2268,6 +2433,7 @@ func open_character_info(answer: Dictionary) -> void:
 	if character_resume: core.snapshot_received.emit(core.query("pause 1"))
 	character_panel = CharacterPanel.new()
 	character_panel.city = self
+	character_panel.portrait_source = character_portrait_source
 	hud.add_child(character_panel)
 	character_panel.closed.connect(close_character)
 	character_panel.focus_requested.connect(focus_walker)

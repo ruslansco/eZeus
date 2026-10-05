@@ -7,7 +7,7 @@ var templates: Dictionary = {}
 var group_signatures: Dictionary = {}
 var group_nodes: Dictionary = {}
 var last_rebuilt := 0
-# Model paths with a threaded load in flight (see prefetch).
+# Model path -> WorkerThreadPool task warming its imported file (see prefetch).
 var requested: Dictionary = {}
 var activity := preload("res://scripts/building_activity.gd").new()
 
@@ -19,8 +19,16 @@ func collect(node: Node3D, parent: Transform3D, result: Array) -> void:
 		if child is Node3D:
 			collect(child, transform, result)
 
-# Starts loading GLBs on worker threads so city load overlaps model reads with terrain
-# building instead of paying for them one after another. Safe to call repeatedly.
+# Loads GLBs on worker threads in parallel, then waits for them all before returning (join), so
+# no worker builds meshes or materials while the main thread renders or builds terrain: Godot's
+# BaseMaterial3D races the renderer when a loading thread sets up a material during a frame
+# (crashes in material_set_shader). Every load is collected straight away into `loaded`, which
+# this node releases when it leaves the tree, before the renderer shuts down; a ResourceLoader
+# load left uncollected would keep its materials until engine exit (a crash in BaseMaterial3D's
+# destructor or an endless "Parameter material is null" flood). Safe to call repeatedly.
+var loaded: Dictionary = {}
+var ever_requested: Dictionary = {}
+
 func prefetch(assets: Array) -> void:
 	var paths: Array = []
 	for asset in assets:
@@ -30,16 +38,40 @@ func prefetch(assets: Array) -> void:
 
 func prefetch_paths(paths: Array) -> void:
 	for path in paths:
-		if requested.has(path) or not ResourceLoader.exists(path):
+		if requested.has(path) or loaded.has(path) or not ResourceLoader.exists(path):
 			continue
 		if ResourceLoader.load_threaded_request(path) == OK:
 			requested[path] = true
+			ever_requested[path] = true
+	join()
 
-# Returns the loaded GLB, joining a threaded load when one was requested.
+# Waits for every load in flight and keeps the results (the main thread does nothing else meanwhile).
+func join() -> void:
+	for path in requested:
+		var resource := ResourceLoader.load_threaded_get(path)
+		if resource != null:
+			loaded[path] = resource
+	requested.clear()
+
+# True when the model is ready to instantiate without waiting.
+func warmed(path: String) -> bool:
+	return not requested.has(path)
+
+# Returns the loaded GLB from the parallel load when there was one.
 func load_model(path: String) -> Resource:
-	if requested.erase(path):
-		return ResourceLoader.load_threaded_get(path)
+	if requested.has(path):
+		join()
+	if loaded.has(path):
+		return loaded[path]
 	return load(path)
+
+# Models loaded ahead are released with the node, before the renderer goes.
+func _exit_tree() -> void:
+	join()
+	loaded.clear()
+	# Diagnostic: any path the loader still tracks as a threaded load would outlive the renderer.
+	var left := ever_requested.keys().filter(func(p): return ResourceLoader.load_threaded_get_status(p) != ResourceLoader.THREAD_LOAD_INVALID_RESOURCE)
+	print("BATCH_LOADS_LEFT ", left.size(), " ", left.slice(0, 5))
 
 func template(asset: String) -> Array:
 	if templates.has(asset):

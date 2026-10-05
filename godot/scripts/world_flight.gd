@@ -65,7 +65,7 @@ func begin_open() -> void:
 	map_colour = city.world_map.get_node("Themed").modulate
 	map_details.assign([city.world_map.markers, city.world_map.armies_layer,
 		city.world_map.get_node("Themed/Margin/Row/Side"), city.world_map.get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasHeading"),
-		city.world_map.get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasControls"), city.world_map.get_node("%AtlasHint")])
+		city.world_map.get_node("%AtlasToolbar")])
 	# The local city and regional globe have independent scales; the atlas flight
 	# originates at the native current-city anchor, never at a guessed Greek town.
 	atlas_view = {"target": city_anchor(), "distance": 14.0, "yaw": -.10, "pitch": 1.36}

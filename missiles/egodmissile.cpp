@@ -64,6 +64,7 @@ void eGodMissile::setTexture(const eCharacterType ct,
                              const eCharacterActionType cat) {
     mCharType = ct;
     mActionType = cat;
+    board().observeMissile(this,0);
 }
 
 void eGodMissile::read(eReadStream& src) {

@@ -80,6 +80,11 @@ public:
     { return mUnderBuilding.get(); }
     eBuildingType underBuildingType() const override;
 
+    void addAnimalBuilding(const stdsptr<eBuilding>& b);
+    void removeAnimalBuilding(eBuilding* const b);
+    const std::vector<stdsptr<eBuilding>>& animalBuildings() const
+    { return mAnimalBuildings; }
+
     void addBanner(const stdsptr<eBanner>& b);
     void removeBanner(const stdsptr<eBanner>& b);
     void removeAllBanners();
@@ -186,6 +191,7 @@ private:
     std::vector<stdsptr<eMissile>> mMissiles;
     std::vector<stdsptr<eCharacter>> mCharacters;
     stdsptr<eBuilding> mUnderBuilding;
+    std::vector<stdsptr<eBuilding>> mAnimalBuildings;
     std::vector<stdsptr<eBanner>> mBanners;
     stdptr<eSoldierBanner> mSoldierBanner;
 };

@@ -16,6 +16,10 @@ void EZeusSimulation::_bind_methods() {
     ClassDB::bind_method(D_METHOD("open_city","engine_dir","save_path","language"),&EZeusSimulation::open_city);
     ClassDB::bind_method(D_METHOD("adventures","engine_dir","language"),&EZeusSimulation::adventures);
     ClassDB::bind_method(D_METHOD("open_adventure","engine_dir","kind","ref","language"),&EZeusSimulation::open_adventure);
+    ClassDB::bind_method(D_METHOD("adventure_preview","engine_dir","kind","ref","language"),&EZeusSimulation::adventure_preview);
+    ClassDB::bind_method(D_METHOD("open_editor","engine_dir","kind","ref","language"),&EZeusSimulation::open_editor);
+    ClassDB::bind_method(D_METHOD("new_adventure","engine_dir","name","language"),&EZeusSimulation::new_adventure);
+    ClassDB::bind_method(D_METHOD("set_adventures_directory","directory"),&EZeusSimulation::set_adventures_directory);
     ClassDB::bind_method(D_METHOD("advance","delta"),&EZeusSimulation::advance);
     ClassDB::bind_method(D_METHOD("replay","ticks","seed"),&EZeusSimulation::replay,DEFVAL(-1));
     ClassDB::bind_method(D_METHOD("set_save_directory","directory"),&EZeusSimulation::set_save_directory);
@@ -45,6 +49,15 @@ Dictionary EZeusSimulation::adventures(const String& engine,const String& lang) 
         return parse("{\"error\":\"adventure_list_failed\"}");
     }
 }
+Dictionary EZeusSimulation::adventure_preview(const String& engine,const String& kind,const String& ref,const String& lang) {
+    if(owned) return parse("{\"error\":\"simulation_already_owned\"}");
+    owner=owned=true;
+    Dictionary result;
+    try { result = parse(service.adventurePreview(engine.utf8().get_data(),kind.utf8().get_data(),ref.utf8().get_data(),lang.utf8().get_data())); }
+    catch(const std::exception&) { result = parse("{\"error\":\"adventure_preview_failed\"}"); }
+    close_city();
+    return result;
+}
 Dictionary EZeusSimulation::open_adventure(const String& engine,const String& kind,const String& ref,const String& lang) {
     if(owned && !owner) return parse("{\"error\":\"simulation_already_owned\"}");
     owner=owned=true; last_buildings = Array();
@@ -54,6 +67,25 @@ Dictionary EZeusSimulation::open_adventure(const String& engine,const String& ki
         close_city(); return parse("{\"error\":\"adventure_load_failed\"}");
     }
 }
+Dictionary EZeusSimulation::open_editor(const String& engine,const String& kind,const String& ref,const String& lang) {
+    if(owned && !owner) return parse("{\"error\":\"simulation_already_owned\"}");
+    owner=owned=true; last_buildings = Array();
+    try {
+        return timed_parse(service.openEditor(engine.utf8().get_data(),kind.utf8().get_data(),ref.utf8().get_data(),lang.utf8().get_data()));
+    } catch(const std::exception&) {
+        close_city(); return parse("{\"error\":\"adventure_load_failed\"}");
+    }
+}
+Dictionary EZeusSimulation::new_adventure(const String& engine,const String& name,const String& lang) {
+    if(owned && !owner) return parse("{\"error\":\"simulation_already_owned\"}");
+    owner=owned=true;
+    Dictionary result;
+    try { result = parse(service.newAdventure(engine.utf8().get_data(),name.utf8().get_data(),lang.utf8().get_data())); }
+    catch(const std::exception&) { result = parse("{\"error\":\"save_failed\"}"); }
+    close_city();
+    return result;
+}
+void EZeusSimulation::set_adventures_directory(const String& directory) { service.setAdventuresDirectory(directory.utf8().get_data()); }
 void EZeusSimulation::advance(double delta) { if(owner) service.advance(delta); }
 void EZeusSimulation::set_save_directory(const String& directory) { service.setSaveDirectory(directory.utf8().get_data()); }
 Dictionary EZeusSimulation::save_city(const String& name) { return owner ? parse(service.save(name.utf8().get_data())) : parse("{\"error\":\"city_not_loaded\"}"); }

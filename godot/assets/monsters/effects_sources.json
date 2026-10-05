@@ -1,0 +1,26 @@
+{
+  "revision": "monster_combat_v1",
+  "scope": "Cosmetic native monster attack and destruction presentation; Hydra-specific venom with a generic finish for other species.",
+  "sources": [
+    {
+      "path": "scripts/monster_effects.gd",
+      "origin": "Original AI-assisted procedural Godot geometry and native-clock animation, authored in this workspace.",
+      "rights_status": "needs_evidence"
+    },
+    {
+      "path": "shaders/monster_puff.gdshader",
+      "origin": "Original AI-assisted procedural shader noise, billboard clouds and contact ring; no external texture pixels.",
+      "rights_status": "needs_evidence"
+    }
+  ],
+  "external_art_inputs": [],
+  "budgets": {
+    "draw_batches": 2,
+    "active_flights": 32,
+    "active_bursts": 64,
+    "puff_instances": 512,
+    "debris_instances": 128,
+    "queued_native_events": 256
+  },
+  "release_status": "Development effect art; user visual acceptance, minimum-Mac GPU profiling and release provenance evidence remain pending. Existing character models and native sprites retain their separate provenance."
+}

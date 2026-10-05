@@ -4,6 +4,10 @@
 			"tris": 19944,
 			"verts": 15443
 		},
+		"animal_cattle": {
+			"tris": 20980,
+			"verts": 14728
+		},
 		"animal_deer": {
 			"tris": 18952,
 			"verts": 14272
@@ -11,6 +15,14 @@
 		"animal_donkey": {
 			"tris": 17690,
 			"verts": 12659
+		},
+		"animal_goat": {
+			"tris": 19144,
+			"verts": 12874
+		},
+		"animal_horse": {
+			"tris": 20996,
+			"verts": 14644
 		},
 		"animal_ox": {
 			"tris": 20724,
@@ -67,6 +79,18 @@
 		"college": {
 			"tris": 66136,
 			"verts": 178327
+		},
+		"column_corinthian": {
+			"tris": 2104,
+			"verts": 5068
+		},
+		"column_doric": {
+			"tris": 1104,
+			"verts": 2456
+		},
+		"column_ionic": {
+			"tris": 1500,
+			"verts": 3136
 		},
 		"commemorative_0": {
 			"tris": 1972,
@@ -200,6 +224,10 @@
 			"tris": 43748,
 			"verts": 105269
 		},
+		"deco_water_park": {
+			"tris": 5474,
+			"verts": 11264
+		},
 		"drama_school": {
 			"tris": 63707,
 			"verts": 168659
@@ -244,6 +272,10 @@
 			"tris": 64522,
 			"verts": 165026
 		},
+		"enemy_boat": {
+			"tris": 66249,
+			"verts": 63335
+		},
 		"farm": {
 			"tris": 9816,
 			"verts": 20968
@@ -253,8 +285,8 @@
 			"verts": 171486
 		},
 		"fishing_boat": {
-			"tris": 36846,
-			"verts": 86422
+			"tris": 27071,
+			"verts": 26747
 		},
 		"fleece_vendor": {
 			"tris": 46372,
@@ -276,9 +308,121 @@
 			"tris": 3588,
 			"verts": 7082
 		},
+		"good_armor": {
+			"tris": 2288,
+			"verts": 3116
+		},
+		"good_blackMarble": {
+			"tris": 96,
+			"verts": 192
+		},
+		"good_bronze": {
+			"tris": 1008,
+			"verts": 2016
+		},
+		"good_carrots": {
+			"tris": 4368,
+			"verts": 3840
+		},
+		"good_cheese": {
+			"tris": 4368,
+			"verts": 6816
+		},
+		"good_fish": {
+			"tris": 2976,
+			"verts": 3292
+		},
+		"good_fleece": {
+			"tris": 4368,
+			"verts": 3380
+		},
+		"good_grapes": {
+			"tris": 4576,
+			"verts": 4784
+		},
+		"good_marble": {
+			"tris": 96,
+			"verts": 192
+		},
+		"good_meat": {
+			"tris": 2128,
+			"verts": 2300
+		},
+		"good_oliveOil": {
+			"tris": 4848,
+			"verts": 4320
+		},
+		"good_olives": {
+			"tris": 5600,
+			"verts": 5680
+		},
+		"good_onions": {
+			"tris": 6320,
+			"verts": 4968
+		},
+		"good_oranges": {
+			"tris": 1968,
+			"verts": 2208
+		},
+		"good_orichalc": {
+			"tris": 912,
+			"verts": 672
+		},
+		"good_sculpture": {
+			"tris": 100492,
+			"verts": 75662
+		},
+		"good_urchin": {
+			"tris": 12432,
+			"verts": 21372
+		},
+		"good_wheat": {
+			"tris": 4032,
+			"verts": 4148
+		},
+		"good_wine": {
+			"tris": 6864,
+			"verts": 7296
+		},
+		"good_wood": {
+			"tris": 576,
+			"verts": 1152
+		},
 		"granary": {
 			"tris": 66396,
 			"verts": 165390
+		},
+		"granary_food_carrots": {
+			"tris": 1056,
+			"verts": 895
+		},
+		"granary_food_cheese": {
+			"tris": 2120,
+			"verts": 3231
+		},
+		"granary_food_fish": {
+			"tris": 1212,
+			"verts": 1260
+		},
+		"granary_food_meat": {
+			"tris": 796,
+			"verts": 658
+		},
+		"granary_food_onions": {
+			"tris": 2560,
+			"verts": 1977
+		},
+		"granary_food_oranges": {
+			"tris": 776,
+			"verts": 811
+		},
+		"granary_food_urchin": {
+			"tris": 2560,
+			"verts": 3924
+		},
+		"granary_food_wheat": {
+			"tris": 456,
+			"verts": 409
 		},
 		"growers_lodge": {
 			"tris": 63371,
@@ -323,6 +467,46 @@
 		"hero_hall_theseus": {
 			"tris": 49578,
 			"verts": 124633
+		},
+		"hippodrome_0": {
+			"tris": 276,
+			"verts": 528
+		},
+		"hippodrome_1": {
+			"tris": 4328,
+			"verts": 6474
+		},
+		"hippodrome_2": {
+			"tris": 132,
+			"verts": 264
+		},
+		"hippodrome_3": {
+			"tris": 4172,
+			"verts": 6162
+		},
+		"hippodrome_4": {
+			"tris": 132,
+			"verts": 264
+		},
+		"hippodrome_5": {
+			"tris": 4328,
+			"verts": 6474
+		},
+		"hippodrome_6": {
+			"tris": 276,
+			"verts": 528
+		},
+		"hippodrome_7": {
+			"tris": 4328,
+			"verts": 6474
+		},
+		"horse_ranch": {
+			"tris": 39080,
+			"verts": 74928
+		},
+		"horse_ranch_enclosure": {
+			"tris": 8480,
+			"verts": 21658
 		},
 		"horse_vendor": {
 			"tris": 56532,
@@ -748,6 +932,42 @@
 			"tris": 12772,
 			"verts": 28598
 		},
+		"roadblock": {
+			"tris": 576,
+			"verts": 1064
+		},
+		"ruins_0": {
+			"tris": 1336,
+			"verts": 3204
+		},
+		"ruins_1": {
+			"tris": 1540,
+			"verts": 3706
+		},
+		"ruins_2": {
+			"tris": 1384,
+			"verts": 3416
+		},
+		"ruins_3": {
+			"tris": 1572,
+			"verts": 3658
+		},
+		"ruins_4": {
+			"tris": 1408,
+			"verts": 3528
+		},
+		"ruins_5": {
+			"tris": 1524,
+			"verts": 3632
+		},
+		"ruins_6": {
+			"tris": 1552,
+			"verts": 3620
+		},
+		"ruins_7": {
+			"tris": 1520,
+			"verts": 3614
+		},
 		"sanctuary_altar": {
 			"tris": 15464,
 			"verts": 35026
@@ -912,6 +1132,10 @@
 			"tris": 63027,
 			"verts": 34117
 		},
+		"stadium": {
+			"tris": 66096,
+			"verts": 179571
+		},
 		"tax_office": {
 			"tris": 63889,
 			"verts": 152723
@@ -952,9 +1176,21 @@
 			"tris": 1830,
 			"verts": 2677
 		},
+		"trireme": {
+			"tris": 66249,
+			"verts": 63335
+		},
+		"trireme_wharf": {
+			"tris": 66274,
+			"verts": 172370
+		},
 		"university": {
 			"tris": 64781,
 			"verts": 177533
+		},
+		"urchin_quay": {
+			"tris": 61548,
+			"verts": 154118
 		},
 		"vine_0": {
 			"tris": 2276,
@@ -1108,6 +1344,10 @@
 			"tris": 29079,
 			"verts": 15871
 		},
+		"walker_disgruntled": {
+			"tris": 29334,
+			"verts": 16028
+		},
 		"walker_dragon": {
 			"tris": 1286,
 			"verts": 1242
@@ -1128,9 +1368,17 @@
 			"tris": 29419,
 			"verts": 15562
 		},
+		"walker_elitecitizen": {
+			"tris": 29382,
+			"verts": 16019
+		},
 		"walker_firefighter": {
 			"tris": 29424,
 			"verts": 16014
+		},
+		"walker_greekchariot": {
+			"tris": 62247,
+			"verts": 34116
 		},
 		"walker_greekhoplite": {
 			"tris": 29163,
@@ -1197,8 +1445,8 @@
 			"verts": 15637
 		},
 		"walker_hydra": {
-			"tris": 3584,
-			"verts": 3642
+			"tris": 24160,
+			"verts": 27860
 		},
 		"walker_inventor": {
 			"tris": 28865,
@@ -1256,6 +1504,10 @@
 			"tris": 29360,
 			"verts": 15675
 		},
+		"walker_orichalcminer": {
+			"tris": 29297,
+			"verts": 15673
+		},
 		"walker_oxhandler": {
 			"tris": 29367,
 			"verts": 15991
@@ -1300,6 +1552,22 @@
 			"tris": 29341,
 			"verts": 15500
 		},
+		"walker_racechariot0": {
+			"tris": 62835,
+			"verts": 34267
+		},
+		"walker_racechariot1": {
+			"tris": 62845,
+			"verts": 33929
+		},
+		"walker_racechariot2": {
+			"tris": 62847,
+			"verts": 33932
+		},
+		"walker_racechariot3": {
+			"tris": 62845,
+			"verts": 33929
+		},
 		"walker_rockthrower": {
 			"tris": 29223,
 			"verts": 15633
@@ -1323,6 +1591,10 @@
 		"walker_sick": {
 			"tris": 29371,
 			"verts": 15959
+		},
+		"walker_silverminer": {
+			"tris": 29280,
+			"verts": 15999
 		},
 		"walker_sphinx": {
 			"tris": 40792,
@@ -1357,8 +1629,8 @@
 			"verts": 15709
 		},
 		"walker_urchin": {
-			"tris": 29638,
-			"verts": 15472
+			"tris": 29625,
+			"verts": 15475
 		},
 		"walker_watchman": {
 			"tris": 29260,

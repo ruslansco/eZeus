@@ -81,6 +81,15 @@ func build(parent: Node) -> void:
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	list.add_theme_constant_override("separation", 4)
 	scroll.add_child(list)
+	# Ares is never enlisted (nor in the SDL dialog): he joins a conquest on its way when his sanctuary is asked for help.
+	var ares: Dictionary = session.get("ares", {})
+	if String(session.purpose) == "conquer" and bool(ares.get("sanctuary", false)):
+		var note := Label.new()
+		note.name = "AresNote"
+		note.theme_type_variation = "Caption"
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		note.text = tr("Ares is away with another army.") if bool(ares.get("abroad", false)) else tr("Ares can march with this army: ask his sanctuary for help while it is on the way.")
+		column.add_child(note)
 	summary = Label.new()
 	summary.theme_type_variation = "Caption"
 	column.add_child(summary)

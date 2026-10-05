@@ -16,7 +16,7 @@ const BuildCatalog = preload("res://scripts/build_catalog.gd")
 const REFRESH_SECONDS := .25
 # The tools dragged over an area, and how many planned pieces are drawn as models (the tinted footprints always show the
 # whole plan): a mansion model has tens of thousands of vertices, a wall piece a few hundred.
-const AREA_TOOLS := ["house", "elite_house", "park", "vine", "olive_tree", "orange_tree", "goat", "sheep", "cattle"]
+const AREA_TOOLS := ["house", "elite_house", "park", "vine", "olive_tree", "orange_tree"]
 # Dragged along a path as roads are.
 const PATH_TOOLS := ["doric_column", "ionic_column", "corinthian_column", "avenue", "boulevard"]
 const COLUMN_TOOLS := ["doric_column", "ionic_column", "corinthian_column"]

@@ -13,8 +13,9 @@ const UserSettings = preload("res://scripts/user_settings.gd")
 const SoundDialog = preload("res://ui/sound_dialog.gd")
 const GameSettingsDialog=preload("res://ui/game_settings_dialog.gd")
 const CITY := "res://main.tscn"
-const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--capture=", "--terrain-review=", "--garden-review=", "--sanctuary-review=", "--pyramid-review=", "--controls-review=", "--objectives-review=",
-	"--character-review=", "--skip-start"]
+const AdventureArt = preload("res://scripts/adventure_art.gd")
+const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--capture=", "--terrain-review=", "--garden-review=", "--sanctuary-review=", "--pyramid-review=", "--controls-review=", "--objectives-review=", "--street-review=",
+	"--character-review=", "--menu-rest-review=", "--attack-review=", "--rite-review=", "--skip-start"]
 
 @onready var pages := {
 	"main": %MainPage, "adventures": %AdventurePage, "intro": %IntroPage, "load": %LoadPage}
@@ -34,6 +35,13 @@ const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--captur
 @onready var adventure_status: Label = %AdventureStatus
 @onready var adventure_back: Button = %AdventureBack
 @onready var adventure_start: Button = %AdventureStart
+@onready var adventure_image: TextureRect = %AdventureImage
+@onready var adventure_mode: Label = %AdventureMode
+@onready var adventure_episodes: Label = %AdventureEpisodes
+@onready var adventure_episode: Label = %AdventureEpisode
+@onready var adventure_goals: VBoxContainer = %AdventureGoals
+@onready var adventure_empty_goals: Label = %AdventureEmptyGoals
+@onready var adventure_scroll: ScrollContainer = %AdventureScroll
 @onready var intro_card = %IntroCard
 # The roster of leaders (built here, see build_leaders): the page and the main page's leader line.
 var leader_page: PanelContainer
@@ -70,6 +78,17 @@ var save_entries: Array = []
 var latest_save: Dictionary = {}
 # The adventure opened for the introduction page, until Begin hands it to the city or Back closes it.
 var opened: RefCounted
+# The adventure editor (the SDL main menu's "Editor"): the adventures page lists them to edit, with a row to make a new one.
+var editing := false
+var adventure_art := AdventureArt.new()
+var adventure_previews := {}
+var preview_generation := 0
+var card_preview := {}
+var preview_busy := false
+var editor_button: Button
+var new_row: HBoxContainer
+var new_name: LineEdit
+var new_button: Button
 
 static func automated() -> bool:
 	for argument in OS.get_cmdline_user_args():
@@ -112,6 +131,10 @@ func _ready() -> void:
 	save_list.item_selected.connect(func(index): save_info.text = save_entries[index].detail if index < save_entries.size() else "")
 	save_list.item_activated.connect(func(_index): open_selected_save())
 	build_leaders()
+	build_editor_entry()
+	get_viewport().size_changed.connect(fit_adventure_page)
+	UiAccess.changed.connect(fit_adventure_page)
+	fit_adventure_page()
 	retranslate()
 	refresh_main()
 	for argument in OS.get_cmdline_user_args():
@@ -141,6 +164,8 @@ func core_language() -> String:
 	return language if language in ["en", "ru"] else "en"
 
 func show_page(name: String) -> void:
+	if name != "adventures":
+		preview_generation += 1
 	page = name
 	for key in pages:
 		pages[key].visible = key == name
@@ -169,9 +194,15 @@ func retranslate() -> void:
 	quit_button.text = tr("Quit")
 	sound_button.text = tr("Sound")
 	%Interface.tooltip_text=tr("Game settings")
-	adventure_heading.text = tr("Choose an adventure")
+	adventure_heading.text = tr("Adventure editor") if editing else tr("Choose an adventure")
+	%AdventureHint.text = tr("Select an adventure to explore its story and opening goals.")
+	%AdventureGoalsHeading.text = tr("Opening objectives")
+	%AdventureArtFallback.text = tr("Artwork unavailable")
 	adventure_back.text = tr("Back")
-	adventure_start.text = tr("Start")
+	adventure_start.text = tr("Edit") if editing else tr("Start")
+	editor_button.text = tr("Adventure editor")
+	new_name.placeholder_text = tr("New adventure's name")
+	new_button.text = tr("New adventure")
 	load_heading.text = tr("Load game")
 	load_back.text = tr("Back")
 	load_open.text = tr("Load")
@@ -227,12 +258,18 @@ func open_selected_save() -> void:
 	if not chosen.is_empty():
 		load_save(save_entries[chosen[0]].path)
 
-# The adventures come from the simulation core (the SDL game's own list, in the interface language).
-func open_adventures() -> void:
+# The adventures come from the simulation core (the SDL game's own list, in the interface language). For the editor an
+# adventure without a title yet (a new one) is listed by its folder's name.
+func open_adventures(edit := false) -> void:
+	editing = edit
+	new_row.visible = editing
+	retranslate()
 	var lister: RefCounted = ClassDB.instantiate("EZeusSimulation") if ClassDB.class_exists("EZeusSimulation") else null
 	var result: Dictionary = lister.adventures(engine, core_language()) if lister != null else {"error": "embedded_query_required"}
 	listing = []
 	for item in result.get("adventures", []):
+		if String(item.title).is_empty() and editing:
+			item.title = String(item.ref).get_file()
 		if not String(item.title).is_empty():
 			listing.append(item)
 	listing.sort_custom(func(a, b): return String(a.title).naturalnocasecmp_to(String(b.title)) < 0)
@@ -243,19 +280,95 @@ func open_adventures() -> void:
 	adventure_start.disabled = listing.is_empty()
 	adventure_title.text = ""
 	adventure_text.text = ""
+	%AdventureCount.text = tr("%d adventures") % listing.size()
+	%AdventureDetail.visible = not listing.is_empty()
+	show_page("adventures")
 	if not listing.is_empty():
 		adventure_list.select(0)
 		show_adventure(0)
-	show_page("adventures")
 
 func show_adventure(index: int) -> void:
 	if index < 0 or index >= listing.size():
 		return
-	adventure_title.text = listing[index].title
-	adventure_text.text = listing[index].introduction
+	preview_generation += 1
+	var generation := preview_generation
+	var item: Dictionary = listing[index]
+	adventure_title.text = item.title
+	adventure_text.text = item.introduction
+	adventure_image.texture = adventure_art.texture(engine, int(item.get("bitmap", 0)))
+	%AdventureArtFallback.visible = adventure_image.texture == null
+	adventure_scroll.scroll_vertical = 0
+	card_preview = {}
+	preview_busy = true
+	adventure_mode.text = tr("Loading…")
+	adventure_episodes.text = ""
+	adventure_episode.text = ""
+	adventure_episode.visible = true
+	clear_adventure_goals()
+	adventure_empty_goals.visible = true
+	adventure_empty_goals.text = tr("Loading…")
+	adventure_status.text = ""
+	var key := "%s:%s:%s" % [core_language(), item.kind, item.ref]
+	if not adventure_previews.has(key):
+		# Paint the selection, then coalesce fast arrow-key changes. Native templates stay on the main thread.
+		await get_tree().create_timer(.10).timeout
+		if generation != preview_generation or page != "adventures":
+			return
+		var reader: RefCounted = ClassDB.instantiate("EZeusSimulation")
+		adventure_previews[key] = reader.adventure_preview(engine, item.kind, item.ref, core_language())
+	if generation != preview_generation or page != "adventures":
+		return
+	card_preview = adventure_previews[key]
+	preview_busy = false
+	if card_preview.has("error"):
+		adventure_mode.text = tr("Adventure")
+		adventure_empty_goals.text = tr("Opening objectives could not be read.")
+		return
+	var episode: Dictionary = card_preview.episode
+	var sandbox: bool = card_preview.get("sandbox", false)
+	adventure_mode.text = tr("Sandbox · Open play") if sandbox else tr("Campaign")
+	var count := int(card_preview.get("episode_total", 1))
+	adventure_episodes.text = tr("No fixed victory objectives") if sandbox else (tr("1 episode") if count == 1 else tr("%d episodes") % count)
+	adventure_episode.text = tr("Episode 1 · %s") % episode.get("episode_title", "")
+	adventure_episode.visible = not sandbox
+	var goals: Array = episode.get("goals", [])
+	adventure_empty_goals.visible = goals.is_empty()
+	adventure_empty_goals.text = tr("Build at your own pace. This adventure has no fixed victory objectives.") if sandbox else tr("No opening objectives are specified for this episode.")
+	for goal in goals:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+		var mark := Label.new()
+		mark.text = "◇"
+		mark.theme_type_variation = "AdventureGoalText"
+		row.add_child(mark)
+		var label := Label.new()
+		label.text = str(goal.text)
+		label.theme_type_variation = "AdventureGoalText"
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(label)
+		adventure_goals.add_child(row)
+
+func clear_adventure_goals() -> void:
+	for child in adventure_goals.get_children():
+		child.free()
+
+# Bound the page at independent interface/text sizes; the paper and list scroll.
+func fit_adventure_page() -> void:
+	var available := get_viewport_rect().size - Vector2(64, 64)
+	var desired := Vector2(minf(1140, available.x), minf(760, available.y))
+	%AdventurePage.custom_minimum_size = desired
+	adventure_list.custom_minimum_size.x = clampf(desired.x * .30, 260, 340)
+	%AdventureHint.custom_minimum_size.x = adventure_list.custom_minimum_size.x
+	%AdventureHero.custom_minimum_size.y = clampf(desired.y * .31, 140, 240)
+	adventure_list.ensure_current_is_visible.call_deferred()
 
 # Reads the chosen adventure's campaign (a moment), then shows its first episode's story and goals.
 func start_adventure() -> void:
+	if adventure_start.disabled:
+		return
+	preview_generation += 1
+	preview_busy = false
 	var chosen := adventure_list.get_selected_items()
 	if chosen.is_empty():
 		return
@@ -264,6 +377,9 @@ func start_adventure() -> void:
 	adventure_start.disabled = true
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if editing:
+		edit_adventure(item)
+		return
 	opened = ClassDB.instantiate("EZeusSimulation")
 	opened.set_save_directory(SaveFiles.directory())
 	var result: Dictionary = opened.open_adventure(engine, item.kind, item.ref, core_language())
@@ -291,6 +407,9 @@ func close_intro() -> void:
 		opened.close_city()
 		opened = null
 	show_page("adventures")
+	var chosen := adventure_list.get_selected_items()
+	if not chosen.is_empty():
+		show_adventure(chosen[0])
 
 # The opened adventure goes to the city scene, which adopts it instead of opening a city of its own.
 func begin() -> void:
@@ -302,6 +421,62 @@ func begin() -> void:
 	Engine.set_meta("ezeus_simulation", opened)
 	opened = null
 	go_city()
+
+# The chosen adventure opened for editing goes to the city scene, which shows the editor instead of the game.
+func edit_adventure(item: Dictionary) -> void:
+	var editor: RefCounted = ClassDB.instantiate("EZeusSimulation")
+	var result: Dictionary = editor.open_editor(engine, item.kind, item.ref, core_language())
+	adventure_start.disabled = false
+	if result.has("error"):
+		editor.close_city()
+		adventure_status.text = tr("That adventure could not be opened")
+		return
+	adventure_status.text = ""
+	Engine.set_meta("ezeus_simulation", editor)
+	Engine.set_meta("ezeus_editor", true)
+	go_city()
+
+# The editor's entry on the main page, and its row for a new adventure on the adventures page (built in code, as the roster).
+func build_editor_entry() -> void:
+	editor_button = Button.new()
+	editor_button.name = "Editor"
+	load_game_button.get_parent().add_child(editor_button)
+	load_game_button.get_parent().move_child(editor_button, load_game_button.get_index() + 1)
+	editor_button.pressed.connect(func(): open_adventures(true))
+	new_row = HBoxContainer.new()
+	new_row.name = "NewAdventure"
+	new_row.visible = false
+	new_row.add_theme_constant_override("separation", 8)
+	new_name = LineEdit.new()
+	new_name.max_length = 48
+	new_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	new_name.text_submitted.connect(func(_text): create_adventure())
+	new_row.add_child(new_name)
+	new_button = Button.new()
+	new_button.pressed.connect(create_adventure)
+	new_row.add_child(new_button)
+	var buttons := adventure_start.get_parent()
+	buttons.get_parent().add_child(new_row)
+	buttons.get_parent().move_child(new_row, buttons.get_index())
+
+# As the SDL editor's "New": an adventure of that name with one episode and an empty map, then listed to edit.
+func create_adventure() -> void:
+	var name := new_name.text.strip_edges()
+	if name.is_empty():
+		adventure_status.text = tr("Give the adventure a name")
+		return
+	var maker: RefCounted = ClassDB.instantiate("EZeusSimulation")
+	var result: Dictionary = maker.new_adventure(engine, name, core_language())
+	if result.has("error"):
+		adventure_status.text = tr("There is an adventure of that name already") if str(result.error) == "name_taken" else tr("That name cannot be used")
+		return
+	new_name.text = ""
+	open_adventures(true)
+	for index in listing.size():
+		if String(listing[index].ref).get_file() == name or String(listing[index].ref) == name:
+			adventure_list.select(index)
+			show_adventure(index)
+	adventure_status.text = tr("The adventure %s was made") % name
 
 # ---- the roster of leaders -----------------------------------------------------------------------------------------
 # Built in code with the menu's Theme (ui/start_menu.tscn is edited by hand and not regenerated): a page listing the

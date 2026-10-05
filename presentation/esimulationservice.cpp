@@ -1,4 +1,5 @@
 #include "esimulationservice.h"
+#include "eeditorsession.h"
 #include "eeventnames.h"
 #include "eeventmessages.h"
 #include "eenginemessages.h"
@@ -36,6 +37,7 @@
 #include "gameEvents/egodquestevent.h"
 #include "engine/egodquest.h"
 #include "characters/actions/emonsteraction.h"
+#include "missiles/egodmissile.h"
 #include "buildings/eresourcebuilding.h"
 #include "buildings/eaestheticsbuilding.h"
 #include "buildings/pyramids/epyramidwall.h"
@@ -81,6 +83,14 @@
 #include "buildings/eemployingbuilding.h"
 #include "buildings/ehousebase.h"
 #include "buildings/ehouseneeds.h"
+#include "buildings/ehousecard.h"
+#include "buildings/epatrolbuilding.h"
+#include "buildings/evendor.h"
+#include "buildings/eagoraspace.h"
+#include "buildings/eagorabase.h"
+#include "engine/ecityadvisor.h"
+#include "engine/etradesummary.h"
+#include "engine/edate.h"
 #include "buildings/estoragebuilding.h"
 #include "buildings/eprocessingbuilding.h"
 #include "buildings/eresourcecollectbuildingbase.h"
@@ -302,9 +312,9 @@ std::map<std::string,BuildSpec> withMenuRest(std::map<std::string,BuildSpec> spe
     add("vine",{eBuildingMode::vine,eBuildingType::vine,1,1,"vine_5",true,true,tree(eResourceBuildingType::vine)});
     add("olive_tree",{eBuildingMode::oliveTree,eBuildingType::oliveTree,1,1,"olive_5",true,true,tree(eResourceBuildingType::oliveTree)});
     add("orange_tree",{eBuildingMode::orangeTree,eBuildingType::orangeTree,1,1,"orange_5",true,true,tree(eResourceBuildingType::orangeTree)});
-    add("goat",{eBuildingMode::goat,eBuildingType::goat,1,2,"animal_goat",true,true,nullptr,Kind::animal});
-    add("sheep",{eBuildingMode::sheep,eBuildingType::sheep,1,2,"animal_sheep_fleeced",true,true,nullptr,Kind::animal});
-    add("cattle",{eBuildingMode::cattle,eBuildingType::cattle,1,2,"animal_cattle",true,true,nullptr,Kind::animal});
+    add("goat",{eBuildingMode::goat,eBuildingType::goat,1,1,"animal_goat",true,true,nullptr,Kind::animal});
+    add("sheep",{eBuildingMode::sheep,eBuildingType::sheep,1,1,"animal_sheep_fleeced",true,true,nullptr,Kind::animal});
+    add("cattle",{eBuildingMode::cattle,eBuildingType::cattle,1,1,"animal_cattle",true,true,nullptr,Kind::animal});
     add("fishery",{eBuildingMode::fishery,eBuildingType::fishery,2,2,"fishery",false,false,nullptr,Kind::shore});
     add("urchin_quay",{eBuildingMode::urchinQuay,eBuildingType::urchinQuay,2,2,"urchin_quay",false,false,nullptr,Kind::shore});
     add("trireme_wharf",{eBuildingMode::triremeWharf,eBuildingType::triremeWharf,3,3,"trireme_wharf",false,false,nullptr,Kind::shore});
@@ -723,6 +733,8 @@ std::string asset(eBuilding* b) {
     // A god's monument is the god's colossus (the sanctuary monument's model) on the palace's paving.
     case eBuildingType::godMonument: return "sanctuary_monument_"+godAsset(static_cast<eGodMonument*>(b)->god());
     case eBuildingType::godMonumentTile: return "palace_tile_plain";
+    // The rubble a fire or collapse leaves on each tile: one of the SDL remaster's eight Roman ruins (art/lots), by the tile's seed.
+    case eBuildingType::ruins: return "ruins_"+std::to_string(((b->seed()%8)+8)%8);
     default: return "unconverted";
     }
 }
@@ -879,10 +891,13 @@ void eSimulationService::detach() {
     if(mBoard) {
         mBoard->waitUntilFinished();
         mBoard->setEventHandler(nullptr); mBoard->setMessageShower(nullptr);
+        mBoard->setButtonsVisUpdater(nullptr);
+        mBoard->setMissileObserver(nullptr);
         mBoard->setTipShower(nullptr); mBoard->setEpisodeFinishedHandler(nullptr); mBoard->setEnlistForcesRequest(nullptr);
     }
     mEvents.clear(); mEnlist.reset(); mBoard = nullptr;
-    mTerrainState.clear(); mTerrainKnown.clear(); mBuildingCache.clear(); mIds.clear(); mSentTerrain = false; mAccumulator = 0; mProfile = Profile{}; mSentBanners.clear();
+    mMonsterShots.clear(); mMonsterEffects.clear(); mNextMonsterShot = mNextMonsterEffect = 1;
+    mTerrainState.clear(); mTerrainKnown.clear(); mBuildingCache.clear(); mIds.clear(); mSentTerrain = false; mAccumulator = 0; mProfile = Profile{}; mSentBanners.clear(); mSentFires.clear();
     mOrientations.clear(); mUndoBuildings.clear(); mUndoRefund = 0; mDemolitionTarget.clear(); mDemolitionToken = 0;
     mInspectionTarget.clear(); ++mInspectionToken;
     mPaused = true; mBlocked = false; mTerminal = false; mSequence = mTicks = 0; mNextId = mNextEvent = 1;
@@ -890,6 +905,7 @@ void eSimulationService::detach() {
 }
 void eSimulationService::close() {
     detach();
+    mEditor.reset();
     mCampaign.reset(); mView.reset();
 }
 void eSimulationService::setSaveDirectory(const std::string& directory) { mSaveDir = directory; }
@@ -1010,6 +1026,32 @@ std::string eSimulationService::adventures(const std::string& engine, const std:
     }
     out << "]}"; return out.str();
 }
+// A menu card reads templates only. No startEpisode/enter, event handlers, live goal checks or save writes.
+std::string eSimulationService::adventurePreview(const std::string& engine, const std::string& kind, const std::string& ref, const std::string& lang) {
+    close();
+    prepare(engine, lang);
+    const bool pak = kind == "pak";
+    if(!pak && kind != "folder") return "{\"error\":\"unknown_adventure\"}";
+    eCampaignGlossary chosen; bool found = false;
+    for(const auto& glossary : eAdventureList::scan()) {
+        if(glossary.fIsPak == pak && (pak ? glossary.fPakPath : glossary.fFolderName) == ref) { chosen = glossary; found = true; break; }
+    }
+    if(!found) return "{\"error\":\"unknown_adventure\"}";
+    mCampaign = std::make_shared<eCampaign>();
+    if(pak) mCampaign->readPak(chosen.fTitle, chosen.fPakPath);
+    else if(!mCampaign->load(chosen.fFolderName)) return "{\"error\":\"adventure_unreadable\"}";
+    const auto& parents = mCampaign->parentCityEpisodes();
+    if(parents.empty() || !parents.front() || !parents.front()->fBoard) return "{\"error\":\"invalid_adventure\"}";
+    const auto hasGoals = [](const auto& episodes) {
+        return std::any_of(episodes.begin(), episodes.end(), [](const auto& episode) {
+            return episode && std::any_of(episode->fGoals.begin(), episode->fGoals.end(), [](const auto& goal) { return bool(goal); });
+        });
+    };
+    const bool sandbox = !hasGoals(parents) && !hasGoals(mCampaign->colonyEpisodes());
+    return "{\"kind\":\"adventure_preview\",\"bitmap\":" + std::to_string(chosen.fBitmap) +
+        ",\"sandbox\":" + (sandbox ? "true" : "false") + ",\"episode_total\":" +
+        std::to_string(parents.size() + mCampaign->colonyEpisodes().size()) + ",\"episode\":" + previewEpisode(parents.front().get()) + "}";
+}
 // Starts a new game from one of the listed adventures: the campaign is read, its first episode begins paused.
 std::string eSimulationService::openAdventure(const std::string& engine, const std::string& kind, const std::string& ref, const std::string& lang) {
     close();
@@ -1034,6 +1076,43 @@ std::string eSimulationService::openAdventure(const std::string& engine, const s
     if(!mCampaign->currentEpisode() || !mCampaign->currentEpisode()->fBoard) { close(); return "{\"error\":\"invalid_adventure\"}"; }
     mCampaign->startEpisode();
     return enter(phase);
+}
+std::string eSimulationService::openEditor(const std::string& engine, const std::string& kind, const std::string& ref, const std::string& lang) {
+    close();
+    prepare(engine, lang);
+    const bool pak = kind == "pak";
+    if(!pak && kind != "folder") return "{\"error\":\"unknown_adventure\"}";
+    // Only what the listing offers (as openAdventure).
+    eCampaignGlossary chosen; bool found = false;
+    for(const auto& glossary : eAdventureList::scan()) {
+        if(glossary.fIsPak == pak && (pak ? glossary.fPakPath : glossary.fFolderName) == ref) { chosen = glossary; found = true; break; }
+    }
+    if(!found) return "{\"error\":\"unknown_adventure\"}";
+    mView = std::make_shared<eGameWidgetSettings>(); mView->fPaused = true;
+    mCampaign = std::make_shared<eCampaign>();
+    // As the SDL editor (eChooseGameEditMenu::proceed): read, then editor mode; the parent city's map is the one edited.
+    if(pak) mCampaign->readPak(chosen.fTitle, chosen.fPakPath);
+    else if(!mCampaign->load(chosen.fFolderName)) { close(); return "{\"error\":\"adventure_unreadable\"}"; }
+    mCampaign->setEditorMode(true);
+    if(!mCampaign->currentEpisode() || !mCampaign->currentEpisode()->fBoard) { close(); return "{\"error\":\"invalid_adventure\"}"; }
+    mEditor = std::make_shared<eEditorSession>(mCampaign);
+    return enter([](int) {});
+}
+std::string eSimulationService::newAdventure(const std::string& engine, const std::string& name, const std::string& lang) {
+    // As the SDL editor's "New": a campaign of that name with one episode and an empty map, saved to the adventures folder.
+    if(name.empty() || name.size() > 48 || name.find_first_of("/\\:*?\"<>|") != std::string::npos || name.front() == '.' || name.front() == ' ' || name.back() == ' ')
+        return "{\"error\":\"invalid_name\"}";
+    close();
+    prepare(engine, lang);
+    std::error_code ec;
+    if(std::filesystem::exists(eGameDir::adventuresDir() + name, ec)) return "{\"error\":\"name_taken\"}";
+    eCampaign campaign;
+    campaign.initialize(name);
+    if(!campaign.save()) return "{\"error\":\"save_failed\"}";
+    return "{\"kind\":\"new_adventure\",\"ref\":" + quote(name) + "}";
+}
+void eSimulationService::setAdventuresDirectory(const std::string& directory) {
+    eGameDir::setAdventuresDirOverride(directory.empty() || directory.back() == '/' ? directory : directory + "/");
 }
 // From a read campaign to a running session: the board, the map extent, the event handlers and the first snapshot.
 std::string eSimulationService::enter(const std::function<void(int)>& phase) {
@@ -1097,6 +1176,7 @@ std::string eSimulationService::enter(const std::function<void(int)>& phase) {
         notify(msg.fFull.fTitle,msg.fFull.fText,data,msg.fCondensed.fText);
     });
     mBoard->setTipShower([this](const ePlayerCityTarget&, const std::string& text) { notify("City",text,eEventData()); });
+    mBoard->setButtonsVisUpdater([this]() { ++mBuildableRevision; });
     mBoard->setEnlistForcesRequest([this](const eEnlistedForces& forces,const std::vector<eCityId>& cids,const std::vector<std::string>& cnames,
                                           const std::vector<eHeroType>& heroesAbroad,const eGameBoard::eEnlistAction& action,const std::vector<eResourceType>& plunder) {
         auto session=std::make_shared<eEnlistSession>();
@@ -1117,6 +1197,7 @@ std::string eSimulationService::enter(const std::function<void(int)>& phase) {
         std::lock_guard<std::mutex> lock(mSoundLock);
         if(mode == "city" || mode == "battle") mMusicMode = mode;
     });
+    mBoard->setMissileObserver([this](eMissile* m,int phase) { observeMonsterMissile(m,phase); });
     auto first = snapshot(true);
     phase(5);
     return first;
@@ -1143,8 +1224,68 @@ void eSimulationService::notify(const std::string& title, const std::string& tex
         if(!d.fA0 && !d.fA1 && !d.fA2 && !d.fCA0 && d.fCCA0.empty()) { mEvents.erase(it); break; }
     }
 }
+void eSimulationService::observeMonsterMissile(eMissile* missile, const int phase) {
+    const auto god=dynamic_cast<eGodMissile*>(missile);
+    if(!mBoard || !god || god->pathPoints().empty()) return;
+    bool monster=false;
+    eMonster::sCharacterToMonsterType(god->characterType(),&monster);
+    if(!monster) return;
+    auto found=mMonsterShots.find(missile);
+    if(found==mMonsterShots.end() || !found->second.native) {
+        MonsterShot shot; shot.native=missile; shot.id=mNextMonsterShot++;
+        const auto& start=god->pathPoints().front(); const auto& end=god->pathPoints().back();
+        shot.start={start.fX,start.fY,start.fHeight}; shot.target={end.fX,end.fY,end.fHeight};
+        switch(god->characterType()) {
+        case eCharacterType::calydonianBoar: shot.asset="walker_calydonianboar"; break;
+        case eCharacterType::cerberus: shot.asset="walker_cerberus"; break;
+        case eCharacterType::chimera: shot.asset="walker_chimera"; break;
+        case eCharacterType::cyclops: shot.asset="walker_cyclops"; break;
+        case eCharacterType::dragon: shot.asset="walker_dragon"; break;
+        case eCharacterType::echidna: shot.asset="walker_echidna"; break;
+        case eCharacterType::harpies: shot.asset="walker_harpies"; break;
+        case eCharacterType::hector: shot.asset="walker_hector"; break;
+        case eCharacterType::hydra: shot.asset="walker_hydra"; break;
+        case eCharacterType::kraken: shot.asset="walker_kraken"; break;
+        case eCharacterType::maenads: shot.asset="walker_maenads"; break;
+        case eCharacterType::medusa: shot.asset="walker_medusa"; break;
+        case eCharacterType::minotaur: shot.asset="walker_minotaur"; break;
+        case eCharacterType::scylla: shot.asset="walker_scylla"; break;
+        case eCharacterType::sphinx: shot.asset="walker_sphinx"; break;
+        case eCharacterType::talos: shot.asset="walker_talos"; break;
+        case eCharacterType::satyr: shot.asset="walker_satyr"; break;
+        default: return;
+        }
+        if(const auto tile=mBoard->tile(int(end.fX),int(end.fY))) {
+            shot.water=tile->hasWater(); shot.building=tile->underBuilding();
+            if(shot.building && shot.building->type()!=eBuildingType::ruins) {
+                const auto& r=shot.building->tileRect(); shot.footprint={r.x,r.y,r.w,r.h};
+            } else shot.building=nullptr;
+        }
+        found=mMonsterShots.insert_or_assign(missile,shot).first;
+    }
+    const auto& shot=found->second;
+    const auto tile=mBoard->tile(int(shot.target[0]),int(shot.target[1]));
+    const auto current=tile?tile->underBuilding():nullptr;
+    const bool destroyed=phase==1 && shot.building && current &&
+                         current!=shot.building && current->type()==eBuildingType::ruins;
+    std::ostringstream o; o << std::setprecision(9)
+        << "{\"event\":" << mNextMonsterEffect++ << ",\"id\":" << shot.id
+        << ",\"phase\":" << quote(phase==0?"launch":phase==1?"impact":"cancel")
+        << ",\"asset\":" << quote(shot.asset) << ",\"time\":" << mBoard->totalTime()
+        << ",\"speed\":" << missile->speed() << ",\"age\":" << missile->time()
+        << ",\"start\":[" << shot.start[0] << ',' << shot.start[1] << ',' << shot.start[2]
+        << "],\"target\":[" << shot.target[0] << ',' << shot.target[1] << ',' << shot.target[2]
+        << "],\"footprint\":[" << shot.footprint[0] << ',' << shot.footprint[1] << ',' << shot.footprint[2] << ',' << shot.footprint[3]
+        << "],\"water\":" << (shot.water?"true":"false") << ",\"destroyed\":" << (destroyed?"true":"false") << '}';
+    // Keep launches and impacts even when a short flight completes between snapshots.
+    // Bounded cosmetics only; no damage, decisions or native RNG in this observer.
+    if(mMonsterEffects.size()==256) mMonsterEffects.erase(mMonsterEffects.begin());
+    mMonsterEffects.push_back(o.str());
+    if(phase!=0) mMonsterShots.erase(found);
+}
+
 void eSimulationService::advance(double delta) {
-    if(!mBoard || !std::isfinite(delta) || delta <= 0) return;
+    if(!mBoard || !std::isfinite(delta) || delta <= 0 || mEditor) return;
     const double ms = std::min(delta*1000.0,250.0);
     mBoard->advanceAnimTime(ms);
     mAccumulator += ms;
@@ -1209,12 +1350,20 @@ std::string eSimulationService::snapshot(bool full) {
     const auto micros = [](std::chrono::steady_clock::time_point a, std::chrono::steady_clock::time_point b) { return std::chrono::duration<double,std::micro>(b-a).count(); };
     const auto began = clock();
     auto& board = *mBoard; board.waitUntilFinished();
+    for(auto it=mMonsterShots.begin();it!=mMonsterShots.end();) {
+        if(!it->second.native) it=mMonsterShots.erase(it); else ++it;
+    }
+    // Loaded in-flight missiles: visit only the active registry, never map cells.
+    if(full) for(const auto m:board.missiles()) {
+        if(m->active() && !mMonsterShots.count(m)) observeMonsterMissile(m,0);
+    }
     full = full || !mSentTerrain; mSentTerrain = true;
     const auto pid = board.personPlayer(); std::ostringstream o; o << std::setprecision(7);
     o << "{\"protocol\":1,\"backend\":\"embedded_cpp\",\"sequence\":" << ++mSequence
-      << ",\"time\":" << board.totalTime() << ",\"paused\":" << (mPaused?"true":"false")
+      << ",\"time\":" << board.totalTime() << ",\"paused\":" << (mPaused?"true":"false") << ",\"editor\":" << (mEditor?"true":"false")
       << ",\"running\":" << (!mPaused&&!mBlocked?"true":"false") << ",\"blocked\":" << (mBlocked?"true":"false")
       << ",\"undo_available\":" << (undoAvailable()?"true":"false")
+      << ",\"buildable_revision\":" << mBuildableRevision.load()
       << ",\"speed\":" << mSpeed << ",\"money\":" << board.drachmas(pid) << ",\"population\":" << board.population(pid)
       << ",\"date\":[" << board.date().day() << ',' << int(board.date().month())+1 << ',' << board.date().year()
       << "],\"city_header\":{\"name\":" << quote(board.cityName(playerCity())) << ",\"id\":" << int(playerCity()) << ",\"stock\":[";
@@ -1242,6 +1391,8 @@ std::string eSimulationService::snapshot(bool full) {
     // The altars of finished sanctuaries that have a rite on them now: each is shown as a scene (see the end of the walkers).
     struct AltarRite { const eTempleAltarBuilding* altar; int x, y, w, h, altitude; };
     std::vector<AltarRite> rites;
+    // The burning buildings (ruins too): their footprint, height and whether they are rubble, for the flames and smoke.
+    std::ostringstream fires; bool firstFire = true;
     bool buildingsChanged = full; size_t seenBuildings = 0; eBuilding* lastBuilding = nullptr;
     board.iterateOverAllTiles([&](eTile* t) {
         eBuilding* const b = t->underBuilding();
@@ -1254,12 +1405,14 @@ std::string eSimulationService::snapshot(bool full) {
         // (0 none, 1 road, 2 avenue, 3 boulevard). Column 4 keeps its 0/1 meaning.
         const auto roadType = road ? t->underBuildingType() : eBuildingType::none;
         const int roadKind = !road ? 0 : roadType == eBuildingType::boulevard ? 3 : roadType == eBuildingType::avenue ? 2 : 1;
-        const std::array<int,6> value{{t->doubleAltitude(),int(t->terrain()),road?1:0,geometry,t->characterDoubleAltitude(),roadKind}};
+        // Column 9: native fishing deposits (fish=1, urchin=2), observation only.
+        const int waterResources = (t->hasFish()?1:0) | (t->hasUrchin()?2:0);
+        const std::array<int,7> value{{t->doubleAltitude(),int(t->terrain()),road?1:0,geometry,t->characterDoubleAltitude(),roadKind,waterResources}};
         const size_t index = size_t(t->y()-mY)*size_t(mW)+size_t(t->x()-mX);
         if(index < cells && (full || !mTerrainKnown[index] || mTerrainState[index] != value)) {
             if(!first) o << ','; first=false;
             o << '[' << t->x() << ',' << t->y() << ',' << value[0] << ',' << value[1] << ',' << value[2] << ','
-              << (board.canBuild(t->x(),t->y(),1,1,false,t->cityId(),pid)?1:0) << ',' << value[3] << ',' << value[4] << ',' << value[5] << ']';
+              << (board.canBuild(t->x(),t->y(),1,1,false,t->cityId(),pid)?1:0) << ',' << value[3] << ',' << value[4] << ',' << value[5] << ',' << value[6] << ']';
             mTerrainState[index] = value; mTerrainKnown[index] = 1;
         }
         if(!b || b == lastBuilding) return;
@@ -1298,6 +1451,10 @@ std::string eSimulationService::snapshot(bool full) {
         if(type == eBuildingType::pyramidStatue || type == eBuildingType::pyramidMonument) orientation = sanctuaryQuarterTurns(eBuildingType::templeStatue, 0, false);
         else if(type == eBuildingType::pyramidTemple) orientation = sanctuaryQuarterTurns(eBuildingType::temple, 0, false);
         const int altitude = centre->doubleAltitude(); const bool active = b->enabled();
+        if(b->isOnFire()) {
+            fires << (firstFire?"":",") << '[' << r.x << ',' << r.y << ',' << r.w << ',' << r.h << ',' << altitude << ',' << (type==eBuildingType::ruins?1:0) << ']';
+            firstFire = false;
+        }
         const auto employer = dynamic_cast<const eEmployingBuilding*>(b);
         const int workers = employer ? employer->employed() : 0;
         // Use native overlay eligibility (including production inputs and patrol
@@ -1379,14 +1536,19 @@ std::string eSimulationService::snapshot(bool full) {
                  << ",\"animation_offset\":" << rec.animationOffset << (rec.grow<100?",\"grow\":"+std::to_string(rec.grow):std::string()) << (rec.stretch?",\"stretch\":true":"");
             if(!rec.storageBays.empty()) item << ",\"bays\":[" << rec.storageBays << "]";
             item << '}';
-            rec.json = item.str(); buildingsChanged = true;
+            rec.json = item.str();
+            if(rec.asset != "native_marker") buildingsChanged = true;
         }
         order.push_back(&rec);
     });
     // Buildings that vanished from the map: forget them (and their session facing).
     if(seenBuildings != mBuildingCache.size()) {
         for(auto it = mBuildingCache.begin(); it != mBuildingCache.end();) {
-            if(it->second.seen != generation) { mOrientations.erase(it->first); it = mBuildingCache.erase(it); buildingsChanged = true; }
+            if(it->second.seen != generation) {
+                if(it->second.asset != "native_marker") buildingsChanged = true;
+                mOrientations.erase(it->first);
+                it = mBuildingCache.erase(it);
+            }
             else ++it;
         }
     }
@@ -1456,7 +1618,12 @@ std::string eSimulationService::snapshot(bool full) {
     for(auto it=mIds.begin();it!=mIds.end();) { if(!alive.count(it->first)) { mOrientations.erase(it->first); it=mIds.erase(it); } else ++it; }
     const auto afterWalkers = clock();
     // The banners are sent whole whenever they change (and in every full snapshot); a snapshot without them leaves the list as it was.
-    { const auto banners=bannersJson(); o << "],"; if(full || banners!=mSentBanners) { mSentBanners=banners; o << "\"banners\":" << banners << ','; }
+    { const auto banners=bannersJson(); o << "],\"monster_effects\":[";
+      bool firstEffect=true; for(const auto& effect:mMonsterEffects) { if(!firstEffect) o << ','; firstEffect=false; o << effect; }
+      mMonsterEffects.clear(); o << "],";
+      if(full || banners!=mSentBanners) { mSentBanners=banners; o << "\"banners\":" << banners << ','; }
+      // The fires are sent whole whenever they change (and in every full snapshot), like the banners.
+      { const auto burning="["+fires.str()+"]"; if(full || burning!=mSentFires) { mSentFires=burning; o << "\"fires\":" << burning << ','; } }
       // While an enemy force is in the city every snapshot says so, with how many invaders stand; peace says nothing.
       if(board.hasActiveInvasions(board.currentCityId())) { int ix=0,iy=0; const int n=invaderCount(&ix,&iy); o << "\"invasion\":true,\"invaders\":" << n << ",\"invader_at\":[" << ix << ',' << iy << "],"; }
       // A view the player's own attack asks for, sent once.
@@ -1888,20 +2055,27 @@ std::string eSimulationService::relativeSound(const std::string& path) {
     return relative;
 }
 // The next episode as the briefing shows it, before it starts: titles, story and the goals' wording (no status yet).
-std::string eSimulationService::previewEpisode() {
+std::string eSimulationService::previewEpisode(eEpisode* selected) {
     if(!mCampaign) return "{\"error\":\"city_not_loaded\"}";
-    const auto e=mCampaign->currentEpisode();
+    const auto e=selected ? selected : mCampaign->currentEpisode();
     if(!e || !e->fBoard) return "{\"error\":\"city_not_loaded\"}";
-    const bool colony=mCampaign->currentEpisodeType()==eEpisodeType::colony;
-    const auto capital=e->fBoard->boardCityWithId(e->fBoard->currentCityId());
+    const bool colony=!selected && mCampaign->currentEpisodeType()==eEpisodeType::colony;
+    auto capital=e->fBoard->boardCityWithId(e->fBoard->currentCityId());
+    if(selected) {
+        // A template has no current city yet. Use the parent district that startEpisode would select,
+        // without changing the world, so Atlantean military goals retain their native frigate wording.
+        for(const auto& city:mCampaign->worldBoard().cities()) if(city && city->type()==eCityType::parentCity) {
+            capital=e->fBoard->boardCityWithId(city->cityId()); break;
+        }
+    }
     const bool atlantean=capital?capital->atlantean():false;
     auto introduction=e->fIntroduction; eStringHelpers::replaceSpecial(introduction);
     std::string voice;
-    { const auto path=mCampaign->currentEpisodeAudioFilePath(true); std::error_code ec; if(!path.empty() && std::filesystem::exists(path,ec)) voice=relativeSound(path); }
+    if(!selected) { const auto path=mCampaign->currentEpisodeAudioFilePath(true); std::error_code ec; if(!path.empty() && std::filesystem::exists(path,ec)) voice=relativeSound(path); }
     std::ostringstream out;
     out << "{\"kind\":\"episode_preview\",\"title\":" << quote(mCampaign->titleText()) << ",\"episode_title\":" << quote(e->fTitle)
         << ",\"introduction\":" << quote(introduction) << ",\"voice\":" << quote(voice) << ",\"colony\":" << (colony?"true":"false")
-        << ",\"episode_number\":" << (mCampaign->currentEpisodeId()+1) << ",\"episode_count\":" << (colony?int(mCampaign->colonyEpisodes().size()):int(mCampaign->parentCityEpisodes().size()))
+        << ",\"episode_number\":" << (selected?1:mCampaign->currentEpisodeId()+1) << ",\"episode_count\":" << (colony?int(mCampaign->colonyEpisodes().size()):int(mCampaign->parentCityEpisodes().size()))
         << ",\"difficulty\":" << int(mCampaign->difficulty()) << ",\"goals\":[";
     bool first=true;
     for(const auto& g:e->fGoals) {
@@ -2193,6 +2367,7 @@ std::string eSimulationService::placement(const std::string& name,int x,int y,in
         cost=eDifficultyHelpers::buildingCost(mBoard->difficulty(pid),costType(spec));
         const auto cid=t?t->cityId():eCityId::neutralFriendly;
         if(t && reason.empty() && !mBoard->supportsBuilding(cid,spec.mode)) reason="building_not_available";
+        if(spec.kind==Kind::animal && t && reason.empty() && mBoard->countAllowed(cid,spec.type)<=0) reason="animal_limit";
         // A trade post belongs to one partner city; a land post needs a land partner, a pier a sea partner.
         if(spec.kind==Kind::trade && t && reason.empty() && !tradePartner(cid,partner,name=="pier")) reason="trade_partner_unavailable";
         if(spec.kind==Kind::agora) {
@@ -2451,6 +2626,17 @@ std::string eSimulationService::placement(const std::string& name,int x,int y,in
                 if(!first) cells << ','; first=false;
                 cells << '[' << x+dx << ',' << y+dy << ',' << (tile?tile->doubleAltitude():altitude) << ',' << (reason.empty()?"true":"false") << ',' << quote(reason) << ']';
             }
+        } else if(spec.kind==Kind::animal) {
+            std::string cellReason=reason;
+            if(cellReason.empty()) {
+                if(!t) cellReason="out_of_map";
+                else if(t->cityId()!=cid) cellReason="other_district";
+                else if(!mBoard->canBuildAnimal(x,y,spec.type,cid,pid,false)) {
+                    cellReason=(t->underBuilding() && t->underBuildingType()!=spec.type)?"occupied":"blocked_terrain";
+                }
+            }
+            if(reason.empty() && !cellReason.empty()) reason=cellReason;
+            cells << '[' << x << ',' << y << ',' << altitude << ',' << (reason.empty()?"true":"false") << ',' << quote(reason) << ']';
         } else {
             const std::string globalReason=reason;
             bool first=true;
@@ -2617,9 +2803,10 @@ std::string eSimulationService::areaPreview(const std::string& name,const int x1
             const int x=cell.first, y=cell.second;
             if(!tile) cellReason="out_of_map";
             else if(allowed<=0) cellReason="animal_limit";
-            else if(taken.count({x,y}) || taken.count({x,y+1})) cellReason="occupied";
-            else if(!mBoard->canBuild(x,y,1,2,false,tile->cityId(),pid,true,true)) cellReason=tile->underBuilding()?"occupied":"blocked_terrain";
-            if(cellReason.empty()) { --allowed; taken.insert({x,y}); taken.insert({x,y+1}); }
+            else if(!mBoard->canBuildAnimal(x,y,spec.type,tile->cityId(),pid,false)) {
+                cellReason=(tile->underBuilding() && tile->underBuildingType()!=spec.type)?"occupied":"blocked_terrain";
+            }
+            if(cellReason.empty()) { --allowed; }
         } else if(cellReason.empty()) {
             if(!tile) cellReason="out_of_map";
             else {
@@ -3099,9 +3286,10 @@ int eSimulationService::worldIndex(const stdsptr<eWorldCity>& city) const {
 std::string eSimulationService::armiesJson() {
     const auto& world=mBoard->world(); const auto date=mBoard->date();
     std::ostringstream out; out << '['; bool first=true;
-    const auto emit=[&](const char* reason,const stdsptr<eWorldCity>& from,const stdsptr<eWorldCity>& to,const stdsptr<eWorldCity>& origin,double frac,int size,const std::vector<eHeroType>& heroes) {
+    // `ares`: the god of war marches with this part (he joins a conquest when his sanctuary is asked for help while it is on the way).
+    const auto emit=[&](const char* reason,const stdsptr<eWorldCity>& from,const stdsptr<eWorldCity>& to,const stdsptr<eWorldCity>& origin,double frac,int size,const std::vector<eHeroType>& heroes,const bool ares=false) {
         if(!first) out << ','; first=false;
-        out << "{\"reason\":\"" << reason << "\",\"from\":" << worldIndex(from) << ",\"to\":" << worldIndex(to) << ",\"origin\":" << worldIndex(origin) << ",\"frac\":" << frac << ",\"size\":" << size << ",\"heroes\":[";
+        out << "{\"reason\":\"" << reason << "\",\"from\":" << worldIndex(from) << ",\"to\":" << worldIndex(to) << ",\"origin\":" << worldIndex(origin) << ",\"frac\":" << frac << ",\"size\":" << size << ",\"ares\":" << (ares?"true":"false") << ",\"heroes\":[";
         bool firstHero=true; for(const auto hero:heroes) { if(!firstHero) out << ','; firstHero=false; out << int(hero); }
         out << "]}";
     };
@@ -3117,7 +3305,8 @@ std::string eSimulationService::armiesJson() {
         for(const auto& part:split) {
             const auto from=world.cityWithId(part.first); const int size=part.second.fSoldiers.empty()?0:1+std::clamp(int(part.second.fSoldiers.size())/3,0,2);
             std::vector<eHeroType> heroes; for(const auto& hero:part.second.fHeroes) heroes.push_back(hero.second);
-            if(home) emit(reason,toCity,from,from,frac,size,heroes); else emit(reason,from,toCity,from,frac,size,heroes);
+            const bool ares=part.second.fAres;
+            if(home) emit(reason,toCity,from,from,frac,size,heroes,ares); else emit(reason,from,toCity,from,frac,size,heroes,ares);
         }
         for(const auto& ally:forces.fAllies) { if(home) emit(reason,toCity,ally,ally,frac,2,{}); else emit(reason,ally,toCity,ally,frac,2,{}); }
     }
@@ -3157,6 +3346,11 @@ std::string eSimulationService::enlistInfo() {
     }
     out << "]";
     if(const auto target=worldCity(session.city)) out << ",\"target\":{\"index\":" << session.city << ",\"name\":" << quote(target->name()) << ",\"shields\":" << target->shields() << '}';
+    // Ares is not enlisted here (the SDL dialog never offers him): he joins a conquest on the way when his sanctuary is asked for help.
+    out << ",\"ares\":{\"sanctuary\":";
+    bool ares=false, away=false;
+    for(const auto cid:session.cids) if(const auto sanctuary=mBoard->sanctuary(cid,eGodType::ares)) if(sanctuary->finished()) { ares=true; away=away || sanctuary->godAbroad(); }
+    out << (ares?"true":"false") << ",\"abroad\":" << (away?"true":"false") << '}';
     out << '}'; return out.str();
 }
 std::string eSimulationService::tradeInfo(eTradePost* post) {
@@ -3201,6 +3395,139 @@ std::string eSimulationService::tradeInfo(eTradePost* post) {
     out << "]}";
     return out.str();
 }
+// The SDL remaster's City History window as data: the monthly record of the player's city in view (engine/ecityhistory),
+// each series' label and whether it is a percentage, each month's name and the range buttons, worded as the SDL window.
+std::string eSimulationService::cityHistory() {
+    mBoard->waitUntilFinished();
+    const auto cid=playerCity();
+    const auto city=mBoard->boardCityWithId(cid);
+    const auto text=[](const char* key,const char* fallback) { const auto& s=eLanguage::text(key); return s.empty()?std::string(fallback):s; };
+    std::ostringstream out;
+    out << "{\"kind\":\"city_history\",\"title\":" << quote(text("history_title","City History")) << ",\"series\":[";
+    const std::array<std::array<const char*,2>,6> series{{{"history_population","Population"},{"history_treasury","Treasury"},{"history_food","Food"},
+        {"history_popularity","Popularity"},{"history_unrest","Unrest"},{"history_health","Health"}}};
+    for(size_t i=0;i<series.size();++i) out << (i?",":"") << "{\"label\":" << quote(text(series[i][0],series[i][1])) << ",\"percent\":" << (i>=3?"true":"false") << '}';
+    out << "],\"ranges\":[" << quote(text("history_2y","2 years")) << ',' << quote(text("history_10y","10 years")) << ',' << quote(text("history_all","All"))
+        << "],\"in_a_year\":" << quote(text("history_year","in a year")) << ",\"since_start\":" << quote(text("history_since","since the start"))
+        << ",\"empty\":[" << quote(text("history_empty","The city's chronicle begins this month.")) << ',' << quote(text("history_empty2","Each month adds a point to these charts."))
+        << "],\"samples\":[";
+    if(city) {
+        bool first=true;
+        for(const auto& s:city->history().samples()) {
+            const auto era=s.fYear<0?eLanguage::zeusText(20,0):eLanguage::zeusText(20,1);
+            const auto label=eMonthHelper::shortName(static_cast<eMonth>(s.fMonth))+" "+std::to_string(std::abs(s.fYear))+" "+era;
+            out << (first?"":",") << "{\"month\":" << s.monthIndex() << ",\"label\":" << quote(label) << ",\"values\":["
+                << s.fPopulation << ',' << s.fDrachmas << ',' << s.fFood << ',' << s.fPopularity << ',' << s.fUnrest << ',' << s.fHealth << "]}";
+            first=false;
+        }
+    }
+    out << "]}"; return out.str();
+}
+
+// The SDL remaster's City Advisor as data: the city's problems, most serious first, with the tiles "Go there" steps through
+// (engine/ecityadvisor, the SDL window's own ranking and words).
+std::string eSimulationService::cityAdvisor() {
+    mBoard->waitUntilFinished();
+    const auto text=[](const char* key,const char* fallback) { const auto& s=eLanguage::text(key); return s.empty()?std::string(fallback):s; };
+    std::ostringstream out;
+    out << "{\"kind\":\"city_advisor\",\"title\":" << quote(text("adv_title","City Advisor")) << ",\"go\":" << quote(text("adv_go","Go there")) << ",\"advice\":[";
+    bool first=true;
+    for(const auto& a:eCityAdvisor::collect(*mBoard,playerCity())) {
+        out << (first?"":",") << "{\"key\":" << quote(a.fKey) << ",\"severity\":" << a.fSeverity << ",\"icon\":" << quote(a.fIcon)
+            << ",\"title\":" << quote(a.fTitle) << ",\"detail\":" << quote(a.fDetail) << ",\"hint\":" << quote(a.fHint) << ",\"places\":[";
+        for(size_t i=0;i<a.fPlaces.size();++i) out << (i?",":"") << '[' << a.fPlaces[i].first << ',' << a.fPlaces[i].second << ']';
+        out << "]}"; first=false;
+    }
+    out << "]}"; return out.str();
+}
+
+// The SDL remaster's Trade Summary as data: its lines (engine/etradesummary), each part's tone, indent and kind.
+std::string eSimulationService::tradeSummary() {
+    mBoard->waitUntilFinished();
+    const auto& title=eLanguage::text("trade_title");
+    static const char* tones[]={"text","dim","green","red","amber","gold","label"};
+    std::ostringstream out;
+    out << "{\"kind\":\"trade_summary\",\"title\":" << quote(title.empty()?std::string("Trade Summary"):title) << ",\"lines\":[";
+    bool first=true;
+    for(const auto& l:eTradeSummary::lines(*mBoard,playerCity())) {
+        out << (first?"":",") << "{\"left\":" << quote(l.fLeft) << ",\"right\":" << quote(l.fRight)
+            << ",\"left_tone\":\"" << tones[int(l.fLeftTone)] << "\",\"right_tone\":\"" << tones[int(l.fRightTone)] << '"'
+            << ",\"heading\":" << (l.fFont?"true":"false") << ",\"indent\":" << l.fIndent << ",\"header\":" << (l.fHeader?"true":"false")
+            << ",\"card\":" << (l.fCard?"true":"false") << ",\"resource\":" << int(l.fIcon) << '}';
+        first=false;
+    }
+    out << "]}"; return out.str();
+}
+
+// The SDL remaster's house card as data (buildings/ehousecard): the level, residents and the needs for the next level.
+std::string eSimulationService::houseCard(int x,int y) {
+    mBoard->waitUntilFinished();
+    if(x<mX || y<mY || x>=mX+mW || y>=mY+mH) return "{\"kind\":\"house_card\",\"valid\":false}";
+    const auto t=mBoard->tile(x,y);
+    const auto house=t?dynamic_cast<eHouseBase*>(t->underBuilding()):nullptr;
+    const auto card=eHouseCards::card(house);
+    if(!card.fValid) return "{\"kind\":\"house_card\",\"valid\":false}";
+    const auto r=house->tileRect();
+    std::ostringstream out;
+    out << "{\"kind\":\"house_card\",\"valid\":true,\"footprint\":[" << r.x << ',' << r.y << ',' << r.w << ',' << r.h << ']'
+        << ",\"elite\":" << (card.fElite?"true":"false") << ",\"level\":" << card.fLevel << ",\"levels\":" << card.fLevels
+        << ",\"name\":" << quote(card.fName) << ",\"residents\":" << quote(card.fResidents) << ",\"people\":" << card.fPeople
+        << ",\"tone\":" << card.fTone << ",\"status\":" << quote(card.fStatus) << ",\"lines\":[";
+    bool first=true;
+    for(const auto& l:card.fLines) {
+        out << (first?"":",") << "{\"icon\":" << quote(l.fIcon) << ",\"resource\":" << int(l.fResource) << ",\"label\":" << quote(l.fLabel)
+            << ",\"detail\":" << quote(l.fDetail) << ",\"note\":" << quote(l.fNote) << ",\"met\":" << (l.fMet?"true":"false") << '}';
+        first=false;
+    }
+    out << "]}"; return out.str();
+}
+
+// The building whose walkers' route the SDL route editor would edit for b: a walker building that sends walkers out, or the
+// agora of a vendor or an agora space (eGameWidget's left click on a building of the player's).
+ePatrolBuildingBase* eSimulationService::routeTarget(eBuilding* b) const {
+    if(!b) return nullptr;
+    if(const auto pb=dynamic_cast<ePatrolBuilding*>(b)) return pb->spawnsPatrolers()?pb:nullptr;
+    if(const auto v=dynamic_cast<eVendor*>(b)) return v->agora();
+    if(const auto s=dynamic_cast<eAgoraSpace*>(b)) return s->agora();
+    return nullptr;
+}
+
+// The route being edited: its building, guides (the tiles the walkers must pass, in order), whether they walk it both ways,
+// and the tiles of the walk the engine found (its path and, both ways, the reverse one; the path finder runs on the board's
+// threads, so the walk follows a change a moment later).
+std::string eSimulationService::routeJson() {
+    const auto text=[](const char* key,const char* fallback) { const auto& s=eLanguage::text(key); return s.empty()?std::string(fallback):s; };
+    const auto pb=mRouteBuilding.get();
+    std::ostringstream out;
+    out << "{\"kind\":\"route\",\"active\":" << (pb && !pb->deleteScheduled()?"true":"false");
+    out << ",\"labels\":{\"clear\":" << quote(text("clear","Clear")) << ",\"restore\":" << quote(text("restore","Restore"))
+        << ",\"both\":" << quote(text("both_directions","Both directions")) << ",\"one\":" << quote(text("one_direction","One direction"))
+        << ",\"close\":" << quote(text("close","Close")) << '}';
+    if(pb && !pb->deleteScheduled()) {
+        const auto centre=pb->centerTile();
+        const auto r=pb->tileRect();
+        out << ",\"name\":" << quote(eBuilding::sNameForBuilding(pb)) << ",\"footprint\":[" << r.x << ',' << r.y << ',' << r.w << ',' << r.h << ']'
+            << ",\"centre\":[" << (centre?centre->x():r.x) << ',' << (centre?centre->y():r.y) << ']'
+            << ",\"both\":" << (pb->bothDirections()?"true":"false") << ",\"max_distance\":" << pb->maxDistance() << ",\"guides\":[";
+        const auto& guides=pb->patrolGuides();
+        for(size_t i=0;i<guides.size();++i) out << (i?",":"") << '[' << guides[i].fX << ',' << guides[i].fY << ']';
+        const auto walk=[&](const std::vector<eOrientation>& path) {
+            out << '[';
+            auto tile=centre;
+            bool first=true;
+            for(int k=int(path.size())-1;k>=0 && tile;--k) {
+                tile=tile->neighbour<eTile>(path[k]);
+                if(!tile) break;
+                out << (first?"":",") << '[' << tile->x() << ',' << tile->y() << ']'; first=false;
+            }
+            out << ']';
+        };
+        out << "],\"path\":"; walk(guides.empty()?std::vector<eOrientation>{}:pb->path());
+        out << ",\"reverse\":"; walk(guides.empty() || !pb->bothDirections()?std::vector<eOrientation>{}:pb->reversePath());
+    }
+    out << '}'; return out.str();
+}
+
 std::string eSimulationService::inspect(int x,int y) {
     mBoard->waitUntilFinished();
     if(x<mX || y<mY || x>=mX+mW || y>=mY+mH) return "{\"error\":\"out_of_map\"}";
@@ -3222,6 +3549,8 @@ std::string eSimulationService::inspect(int x,int y) {
             << ",\"footprint\":[" << r.x << ',' << r.y << ',' << r.w << ',' << r.h << ']'
             << ",\"maintenance\":" << b->maintenance() << ",\"enabled\":" << (b->enabled()?"true":"false")
             << ",\"on_fire\":" << (b->isOnFire()?"true":"false") << ",\"road_access\":" << (b->accessToRoad()?"true":"false");
+        if(const auto pb=routeTarget(b)) if(pb->playerId()==mBoard->personPlayer() && !b->deleteScheduled())
+            out << ",\"route\":{\"guides\":" << pb->patrolGuides().size() << ",\"editing\":" << (mRouteBuilding.get()==pb?"true":"false") << '}';
         if(auto employer=dynamic_cast<eEmployingBuilding*>(b))
             out << ",\"employees\":" << employer->employed() << ",\"max_employees\":" << employer->maxEmployees()
                 << ",\"shut_down\":" << (employer->shutDown()?"true":"false");
@@ -3341,6 +3670,13 @@ std::string eSimulationService::command(const std::string& text) {
     if(!mBoard) return "{\"error\":\"city_not_loaded\"}";
     std::istringstream in(text); std::string action; in >> action; int value;
     if(action=="snapshot") return snapshot(true);
+    // The adventure editor's commands (eEditorSession); while editing, the city never runs and is never played.
+    if(action.rfind("editor",0)==0) {
+        if(!mEditor) return "{\"error\":\"not_editing\"}";
+        mBoard->waitUntilFinished();
+        return mEditor->command(action,in);
+    }
+    if(mEditor && action!="view_tile" && action!="cities" && action!="inspect" && action!="world" && action!="buildable") return "{\"error\":\"editing\"}";
     if(action=="pause" && in >> value && (value==0 || value==1)) mPaused=bool(value);
     else if(action=="speed" && in >> value && value>=0 && value<=3) mSpeed=value;
     else if(action=="event") {
@@ -3538,6 +3874,39 @@ std::string eSimulationService::command(const std::string& text) {
         // The city's own count of its goods is a cache the simulation refreshes once a second; refresh it so what was stocked counts at once.
         for(const auto cid:mBoard->personPlayerCitiesOnBoard()) mBoard->updateResources(cid);
         return "{\"kind\":\"stock\",\"added\":"+std::to_string(added)+"}";
+    } else if(action=="test_fire" || action=="test_collapse") {
+        // Validators only: sets the building on a tile burning (as the engine's fire risk does) or brings it down (eBuilding::collapse,
+        // which leaves ruins on each of its buildable tiles, burning or not as the fire was).
+        int x,y; if(!mAllowTestCommands || !mBoard || !(in>>x>>y)) return "{\"error\":\"unsupported_command\"}";
+        mBoard->waitUntilFinished();
+        const auto tile=mBoard->tile(x,y); const auto b=tile?tile->underBuilding():nullptr;
+        if(!b || b->type()==eBuildingType::road) return "{\"error\":\"nothing_there\"}";
+        if(action=="test_fire") b->setOnFire(true); else b->collapse();
+        // Not a snapshot: the change must reach the presentation in its next one.
+        return "{\"kind\":\"test\",\"done\":true}";
+    } else if(action=="test_earthquake") {
+        // Validators only: an earthquake of `size` tiles from a tile (eGameBoard::earthquake, the god's and the scenario's own); it
+        // spreads as the city runs, turning ground into chasms and bringing down what stands there.
+        int x,y,size; if(!mAllowTestCommands || !mBoard || !(in>>x>>y>>size)) return "{\"error\":\"unsupported_command\"}";
+        mBoard->waitUntilFinished();
+        const auto tile=mBoard->tile(x,y); if(!tile) return "{\"error\":\"out_of_map\"}";
+        mBoard->earthquake(tile,std::clamp(size,1,60));
+        return "{\"kind\":\"test\",\"done\":true}";
+    } else if(action=="test_terrain") {
+        // Validators only: turns the free ground within a radius of a tile into chasm (quake), lava or marsh.
+        std::string kind; int x,y,radius; if(!mAllowTestCommands || !mBoard || !(in>>kind>>x>>y>>radius)) return "{\"error\":\"unsupported_command\"}";
+        const eTerrain terrain=kind=="quake"?eTerrain::quake:kind=="lava"?eTerrain::lava:kind=="marsh"?eTerrain::marsh:eTerrain::dry;
+        if(terrain==eTerrain::dry) return "{\"error\":\"unsupported_command\"}";
+        mBoard->waitUntilFinished();
+        int changed=0;
+        for(int dy=-radius;dy<=radius;++dy) for(int dx=-radius;dx<=radius;++dx) {
+            if(dx*dx+dy*dy>radius*radius) continue;
+            const auto t=mBoard->tile(x+dx,y+dy);
+            if(!t || t->underBuilding() || t->terrain()==eTerrain::water) continue;
+            t->setTerrain(terrain); t->scheduleNeighboursTerrainUpdate(); ++changed;
+            if(const auto c=mBoard->boardCityWithId(t->cityId())) c->incTerrainState();
+        }
+        return "{\"kind\":\"terrain\",\"changed\":"+std::to_string(changed)+"}";
     } else if(action=="test_win") {
         // Validators only (see enableTestCommands): the same path a fulfilled set of goals takes.
         if(!mAllowTestCommands || !mBoard) return "{\"error\":\"unsupported_command\"}";
@@ -3671,6 +4040,24 @@ std::string eSimulationService::command(const std::string& text) {
         monster->changeTile(spot);
         act->increment(1);
         return armyInfo();
+    } else if(action=="test_monster_strike") {
+        // Isolated validators only: exercise the real obstacle-destruction action.
+        // It still waits, launches the native three missiles and collapses by its own callback.
+        uint64_t token; int sx,sy,tx,ty;
+        if(!mAllowTestCommands || !mBoard || !(in>>token>>sx>>sy>>tx>>ty)) return "{\"error\":\"unsupported_command\"}";
+        mBoard->waitUntilFinished();
+        const auto source=mBoard->tile(sx,sy), target=mBoard->tile(tx,ty);
+        if(!source || !target || !target->underBuilding()) return "{\"error\":\"invalid_test_target\"}";
+        for(const auto c:mBoard->characters()) {
+            const auto known=mIds.find(c); if(known==mIds.end() || known->second!=token) continue;
+            bool monster=false; eMonster::sCharacterToMonsterType(c->type(),&monster);
+            const auto act=dynamic_cast<eMonsterAction*>(c->action());
+            if(!monster || !act) break;
+            c->changeTile(source);
+            if(!eMonsterObsticleHandler(*mBoard,act).handle(target)) return "{\"error\":\"invalid_test_target\"}";
+            return "{\"okay\":true}";
+        }
+        return "{\"error\":\"unknown_monster\"}";
     } else if(action=="hero_summon") {
         // hero_summon <x> <y> <inspection token>: the summon button of a hero's hall, as the SDL inspector offers it (only when every
         // requirement is met); like every building control it is refused for a building other than the one that was inspected.
@@ -3809,6 +4196,53 @@ std::string eSimulationService::command(const std::string& text) {
         return snapshot();
     } else if(action=="city_data") {
         return cityData();
+    } else if(action=="city_history") {
+        return cityHistory();
+    } else if(action=="city_advisor") {
+        return cityAdvisor();
+    } else if(action=="trade_summary") {
+        return tradeSummary();
+    } else if(action=="house_card") {
+        int x,y; if(!(in>>x>>y)) return "{\"error\":\"invalid_house\"}";
+        return houseCard(x,y);
+    } else if(action=="route") {
+        return routeJson();
+    } else if(action=="route_begin") {
+        // route_begin <x> <y> <token>: edit the route of the inspected building's walkers (the SDL left click on a walker
+        // building of the player's); the guides it had are kept for route_restore.
+        int x,y; uint64_t token; if(!(in>>x>>y>>token)) return "{\"error\":\"invalid_route\"}";
+        mBoard->waitUntilFinished();
+        const auto tile=(x>=mX && y>=mY && x<mX+mW && y<mY+mH)?mBoard->tile(x,y):nullptr;
+        const auto b=tile?tile->underBuilding():nullptr;
+        if(!b) return "{\"error\":\"invalid_route\"}";
+        if(token!=mInspectionToken || mInspectionTarget.get()!=b || b->deleteScheduled()) return "{\"error\":\"inspection_target_changed\"}";
+        const auto pb=routeTarget(b);
+        if(!pb) return "{\"error\":\"no_route\"}";
+        if(pb->playerId()!=mBoard->personPlayer()) return "{\"error\":\"not_owned\"}";
+        mRouteBuilding=pb; mRouteSaved=pb->patrolGuides();
+        pb->updatePath();
+        return routeJson();
+    } else if(action=="route_toggle" || action=="route_clear" || action=="route_restore" || action=="route_both" || action=="route_end") {
+        // route_toggle <x> <y> adds a road tile as the next guide or takes an existing guide away (the SDL left click);
+        // route_clear, route_restore (the guides it had when editing began), route_both (one way or both) and route_end.
+        mBoard->waitUntilFinished();
+        const auto pb=mRouteBuilding.get();
+        if(action=="route_end") { mRouteBuilding=nullptr; mRouteSaved.clear(); return routeJson(); }
+        if(!pb || pb->deleteScheduled()) { mRouteBuilding=nullptr; return "{\"error\":\"no_route\"}"; }
+        auto& guides=pb->patrolGuides();
+        if(action=="route_toggle") {
+            int x,y; if(!(in>>x>>y)) return "{\"error\":\"invalid_route\"}";
+            const auto tile=(x>=mX && y>=mY && x<mX+mW && y<mY+mH)?mBoard->tile(x,y):nullptr;
+            if(!tile) return "{\"error\":\"invalid_route\"}";
+            const auto found=std::find_if(guides.begin(),guides.end(),[&](const ePatrolGuide& g) { return g.fX==x && g.fY==y; });
+            if(found!=guides.end()) guides.erase(found);
+            else if(tile->hasRoad()) guides.push_back({x,y});
+            else return "{\"error\":\"route_needs_road\"}";
+        } else if(action=="route_clear") guides.clear();
+        else if(action=="route_restore") guides=mRouteSaved;
+        else pb->setBothDirections(!pb->bothDirections());
+        pb->updatePath();
+        return routeJson();
     } else if(action=="set_tax" || action=="set_wage" || action=="set_priority" || action=="man_towers") {
         // The settings of the SDL data pages: set_tax <0-6> (none ... outrageous), set_wage <0-5> (none ... very high),
         // set_priority <sector 0-7> <0-5> (no priority ... very high; the workers are then shared out again, as the SDL
@@ -3867,6 +4301,36 @@ std::string eSimulationService::command(const std::string& text) {
             if(!monster || monster->dead() || !monster->tile()) continue;
             if(!first) o << ','; first=false;
             o << "{\"name\":" << quote(eMonster::sMonsterName(eMonster::sCharacterToMonsterType(monster->type()))) << ",\"x\":" << monster->tile()->x() << ",\"y\":" << monster->tile()->y() << '}';
+        }
+        o << "]}";
+        return o.str();
+    } else if(action=="monster_info") {
+        // The monster card beside the journal: every monster at large in the player's city with the engine's own words for its coming
+        // (the message the SDL view shows when it arrives), where it is, the hero who alone can slay it (only a hero's hunt kills a monster)
+        // and how far the city is with that hero: whether the hero's hall may be built, where it stands and the summoning stage.
+        mBoard->waitUntilFinished();
+        const auto cid=playerCity(); std::ostringstream o; o << "{\"kind\":\"monster_info\",\"monsters\":[";
+        bool first=true;
+        for(const auto monster:mBoard->monsters(cid)) {
+            if(!monster || monster->dead() || !monster->tile()) continue;
+            const auto type=eMonster::sCharacterToMonsterType(monster->type());
+            const auto hero=eMonster::sSlayer(type);
+            const auto hallType=eHerosHall::sHeroTypeToHallType(hero);
+            std::string hallTool; bool hallAllowed=false;
+            for(const auto& item:buildSpecs) if(item.second.type==hallType) { hallTool=item.first; hallAllowed=mBoard->supportsBuilding(cid,item.second.mode); break; }
+            const auto hall=mBoard->heroHall(cid,hero); const auto hallTile=hall?hall->centerTile():nullptr;
+            const char* stage=!hall?"none":hall->stage()==eHeroSummoningStage::arrived?"arrived":hall->stage()==eHeroSummoningStage::summoned?"summoned":"waiting";
+            std::string title,text;
+            if(const auto mm=eMessages::instance.monsterMessages(type)) {
+                eEventData record(cid); record.fMonster=type; record.fDate=mBoard->date(); record.fPlayerName=mPlayerName;
+                title=eMessageBox::sFormatTitle(record,mm->fInCity.fFull.fTitle); text=eMessageBox::sFormatText(record,mm->fInCity.fFull.fText);
+            }
+            if(!first) o << ','; first=false;
+            o << "{\"name\":" << quote(eMonster::sMonsterName(type)) << ",\"x\":" << monster->tile()->x() << ",\"y\":" << monster->tile()->y()
+              << ",\"title\":" << quote(title) << ",\"text\":" << quote(text)
+              << ",\"hero\":" << quote(eHero::sHeroName(hero)) << ",\"hall_tool\":" << quote(hallTool) << ",\"hall_allowed\":" << (hallAllowed?"true":"false")
+              << ",\"hall_built\":" << (hall?"true":"false") << ",\"hall_at\":[" << (hallTile?hallTile->x():0) << ',' << (hallTile?hallTile->y():0) << "]"
+              << ",\"hero_stage\":" << quote(stage) << '}';
         }
         o << "]}";
         return o.str();
