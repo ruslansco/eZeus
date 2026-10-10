@@ -36,8 +36,8 @@ Architecture scales vertically around the native foundation. Resident roots
 move with their authored floor, with inverse local height scaling to preserve
 anatomy; manifests record before/after resident heights. Source chores are posed
 with their original local root scale before restoring presentation height
-compensation, so reposing cannot change limb targets or the seated silhouette. Footprint width/depth
-stay unchanged. This is an art proportion pass, not new floors or occupancy rules.
+compensation, so reposing cannot change limb targets or the seated silhouette.
+Footprint width/depth stay unchanged. This is an art proportion pass, not new floors or occupancy rules.
 
 Earth yards use muted neutral soil in irregular thin patches with exposed
 terrain corners and small approach stones. The golden rectangular earth mat and
@@ -53,8 +53,7 @@ Residents and animated hand props belong to fresh building-activity derivatives
 for all seven active models. Their per-instance `working` flag requires native
 `eSmallHouse::people() > 0` and the absence of fire. Native houses do not use
 workplace enabled/overlay flags; neither those flags nor employee counts gate
-households. The existing delta cache reports first
-arrival/final departure without new polling, RNG draws or serialization fields.
+households. The existing delta cache reports first arrival/final departure without new polling, RNG draws or serialization fields.
 
 Starter women now stand with relaxed arms beside their hips, a small breathing
 and weight-shift loop and planted feet. Upper levels retain authored spinning,
@@ -73,6 +72,8 @@ models before separation; architecture-only files are intentionally much smaller
 `tools/review_housing_art.py --lang en` (then `ru`) checks actual GPU visibility,
 geometry reuse and the installed models in owned Metal windows. The standard
 activity gate still covers native pause/speed/decision holds and every baked pose.
+Use `--residents-only` for the small seven-house Metal fixture, or `--checks`
+for ordinary immigration and scratch save/reload without a full-city renderer.
 
 ## Export contract
 

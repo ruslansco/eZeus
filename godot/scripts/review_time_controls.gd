@@ -21,17 +21,21 @@ func frames(count:=8) -> void:
 	for i in count:await process_frame
 
 func click(button: Control) -> void:
+	DisplayServer.window_move_to_foreground()
 	var point:=button.get_global_rect().get_center()
+	root.warp_mouse(point)
 	var motion:=InputEventMouseMotion.new();motion.position=point;motion.set_meta("review_input",true)
-	Input.parse_input_event(motion);await frames(2)
+	root.push_input(motion,true);await frames(3)
+	root.push_input(motion,true)
 	for pressed in [true,false]:
-		var event:=InputEventMouseButton.new();event.position=point;event.button_index=MOUSE_BUTTON_LEFT;event.pressed=pressed
-		event.set_meta("review_input",true);Input.parse_input_event(event);await frames(3)
+		var event:=InputEventMouseButton.new();event.position=point;event.global_position=point
+		event.button_index=MOUSE_BUTTON_LEFT;event.pressed=pressed;event.button_mask=MOUSE_BUTTON_MASK_LEFT if pressed else 0
+		event.set_meta("review_input",true);root.push_input(event,true);await frames(3)
 
 func key(code: Key) -> void:
 	for pressed in [true,false]:
 		var event:=InputEventKey.new();event.physical_keycode=code;event.keycode=code;event.pressed=pressed
-		event.set_meta("review_input",true);Input.parse_input_event(event);await frames(2)
+		event.set_meta("review_input",true);root.push_input(event,true);await frames(2)
 
 func publish() -> Dictionary:
 	var state: Dictionary=city.core.simulation.snapshot(false)
@@ -142,6 +146,22 @@ func run() -> void:
 	check(int(publish().time)==held and city.state.blocked,"speed selection never bypasses a native decision")
 	check(FileAccess.get_sha256(copy)==FileAccess.get_sha256(source),"the copied city remains byte-identical to its protected source")
 	while hud.thumbnails.busy or not hud.thumbnails.pending.is_empty():await frames(2)
-	city.core.simulation.close_city();city.queue_free();await frames(4)
+	city.core.simulation.close_city()
+	# Native presentation metadata still remembers each selected pace after reload.
+	var saved_core: RefCounted=ClassDB.instantiate("EZeusSimulation")
+	var engine:=ProjectSettings.globalize_path("res://..").simplify_path()
+	var directory: String=preload("res://scripts/save_files.gd").directory()
+	saved_core.set_save_directory(directory)
+	for pace in [1,2,3]:
+		saved_core.open_city(engine,copy,language)
+		saved_core.command("speed %d"%pace)
+		var saved: Dictionary=saved_core.save_city("pace-%d"%pace)
+		check(not saved.has("error"),"pace %d saves only into the owned scratch directory"%pace)
+		saved_core.close_city()
+		var restored: Dictionary=saved_core.open_city(engine,directory.path_join("pace-%d.ez"%pace),language)
+		check(int(restored.get("speed",-1))==pace and restored.paused,"pace %d reloads with its selected speed and normal paused entry"%pace)
+		saved_core.close_city()
+	check(FileAccess.get_sha256(copy)==FileAccess.get_sha256(source),"pace round trips preserve the protected source and designated copy")
+	city.queue_free();await frames(4)
 	print("TIME_VALIDATION ","PASS" if okay else "FAIL"," checks=",checks)
 	quit(0 if okay else 1)

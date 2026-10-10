@@ -1,5 +1,51 @@
 # Preserve the simulation, replace the presentation
 
+## Simplified city people and portrait allocation — 10 October 2026
+
+Implemented: `city_people_v2` removes protruding scalp curls, beard locks, thick
+brow geometry and offline fiber grooms from 103 people models, retains fitted
+hair/short beards and paints eyebrows. Lower face/hand allocations preserve
+occupation clothes, equipment, bodies and original motion. Source triangles
+drop 3,622,756 → 1,651,347 (54.4%); vertices 1,944,670 → 906,686 (53.4%);
+optimized GLBs 1,068,373,828 → 495,695,920 bytes. Only those 103 geometry baseline
+entries change. Hades, the physician skeletal/crowd benchmark, monsters and
+shared native libraries are retained. The installed Dionysus/Odysseus identities
+override older native prototypes during Godot-only exports.
+
+People panels select their exact generated image or a related role/variant
+portrait; all 104 roles are covered. The missing homeless image is present.
+Portrait stages/lights/plinths/cameras are allocated only for uncovered
+animal/boat fallbacks or explicit offline previews. Names, native lines, voice,
+inventory, co-located selection, pause and queue behavior remain. Existing ruler
+cards use static PNGs; no high-detail ruler busts are rolled into the crowd.
+
+Verified: lossless optimization preserves both UVs, palette, geometry and
+19,412 original morph frames across 304 primitives. All 103 derivatives are
+fresh; 12,401 distinct imported poses pass. Character checks pass 315, the full
+441-model geometry/LOD gate passes, and motion checks pass 35. Sequential EN/RU
+panel reviews pass 43/41. See validation for evidence, numerical limits and
+visible captures. Actual FPS improvement, minimum-Mac profiling, painted PBR
+baking, remaining embedded-worker art and user visual acceptance remain pending.
+
+## Green Hades portal and hooded guardian — 10 October 2026
+
+The user’s new visual reference supersedes the cinematic portal’s red fire.
+Normal menus now draw rising lime-green flame tongues/motes, cyan swirling
+depths, a detailed hooded stone guardian with a downward sword and green eyes,
+and nearer moving mist. All layers keep source-image aperture registration and
+the existing menu animation clock/reduced-motion freeze. The backdrop remains
+the same photographic image; no native C++/gameplay/save or city art changes.
+
+The guardian is generated transparent artwork on a separate 3D quad, rather than
+a full sculpted runtime character. The original simple geometry draft remains
+editable outside the runtime directory. A separate packed Blender composition
+provides an approximate effect preview; Godot shaders are authoritative. Exact
+generation prompts and hashes are recorded alongside the new artwork, while the
+old scenic source/Blender reference/portal shader/guardian assets are retained.
+Runtime geometry is eight triangles/four planes. Read `GODOT_HADES_PORTAL.md` and
+current validation; minimum-device profiling, further sculpt refinement and
+user visual acceptance remain open.
+
 ## Three measured city paces — 10 October 2026
 
 The user's speed request supersedes the four-speed presentation contract. The
@@ -46,7 +92,8 @@ See current interface/validation evidence for scoped EN/RU layouts and behavior.
 The seven common-house static models now export only architecture and yard
 props. Their GPU activity derivatives contain residents and moving hand props,
 using the existing native `working` delta and an occupancy threshold of one
-person, excluding fire. Houses do not use workplace enabled/overlay flags. Empty homes, architecture fallback and placement ghosts show no people.
+person, excluding fire. Houses do not use workplace enabled/overlay flags. Empty
+homes, architecture fallback and placement ghosts show no people.
 First arrival/final departure only update instance data. Starter women replace
 the held forward-reaching pose with relaxed arms, subtle weight shift/breathing
 and planted feet. Higher levels reuse authored household tasks. A per-material
@@ -57,6 +104,12 @@ catalog grows from 47 to 54 assets. Explicit resident allocations and triangle
 ceilings retain the pre-split occupied tier, rather than growing from the smaller
 architecture-only source. See the housing/activity contracts and current
 validation evidence. Painted materials and user visual acceptance remain open.
+
+Verified housing evidence: 39 occupancy/save checks, 55 art checks, 126 baked
+part poses across seven assets, and 4 scoped Metal visibility/motion checks per
+language. Full-city Metal reviews pass 34 per language. Retained activity passes
+247 over 54 assets; housing 30 and embedded 101 pass. See `GODOT_VALIDATION.md` for full-city reviews and the two
+pre-existing non-housing source-budget failures.
 
 ## Zeus guide parity: original keys and missing gameplay — 10 October 2026
 

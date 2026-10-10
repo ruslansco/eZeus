@@ -3,19 +3,19 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hercules.glb",
-  "bytes": 8590648,
-  "vertices": 15964,
+  "bytes": 3616028,
+  "vertices": 6651,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.21700994670391083,
+      -0.21719002723693848,
       -0.3945992588996887,
       0.0005599489668384194
     ],
     [
-      0.24383558332920074,
-      0.1906442642211914,
+      0.24369804561138153,
+      0.19093798100948334,
       1.0294885635375977
     ]
   ],
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Hercules",
@@ -62,6 +62,7 @@
           "seed": 51303
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "da61699b66cab97ec4e5b61ef56ed3ff23289b9d07387dac6e978b15266d465a",
         "clavi_srgb": [
           0.58,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

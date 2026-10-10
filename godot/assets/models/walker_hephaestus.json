@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hephaestus.glb",
-  "bytes": 9411004,
-  "vertices": 15994,
+  "bytes": 3989412,
+  "vertices": 6615,
   "surfaces": 3,
-  "source_surfaces": 19,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.5959624648094177,
+      -0.5963873267173767,
       -0.7280309200286865,
       0.0
     ],
     [
-      0.6413586735725403,
+      0.6407344341278076,
       0.47955483198165894,
-      2.7447922229766846
+      2.74358868598938
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Hephaestus",
@@ -62,6 +62,7 @@
           "seed": 62102
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "dcee6fbae41daca7f29f77e4a5ccfcb7c23277add1a354e61453c140bcbd097b",
         "clavi_srgb": [
           0.28,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_gymnast.glb",
-  "bytes": 6782216,
-  "vertices": 15758,
+  "bytes": 2772384,
+  "vertices": 6353,
   "surfaces": 3,
-  "source_surfaces": 16,
+  "source_surfaces": 13,
   "bounds_blender": [
     [
       -0.1757482886314392,
-      -0.18746668100357056,
+      -0.18754875659942627,
       0.0005000438541173935
     ],
     [
       0.1899999976158142,
-      0.19015076756477356,
-      0.8500425219535828
+      0.1904803365468979,
+      0.8471835255622864
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Gymnast",
@@ -62,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "201e1e87570177a6855b47d620843b81cfe637400eb0ab1a9a0d8d1375f3a927",
         "clavi_srgb": [
           0.4,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

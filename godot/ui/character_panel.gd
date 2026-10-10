@@ -43,21 +43,22 @@ var info: Dictionary = {}
 var access: Node
 var card := PanelContainer.new()
 var viewport := SubViewport.new()
-var stage := Node3D.new()
-var turntable := Node3D.new()
-var camera := Camera3D.new()
+var stage: Node3D
+var turntable: Node3D
+var camera: Camera3D
 var figure: Node3D
 var holder := SubViewportContainer.new()
 var still := TextureRect.new()      # The role's pre-rendered portrait, when it has one.
 # Render-only (scripts/render_portraits.gd): a folder of portrait models outside the project, loaded at run time, and a
 # fixed three-quarter pose. Empty in the game, which never loads portrait models.
 var portrait_source := ""
+var stage_ready := false
 # Roles that show their 3D model even though they have a portrait image, e.g. ["walker_curator"].
 var portrait_models: Array[String] = []
 var posed := false
-var plinth := MeshInstance3D.new()
-var band := MeshInstance3D.new()
-var halo := MeshInstance3D.new()   # The light a hovering Olympian casts on the plinth.
+var plinth: MeshInstance3D
+var band: MeshInstance3D
+var halo: MeshInstance3D   # The light a hovering Olympian casts on the plinth.
 var voice_row := HBoxContainer.new()
 var entry: Dictionary = {}     # A walker record for the figure, so main.gd's idle pose and god float apply.
 var floating := false
@@ -170,13 +171,10 @@ func build_portrait() -> Control:
 	holder.tooltip_text = tr("Drag to turn · wheel or double-click to zoom")
 	holder.gui_input.connect(portrait_input)
 	layers.add_child(holder)
-	viewport.own_world_3d = true
 	viewport.transparent_bg = true
 	viewport.msaa_3d = Viewport.MSAA_4X
-	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	holder.add_child(viewport)
-	build_stage()
-	viewport.add_child(stage)
 	still.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	still.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	still.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
@@ -198,6 +196,12 @@ func build_portrait() -> Control:
 	return frame
 
 func build_stage() -> void:
+	stage = Node3D.new()
+	turntable = Node3D.new()
+	camera = Camera3D.new()
+	plinth = MeshInstance3D.new()
+	band = MeshInstance3D.new()
+	halo = MeshInstance3D.new()
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_CLEAR_COLOR
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
@@ -408,9 +412,9 @@ func set_figure(asset: String) -> void:
 		figure.queue_free()
 		figure = null
 	entry = {}
-	viewport.mesh_lod_threshold = 1.0
-	viewport.scaling_3d_scale = 1.0
-	stage.get_node("PortraitKey").light_energy = 1.25
+	can_zoom = false
+	zoom = 0.0
+	zoom_target = 0.0
 	var image := portrait_image(asset)
 	var pictured := pictured_role(asset)
 	still.visible = pictured
@@ -422,6 +426,16 @@ func set_figure(asset: String) -> void:
 		return
 	if asset.is_empty():
 		return
+	# People images need no 3D world, lights, plinth, camera or model. Build
+	# those only for an uncovered animal/boat or an explicit offline override.
+	if not stage_ready:
+		viewport.own_world_3d = true
+		build_stage()
+		viewport.add_child(stage)
+		stage_ready = true
+	viewport.mesh_lod_threshold = 1.0
+	viewport.scaling_3d_scale = 1.0
+	stage.get_node("PortraitKey").light_energy = 1.25
 	figure = portrait_model(asset)
 	if figure == null:
 		figure = city.model(asset)
@@ -592,14 +606,15 @@ func _process(dt: float) -> void:
 	# The figure faces the viewer and sways a little; a drag turns it freely.
 	if not dragging:
 		drag_turn = lerpf(drag_turn, 0.0, 1.0 - exp(-dt * 1.4))
-	turntable.rotation.y = PI + (POSE_TURN if posed else sin(time * .55) * TURN_SWAY + drag_turn)
+	if stage_ready:
+		turntable.rotation.y = PI + (POSE_TURN if posed else sin(time * .55) * TURN_SWAY + drag_turn)
 	if still.visible and not access.reduced_motion:
 		# A slow breath of movement over the still portrait.
 		still.pivot_offset = still.size * Vector2(.5, .35)
 		still.scale = Vector2.ONE * (1.0 + .02 * (.5 - .5 * cos(time * .35)))
 	if absf(zoom - zoom_target) > .0005:
 		zoom = move_toward(zoom, zoom_target, dt * (100.0 if access.reduced_motion else 2.6))
-	if zoom > 0.0 or absf(zoom - zoom_target) > .0005:
+	if figure != null and (zoom > 0.0 or absf(zoom - zoom_target) > .0005):
 		place_camera()
 	if figure != null and not entry.is_empty():
 		figure.position = figure_base

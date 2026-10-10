@@ -20,11 +20,13 @@ func capture(label: String) -> Image:
 func flags(active: bool) -> bool:
 	var found := 0
 	for group in groups:
-		var matches := false
+		var matches := true
+		var dynamic := 0
 		for node in batches.group_nodes[group]:
 			if node.multimesh.use_custom_data:
-				matches = matches or (node.multimesh.get_instance_custom_data(0).r>.5)==active
-		if matches: found+=1
+				dynamic += 1
+				matches = matches and (node.multimesh.get_instance_custom_data(0).r>.5)==active
+		if matches and dynamic>0: found+=1
 	return found==7
 func run() -> void:
 	for arg in OS.get_cmdline_user_args():
@@ -61,8 +63,8 @@ func run() -> void:
 	for phase in [0,10,20,30]:
 		RenderingServer.global_shader_parameter_set("building_work_clock",float(phase))
 		var picture: Image=await capture("resident-idle-%02d"%phase)
-		if phase==0:first_hash=picture.get_data().hash()
-		else:moved=moved or first_hash!=picture.get_data().hash()
+		if phase==0:first_hash=hash(picture.get_data())
+		else:moved=moved or first_hash!=hash(picture.get_data())
 	check(moved,"actual rendered household poses change across the four-second loop")
 	await capture("residents-occupied")
 	for group in groups:groups[group][0].working=false

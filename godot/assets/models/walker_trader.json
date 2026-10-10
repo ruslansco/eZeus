@@ -3,19 +3,19 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_trader.glb",
-  "bytes": 6891112,
-  "vertices": 16014,
+  "bytes": 2870476,
+  "vertices": 6593,
   "surfaces": 3,
-  "source_surfaces": 19,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.1933414489030838,
-      -0.1750773787498474,
+      -0.19348056614398956,
+      -0.1751595139503479,
       0.0004999842494726181
     ],
     [
       0.20675088465213776,
-      0.17521809041500092,
+      0.17548033595085144,
       0.8700000047683716
     ]
   ],
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Trader",
@@ -62,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "7253f8d0e73eea2dce533879758688ab4905b1806d000c58f2b9d330782deefc",
         "clavi_srgb": [
           0.42,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

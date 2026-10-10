@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hera.glb",
-  "bytes": 9926064,
-  "vertices": 15518,
+  "bytes": 4287352,
+  "vertices": 6514,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.5601091384887695,
-      -0.5340725183486938,
+      -0.5598382353782654,
+      -0.5301900506019592,
       0.0
     ],
     [
-      0.5900803208351135,
+      0.5903456211090088,
       0.4804517924785614,
-      2.9098875522613525
+      2.9092001914978027
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Hera",
@@ -63,6 +63,7 @@
           "seed": 61909
         },
         "body_height": 0.8700665268115699,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "421e4dc7719e4eb0ad71ddc26b8ad0378722e3d86bc27afb96655ed086b26f4f",
         "clavi_srgb": [
           0.14,
@@ -72,11 +73,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

@@ -22,7 +22,7 @@ void fragment() {
  // Rising domain-warped flame tongues, with a quieter hot line at the masonry.
  vec2 warp=vec2(fbm(p*.53+vec2(t*.12,-t*.62)),fbm(p*.43+vec2(4.7,-t*.46)));
  float flow=fbm(p*vec2(1.4,.62)+warp*2.5+vec2(t*.08,-t*1.15));
- float reach=.24+pow(flow,2.3)*2.5;
+ float reach=.16+pow(flow,1.8)*3.1;
  float tongue=pow(clamp(1.0-edge/reach,0.0,1.0),1.25);
  float fire=tongue*(.45+flow*.95)+exp(-edge*4.8)*.14;
  vec3 green=mix(vec3(.025,.48,.008),vec3(.35,1.0,.018),clamp(fire*1.15,0.0,1.0));
@@ -30,15 +30,21 @@ void fragment() {
  // Slow rotating, billowing depths behind the guardian, open rather than black.
  vec2 center=vec2((UV.x-.56)*1.2,(UV.y-.46)*1.65);
  float radius=length(center), angle=atan(center.y,center.x);
- vec2 swirl=vec2(cos(angle+radius*4.0-t*.11),sin(angle+radius*4.0-t*.11))*radius;
- float cloud=fbm(swirl*6.0+warp*.65+vec2(t*.07,-t*.16));
+ vec2 swirl=vec2(cos(angle+radius*2.1-t*.11),sin(angle+radius*2.1-t*.11))*radius;
+ float cloud=fbm(swirl*8.0+warp*2.4+vec2(t*.07,-t*.26));
  float veil=fbm(p*.30+vec2(cloud*1.8-t*.13,t*.12));
  float core=exp(-dot(center,center)*5.0);
- vec3 depth=mix(vec3(.009,.055,.046),vec3(.10,.31,.28),cloud);
- depth+=vec3(.17,.36,.38)*core*(.48+veil*.72);
+ vec3 depth=mix(vec3(.003,.018,.021),vec3(.025,.13,.14),smoothstep(.24,.68,cloud));
+ depth+=vec3(.17,.36,.42)*core*pow(veil,1.15);
  float stream=pow(clamp(1.0-abs(sin(p.y*.47+cloud*4.0+p.x*.18-t*.44)),0.0,1.0),10.0);
- depth+=vec3(.08,.23,.18)*stream*veil*core;
- vec3 color=depth+green*fire*1.35;
+ depth+=vec3(.10,.29,.25)*stream*veil*core;
+ vec3 color=depth+green*fire*1.60;
+ // Sparse rising motes, deterministic per cell and clipped by the aperture.
+ vec2 spark_uv=p*vec2(1.3,.8)+vec2(0,-t*1.35);
+ vec2 cell=floor(spark_uv), local=fract(spark_uv)-.5;
+ float seed=hash(cell);
+ float spark=exp(-dot(local*vec2(16,9),local*vec2(16,9)))*step(.94,seed);
+ color+=vec3(.30,.80,.04)*spark*(.30+fire);
  ALBEDO=color;
  EMISSION=color*.34;
  ROUGHNESS=1.0;

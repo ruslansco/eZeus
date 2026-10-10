@@ -121,9 +121,11 @@ func run() -> void:
 	city.core._process(.5)
 	check(city.core.simulation.snapshot(false).time == held_time, "the native clock holds while the window is open")
 	var info: Dictionary = panel.info
-	check(panel.name_label.text != "" and (panel.speech.text.contains(str(info.text)) or str(info.text).is_empty()), "name and spoken line are shown")
+	var native_line := str(info.text).strip_edges()
+	check(panel.name_label.text != "" and panel.speech.text == ("“" + native_line + "”" if not native_line.is_empty() else ""), "name and complete native spoken line are shown")
 	if panel.pictured_role(str(info.asset)):
 		check(panel.still.visible and panel.figure == null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED, "a role with a portrait image shows the still image, no 3D figure")
+		check(not panel.stage_ready and panel.stage == null, "an image-only people panel does not allocate a 3D portrait stage")
 	else:
 		check(panel.figure != null and panel.holder.visible, "the walker's 3D model stands in the portrait")
 	check(not str(info.voice).is_empty() and (panel.speaking or audio.muted() or not audio.enabled), "the voice line plays when the window opens")

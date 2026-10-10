@@ -1,21 +1,22 @@
 {
   "asset": "walker_urchin",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_urchin.glb",
-  "bytes": 15425428,
-  "vertices": 15475,
+  "bytes": 6271276,
+  "vertices": 6238,
   "surfaces": 2,
-  "source_surfaces": 13,
+  "source_surfaces": 11,
   "bounds_blender": [
     [
       -0.22970016300678253,
-      -0.14522457122802734,
+      -0.14530670642852783,
       -0.710429310798645
     ],
     [
-      0.21215324103832245,
-      0.36392080783843994,
-      0.5418477058410645
+      0.21269072592258453,
+      0.3638971745967865,
+      0.538809061050415
     ]
   ],
   "walk_samples": 24,
@@ -35,7 +36,7 @@
     "state": "native collect/carry/deposit observations, presentation only, no root-motion"
   },
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Urchin gatherer",
@@ -70,6 +71,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "5457d1405dabc5ba0d79ed86e22aa9fcc0c0ef20f3c9a1ef62b7f2c8f41e102d",
         "clavi_srgb": [
           0.3,
@@ -79,11 +81,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

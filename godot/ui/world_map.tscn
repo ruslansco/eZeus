@@ -72,10 +72,10 @@ anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="AtlasHeading" type="PanelContainer" parent="Themed/Margin/Row/MapFrame/MapBox"]
-offset_left = 24.0
-offset_top = 20.0
-offset_right = 460.0
-offset_bottom = 98.0
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 490.0
+offset_bottom = 114.0
 mouse_filter = 2
 theme_type_variation = &"AtlasHeadingPanel"
 
@@ -130,14 +130,18 @@ mouse_filter = 2
 
 [node name="AtlasOverview" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 focus_mode = 0
 size_flags_horizontal = 3
 text = "Overview"
 
 [node name="AtlasFocus" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 focus_mode = 0
 size_flags_horizontal = 3
 text = "Focus city"
@@ -145,16 +149,18 @@ text = "Focus city"
 [node name="AtlasZoomOut" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 focus_mode = 0
-custom_minimum_size = Vector2(44, 0)
+custom_minimum_size = Vector2(44, 46)
 text = "−"
 tooltip_text = "Zoom out"
 
 [node name="AtlasZoomIn" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 focus_mode = 0
-custom_minimum_size = Vector2(44, 0)
+custom_minimum_size = Vector2(44, 46)
 text = "+"
 tooltip_text = "Zoom in"
 
@@ -176,7 +182,7 @@ autowrap_mode = 3
 mouse_filter = 2
 
 [node name="Side" type="PanelContainer" parent="Themed/Margin/Row" unique_id=1705860603]
-custom_minimum_size = Vector2(330, 0)
+custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 theme_type_variation = &"AtlasPanel"
 
@@ -190,8 +196,9 @@ theme_override_constants/separation = 6
 
 [node name="Previous" type="Button" parent="Themed/Margin/Row/Side/Column/Nav" unique_id=688657527]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 40)
+custom_minimum_size = Vector2(44, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_vertical = 4
 focus_mode = 0
 text = "◀"
@@ -212,7 +219,7 @@ autowrap_mode = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"Heading"
+theme_type_variation = &"AtlasCityName"
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -226,8 +233,9 @@ autowrap_mode = 3
 
 [node name="Next" type="Button" parent="Themed/Margin/Row/Side/Column/Nav" unique_id=1918190106]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(44, 40)
+custom_minimum_size = Vector2(44, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_vertical = 4
 focus_mode = 0
 text = "▶"
@@ -246,6 +254,7 @@ show_percentage = false
 
 [node name="GoodsScroll" type="ScrollContainer" parent="Themed/Margin/Row/Side/Column" unique_id=572955328]
 layout_mode = 2
+theme_type_variation = &"AtlasGoods"
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
@@ -270,56 +279,63 @@ columns = 3
 
 [node name="Request" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=969502843]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Request"
 
 [node name="Fulfil" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=882299145]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Fulfil"
 
 [node name="Gift" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=1684285915]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Gift"
 
 [node name="Raid" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=1735296283]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Raid"
 
 [node name="Conquer" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=938856479]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Conquer"
 
 [node name="Aid" type="Button" parent="Themed/Margin/Row/Side/Column/Actions" unique_id=1494414821]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Aid"
 
 [node name="Quests" type="Button" parent="Themed/Margin/Row/Side/Column" unique_id=861546378]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
+theme_type_variation = &"AtlasAction"
 size_flags_horizontal = 3
 focus_mode = 0
 text = "Quests of the gods"
@@ -333,8 +349,8 @@ autowrap_mode = 3
 
 [node name="Back" type="Button" parent="Themed/Margin/Row/Side/Column" unique_id=1362566935]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 focus_mode = 0
-theme_type_variation = &"Primary"
+theme_type_variation = &"AtlasPrimary"
 text = "Back to city"

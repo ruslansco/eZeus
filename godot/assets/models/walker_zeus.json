@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_zeus.glb",
-  "bytes": 15709008,
-  "vertices": 16035,
+  "bytes": 6673912,
+  "vertices": 6602,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 15,
   "bounds_blender": [
     [
       -0.5957717299461365,
-      -0.47409072518348694,
+      -0.4730816185474396,
       -15.611648559570312
     ],
     [
-      0.6154473423957825,
-      0.47347021102905273,
-      2.65842866897583
+      0.6152999997138977,
+      0.4759546220302582,
+      2.6572253704071045
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Zeus",
@@ -62,6 +62,7 @@
           "seed": 61101
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "d9d8f7952b82a3264c4cd94435b3723cee015625e4feab0767e52927432caa5e",
         "clavi_srgb": [
           0.4,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

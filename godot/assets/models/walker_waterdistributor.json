@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_waterdistributor.glb",
-  "bytes": 7209304,
-  "vertices": 16828,
+  "bytes": 3063456,
+  "vertices": 7081,
   "surfaces": 3,
-  "source_surfaces": 31,
+  "source_surfaces": 25,
   "bounds_blender": [
     [
-      -0.2063334435224533,
+      -0.2070361077785492,
       -0.4208787679672241,
       0.0005000140517950058
     ],
     [
-      0.2533080279827118,
+      0.2538501024246216,
       0.5199999809265137,
-      0.8480428457260132
+      0.8462486863136292
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Water carrier A",
@@ -62,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "494ff57ae341185d359aefa38c679d81c56e0611c4e39eeb14a698380abcc909",
         "clavi_srgb": [
           0.26,
@@ -102,6 +103,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "6790da4b72dcb3fe817755df0baf6497d9c4889b6affc2d0bc3e4f2d2b82e75a",
         "clavi_srgb": [
           0.34,
@@ -111,11 +113,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

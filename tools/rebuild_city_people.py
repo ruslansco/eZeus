@@ -76,7 +76,10 @@ def main():
             assert all(report.get(k)==v for k,v in old['manifest'].items()), name+' changed native clip contract'
             current=geometry(path)
             assert current['frames']==old['frames'], name+' lost pose aliases'
-            assert current['triangles'] < old['triangles'], name+' did not reduce geometry'
+            if old['character'].get('city_detail'):
+                assert current['triangles'] <= old['triangles']*1.05, name+' grew beyond its city geometry baseline'
+            else:
+                assert current['triangles'] < old['triangles'], name+' did not reduce geometry'
             assert report['vertices']<=report['character']['city_detail']['allocation_target']*1.4, name+' exceeds city budget'
             # Bake the derivative against the verified candidate before replacing
             # either source file. Moving retains its recorded size/mtime pair.
@@ -91,11 +94,22 @@ def main():
                 vat_bytes=vat['vat'],max_pose_error=vat['error'],source_sha256=hashlib.sha256((MODELS/(name+'.glb')).read_bytes()).hexdigest())
 
     pending=[n for n in names if not (n in results and results[n]['source_sha256']==hashlib.sha256((MODELS/(n+'.glb')).read_bytes()).hexdigest())]
+    errors=[]
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
-        for future in concurrent.futures.as_completed([pool.submit(rebuild,n) for n in pending]):
-            result=future.result();results[result['asset']]=result
+        futures={pool.submit(rebuild,n):n for n in pending}
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                result=future.result()
+            except Exception as error:
+                errors.append({'asset':futures[future],'error':str(error)})
+                print(json.dumps(errors[-1]),flush=True)
+                continue
+            results[result['asset']]=result
             results_path.write_text(json.dumps(results,indent=2)+'\n')
             print(json.dumps(result),flush=True)
+    if errors:
+        (REPORTS/'errors.json').write_text(json.dumps(errors,indent=2)+'\n')
+        raise SystemExit(1)
     print('CITY_PEOPLE_REBUILD_PASS',len(results),flush=True)
 
 

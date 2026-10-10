@@ -77,6 +77,32 @@ func run(city: Node3D, phase: String, subjects: Array = []) -> void:
 	city.horizon.visible = true
 	for environment in saved_environments:
 		environment.environment = saved_environments[environment]
+	# Focused people art is also judged at the closest ordinary player zoom.
+	# These specimens use the city model/material/VAT loader on an existing
+	# native route, and the snapshot equality check below retains native state.
+	if not subjects.is_empty():
+		for asset: String in subjects:
+			if not city.model_contract(asset).get("character", {}).has("city_detail"):
+				continue
+			for walker in initial.walkers:
+				if not city.model_contract(str(walker.asset)).has("character"):
+					continue
+				var specimen: Node3D = city.model(asset)
+				for part in specimen.get_meta("vat_parts", []):
+					part.node.set_instance_shader_parameter("vat_pose", Vector3(part.table.idle_00, -1, 0))
+				specimen.position = city.walker_world_position(walker)
+				city.add_child(specimen)
+				city.orbit.target = specimen.position + Vector3.UP * .45
+				city.orbit.distance = city.orbit.MINIMUM_DISTANCE
+				city.orbit.pitch = 40
+				city.orbit.yaw = 145
+				city.orbit.refresh()
+				await city.get_tree().create_timer(.3).timeout
+				city.capture_path = ProjectSettings.globalize_path("res://captures/character-%s-city-closest-%s.png" % [phase, asset])
+				await city.capture()
+				samples.append({"asset":asset, "view":"city_closest", "native_route":walker.asset, "presentation_only":true})
+				specimen.free()
+				break
 	# A temporary presentation specimen beside an existing native route. It is
 	# never added to the simulation, and the snapshot equality gate proves that.
 	if "walker_hades" in subjects:

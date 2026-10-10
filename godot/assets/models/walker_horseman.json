@@ -3,19 +3,19 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_horseman.glb",
-  "bytes": 18403480,
-  "vertices": 33134,
+  "bytes": 10459096,
+  "vertices": 18956,
   "surfaces": 3,
-  "source_surfaces": 28,
+  "source_surfaces": 27,
   "bounds_blender": [
     [
-      -0.2401464432477951,
+      -0.24040518701076508,
       -0.5766094326972961,
       -0.006734237540513277
     ],
     [
-      0.24006691575050354,
-      0.5998237729072571,
+      0.2403176724910736,
+      0.5999539494514465,
       1.2560014724731445
     ]
   ],
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Eques",
@@ -62,6 +62,7 @@
           "seed": 41711
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "c352836be776127f28b0d7bc960342e6ef4d62a2b092d8a2355039ca76be6eab",
         "clavi_srgb": [
           0.86,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 45000,
-    "allocation_target": 32000,
+    "allocation_target": 18000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 18000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

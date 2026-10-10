@@ -180,6 +180,19 @@ func run() -> void:
 			var amount:Label=wm.goods_box.get_node_or_null("NativeStock/Stock_%d"%int(item.resource))
 			stocks=stocks and amount!=null and amount.text=="%d"%int(item.count)
 	check(stocks and wm.goods_box.has_node("NativeStock"),"own-city panel shows the exact native stored goods")
+	var frame_style: StyleBox = wm.get_node("Themed/Margin/Row/MapFrame").get_theme_stylebox("panel")
+	check(frame_style is StyleBoxTexture and not frame_style.draw_center and frame_style.texture.resource_path == "res://assets/ui/greek_panel_v1.png","original wood/gold atlas frame preserves the live viewport")
+	check(wm.get_node("Themed/Margin/Row/Side").get_theme_stylebox("panel") is StyleBoxTexture and wm.get_node("%Back").get_theme_stylebox("normal") is StyleBoxTexture,"city card and larger return action match the approved frame/enamel family")
+	check(wm.envoy_portrait.ruler_card and wm.envoy_portrait.find_children("*","SubViewport",true,false).is_empty() and (wm.envoy_portrait.portrait == null or wm.envoy_portrait.portrait.resource_path.begins_with("res://assets/leaders/")),"Your city uses painted ruler art or a neutral seal, never a city landscape or rendered model")
+	var portraits: Control = load("res://ui/envoy_portrait.gd").new()
+	portraits.ruler_card = true
+	root.add_child(portraits); portraits.hide()
+	for fixture in [{"name":"Lantern Reach","type":"foreign"},{"name":"Фонарная гавань","type":"parent","mine":true,"current":true},{"name":"Unknown City","leader":"Маршал Дореон","type":"foreign"}]:
+		portraits.set_city(fixture)
+		check(portraits.portrait != null and portraits.portrait.resource_path.begins_with("res://assets/leaders/"),"painted portrait resolves from native city/leader names across locales and owned cities")
+	portraits.set_city({"name":"Unassigned ruler","type":"foreign","index":12})
+	check(portraits.portrait == null,"missing art never substitutes an unrelated ruler or old envoy render")
+	portraits.queue_free()
 	await capture("overview")
 	await water_checks()
 	await keyboard_checks()
@@ -237,6 +250,13 @@ func run() -> void:
 		for control in [wm.get_node("%Back"),wm.get_node("Themed/Margin/Row/Side"),wm.get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar")]:
 			fit=fit and bounds.encloses(control.get_global_rect())
 		check(fit,"map controls and city panel fit at %d%% interface size"%int(144000/scale_size.x))
+		var labels_fit := true
+		for button in [wm.request_button,wm.fulfil_button,wm.gift_button,wm.raid_button,wm.conquer_button,wm.aid_button,wm.quests_button,wm.get_node("%Back"),wm.get_node("%AtlasOverview"),wm.get_node("%AtlasFocus")]:
+			if not button.is_visible_in_tree(): continue
+			var font: Font = button.get_theme_font("font")
+			var required: Vector2 = font.get_string_size(button.text,HORIZONTAL_ALIGNMENT_LEFT,-1,button.get_theme_font_size("font_size")) + button.get_theme_stylebox("normal").get_minimum_size()
+			labels_fit = labels_fit and button.size.x >= required.x and button.size.y >= 46
+		check(labels_fit,"full native action labels clear the gold bevel at enlarged interface size")
 		await capture("large-%d"%int(144000/scale_size.x))
 	root.content_scale_size=Vector2i(1440,900);await frames(8)
 	# Native army fractions are projected; presentation never invents their progress.

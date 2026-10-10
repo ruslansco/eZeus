@@ -1,20 +1,21 @@
 {
   "asset": "walker_rancher",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_rancher.glb",
-  "bytes": 9686344,
-  "vertices": 15999,
+  "bytes": 4055324,
+  "vertices": 6602,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 15,
   "bounds_blender": [
     [
-      -0.1916571855545044,
-      -0.17928537726402283,
+      -0.19149929285049438,
+      -0.17936751246452332,
       0.0004999544471502304
     ],
     [
-      0.20844131708145142,
-      0.18021810054779053,
+      0.2082764357328415,
+      0.18048034608364105,
       0.9659295678138733
     ]
   ],
@@ -35,7 +36,7 @@
     "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
   },
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Hunter",
@@ -70,6 +71,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "abe3a3b316a0f6d992a40a81c475c3b3288c1e81436b1ac4601986284decab72",
         "clavi_srgb": [
           0.38,
@@ -79,11 +81,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

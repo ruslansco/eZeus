@@ -305,6 +305,13 @@ and contextual labels [guideline 114](https://learn.microsoft.com/en-us/xbox/acc
 
 ## Realistic scenic plate and registered portal — 9 October 2026
 
+The later 10 October Hades reference replaces the red fire with living green
+flames, blue-green swirling depths, a generated hooded guardian and foreground
+mist. See `GODOT_HADES_PORTAL.md`: the detailed guardian is transparent artwork
+on its own registered 3D plane, not a full sculpted runtime character. The four
+planes share scene time and reduced-motion freeze. Earlier source art and the
+analytic portal are retained.
+
 The current start scene uses `scripts/cinematic_menu_world.gd`, superseding the
 procedural scenery composer below. `assets/menu/aegean_cinematic_v2.png` is a
 1672×941 generated photographic Greek scene. The existing portal shader is a

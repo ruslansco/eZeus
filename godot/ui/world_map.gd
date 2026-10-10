@@ -52,6 +52,9 @@ func _ready() -> void:
 	markers.resized.connect(place_markers)
 	atlas.camera_changed.connect(place_markers)
 	atlas.resized.connect(fit_atlas_controls)
+	%AtlasToolbar.minimum_size_changed.connect(fit_atlas_controls.call_deferred)
+	get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasHeading").minimum_size_changed.connect(fit_atlas_controls.call_deferred)
+	get_node("/root/UiAccess").changed.connect(fit_atlas_controls.call_deferred)
 	fit_atlas_controls.call_deferred()
 	%AtlasCaption.text=tr("City states of the ancient world")
 	%AtlasOverview.text=tr("Overview")
@@ -88,10 +91,25 @@ func _ready() -> void:
 
 func fit_atlas_controls() -> void:
 	var heading:Control=get_node("Themed/Margin/Row/MapFrame/MapBox/AtlasHeading")
-	heading.offset_right=minf(460,atlas.size.x-24)
+	heading.offset_right=minf(490,atlas.size.x-20)
+	heading.offset_bottom = heading.offset_top+heading.get_combined_minimum_size().y
 	var toolbar:Control=%AtlasToolbar
-	var width:=minf(600,maxf(250,atlas.size.x-36))
+	var width:=minf(660,maxf(250,atlas.size.x-24))
 	toolbar.offset_left=-width*.5;toolbar.offset_right=width*.5
+	var height := toolbar.get_combined_minimum_size().y
+	toolbar.offset_top = -height-16; toolbar.offset_bottom = -16
+	var side: Control = get_node("Themed/Margin/Row/Side")
+	var actions: GridContainer = request_button.get_parent()
+	var longest := 0.0
+	for button in actions.get_children(): longest = maxf(longest,button.get_combined_minimum_size().x)
+	var viewport: Vector2 = get_node("Themed").size
+	side.custom_minimum_size.x = minf(440,maxf(360,viewport.x*.32))
+	actions.columns = 3 if longest*3+12 <= side.size.x-64 else 2
+	if envoy_portrait != null:
+		var portrait_size := 104 if viewport.y < 670 else 168
+		envoy_portrait.custom_minimum_size = Vector2(portrait_size,portrait_size)
+	# Empty native fields should not consume scarce reading space at larger scales.
+	for label in [leader,regard_name,tribute,status]: label.visible = not label.text.is_empty()
 
 # Shows the world of the city being played. Returns false when the core cannot tell (no city loaded).
 func prewarm(core_node: Node) -> void:
@@ -252,10 +270,11 @@ func show_city() -> void:
 	city_name.text = String(city.name)
 	if envoy_portrait == null:
 		envoy_portrait = load("res://ui/envoy_portrait.gd").new()
+		envoy_portrait.ruler_card = true
 		leader.get_parent().add_child(envoy_portrait)
 		leader.get_parent().move_child(envoy_portrait, leader.get_index())
-		# Keep this portrait circular instead of stretching it across the header.
-		envoy_portrait.custom_minimum_size=Vector2(136,136)
+		# Preserve the full square painted portrait inside its own gold trim.
+		envoy_portrait.custom_minimum_size=Vector2(168,168)
 		envoy_portrait.size_flags_horizontal=Control.SIZE_SHRINK_CENTER
 	envoy_portrait.set_city(city)
 	leader.text = tr("Leader: %s") % city.leader if String(city.leader) != "" and String(city.type) == "foreign" else ""
@@ -288,6 +307,10 @@ func show_city() -> void:
 	conquer_button.tooltip_text = (tr("Send troops to defend this city.") if bool(city.reinforce) else tr("Send an army to conquer this city.")) if bool(city.can_conquer) else tr("This city cannot be conquered.")
 	aid_button.disabled = String(city.aid) == ""
 	aid_button.tooltip_text = tr("Ask this city for troops, or to strike a rival.") if String(city.aid) != "" else tr("Nothing can be asked of this city.")
+	# The current city cannot negotiate with itself. Keep foreign-city eligibility
+	# states visible; omit the six unusable self-dealings from the owned-city card.
+	request_button.get_parent().visible = not bool(city.current) or [request_button,fulfil_button,gift_button,raid_button,conquer_button,aid_button].any(func(button):return not button.disabled)
+	fit_atlas_controls.call_deferred()
 
 func add_goods(title: String, list: Array) -> void:
 	if list.is_empty():
@@ -395,6 +418,7 @@ func open_dialog(title: String, size_hint := Vector2i(560, 420)) -> VBoxContaine
 	window.ok_button_text = tr("Close")
 	window.exclusive = true
 	window.theme = load("res://ui/lapis_gold.tres")
+	preload("res://ui/city_panel_skin.gd").prepare_window(window)
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(size_hint.x - 40, size_hint.y - 110)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

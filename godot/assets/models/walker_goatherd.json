@@ -1,20 +1,21 @@
 {
   "asset": "walker_goatherd",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_goatherd.glb",
-  "bytes": 18757300,
-  "vertices": 21090,
+  "bytes": 9577296,
+  "vertices": 10710,
   "surfaces": 3,
-  "source_surfaces": 26,
+  "source_surfaces": 23,
   "bounds_blender": [
     [
-      -0.22117741405963898,
+      -0.22205296158790588,
       -0.1792658567428589,
-      -2.212402932855184e-06
+      -5.14710700372234e-06
     ],
     [
-      0.3641558885574341,
-      0.3754577338695526,
+      0.36410409212112427,
+      0.3866407871246338,
       0.9300000071525574
     ]
   ],
@@ -38,7 +39,7 @@
     "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
   },
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Goatherd",
@@ -73,6 +74,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "726c027ff1cce8195a89914b4dab23bd6225b780f1c656faa602b63d79b9910c",
         "clavi_srgb": [
           0.37,
@@ -82,11 +84,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 20000,
+    "allocation_target": 10000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 10000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

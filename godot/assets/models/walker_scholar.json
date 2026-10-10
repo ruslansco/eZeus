@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_scholar.glb",
-  "bytes": 6851440,
-  "vertices": 16001,
+  "bytes": 2842044,
+  "vertices": 6572,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 14,
   "bounds_blender": [
     [
-      -0.1924688220024109,
-      -0.1652245819568634,
+      -0.1921636462211609,
+      -0.1653067171573639,
       0.0004999544471502304
     ],
     [
-      0.2074848860502243,
-      0.2549999952316284,
-      0.8492646813392639
+      0.20754368603229523,
+      0.25460463762283325,
+      0.8460675477981567
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Scholar",
@@ -62,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "077c2a0b079c11d046b756391e3798447d8ba54308da6305328acc7878ee2b94",
         "clavi_srgb": [
           0.12,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

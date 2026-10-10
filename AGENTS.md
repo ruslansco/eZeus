@@ -1,5 +1,44 @@
 # eZeus / Godot 3D development instructions
 
+## Simplified people and image-only panels — 10 October 2026
+
+The user's cleanup/performance request supersedes rich city face/hand allocations.
+103 non-Hades human assets now use `godot_character_realism.py` revision
+`city_people_v2`: fitted caps/short beards, painted eyebrows, no protruding tubes
+or offline grooms. Keep original bodies, identity variants, clothes, equipment,
+all native clips, both UVs, palette, fresh VAT and reduced LODs. Preserve the
+installed young Dionysus and older Odysseus Godot profiles, rather than reverting
+to the shared native prototypes. Hades, monsters, the physician benchmark and
+native art remain separate. Read `docs/GODOT_CHARACTER_ART.md` before exports.
+
+`tools/rebuild_city_people.py` stages/verifies/bakes two background exports at a
+time; use one catalog coordinator. All 104 people panel roles use exact or
+related generated portraits. Image-only panels allocate no 3D stage; keep lazy
+animal/boat and explicit offline overrides. Native voice/words/inventory/pause
+callbacks remain. Ruler cards already use static PNGs; their 72K–94K-triangle
+busts are not crowd assets. Source triangles fall 54.4%, vertices 53.4%; that is
+not measured FPS evidence. Character 315, pose 103/12,401, geometry 441 and motion
+35 gates pass, with sequential EN/RU panel reviews 43/41. Minimum-Mac/matched FPS,
+painted PBR, embedded-worker art and user visual acceptance remain pending.
+
+## Living green Hades portal and guardian — 10 October 2026
+
+Read `docs/GODOT_HADES_PORTAL.md`. The cinematic menu now uses a new green flame/
+cyan-depth shader, a detailed generated hooded guardian on a separate 3D plane
+and foreground mist. This is depth-layer artwork, not a fully sculpted runtime
+character. Preserve the retained backdrop/distance mask, shared source-pixel
+registration, generated RGBA alpha, lossless imports and existing scene-time/
+reduced-motion behavior. The composition stays at eight triangles/four planes.
+Original portal/guardian models and native rules/RNG/saves remain unchanged.
+
+Built-in generation prompt/hashes live beside `hades_guardian_cutout_v1.png`.
+Separate packed Blender reference and unused editable geometry draft are under
+parent `art/menu/hades-portal/`; never overwrite the historical cinematic source
+or live Blender document. Use background reference/guardian builders only.
+Run sequential disposable EN/RU main-menu `--menu-only` and `--art-only --portal`
+reviews with dedicated tags. Keep user visual/whole-device acceptance distinct
+from the bounded render and motion checks.
+
 ## Three speeds and native-time effects — 10 October 2026
 
 The embedded game now exposes Normal/Fast/Very-fast at 1×/2×/4× (native command
@@ -51,6 +90,12 @@ triangle ceilings in `housing_art.json` use the occupied pre-split models.
 Placement ghosts use architecture-only preview templates. Read housing/activity
 contracts and run occupancy, art, activity and owned EN/RU visible checks.
 Background Blender only; preserve the live port-9876 scene and native artwork.
+
+Verified housing evidence: 39 occupancy/save checks, 55 art checks, 126 baked
+part poses across seven assets, and 4 scoped Metal visibility/motion checks per
+language. Full-city Metal reviews pass 34 per language. Retained activity passes
+247 over 54 assets; housing 30 and embedded 101 pass. See `docs/GODOT_VALIDATION.md` for full-city reviews and the two
+pre-existing non-housing source-budget failures.
 
 ## Zeus guide parity: original keys and gameplay — 10 October 2026
 

@@ -861,6 +861,7 @@ func run() -> void:
 	theme.set_color("activity", "LoadingScreen", Color("dec08a"))
 	# Focused updates preserve unrelated authored Theme items in the working tree.
 	preload("res://ui/city_panel_skin.gd").install(theme)
+	preload("res://ui/world_map_skin.gd").install(theme)
 	# Add -- --decisions-only to refresh only the correspondence styles, or -- --guide-only for the city help card's
 	# (its Guide* and Issue* variations).
 	var focused: Array = []
@@ -870,6 +871,8 @@ func run() -> void:
 		focused = Array(theme.get_type_list()).filter(func(kind): return str(kind).begins_with("Guide") or str(kind).begins_with("Issue"))
 	elif OS.get_cmdline_user_args().has("--panels-only"):
 		focused = preload("res://ui/city_panel_skin.gd").TYPES
+	elif OS.get_cmdline_user_args().has("--atlas-only"):
+		focused = preload("res://ui/world_map_skin.gd").TYPES
 	elif OS.get_cmdline_user_args().has("--clock-only"):
 		focused = ["ClockPanel", "ClockDate", "ClockSpeed", "ClockPause"]
 	if not focused.is_empty():

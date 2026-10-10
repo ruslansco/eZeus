@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_perseus.glb",
-  "bytes": 10705248,
-  "vertices": 15685,
+  "bytes": 4500128,
+  "vertices": 6534,
   "surfaces": 3,
-  "source_surfaces": 21,
+  "source_surfaces": 20,
   "bounds_blender": [
     [
-      -0.34945881366729736,
-      -0.2007293999195099,
+      -0.34941720962524414,
+      -0.2008214145898819,
       0.0005599489668384194
     ],
     [
-      0.23287005722522736,
+      0.2325841784477234,
       0.24214386940002441,
-      0.993109405040741
+      0.9933779835700989
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Perseus",
@@ -62,6 +62,7 @@
           "seed": 51606
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "a5d012004205146ee81398955615e6ae46d943cf3b36042b796b4816a3a4e058",
         "clavi_srgb": [
           0.8,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

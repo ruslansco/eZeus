@@ -3,19 +3,19 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hermes.glb",
-  "bytes": 6104048,
-  "vertices": 15683,
+  "bytes": 2540092,
+  "vertices": 6487,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.5980013608932495,
-      -0.4703657031059265,
+      -0.597636878490448,
+      -0.4698673188686371,
       0.06532320380210876
     ],
     [
       0.6406065821647644,
-      0.42660942673683167,
+      0.428032249212265,
       2.6575355529785156
     ]
   ],
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Hermes",
@@ -62,6 +62,7 @@
           "seed": 62203
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "57497cdef4ec6ea21923cff00719c5b5272f7c4506be9f8825dbd6c3dcb36002",
         "clavi_srgb": [
           0.26,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

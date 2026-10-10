@@ -1,11 +1,12 @@
 {
   "asset": "walker_greekhorseman",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_greekhorseman.glb",
-  "bytes": 18491200,
-  "vertices": 32909,
+  "bytes": 10506460,
+  "vertices": 18686,
   "surfaces": 3,
-  "source_surfaces": 21,
+  "source_surfaces": 20,
   "bounds_blender": [
     [
       -0.2401464432477951,
@@ -14,7 +15,7 @@
     ],
     [
       0.24010902643203735,
-      0.5998237729072571,
+      0.5999539494514465,
       1.279422402381897
     ]
   ],
@@ -26,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Greek horseman",
@@ -61,6 +62,7 @@
           "seed": 93002
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "db8075154e97009eedfbe06a11d6d7c2e36635135a0ddd708c33df6084666891",
         "clavi_srgb": [
           0.3,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 45000,
-    "allocation_target": 32000,
+    "allocation_target": 18000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 18000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

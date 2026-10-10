@@ -3,10 +3,10 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_lumberjack.glb",
-  "bytes": 11942124,
-  "vertices": 15966,
+  "bytes": 5030328,
+  "vertices": 6624,
   "surfaces": 3,
-  "source_surfaces": 19,
+  "source_surfaces": 18,
   "bounds_blender": [
     [
       -0.1931486576795578,
@@ -14,9 +14,9 @@
       0.0005000140517950058
     ],
     [
-      0.22031767666339874,
+      0.22086836397647858,
       0.2951197922229767,
-      0.9763371348381042
+      0.9764108061790466
     ]
   ],
   "walk_samples": 24,
@@ -38,7 +38,7 @@
     "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
   },
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Lumberjack",
@@ -73,6 +73,7 @@
           "seed": 31101
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "275ca98f471971faed2ceb7260db6f96be42f45206bc68a8a71b6cbfe93c2d26",
         "clavi_srgb": [
           0.24,
@@ -82,11 +83,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

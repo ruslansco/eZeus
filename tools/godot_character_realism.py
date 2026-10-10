@@ -60,6 +60,15 @@ def profile(name, previous=None):
         p.update(beard_length=0, grey=.08)
     if name == 'Philosopher':
         p.update(skin=SKINS[0], hair=((.28,.26,.23),(.53,.51,.47)), grey=.65)
+    if name == 'Dionysus':
+        # Retain the installed Godot identity; the native kit's older, broader
+        # prototype is not the anatomy of the accepted city model.
+        p.update(age=28,jaw=.98,cheek=1.04,nose=.001,chin=.002,eye=1.02,
+                 beard_length=.012,grey=0)
+    if name == 'Odysseus':
+        p.update(age=46,jaw=1.02,cheek=.95,nose=.007,chin=.003,eye=.97,
+                 hair=((.14,.06,.03),(.34,.20,.12)),hair_length=.016,
+                 beard_length=.03,grey=.28)
     if name in ['Greek physician','Greek transporter']:
         p.update(beard_length=.004 if name.endswith('physician') else 0, grey=.06)
     if name == 'Hades':
@@ -146,16 +155,18 @@ def groom(h,K):
     kept=[]
     for part in h.parts:
         label=part.ob.name.lower()
-        replaced = any(term in label for term in ['groom','stubble','curled hair','beard','swept curl','braided','eyebrow'])
+        terms = ['groom','stubble','curled hair','beard','swept curl','braided','eyebrow'] if CITY_DETAIL else ['strand groom','beard groom','eyebrow groom','shaved stubble']
+        replaced = any(term in label for term in terms)
         if replaced:
             part.ob.hide_render=True
-        else:
+        if not CITY_DETAIL or not replaced:
             kept.append(part)
     # Native show() toggles every part: removing replaced pieces from the pose
     # list prevents them from reappearing in work, combat or death samples.
     h.parts=kept
     colour=tuple(a*(1-p['grey'])+b*p['grey'] for a,b in zip(p['hair'][0],(.49,.47,.43)))
     base=K.material(h.name+' natural hair',colour,rough=.72)
+    grey=K.material(h.name+' silver locks',(.49,.47,.43),rough=.72) if not CITY_DETAIL else None
     def attach_curve(ob):
         bpy.ops.object.select_all(action='DESELECT')
         ob.select_set(True);bpy.context.view_layer.objects.active=ob
@@ -189,7 +200,7 @@ def groom(h,K):
                 for i in range(9):
                     t=i/8; angle=t*math.tau
                     pts.append(tuple(root+normal*(.001+size*.35*math.sin(math.pi*t))+Vector((size*.22*math.sin(angle),0,-size*t))))
-                lock=K.curve(h.name+' beard lock',pts,.00085,base,h.root)
+                lock=K.curve(h.name+' beard lock',pts,.00085,grey if rng.random()<p['grey'] else base,h.root)
                 attach_curve(lock)
     # Eyebrows follow each individual orbital ridge, not oversize painted dots.
     for side in ([] if CITY_DETAIL else [-1,1]):
@@ -209,9 +220,12 @@ def groom(h,K):
 
 def city_deform(part,R,T):
     """Same linear skinning, evaluating only nonzero source bone weights."""
+    key=(id(part.W),part.W.shape)
+    if getattr(part,'_city_weights_key',None)!=key:
+        part._city_weights=[(bone,np.flatnonzero(part.W[:,bone])) for bone in range(part.W.shape[1])]
+        part._city_weights_key=key
     out=np.zeros_like(part.rest)
-    for bone in range(part.W.shape[1]):
-        ids=np.flatnonzero(part.W[:,bone])
+    for bone,ids in part._city_weights:
         if len(ids):
             out[ids]+=(part.rest[ids]@R[bone].T+T[bone])*part.W[ids,bone,None]
     if part.floor is not None:

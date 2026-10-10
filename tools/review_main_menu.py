@@ -12,6 +12,7 @@ from run_godot_pilot import REPO, ROOT, GODOT, SAVE, fingerprint
 parser = argparse.ArgumentParser()
 parser.add_argument('--lang', choices=['en', 'ru'], default='en')
 parser.add_argument('--art-only', action='store_true', help='Capture the menu and unobstructed sanctuary, then exit before save fixtures')
+parser.add_argument('--portal', action='store_true', help='Capture fixed-time portal animation and check shared source registration at several sizes')
 parser.add_argument('--menu-only', action='store_true', help='Review menus and settings without loading the 3D city for the final Continue check')
 parser.add_argument('--tag', default='main-menu', help='Owned capture/log prefix for concurrent work in the shared project')
 args = parser.parse_args()
@@ -26,6 +27,8 @@ command = [str(GODOT), '--path', str(REPO / 'godot'), '--script',
            '--', '--main-menu-review', '--lang=' + args.lang, '--silent', '--menu-capture-prefix=' + args.tag]
 if args.art_only:
     command.append('--olympian-art-only')
+if args.portal:
+    command.append('--hades-portal-review')
 if args.menu_only:
     command.append('--menu-only')
 try:

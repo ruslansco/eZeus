@@ -1,20 +1,21 @@
 {
   "asset": "walker_racechariot2",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_racechariot2.glb",
-  "bytes": 7354364,
-  "vertices": 33932,
+  "bytes": 4220068,
+  "vertices": 19846,
   "surfaces": 3,
-  "source_surfaces": 22,
+  "source_surfaces": 20,
   "bounds_blender": [
     [
-      -0.3317031264305115,
+      -0.3316935896873474,
       -0.772405743598938,
       -0.006751027423888445
     ],
     [
-      0.3317239582538605,
-      0.5999539494514465,
+      0.33190789818763733,
+      0.6002581119537354,
       1.0649017095565796
     ]
   ],
@@ -26,13 +27,13 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Charioteer of the greens",
         "sex": "male",
         "profile": {
-          "age": 33,
+          "age": 63,
           "jaw": 1.0,
           "cheek": 0.99,
           "nose": 0.001,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2264451147,
           "skin": [
             0.53,
@@ -61,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "b7bf59a7cf8173b639340743326fcc0816564318e8d346fc0ccd648bd54669f7",
         "clavi_srgb": [
           0.12,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 45000,
-    "allocation_target": 32000,
+    "allocation_target": 18000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 18000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

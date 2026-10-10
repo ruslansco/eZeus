@@ -1,7 +1,7 @@
 """Original hooded stone sentinel; run only in background factory-startup Blender.
 
 The user's visual reference supplies hood/sword/green-eye motifs, not game meshes.
-Outputs a separate editable source and a menu-only GLB; no native art is changed.
+Outputs a separate editable source and unused GLB draft; no native art is changed.
 """
 from pathlib import Path
 from math import sin, cos, pi
@@ -13,7 +13,7 @@ from mathutils import Vector
 REPO = Path(__file__).resolve().parents[1]
 SOURCE = REPO.parent / 'art/menu/hades-portal'
 SOURCE.mkdir(parents=True, exist_ok=True)
-OUTPUT = REPO / 'godot/assets/menu/hades_portal_guardian.glb'
+OUTPUT = SOURCE / 'hades-portal-guardian-draft-v1.glb'
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 
@@ -214,7 +214,7 @@ manifest={'version':1,'asset':OUTPUT.name,'creator':'Original authored geometry 
     'inspiration':'User-supplied Burning Crusade doorway screenshot: hooded stone guardian, sword, glowing green eyes; original Greek mantle, chiton, brooches and leaf-shaped sword.',
     'source_sha256':hashlib.sha256(blend.read_bytes()).hexdigest(),
     'glb_sha256':hashlib.sha256(OUTPUT.read_bytes()).hexdigest(),
-    'triangles':triangles,'surfaces':4,'uv_sets':2,'scope':'Menu-only; does not replace native Hades, monsters or older guardian assets',
-    'release_status':'Original development sculpture; reference comparison and user visual acceptance remain pending.'}
+    'triangles':triangles,'surfaces':4,'uv_sets':2,'scope':'Retained editable geometry draft, not loaded by the menu; final scene uses detailed generated cutout art',
+    'release_status':'Original development sculpture; further anatomical/drapery refinement is needed before runtime use.'}
 OUTPUT.with_suffix('.json').write_text(json.dumps(manifest,indent=2)+'\n')
 print('HADES_PORTAL_GUARDIAN PASS '+json.dumps(manifest))

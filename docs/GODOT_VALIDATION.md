@@ -1,5 +1,255 @@
 # Godot embedding validation — 9 October 2026
 
+## Simplified people and image-only panels — 10 October 2026
+
+**Implemented:** 103 non-Hades people GLBs use `city_people_v2`, with fitted caps,
+short fitted beards and painted eyebrows. Protruding scalp/beard/brow tubes and
+offline fiber grooms are absent. Original anatomical hashes, identity variants,
+clothes/equipment and clip labels remain. Godot-only overrides retain the
+installed young Dionysus and older Odysseus rather than older native prototypes.
+All 104 people panel roles resolve painted portraits, including the homeless
+traveler; an image-only panel creates no 3D stage, lights, plinth or camera.
+Uncovered animals/boats and explicit offline previews retain a lazy fallback.
+
+Measured source changes (`godot/captures/people-v2/{before,results,summary}.json`):
+
+| 103-model set | Before | After | Reduction |
+| --- | ---: | ---: | ---: |
+| Vertices | 1,944,670 | 906,686 | 53.38% |
+| Triangles | 3,622,756 | 1,651,347 | 54.42% |
+| Optimized GLB bytes | 1,068,373,828 | 495,695,920 | 53.60% |
+
+- Per-candidate lossless optimization: **103 models / 304 primitives / 19,412
+  original morph frames**, zero differences in geometry, normals, colours, both
+  UVs or pose aliases. All pre-existing source anatomy hashes and clip sets
+  match. Every candidate is baked before installation; **103 fresh VAT pairs**.
+- `validate_characters.gd`: **315 PASS**, including simplified grooming/caps,
+  skin/eyes, both UVs, ground anchors, female/child anatomy, individual profiles,
+  all motion aliases and read-only designated city state (173 human walkers).
+- `validate_geometry.gd`: **PASS across 441 GLBs**; every asset above 5K
+  triangles retains a LOD ladder and no unexpected growth/missing baseline.
+  Only the intended 103 people entries change in `geometry_baseline.json`.
+- Scoped `validate_poses.gd`: **103/103 PASS, 12,401 distinct imported poses,
+  zero stale derivatives**. Worst fingerprint gap .0066667 is accepted by the
+  retained displacement-scaled tolerance for long deity disappear motions;
+  the ordinary .004 threshold and baker's RGBAH format are unchanged. Largest
+  half-float component error .0078087 belongs to Zeus's moving prop, rather than
+  an ordinary walking body. No source pose is clamped or retimed.
+- `validate_locomotion.gd`: **35 PASS** on a clean rerun. A type inference error
+  in the concurrently edited `world_map.gd` was repaired with an explicit
+  `Vector2` declaration. `test_citizen_gait.py`: **3 PASS**. Sparse exporter
+  skinning matches native male/female linear weighting within 8.88e-16 in **8
+  checks**, including cached reuse, replaced weight arrays and floor constraints.
+- Sequential Metal `review_character_panel.py`: **43 EN / 41 RU PASS**. Covered:
+  all 104 people image choices with disabled 3D viewport, absent stage on fresh
+  image-only panels, native names/complete trimmed spoken lines/voice, inventory
+  refresh, co-located selection, enlarged footers, pause/queue restoration,
+  animal fallback and explicit curator model override. The whitespace gate now
+  compares the native line after the panel's existing `strip_edges()` behavior.
+- Final Metal character review: **PASS**, 20 front/face/rear/walk captures plus
+  five closest-player-zoom city specimens for homeless/philosopher/Aphrodite/
+  family/horseman; retained Aphrodite hover behavior and exact native snapshot
+  equality. Captures: `character-after-<asset>-<view>.png` and
+  `character-after-city-closest-<asset>.png`; matched prior captures exist for
+  the four previously reviewed subjects. Studio frame rates are diagnostics,
+  not a controlled city FPS comparison.
+- **132 protected source/runtime/import/library hashes remain identical**:
+  all seventeen monsters/Hydra, authored Hades, physician skeletal/crowd assets
+  and shared human/identity/source-refinement libraries. Owned visible reviews
+  retain the designated save and preferences; the live Blender document is
+  never connected to or modified.
+
+Ruler audit: the 49 retained source bust GLBs contain **72,372–93,738 triangles /
+228–299 surfaces**, with no animations (`people-v2-ruler-costs.json`). The game
+displays their static PNGs; this work does not replace citizens with those busts.
+
+Limits: no claimed FPS uplift, minimum-Mac result, painted PBR completion,
+embedded-worker art rollout or user visual acceptance. Visible runs retain the
+previous image-resource teardown warnings (13 texture RIDs); functional checks
+and owned-save guards complete. The early export ran out of disk space, resumed
+after space became available, and all 103 final source hashes are verified.
+An additional built-in imagegen traveler candidate and exact prompt are retained
+under parent `art/ai_portraits/generated/walker_homeless/`; the separately updated
+runtime portrait is preserved, not overwritten by that alternative candidate.
+
+## Living green Hades portal and detailed guardian — 10 October 2026
+
+The cinematic menu now has moving lime-green flame tongues/motes, cyan misty
+depths, a hooded stone guardian with glowing eyes and a sword, and nearer mist.
+The final statue is generated transparent artwork on a registered 3D plane;
+the original geometry draft remains editable outside the runtime assets. This
+does not establish a fully sculpted runtime statue or change native gameplay.
+
+- Sequential owned `tools/review_main_menu.py --lang en|ru --menu-only --tag
+  hades-menu` pass **94 each / 188 total**, exiting zero without runtime errors.
+  Native menu/settings/leader/save metadata behavior, keyboard/mouse input,
+  1920×1080 and 125% UI / 130% text at 1280×800/720 remain verified. The final
+  Continue-to-city step is intentionally outside these menu-only runs; earlier
+  unrelated Continue evidence remains separate.
+- Final sequential `--lang en|ru --art-only --portal --tag hades-live` pass
+  **20 each / 40 total** on Metal/Forward Mobile. Each records 24 actual GPU
+  frames. Fixed samples at distinct scene times change **836** sampled pixels;
+  returning to the same held time reproduces the exact image. Reduced motion
+  holds all three effect materials and scenic drift. Portal/guardian centers
+  retain source-pixel registration within .1 pixel at 1280×720, 1280×800 and
+  1600×1000. Geometry remains **eight triangles/four planes**.
+- EN full menu/enlarged and RU unobstructed/enlarged captures were visually
+  inspected. `hades-portal-motion.gif` combines the 24 actual English GPU frames;
+  it is a short repeating preview, not a baked runtime animation.
+- All generated RGBA pixels/alpha are retained. Artwork/prompt, packed reference,
+  original backdrop, aperture mask and historical Blender reference hash guards
+  pass. Source PNG is **1024×1536 RGBA**, not an inferred 4K asset. Lossless
+  mipmaps apply to the guardian; the packed distance mask stays linear/no mips.
+- Background Blender 5.2.2 builds the separate packed
+  `art/menu/hades-portal/hades-portal-menu-v1.blend` (**four objects/three packed
+  images**) and the unused editable sculpture draft (**15,874 triangles, four
+  surfaces, two UV sets**). Its material is an approximate preview; Godot shaders
+  are authoritative. Read-only port-9876 observations before/after retain the
+  same Cube, Light, Camera and two materials in the user's interactive scene.
+  Builder/reviewer Python syntax and scoped whitespace checks pass.
+
+Evidence: `godot/captures/hades-menu-{en,ru}-engine.log`,
+`hades-live-{en,ru}-engine.log`, matching PNG sequences/menu captures,
+`hades-portal-motion.gif`, `hades-art-validation.log`,
+`hades-guardian-build.log` and `hades-portal-reference-build.log`.
+Art/prompt/provenance are adjacent to `assets/menu/hades_guardian_cutout_v1.png`;
+contracts are in `GODOT_HADES_PORTAL.md`.
+
+Protected player saves/settings remain unchanged in every final review. Initial
+sandboxed Blender startup failed and a preliminary import ran before the draft
+GLB existed; both were repaired before the final successful build/reviews.
+Headless import retains the known macOS certificate/editor-preference permission
+diagnostics; final visible runs have no errors. Disk space briefly prevented a
+read helper and recovered without deleting user files. User visual acceptance,
+further sculpt/drapery refinement, actual other-platform/high-DPI coverage and
+sustained minimum-device performance remain pending. Native C++/RNG/save/tick,
+monsters/Hades/city models, old portal and source artwork are retained.
+
+## Three city paces, transport panel and native-time effects — 10 October 2026
+
+Implemented and verified: Normal/Fast/Very-fast use native increments 15/30/60
+per unchanged 50 ms tick (1×/2×/4×). Normal is the former second speed, 2.5×
+the old default. Native IDs 1..3 remain; retired zero aliases Normal in commands
+and old presentation metadata. Embedded Very-fast no longer takes the old five
+maximum-speed substeps. Native rules/RNG/fixed-tick replay and save layout remain;
+selected speed metadata still survives save/reload. The shared SDL reference
+stepper and its own speed settings are unchanged.
+
+The original SVG arrows, multiplier buttons, date row and slim month-progress
+track share focused Clock* Theme variations. Building activity retains native
+time/30 and housing work_rate=.2. Native phase also drives a session-relative
+city_effect_clock for building/altar flames and smoke; fire lights and soot
+advance from native phase deltas. Required decisions and pause freeze these
+effects without automatic answers.
+
+Final checks (owned sequential visible reviews, disposable settings/save copies):
+
+- `tools/review_time_controls.py --lang en` / `ru`: **82 each**, clean exits.
+  Real mouse-down/up, one command per action, single selected pace, translated
+  descriptions and actual speed shortcuts, pause retention, Play/Pause callbacks,
+  bracket-key boundaries, exact native 1×/2×/4× increments, building work,
+  water-worker/projectile clocks, actual test-fire lights/soot and pause freezing.
+  Actual native required-decision block survives speed selection. Each pace saves
+  and reloads only inside the owned scratch directory. Source/save/preferences
+  fingerprint guards pass.
+- Both reviews cover 1920×1080 and 1280×720 at 100/100 and 125% UI / 130% text,
+  map open/folded, every control/full date in bounds, map above the panel and no
+  overlap with the construction dock. Default/enlarged EN/RU captures were
+  visually inspected under `godot/captures/time-<lang>-<width>-<scale>.png`.
+- Retained `validate_embedded.gd`: **101 assertions**, PASS in both languages
+  inside the suite, including the deliberate changed increments/zero alias,
+  five-tick frame clamp, native construction and required-decision handling.
+- Retained `validate_building_activity.gd`: **247**, PASS, all **54** installed
+  activity assets, native staffing/occupancy/work flags, clocks at all command
+  aliases and required-decision holds. Art, UVs, VAT and LODs are unchanged.
+- Retained `validate_toolbar_input.gd`: **18**, PASS. The three headless suites
+  exit zero; their pre-existing macOS system-certificate diagnostic is separate
+  from assertion results. Final visible logs have no script/engine errors.
+
+These final runs total **530 scoped assertions**, with overlapping clock/input
+coverage. The native extension built and installed through the atomic signed
+helper. A first build encountered a full disk; a later successful build completed
+after space became available. An early visual attempt stalled during low-space
+conditions; only final completed runs count. An initial input fixture used the
+wrong viewport delivery path; corrected native GUI input passes every action.
+No player save/preferences, live game or Blender document was changed. CSV,
+Python syntax and focused whitespace checks pass; Theme merge is Clock-only.
+
+Restart an already running game to load the new extension. Human pacing/balance,
+sustained minimum-device profiling, other-platform/high-DPI acceptance and wider
+campaign playthroughs remain pending. Three rates are the chosen game design,
+not a universal industry certification. Older four-speed evidence below is
+historical and superseded by this requested pacing change.
+
+## Occupancy-aware common-house residents — 10 October 2026
+
+The seven active common-house levels now separate architecture from household
+residents. Native `eSmallHouse::people() > 0`, excluding fire, controls the existing
+`working` observation; employer enabled/overlay flags and worker counts do not
+apply to homes. Static fallback, thumbnails and placement ghosts contain no
+people. Occupied starter women have relaxed arms, subtle weight shift/breathing
+and planted feet; upper levels retain their authored household tasks. Housing
+uses eight samples over four seconds at Normal speed through `work_rate=.2`;
+the modulo-40 shared clock retains existing worker timing. Source-coordinate
+posing before inverse height compensation preserves resident body proportions,
+including the seated terrace musician. No occupancy/evolution/economy/RNG/save
+fields or simulation rules are changed by this slice.
+
+Final owned Apple M4 Metal/Forward Mobile and headless evidence:
+
+- `tools/review_housing_art.py --checks` / `validate_house_residents.gd`: **39**.
+  Ordinary campaign placement creates thirty empty houses; native immigrant
+  arrival changes the existing building delta and agrees with inspected resident
+  counts. EN/RU empty and occupied scratch saves reload with matching visibility.
+  All seven fresh derivatives retain four-second metadata, architecture-only
+  preview templates, and first-arrival/final-departure instance updates without
+  geometry replacement. No test commands or injected residents are used.
+- `validate_housing_art.gd`: **55**. Height progression, unchanged two-by-two
+  footprints, source resident dimensions, finite geometry, both UVs, CityPalette,
+  bounded PBR groups, explicit allocations and useful imported reduced LODs pass.
+  Only the seven deliberate house entries changed in `geometry_baseline.json`.
+- Scoped `tools/verify_building_activity.py --assets common_house_0a ...
+  common_house_6a`: **7 assets / 126 part poses**. Runtime rest attributes/UVs and
+  triangle indices match the sampled sources; no runtime morph buffers remain.
+  Both UV sets, six-or-fewer finish groups, fresh original-model hashes and the
+  occupied pre-split triangle ceilings pass. Worst decoded displacement error is
+  **0.000935 tiles**, below the .002 gate. Housing VATs total **7,127,040 bytes**,
+  loaded only for present types.
+- Retained `validate_building_activity.gd`: **247** over **54 assets**. Imported
+  pose addresses/material bindings, active/inactive motion, native employment,
+  shutdown/resume, pause, all current speed aliases and required-decision holds
+  pass. Retained native housing area/price/undo checks pass **30** and embedded
+  regressions pass **101**.
+- `tools/review_housing_art.py --residents-only --lang en` then `ru`: **4 each**.
+  Actual GPU buffers for all seven household levels hide/reveal residents,
+  rendered images change across loop phases, and departure reuses geometry.
+  Empty/occupied images were inspected. The small fixture avoids loading the
+  whole city; its diagnostic house labels retain the English art-level names.
+
+- Retained full-city `tools/review_housing_art.py --lang en` then `ru`: **34 each**.
+  All seven installed models, native two-by-two scale, occupied/inactive GPU
+  visibility, departure geometry reuse, native ID/foundation/footprint retention
+  through every level, the starter catalog thumbnail and exact unchanged native
+  snapshot fields pass. These final sequential reviews exit normally. Full-city
+  starter empty/occupied and upper-level captures were visually inspected.
+
+Logs/captures are under `godot/captures/housing-occupancy/`: final native/art/pose
+logs, `final-retained-results.json`, `en/` and `ru/` empty/occupied/idle images.
+All finished checks exit normally without engine/script errors. Wrappers guard
+the designated save, player preferences and native house scripts/Blender files;
+their fingerprints remain unchanged. The rebuilt extension is atomically
+installed and signed. The live port-9876 Blender document was not operated on.
+
+The all-catalog source-pose audit still flags the pre-existing **corral** and
+**horse_ranch** triangle overages (62,426 versus a 55,904 ceiling; 62,258 versus
+41,034). Their original/runtime meshes are outside this housing change and were
+not regenerated or granted larger baselines. Every sampled pose remains below
+the precision limit; this audit is not an all-catalog geometry pass. An earlier
+full-city visual run timed out under disk/memory pressure; the final full-city
+EN/RU reviews above both pass. User visual acceptance, painted material baking, extra housing
+variants and sustained minimum-hardware performance remain pending.
+
+
 ## Optional settlement coaching and honest progress — 10 October 2026
 
 The default guide now offers an introduction and one current task, with a

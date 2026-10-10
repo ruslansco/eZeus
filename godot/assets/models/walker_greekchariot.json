@@ -1,20 +1,21 @@
 {
   "asset": "walker_greekchariot",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_greekchariot.glb",
-  "bytes": 15379912,
-  "vertices": 34116,
+  "bytes": 8704888,
+  "vertices": 19623,
   "surfaces": 3,
-  "source_surfaces": 34,
+  "source_surfaces": 31,
   "bounds_blender": [
     [
-      -0.3317031264305115,
+      -0.3316935896873474,
       -0.772405743598938,
       -0.006751027423888445
     ],
     [
-      0.3317239582538605,
-      0.5999539494514465,
+      0.33190789818763733,
+      0.6002581119537354,
       1.1397250890731812
     ]
   ],
@@ -26,13 +27,13 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Greek charioteer",
         "sex": "male",
         "profile": {
-          "age": 41,
+          "age": 71,
           "jaw": 1.0999999999999999,
           "cheek": 0.97,
           "nose": 0.001,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2712021731,
           "skin": [
             0.57,
@@ -61,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "2c28ceac015e8c6a3b0698212eab5758b6fb5766b5dddf98a3e27c63c3cf2a84",
         "clavi_srgb": [
           0.55,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 45000,
-    "allocation_target": 32000,
+    "allocation_target": 18000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 18000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

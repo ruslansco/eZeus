@@ -1,5 +1,37 @@
 # Godot 3D city rebuild
 
+## Lighter people and image-only portraits — 10 October 2026
+
+103 people assets now use fitted scalp/short-beard shapes and painted eyebrows,
+without protruding curls, beard locks or thick brow tubes. Faces/hands have lower
+city-camera allocations. The set falls from 3.62M to 1.65M triangles (54.4%) and
+1.94M to .91M vertices (53.4%); source GLBs are about 546 MiB smaller. Clothes,
+equipment, anatomical identities and existing animation clips remain. Hades,
+the physician benchmark, monsters and native/shared art retain their sources.
+
+All 104 people roles resolve a painted image in the Character panel, including
+the homeless traveler and identity variants. Image-only panels create no 3D
+stage; uncovered animals/boats and explicit offline previews retain a lazy
+model fallback. Ruler panels already show static renders, so their detailed
+busts remain portrait sources. See [character contracts](../docs/GODOT_CHARACTER_ART.md)
+and current validation for checked scope and captures. Relaunch to load the new
+models. User visual acceptance and matched/minimum-Mac FPS profiling remain open.
+
+## Living green Hades doorway — 10 October 2026
+
+The menu portal now has moving lime-green flames and motes, swirling blue-green
+depths, and a hooded stone guardian with a sword and glowing eyes. Mist passes in
+front of its feet. The effect stays fitted to the arch during scenic drift and
+window resizing; reduced interface motion holds the whole effect.
+
+The detailed guardian uses generated transparent artwork on a separate depth
+layer. A packed Blender composition and editable geometry draft are retained
+under parent `art/menu/hades-portal/`. The original scenic image, earlier models,
+native menu behavior and player files remain unchanged. Relaunch **Launch Godot
+3D.command** to see it. See [portal contract](../docs/GODOT_HADES_PORTAL.md) and
+current validation for live-frame previews, EN/RU review scope and remaining
+user visual/platform acceptance.
+
 ## Three city speeds and a clearer clock — 10 October 2026
 
 The time panel below the map now shows the full date above a slim month-progress
@@ -39,6 +71,12 @@ Pause, speed and required decisions control this motion through the shared
 activity clock. All seven housing levels preserve their architecture and native
 occupancy/evolution/save behavior. Restart an already running game to load the
 updated native observation layer and model derivatives.
+
+Verified housing evidence: 39 occupancy/save checks, 55 art checks, 126 baked
+part poses across seven assets, and 4 scoped Metal visibility/motion checks per
+language. Full-city Metal reviews pass 34 per language. Retained activity passes
+247 over 54 assets; housing 30 and embedded 101 pass. See `../docs/GODOT_VALIDATION.md` for full-city reviews and the two
+pre-existing non-housing source-budget failures.
 
 ## Original Zeus keys and the guide's gameplay — 10 October 2026
 

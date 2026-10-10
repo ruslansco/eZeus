@@ -1,5 +1,47 @@
 # Natural people refinement — 30 September 2026
 
+## Simplified city people and image-only panels — 10 October 2026
+
+The user's request to remove thick scalp/beard protrusions and reduce facial
+detail supersedes the earlier close-up face/hand allocations for city walkers.
+`tools/godot_character_realism.py`, revision `city_people_v2`, skips swept curl
+tubes, braided temple tubes and render-only fiber grooms. A continuous fitted
+scalp, a short fitted beard and painted eyebrows retain the silhouette. Replaced
+parts leave the pose list, so native `show()` cannot resurrect them in later work,
+fight or death samples. Female rear buns, clothing, headwear, equipment, anatomy,
+identity variants and original motion callbacks remain.
+
+`tools/export_godot_pilot.py` allocates 6,000 vertices for an ordinary person,
+10,000 for the four people carrying animals, 16,000 for the settler family and
+18,000 for mounted/chariot assets. Face/hand weighting is reduced. Surface seams
+can exceed allocation; `validate_characters.gd` gates the result at 1.4 times its
+allocation. Both UVs, `CityPalette`, morph aliases and fresh VAT/automatic LODs
+remain required. Hades keeps his separately authored flame/face/drape design;
+the physician's skeletal benchmark and crowd twin remain separate and unchanged.
+Monsters and shared native libraries are outside this change.
+
+`tools/rebuild_city_people.py` exports two candidates at a time in background
+Blender, checks original anatomical hashes and clip names, proves optimization
+preserves geometry/colours/both UVs/every morph frame, bakes VAT, then installs the
+verified source/derivative pairs. Temporary raw exports are released per asset.
+`godot/captures/people-v2/before.json` and `results.json` retain the original and
+new counts. Sparse source skinning uses the same linear weights; pose captures
+omit repeated reads of unchanged faces/material attributes.
+
+People panels resolve their exact painted portrait first, then a role/variant
+alias. The homeless traveler now has an image. The 3D viewport starts disabled;
+no stage, lights, plinth or camera are created for an image-only panel. Uncovered
+animals/boats and explicit offline model previews create their stage lazily.
+Native names, lines, voice, inventory, selection and pause callbacks remain.
+
+The ruler portraits already display PNG renders; they do not continuously draw
+their source busts. An audit of the 49 locally retained ruler GLBs found
+72,372–93,738 triangles, 228–299 surfaces and no animations. They use the same
+CC0 human foundation. Their appearance can inform future art, but those busts
+are unsuitable as unmodified crowd walkers. This cleanup does not claim new
+ruler-based face sculpts or measured FPS gains. See current validation for the
+completed rollout, visible evidence and remaining visual/profile gates.
+
 ## Bounded slope clearance — 7 October 2026
 
 `walker_ground_contact.gd` adds capped sole-area root clearance for human

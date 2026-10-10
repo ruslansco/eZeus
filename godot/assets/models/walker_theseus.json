@@ -3,19 +3,19 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_theseus.glb",
-  "bytes": 9572536,
-  "vertices": 15952,
+  "bytes": 4010484,
+  "vertices": 6608,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.21432489156723022,
-      -0.2007293999195099,
+      -0.2139713317155838,
+      -0.2008214145898819,
       0.0005599489668384194
     ],
     [
-      0.2337615191936493,
-      0.20184427499771118,
+      0.2338249832391739,
+      0.2021379917860031,
       0.9722910523414612
     ]
   ],
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Theseus",
@@ -62,6 +62,7 @@
           "seed": 51707
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "113e86aede957eee234197346c9de6eb055837463446e64c1f33583ba8e64ebf",
         "clavi_srgb": [
           0.88,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

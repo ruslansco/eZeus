@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "date": "2026-10-10",
+  "asset": "hades_guardian_cutout_v1.png",
+  "generation": "Built-in image_gen, transparent_background=true",
+  "prompt": "hades_guardian_cutout_v1.prompt.txt",
+  "prompt_sha256": "d21ab3c398dc3324fd696dc10de2507e37cb7914b221c9113df1a894d53c937f",
+  "asset_sha256": "a8be379d9385aa3e804371375bb9944eac154e6733e070689caafeb98ceec843",
+  "dimensions": [
+    1024,
+    1536
+  ],
+  "channels": "RGBA; generated alpha preserved byte-for-byte",
+  "references": [
+    {
+      "role": "User-supplied motif reference: hooded sentinel, sword, green eyes",
+      "filename": "codex-clipboard-5886db9d-6669-47a2-8af3-9e15b6c6805c.png",
+      "sha256": "be35339fbd1092a603f6598206c1f12db08e2a2bd3837f0fe7aff5488139d8e4"
+    },
+    {
+      "role": "Lighting/realism reference: retained Greek cinematic backdrop",
+      "asset": "aegean_cinematic_v2.png",
+      "sha256": "fca2368e27061e210fd3849b8f97f525da358500a09c25c652150b980688623e"
+    }
+  ],
+  "art_direction": "Original Greek underworld guardian with carved chiton, mantle, meander borders, leaf-shaped sword, recessed faceless hood and green eyes. No screenshot pixels embedded.",
+  "runtime": "Painted guardian on its own aperture-clipped 3D quad; animated rim/eyes and foreground mist. Not a full sculpted runtime character.",
+  "retained_draft": "art/menu/hades-portal/hades-portal-guardian-v1.blend",
+  "release_status": "Generated development art; user visual acceptance and reference/right review remain pending.",
+  "blender_reference": "art/menu/hades-portal/hades-portal-menu-v1.blend",
+  "blender_reference_sha256": "8e8dfa6ae6edbd804a3f18b4bfeaa8f8cdfa5549a027b6cab5e96ab75d38e441",
+  "blender_reference_scope": "Packed backdrop/guardian art and approximate procedural green aperture on 3D planes; authoritative animation in Godot."
+}

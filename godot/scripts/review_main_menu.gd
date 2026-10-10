@@ -96,6 +96,45 @@ func profile_content_fits() -> bool:
 	var reading := frame.grow_individual(-frame.size.x*.09,-frame.size.y*.14,-frame.size.x*.09,-frame.size.y*.12)
 	var controls := [menu.leader_heading,menu.leader_list,menu.navigation.profile_pager.search,menu.navigation.profile_pager.previous,menu.navigation.profile_pager.next,menu.leader_name,menu.leader_create,menu.leader_status,menu.leader_delete,menu.leader_back,menu.leader_proceed]
 	return Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(frame) and controls.all(func(control): return not control.is_visible_in_tree() or reading.encloses(control.get_global_rect())) and [menu.leader_create,menu.leader_delete,menu.leader_back,menu.leader_proceed].all(func(button): return text_fits(button))
+func portal_review(scenery: Node3D) -> void:
+	check(scenery.guardian_node != null and scenery.guardian_node.material_override.shader.resource_path == "res://shaders/hades_guardian_art.gdshader" and scenery.mist_node != null and scenery.animated_materials.size() == 3,"hooded guardian and foreground mist are separate animated depth layers")
+	check(scenery.geometry_triangles == 8 and scenery.mesh_instances == 4,"portal composition stays bounded at eight triangles and four planes")
+	var aperture: Rect2 = Rect2(scenery.image_rect.position+scenery.APERTURE.position*scenery.image_rect.size,scenery.APERTURE.size*scenery.image_rect.size)
+	var region := Rect2i(aperture.grow(36)).intersection(Rect2i(root.get_visible_rect()))
+	var first: Image
+	var later: Image
+	for i in 24:
+		scenery.set_review_time(4.0+i*.14)
+		DisplayServer.window_move_to_foreground()
+		await frames(3)
+		RenderingServer.force_draw(true,.016)
+		var frame: Image = root.get_texture().get_image().get_region(region)
+		frame.save_png("res://captures/%s-%s-live-%02d.png" % [capture_prefix,language,i])
+		if i == 0: first=frame
+		if i == 12: later=frame
+	var changes := 0
+	for y in range(0,first.get_height(),8):
+		for x in range(0,first.get_width(),8):
+			if first.get_pixel(x,y) != later.get_pixel(x,y): changes+=1
+	check(changes>100,"fixed-time GPU captures show moving green flames, mist and depths (%d changed samples)" % changes)
+	scenery.set_review_time(4.0)
+	await frames(8)
+	RenderingServer.force_draw(true,.016)
+	var held: Image = root.get_texture().get_image().get_region(region)
+	check(first.get_data() == held.get_data(),"held portal clock reproduces the exact image with no wall-clock shader motion")
+	for size in [Vector2i(1280,720),Vector2i(1280,800),Vector2i(1600,1000)]:
+		DisplayServer.window_set_size(size)
+		root.get_node("UiAccess").apply(125,130)
+		await frames(15)
+		var screen_center: Vector2 = scenery.camera.unproject_position(scenery.portal_node.global_position)
+		var source_center: Vector2 = scenery.image_rect.position+scenery.APERTURE.get_center()*scenery.image_rect.size
+		var guardian_center: Vector2 = scenery.camera.unproject_position(scenery.guardian_node.global_position)
+		var guardian_source: Vector2 = scenery.image_rect.position+scenery.GUARDIAN_RECT.get_center()*scenery.image_rect.size/Vector2(1672,941)
+		check(screen_center.distance_to(source_center)<.1 and guardian_center.distance_to(guardian_source)<.1,"portal and guardian keep shared source-pixel registration at "+str(size))
+		await capture("portal-%dx%d" % [size.x,size.y])
+	root.get_node("UiAccess").apply(100,100)
+	DisplayServer.window_set_size(Vector2i(1920,1080))
+	await frames()
 func run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--lang="): language = argument.get_slice("=",1)
@@ -137,6 +176,7 @@ func run() -> void:
 	if OS.get_cmdline_user_args().has("--olympian-art-only"):
 		menu.get_node("%MainPage").hide()
 		await capture("sanctuary")
+		if OS.get_cmdline_user_args().has("--hades-portal-review"): await portal_review(scenery)
 		print("MAIN_MENU_VALIDATION ","PASS" if okay else "FAIL"," checks=",checks," language=",language," art_only=true")
 		quit(0 if okay else 1)
 		return
