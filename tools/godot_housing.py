@@ -100,15 +100,25 @@ def starter(K, G, L, P, level):
     K.basket(P, .58, .72, .06, .09, fill=True, fill_mat=M.straw)
     resident = K.Worker(P, 'Household resident', P.cloth['rose'], loc=(.36, .62, .018),
                         facing=-math.pi / 2, garment='chiton', sex='female', seed=11 + level)
-    resident.pose((0, 0, resident.pelvis_height), .02,
-                  {1: (.08, .03, 0), -1: (-.08, -.03, 0)},
-                  {1: Vector((.13, .18, .43)), -1: Vector((-.12, .16, .43))})
+    def animate(frame, active=True):
+        resident.show(active)
+        angle = 2 * math.pi * (frame % 8) / 8
+        sway, breath = math.sin(angle), math.cos(angle)
+        # Relaxed elbows and hands beside the hips, with planted feet. Small
+        # opposing shoulder/hip motion avoids the old rigid reaching pose.
+        resident.pose((.008 * sway, 0, resident.pelvis_height + .002 * breath),
+                      .008 + .004 * breath,
+                      {1: (.075, .035, 0), -1: (-.075, -.025, 0)},
+                      {1: Vector((.16 + .004 * sway, .015, .34 + .003 * breath)),
+                       -1: Vector((-.15 + .004 * sway, .025, .35 - .003 * breath))},
+                      turn=.018 * sway)
+    return animate
 
 
 ORIGINAL_YARD = None
 
 
-def build(K, name, execute):
+def build(K, name, execute, activity=False):
     global ORIGINAL_YARD
     sys.path.insert(0, str(ROOT / 'art/common_house'))
     import levels as L
@@ -144,13 +154,30 @@ def build(K, name, execute):
         if level < 2:
             P = L.setup(f'{level}a', Path(tempfile.gettempdir()) / 'godot-housing-source')
             G.M = None
-            starter(K, G, L, P, level)
+            animate = starter(K, G, L, P, level)
         else:
-            execute(ROOT / f'art/{name}/build_sprites.py', [])
+            namespace = execute(ROOT / f'art/{name}/build_sprites.py', [])
+            animate = namespace['__godot_activity__']
         # Sprite smoke is a held sphere cloud, not part of the house silhouette.
         # Original native sprite recipes and their working loops are untouched.
-        for ob in K.root.children_recursive:
-            if ob.name.startswith('Smoke puff'): ob.hide_render = True
+        smoke = [ob for ob in K.root.children_recursive if ob.name.startswith('Smoke puff')]
+        source_scales = {root: root.scale.copy() for root in residents}
+        def household(frame, active=True):
+            presentation_scales = {root: root.scale.copy() for root in residents}
+            # Source chores derive hand targets from matrix_basis. Pose in the
+            # original source coordinates, then restore inverse height scaling;
+            # presentation proportions must not change the authored anatomy.
+            for root in residents: root.scale = source_scales[root]
+            bpy.context.view_layer.update()
+            animate(frame, active)
+            for root in residents: root.scale = presentation_scales[root]
+            # Include clothing and attached hand props even if an authored
+            # source cycle leaves an accessory visible in its inactive pose.
+            if not active:
+                for root in residents:
+                    for ob in root.children_recursive: ob.hide_render = True
+            for ob in smoke: ob.hide_render = True
+        household(0, True)
         bpy.context.view_layer.update()
         def resident_height(root):
             points = [(ob.matrix_world @ Vector(c)).z for ob in root.children_recursive
@@ -158,6 +185,9 @@ def build(K, name, execute):
             return max(points) - min(points)
         before_people = [resident_height(root) for root in residents]
         people = {ob for root in residents for ob in [root, *root.children_recursive]}
+        household(0, False)
+        if any(not ob.hide_render for ob in people if ob.type in {'MESH', 'CURVE'}):
+            raise RuntimeError(f'{name}: an unoccupied house still exposes resident geometry')
         architecture = [ob for ob in K.root.children_recursive if ob.type in {'MESH', 'CURVE'} and not ob.hide_render and ob not in people]
         top = max((ob.matrix_world @ Vector(c)).z for ob in architecture for c in ob.bound_box)
         factor = ART['architecture_heights'][level] / top
@@ -166,13 +196,21 @@ def build(K, name, execute):
         # body dimensions. All current household roots are children of K.root.
         for root in residents: root.scale.z /= factor
         K.root.rotation_euler.z = 0
+        household(0, True)
         bpy.context.view_layer.update()
         K.root['housing_height'] = ART['architecture_heights'][level]
+        after_people = [resident_height(root) for root in residents]
+        if any(abs(before-after) > .00001 for before, after in zip(before_people, after_people)):
+            raise RuntimeError(f'{name}: architectural height scaling changed a resident pose')
         MEASUREMENTS[name] = {
             'resident_heights_before': before_people,
-            'resident_heights_after': [resident_height(root) for root in residents],
+            'resident_heights_after': after_people,
             'measured_architecture_height': max((ob.matrix_world @ Vector(c)).z for ob in architecture for c in ob.bound_box)
         }
+        # The exporter captures this callback for both original starter idles
+        # and retained upper-level chores. Static/preview models have no people.
+        household(0, activity)
+        return household
     finally:
         G.materials, G.yard, K.Worker = original_materials, ORIGINAL_YARD, original_worker
 

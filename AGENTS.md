@@ -1,5 +1,181 @@
 # eZeus / Godot 3D development instructions
 
+## Three speeds and native-time effects — 10 October 2026
+
+The embedded game now exposes Normal/Fast/Very-fast at 1×/2×/4× (native command
+IDs 1/2/3, time increments 15/30/60 per unchanged 50 ms tick). Default 1 replaces
+the old very slow 0; command/save metadata 0 aliases 1. Preserve PRESENTATION 1,
+selected speed persistence, shared stepper/SDL reference behavior and fixed-tick
+seeded replay. Embedded Very-fast uses one native step, never the old five-step
+burst. [ / ] and three HUD slots must use these native IDs, not slot indices.
+
+The calendar/three-arrow panel remains below the map; shared Clock* styles merge
+with --clock-only, and original SVG arrows/CSV help retain pause and input rules.
+BuildingActivity's native phase drives work and session-relative city_effect_clock
+for building/altar fire/smoke. Fire-light/soot deltas also freeze when native time
+stops. Preserve housing rate .2, work flags, original assets and decision callbacks.
+Use sequential disposable tools/review_time_controls.py --lang en|ru, retained
+embedded/building-activity checks and toolbar input checks; inspect EN/RU normal
+and enlarged layouts. Record scope and pending pacing/platform acceptance.
+
+
+## Settings frames and language ownership — 10 October 2026
+
+Both main-menu and city Settings details use SettingsShell's private wood/gold
+frame, ivory corners, slate reading inset and measured 48-pixel enamel footers.
+The hub retains six distinct categories. GameSettingsDialog defaults to its own
+options; duplicate category links require an explicit legacy opt-in.
+
+Interface language lives only in Settings → Interface alongside sizes and motion,
+with English/Русский self-names. Selection is a draft: Apply saves and invokes the
+existing host language/retranslation path; Cancel/Escape leaves language unchanged
+and restores size/motion previews. Main-menu and Escape-hub language controls are
+removed. Preserve the separate native voice-language option, current city language
+contract, exact display/graphics revert, key capture, optional native difficulty,
+stable controls/focus, pause/queue restoration and personal saves/preferences.
+Run owned sequential main-menu and Escape EN/RU reviews after changes; long key
+lists retain their bounded scroller. Never save scaled Themes.
+
+## Occupied common-house residents — 10 October 2026
+
+The seven active `common_house_<0-6>a` static GLBs contain architecture only.
+Household residents and hand tools live in fresh building-activity derivatives;
+native `eSmallHouse::people() > 0` gates their existing `working` observation.
+Do not gate homes on employee counts or alter occupancy/rules/RNG/save data.
+Starter residents use relaxed planted-foot idles; upper levels retain authored
+chores. Housing uses `work_rate=.2` (four seconds at normal speed), with a shared
+40-sample clock wrap; other activity remains rate 1. Preserve UVs, palette,
+static/dynamic batches, source fingerprints, height/anatomy, and reduced LODs.
+Export architecture first, then all seven activity derivatives. Their explicit
+triangle ceilings in `housing_art.json` use the occupied pre-split models.
+Placement ghosts use architecture-only preview templates. Read housing/activity
+contracts and run occupancy, art, activity and owned EN/RU visible checks.
+Background Blender only; preserve the live port-9876 scene and native artwork.
+
+## Zeus guide parity: original keys and gameplay — 10 October 2026
+
+Read the "Zeus guide parity" section of `docs/GODOT_MIGRATION.md`. The user's
+reference is `../ZEUS_GAME_GUIDE.md` (a copyrighted GameFAQs guide: consult it,
+never copy it into the project). The user approved native gameplay changes and
+new saves for them.
+
+- Keys: `KeyBindings.EXTRA` holds the original game's controls (given only where
+  they clash with nothing; they are assigned after a player's older choices, so a
+  key already taken stays theirs). `KeyBindings.CLASSIC` is the Classic Zeus layout
+  (Controls → Key layout; stored as `[controls] layout`; switching resets custom
+  keys). Arrow panning is the `held2` second key of the pan actions
+  (`KeyBindings.SECOND`). `scripts/city_hotkeys.gd` handles them, called once from
+  `main.gd` `_unhandled_input`; it also does Shift+digit tabs, footprint holding
+  (`holds_placement` in `pick_tile`), bookmarks, company keys, the screenshot (tests set
+  `screenshot_folder`) and the Alt+X confirmation. Quarter turns ease `orbit.turn_goal`.
+- Engine (shared with SDL, `eFileFormat::zeusGuide`): stockpiling
+  (`eBoardCity::stockpiled`, cart target filter, trade-post buy), Auto Defend
+  (`eBoardCity::autoDefend`, `updateCityDefense` for a player's city; manual army
+  orders answer `auto_defend`), the oracle (`eSanctuary::consultOracle`, Zeus and
+  Apollo only), trireme crews (`eTriremeWharf::crewed`: the wharf's own workers;
+  `crew_all`) and the navy abroad (`eEnlistedForces::fTriremes`, `t:` in
+  `enlist_dispatch`, `eWorldCity::waterTrade` reach). Validator-only `test_sea`.
+- Checks: `validate_controls.gd` and `validate_guide_parity.gd` (headless), and
+  `tools/review_original_keys.py --lang en|ru --parity` (windowed:
+  `validate_original_keys.gd` + `validate_guide_parity_ui.gd`). Both suites also
+  run inside the full `--validate` run. Rebuild with `tools/build_godot_extension.sh`;
+  the installer swaps the library atomically, so a running game keeps the old
+  one until restarted.
+
+## Optional first-settlement coach — 10 October 2026
+
+Read `docs/GODOT_CITY_CLARITY.md`. New empty-city offers now show an optional
+introduction, then one current task; the full roadmap is on demand. Capture the
+initial native road count before setup, require real residents/service delivery,
+and distinguish Continue, completed history and explicit Skip. Food coaching
+adapts to actual offered tools, stored food, local sources and existing trade
+posts. Unsupported chapter tools and sandbox maps must have clear exits.
+
+`ui/settlement_steps.gd` is read-only presentation logic. Preserve original native
+tool/overlay/objective/inspector callbacks, exact costs, required decisions and
+pause. Resume must remain explicit and blocked by pending decisions. Guide reports
+refresh once per second; Issues retains its five-second reading hold. Cache derived
+tasks outside frame animation, protect held presses and restore named keyboard
+focus through live rebuilds. Guide navigation holds the camera; placement returns
+input. Deferred ToolbarButton focus release must tolerate a removed Control.
+
+Use the shared Theme generator's `--guide-only` merge and CSV translations. Keep
+road/learned/skipped state session-only, the explicit presentation opt-out and
+manual access; do not add native saved fields, grants or automatic outcomes.
+Run sequential disposable `tools/review_settlement_guide.py --lang en` / `ru`,
+retained `tools/review_city_clarity.py`, and mouse-up toolbar input checks. Pure
+coaching fixtures are separate from real native construction in the designated
+copy. Protect all personal saves/preferences and live game/Blender; record scoped
+evidence and remaining newcomer/platform acceptance in validation.
+
+## Game-menu hierarchy and larger actions — 10 October 2026
+
+The six-choice root now supersedes the earlier three-column Escape layout:
+Return to city, Saved games, Settings, City views, Help and Main menu. Files,
+settings, city views and help use focused pages in the same frame. All existing
+native actions remain accessible; Graphics is promoted from the old nested route.
+The Gameplay form omits redundant links to other settings; explicit legacy
+GameSettingsDialog callers can opt into the old nested links.
+
+Keep stable Controls, full translated labels and key-binding hints, predictable
+Back/Escape/right-click hierarchy and opener focus. Tab wraps within the visible
+page without reaching the city HUD. Language belongs in Interface. Pages have no
+scroll containers and must fit at 720p with 125% UI / 130% text. Do not shrink text
+to force a fit. Explicit GameMenuAction/Primary use 18-pixel labels, 52-pixel targets
+and protected enamel padding; compact generic HUD buttons are unchanged.
+
+SettingsShell can install a private wood/slate form skin for Game-menu dialogs;
+48-pixel footers, aligned readable controls and the scenic shade remain through
+child dialogs. Long rebindable key lists retain their bounded reading scroller.
+Preserve Apply/Cancel, display/graphics previews, existing confirmations, native
+pause/queued-command restoration and player files. Run owned sequential EN/RU
+Escape reviews and retained start-menu settings reviews after shell changes.
+
+
+## In-game wood-frame foundation — 10 October 2026
+
+Read `docs/GODOT_PANEL_DESIGN.md`. The first in-game pass applies original
+`assets/ui/greek_panel_v1.png` to EscapeCard, CharacterCard, EpisodeShell and
+embedded dialogs. Dense City data uses a slate CityLedger within the frame.
+Compact inspectors and the persistent Nova HUD retain their current lighter
+styles; do not apply the large frame to generic PanelContainer or tiny key caps.
+
+`city_panel_skin.gd` is called by the shared Theme generator. Use
+`build_ui_theme.gd -- --panels-only` to merge only its declared types, preserving
+unrelated authored resources and baseline font sizes. Runtime UiAccess still
+owns independent sizes; never save its scaled Theme. The raw RGBA source/prompt/
+hash are retained; lossless import limit384 and 48-pixel slices keep corners
+compact. Window title bands reserve72 pixels, contents retain lower clearance,
+and HUD configures embedded dialog transparency without changing input rectangles.
+
+Escape groups Your city/Settings/City views in three columns at ordinary widths,
+with native callbacks and narrow-width fallback. Character co-located people sit
+outside prose/inventory scrolling; preserve their native selection, voices and
+pause/queue restoration. City tabs recenter/reflow without rebuilding drafts.
+Native decisions/rules/20Hz/saves, models/UV/LODs and live game/Blender stay intact.
+Run owned sequential EN/RU Escape, character and episode reviews; record existing
+renderer teardown diagnostics separately from UI assertion results.
+
+## Roomier menus and enamel footer actions — 10 October 2026
+
+Profiles/Load use larger bounded 1040×860 frames with a 13% lower reading inset;
+the roster creation/status/footer stack has explicit vertical gaps. Briefings
+can grow to 1560×980 inside the viewport, with a wider story column and a bounded
+objectives column. Preserve the decorated rail/crest reading insets, all native
+goals together, complete word-boundary story paging and unchanged 14/16-pixel
+story font baselines. Three-pixel leading and modest clean paper padding reduce
+small last-page spills without cropping or rewriting prose. Long stories and
+enlarged text retain readable paging.
+
+`ui/settings_art/menu_action.svg` is original code-native blue-enamel/bronze art.
+Only explicit `MenuPagePrimary` / `MenuPageChoice` / `MenuPageDanger` / `MenuPagePager`
+variations use it, with protected text insets and quiet silhouette focus. Do not
+apply this texture to generic settings Button/key caps. Create/Delete and catalog
+arrows now share this style, retaining native identity/deletion confirmations.
+Run owned sequential EN/RU profile/menu, adventure and five-campaign menu-only
+reviews. Check actual ready status and all footer labels at enlarged 720p; record
+page-one coverage at normal sizes. Keep shared city Theme and all native behavior.
+
 ## Menu frame hierarchy and one briefing route — 10 October 2026
 
 Keep the user's approved ornate walnut/bronze/ivory frame on full menu pages:

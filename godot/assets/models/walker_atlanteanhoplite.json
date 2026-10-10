@@ -1,19 +1,20 @@
 {
   "asset": "walker_atlanteanhoplite",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_atlanteanhoplite.glb",
-  "bytes": 7743540,
-  "vertices": 15818,
+  "bytes": 3216420,
+  "vertices": 6498,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.31197965145111084,
-      -0.17924624681472778,
+      -0.3118227422237396,
+      -0.1793283224105835,
       0.0004999842494726181
     ],
     [
-      0.20195725560188293,
+      0.2020927369594574,
       0.21619586646556854,
       1.190000057220459
     ]
@@ -26,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Atlantean raider",
@@ -61,6 +62,7 @@
           "seed": 93022
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "f8eaf485f082783222c65e83103569b9b241b5ced151820b407965e62cf8ea47",
         "clavi_srgb": [
           0.1,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

@@ -34,7 +34,9 @@ The previous starter hut was taller than level 1, and the previous apartment
 was taller than the townhouse. The new architecture grows at every step.
 Architecture scales vertically around the native foundation. Resident roots
 move with their authored floor, with inverse local height scaling to preserve
-anatomy; manifests record before/after resident heights. Footprint width/depth
+anatomy; manifests record before/after resident heights. Source chores are posed
+with their original local root scale before restoring presentation height
+compensation, so reposing cannot change limb targets or the seated silhouette. Footprint width/depth
 stay unchanged. This is an art proportion pass, not new floors or occupancy rules.
 
 Earth yards use muted neutral soil in irregular thin patches with exposed
@@ -43,6 +45,34 @@ bottom slab are removed. Later paved courts use grey limestone. Brown thatch
 and mud-brick diffuse/base colors are explicitly set, since the preview palette
 cannot evaluate the original procedural textures. Original static smoke spheres
 are excluded from the house silhouette; native sprite smoke loops are retained.
+
+## Resident occupancy and motion — 10 October 2026
+
+Static architecture, thumbnails and placement previews contain no people.
+Residents and animated hand props belong to fresh building-activity derivatives
+for all seven active models. Their per-instance `working` flag requires native
+`eSmallHouse::people() > 0` and the absence of fire. Native houses do not use
+workplace enabled/overlay flags; neither those flags nor employee counts gate
+households. The existing delta cache reports first
+arrival/final departure without new polling, RNG draws or serialization fields.
+
+Starter women now stand with relaxed arms beside their hips, a small breathing
+and weight-shift loop and planted feet. Upper levels retain authored spinning,
+sharpening, baking, feeding and music tasks. All housing uses eight samples over
+four seconds at normal speed, via `work_rate=.2` on the shared activity shader.
+Its 40-sample clock wrap preserves the slower housing loop and existing rate-1
+workers. Native pause/speed and required decisions apply. Hand props hide with
+the resident; held sphere smoke stays excluded.
+
+Export/install architecture first, then run `export_building_activity.py --assets`
+with the seven active names. Re-bake/re-import every affected derivative, retaining
+both UV sets, CityPalette, static/dynamic finish groups and reduced LODs. Explicit
+resident allocations/triangle ceilings in `housing_art.json` refer to the occupied
+models before separation; architecture-only files are intentionally much smaller.
+`validate_house_residents.gd` uses ordinary immigration and scratch save/reload;
+`tools/review_housing_art.py --lang en` (then `ru`) checks actual GPU visibility,
+geometry reuse and the installed models in owned Metal windows. The standard
+activity gate still covers native pause/speed/decision holds and every baked pose.
 
 ## Export contract
 
@@ -56,7 +86,8 @@ Use background Blender only:
 
 Export all seven into a staging directory before installing their GLBs/manifests.
 The adapter stores no source scene, sprite or atlas. execute_source suppresses
-native atlas/render/save writers and captures the existing held working pose.
+native atlas/render/save writers and captures authored household callbacks. Static GLBs deliberately use the
+resident-free inactive pose; the activity exporter samples the occupied loop.
 Use only local source seeds; never simulation RNG. godot_asset_sources.py
 registers the active family for future background exports.
 
@@ -78,7 +109,7 @@ Current verified evidence and limits are in GODOT_VALIDATION.md.
 
 ## Remaining work
 
-User visual acceptance, complete material baking, animated household tasks,
+User visual acceptance, complete material baking,
 additional appearance variants and sustained minimum-Mac profiling remain
 pending. Source-derived higher levels retain needs_evidence provenance.
 This pass changes common housing only; native elite housing keeps its models.

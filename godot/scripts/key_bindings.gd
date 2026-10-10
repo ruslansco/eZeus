@@ -17,10 +17,18 @@ const SECTION := "keys"
 const CMD := KEY_MASK_CTRL    # Ctrl or Cmd
 const ALT := KEY_MASK_ALT
 const MODIFIERS := KEY_MASK_CTRL | KEY_MASK_ALT
-const GROUPS := ["Camera", "Construction", "Game", "City views"]
+const GROUPS := ["Camera", "Construction", "Game", "Build tabs", "Bookmarks", "Companies", "City views"]
 # Held actions are InputMap actions and take no modifier; "bare" ones take none either; the others may carry Ctrl/Cmd and Alt.
+# "held2" is a held action's second key (the arrows for panning): no modifier either, but it may be left unassigned.
 const DOCK_ACTIONS := ["build_house", "build_road", "build_roadblock", "layers", "jobs"]
 const HELD := ["orbit_left", "orbit_right", "tilt_up", "tilt_down", "pan_forward", "pan_back", "pan_left", "pan_right"]
+# A held action's second key, fed into the same InputMap action.
+const SECOND := {"pan_forward": "pan_forward_alt", "pan_back": "pan_back_alt", "pan_left": "pan_left_alt", "pan_right": "pan_right_alt"}
+# The two key layouts: this game's own ("ezeus", the default) and the original Zeus: Master of Olympus keys ("classic").
+# Choosing a layout puts every control on that layout's key; the player's own changes are kept per layout choice.
+const LAYOUTS := ["ezeus", "classic"]
+const LAYOUT_NAMES := {"ezeus": "eZeus (this game)", "classic": "Classic Zeus"}
+const LAYOUT_SECTION := "controls"
 const RESERVED := [KEY_ESCAPE, KEY_DELETE, KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_META, KEY_UNKNOWN, KEY_CAPSLOCK, KEY_NUMLOCK, KEY_SCROLLLOCK]
 
 # [group, label (a tr() key), default code, kind: "held", "bare" or "free"]
@@ -55,11 +63,77 @@ const FIXED := {
 }
 # The second key that returns to the normal view (the SDL game's back quote).
 const NORMAL_ALTERNATE := "overlay_normal_alt"
+# The original game's keys (the Zeus guide's hotkey list) that came after the table above. Their defaults are this game's; a key only
+# Zeus had is given in both layouts where it is free, and a key that clashes with one of this game's is the Classic layout's only.
+# They are given out after the player's older choices (see `_load`), so a key the player already uses stays theirs.
+const EXTRA := {
+	"pan_forward_alt": ["Camera", "Pan forward (second key)", KEY_UP, "held2"],
+	"pan_back_alt": ["Camera", "Pan back (second key)", KEY_DOWN, "held2"],
+	"pan_left_alt": ["Camera", "Pan left (second key)", KEY_LEFT, "held2"],
+	"pan_right_alt": ["Camera", "Pan right (second key)", KEY_RIGHT, "held2"],
+	"rotate_left": ["Camera", "Turn the city a quarter left", KEY_PAGEUP, "free"],
+	"rotate_right": ["Camera", "Turn the city a quarter right", KEY_PAGEDOWN, "free"],
+	"face_north": ["Camera", "Face north", 0, "free"],
+	"freeze_footprint": ["Construction", "Hold the placement in place", 0, "free"],
+	"pause_alt": ["Game", "Pause or resume (second key)", KEY_P, "free"],
+	"speed_up": ["Game", "Faster game speed", KEY_BRACKETRIGHT, "free"],
+	"speed_down": ["Game", "Slower game speed", KEY_BRACKETLEFT, "free"],
+	"overview_map": ["Game", "Show or hide the city map", 0, "free"],
+	"screenshot": ["Game", "Screenshot", KEY_F12, "free"],
+	"quit_game": ["Game", "Exit the game", KEY_X | KEY_MASK_ALT, "free"],
+	"window_800": ["Game", "Window 800 × 600", 0, "free"],
+	"window_1024": ["Game", "Window 1024 × 768", 0, "free"],
+	"category_1": ["Build tabs", "Population tab", 0, "bare"],
+	"category_2": ["Build tabs", "Husbandry tab", 0, "bare"],
+	"category_3": ["Build tabs", "Industry tab", 0, "bare"],
+	"category_4": ["Build tabs", "Distribution tab", 0, "bare"],
+	"category_5": ["Build tabs", "Hygiene and safety tab", 0, "bare"],
+	"category_6": ["Build tabs", "Administration tab", 0, "bare"],
+	"category_7": ["Build tabs", "Culture tab", 0, "bare"],
+	"category_8": ["Build tabs", "Mythology tab", 0, "bare"],
+	"category_9": ["Build tabs", "Military tab", 0, "bare"],
+	"category_10": ["Build tabs", "Aesthetics tab", 0, "bare"],
+	"bookmark_go_1": ["Bookmarks", "Go to bookmark 1", KEY_F1 | KEY_MASK_ALT, "free"],
+	"bookmark_go_2": ["Bookmarks", "Go to bookmark 2", KEY_F2 | KEY_MASK_ALT, "free"],
+	"bookmark_go_3": ["Bookmarks", "Go to bookmark 3", KEY_F3 | KEY_MASK_ALT, "free"],
+	"bookmark_go_4": ["Bookmarks", "Go to bookmark 4", KEY_F4 | KEY_MASK_ALT, "free"],
+	"bookmark_set_1": ["Bookmarks", "Set bookmark 1", KEY_F1 | KEY_MASK_CTRL, "free"],
+	"bookmark_set_2": ["Bookmarks", "Set bookmark 2", KEY_F2 | KEY_MASK_CTRL, "free"],
+	"bookmark_set_3": ["Bookmarks", "Set bookmark 3", KEY_F3 | KEY_MASK_CTRL, "free"],
+	"bookmark_set_4": ["Bookmarks", "Set bookmark 4", KEY_F4 | KEY_MASK_CTRL, "free"],
+	"company_set_1": ["Companies", "Give the chosen company key 1", KEY_1 | KEY_MASK_CTRL, "free"],
+	"company_set_2": ["Companies", "Give the chosen company key 2", KEY_2 | KEY_MASK_CTRL, "free"],
+	"company_set_3": ["Companies", "Give the chosen company key 3", KEY_3 | KEY_MASK_CTRL, "free"],
+	"company_set_4": ["Companies", "Give the chosen company key 4", KEY_4 | KEY_MASK_CTRL, "free"],
+	"company_set_5": ["Companies", "Give the chosen company key 5", KEY_5 | KEY_MASK_CTRL, "free"],
+	"company_select_1": ["Companies", "Choose company 1", KEY_1 | KEY_MASK_ALT, "free"],
+	"company_select_2": ["Companies", "Choose company 2", KEY_2 | KEY_MASK_ALT, "free"],
+	"company_select_3": ["Companies", "Choose company 3", KEY_3 | KEY_MASK_ALT, "free"],
+	"company_select_4": ["Companies", "Choose company 4", KEY_4 | KEY_MASK_ALT, "free"],
+	"company_select_5": ["Companies", "Choose company 5", KEY_5 | KEY_MASK_ALT, "free"],
+	"switch_view": ["City views", "Switch views (normal and the last overlay)", 0, "free"],
+}
+# The Classic Zeus layout: the original game's keys (P pauses, Space switches views, 1-0 open the build tabs, - the overview,
+# Tab the city map, Home faces north, PgUp/PgDn turn the city, F1-F4 go to bookmarks, F5 windowed, F6/F7 the old window sizes,
+# Print Screen, Alt+X, Ctrl/Alt+1-5 the companies, M holds a sanctuary's footprint). Controls not named keep this game's key;
+# the ones the original keys displace get a free key of their own (or none: the overlays are chosen from Layers there).
+const CLASSIC := {
+	"pause": KEY_P, "pause_alt": 0, "switch_view": KEY_SPACE, "face_north": KEY_HOME, "camera_home": KEY_END,
+	"overview_map": KEY_TAB, "freeze_footprint": KEY_M, "mute": KEY_M | KEY_MASK_ALT, "fullscreen": KEY_F5,
+	"quick_save": KEY_S | KEY_MASK_CTRL, "window_800": KEY_F6, "window_1024": KEY_F7, "screenshot": KEY_PRINT,
+	"world_map": KEY_F8, "army": KEY_F10, "mythology": KEY_F11, "city": KEY_MINUS, "details": 0,
+	"bookmark_go_1": KEY_F1, "bookmark_go_2": KEY_F2, "bookmark_go_3": KEY_F3, "bookmark_go_4": KEY_F4,
+	"category_1": KEY_1, "category_2": KEY_2, "category_3": KEY_3, "category_4": KEY_4, "category_5": KEY_5,
+	"category_6": KEY_6, "category_7": KEY_7, "category_8": KEY_8, "category_9": KEY_9, "category_10": KEY_0,
+	"overlay_normal": 0, "overlay_water": 0, "overlay_supplies": 0, "overlay_hygiene": 0, "overlay_hazards": 0, "overlay_appeal": 0,
+	"overlay_taxes": 0, "overlay_unrest": 0, "overlay_security": 0, "overlay_roads": 0, "overlay_problems": 0,
+}
 
 static var table: Array = []
 static var index: Dictionary = {}
 static var custom: Dictionary = {}
 static var loaded := false
+static var current_layout := "ezeus"
 
 # ---- the table of actions ---------------------------------------------------------------------------------------------
 # [{id, group, label, default, kind}] in the order the Controls dialog lists them.
@@ -74,6 +148,9 @@ static func actions() -> Array:
 		if key != 0:
 			table.append({"id": "overlay_" + id, "group": "City views", "label": Overlays.MODES[id][0], "default": key, "kind": "bare"})
 	table.append({"id": NORMAL_ALTERNATE, "group": "City views", "label": "Normal view (second key)", "default": KEY_QUOTELEFT, "kind": "bare"})
+	for id in EXTRA:
+		var entry: Array = EXTRA[id]
+		table.append({"id": id, "group": entry[0], "label": entry[1], "default": int(entry[2]), "kind": entry[3]})
 	return table
 
 static func definition(id: String) -> Dictionary:
@@ -82,8 +159,33 @@ static func definition(id: String) -> Dictionary:
 			index[entry.id] = entry
 	return index.get(id, {})
 
-static func default_code(id: String) -> int:
+# The key a control has in the layout in use (or in the one named) before the player changes it.
+static func default_code(id: String, in_layout := "") -> int:
+	var name := in_layout if in_layout != "" else layout()
+	if name == "classic" and CLASSIC.has(id):
+		return int(CLASSIC[id])
 	return int(definition(id).get("default", 0))
+
+# ---- the key layout ---------------------------------------------------------------------------------------------------
+static func layout() -> String:
+	_load()
+	return current_layout
+
+# Puts every control on the named layout's keys: the player's own changes are forgotten (they were made against the other
+# layout's keys), and the choice is remembered when automation is not running.
+static func set_layout(name: String) -> bool:
+	if name not in LAYOUTS:
+		return false
+	_load()
+	for entry in actions():
+		custom.erase(entry.id)
+		if uses_player_settings():
+			Settings.set_value(SECTION, entry.id, null)
+	current_layout = name
+	if uses_player_settings():
+		Settings.set_value(LAYOUT_SECTION, "layout", name)
+	apply_input_map()
+	return true
 
 # ---- reading and writing the player's choices -------------------------------------------------------------------------
 static func uses_player_settings() -> bool:
@@ -100,31 +202,37 @@ static func uses_player_settings() -> bool:
 static func reload() -> void:
 	loaded = false
 	custom = {}
+	current_layout = "ezeus"
 
 static func _load() -> void:
 	if loaded:
 		return
 	loaded = true
 	custom = {}
+	current_layout = "ezeus"
 	if not uses_player_settings():
 		return
+	var chosen: Variant = Settings.get_value(LAYOUT_SECTION, "layout", "ezeus")
+	if typeof(chosen) == TYPE_STRING and chosen in LAYOUTS:
+		current_layout = chosen
 	var found := {}
 	for entry in actions():
 		var value: Variant = Settings.get_value(SECTION, entry.id, "")
-		if typeof(value) == TYPE_INT and problem(entry.id, int(value)).is_empty() and int(value) != int(entry.default):
+		if typeof(value) == TYPE_INT and problem(entry.id, int(value)).is_empty() and int(value) != default_code(entry.id):
 			found[entry.id] = int(value)
-	# Validate legacy bindings first. Adding dock defaults must not displace an
+	# Validate legacy bindings first. Adding dock defaults (and the original game's keys) must not displace an
 	# existing custom key; a newly occupied shortcut stays unassigned until rebound.
+	var late: Array = DOCK_ACTIONS + EXTRA.keys()
 	var seen := {}
 	for entry in actions():
-		if entry.id in DOCK_ACTIONS: continue
-		var effective := int(found.get(entry.id, entry.default))
+		if entry.id in late: continue
+		var effective := int(found.get(entry.id, default_code(entry.id)))
 		if effective == 0: continue
 		if seen.has(effective):
 			push_warning("key bindings: %s is bound twice; the defaults are used" % OS.get_keycode_string(effective & KEY_CODE_MASK))
 			return
 		seen[effective] = entry.id
-	for id in DOCK_ACTIONS:
+	for id in late:
 		var effective := int(found.get(id,default_code(id)))
 		if effective == 0: continue
 		if seen.has(effective): found[id] = 0
@@ -188,7 +296,7 @@ static func overlay_for(event: InputEvent) -> String:
 		return ""
 	var value := encode(event)
 	for entry in actions():
-		if entry.group == "City views" and code(entry.id) == value:
+		if entry.group == "City views" and str(entry.id).begins_with("overlay_") and code(entry.id) == value:
 			return "normal" if entry.id == NORMAL_ALTERNATE else str(entry.id).trim_prefix("overlay_")
 	return ""
 
@@ -261,6 +369,11 @@ static func apply_input_map() -> void:
 		var event := InputEventKey.new()
 		event.physical_keycode = (code(id) & KEY_CODE_MASK) as Key
 		InputMap.action_add_event(id, event)
+		# The second key (the arrows for panning) drives the same action.
+		if SECOND.has(id) and code(SECOND[id]) != 0:
+			var second := InputEventKey.new()
+			second.physical_keycode = (code(SECOND[id]) & KEY_CODE_MASK) as Key
+			InputMap.action_add_event(id, second)
 
 # The hint that names the camera keys, in the player's own (translated) words.
 static func idle_hint() -> String:

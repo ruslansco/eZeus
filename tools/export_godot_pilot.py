@@ -74,21 +74,22 @@ def execute_source(source, args, stop=None, transform=None):
     bpy.ops.wm.save_as_mainfile = lambda *a, **kw: None
     exec(compile(tree, str(source), 'exec'), namespace)
     K.root.rotation_euler.z = 0
+    namespace['__godot_activity__'] = BUILDING_ANIMATE
     return namespace
 
 
 def construct(name):
+    global BUILDING_ANIMATE
     if name.startswith('common_house_'):
         import godot_housing
         if name in godot_housing.ASSETS:
-            godot_housing.build(K, name, execute_source)
+            BUILDING_ANIMATE = godot_housing.build(K, name, execute_source, activity=BUILDING_ACTIVITY)
             return 'eZeus/tools/godot_housing.py', None, None
     if name in ('tower', 'gatehouse') or name.startswith('wall_'):
         source = Path(__file__).with_name('godot_defences.py')
         args = ['--piece', 'wall', '--mask', name.removeprefix('wall_')] if name.startswith('wall_') else ['--piece', name]
         execute_source(source, args)
         return str(source.relative_to(ROOT)), None, None
-    global BUILDING_ANIMATE
     EXTRA_CLIPS.clear()
     from godot_monster_reference import ASSETS as MONSTER_REFERENCES
     if name.removeprefix('walker_') in MONSTER_REFERENCES:
@@ -331,7 +332,7 @@ def construct(name):
     return str(source.relative_to(ROOT)), namespace.get('pose'), namespace.get('idle')
 
 
-def evaluated(objects, collapse_hidden=False):
+def evaluated(objects, collapse_hidden=False, positions_only=False):
     bpy.context.view_layer.update()
     deps = bpy.context.evaluated_depsgraph_get()
     result = []
@@ -349,6 +350,10 @@ def evaluated(objects, collapse_hidden=False):
             # A soldier's weapon that the current clip puts away: folded to a point inside the body, so it costs nothing to see
             # and never lies below the ground (the clips that show it displace it from there).
             xyz = np.tile(np.array([0, 0, .9], dtype=np.float32), (len(xyz), 1))
+        if positions_only:
+            result.append((obj.name, xyz, [], [], {}))
+            eo.to_mesh_clear()
+            continue
         faces = [(tuple(p.vertices), p.material_index) for p in mesh.polygons]
         materials = list(mesh.materials)
         attributes = {}
@@ -530,6 +535,10 @@ def export(name):
         budget = 32000 if name == 'settlers1' or name in MOUNTED else 15000
         if name in ('walker_hunter','walker_deerhunter','walker_shepherd','walker_goatherd'):
             budget = 20000  # The carried prey / hidden native work animal is part of these clips.
+        if character_art.CITY_DETAIL:
+            budget = 16000 if name == 'settlers1' else 18000 if name in MOUNTED else 6000
+            if name in ('walker_hunter','walker_deerhunter','walker_shepherd','walker_goatherd'):
+                budget = 10000
         if name == 'walker_hades':
             # The designed face keeps its eyes, brows, beard strands and hairline whole; the rest still gets its share.
             budget = 19000
@@ -547,13 +556,18 @@ def export(name):
         # Respect each already-optimized building's geometry tier. A moving
         # worker must not restore render-source architecture to 35K vertices.
         previous = json.loads((ROOT/'eZeus/godot/assets/models'/f'{name}.json').read_text())
-        if int(previous['vertices']) < 20000:
+        if name.startswith('common_house_'):
+            from godot_housing import ART
+            budget = min(budget, ART['resident_activity']['vertex_allocations'][name])
+        elif int(previous['vertices']) < 20000:
             budget = min(budget, int(previous['vertices']*.88))
     protected = sum(len(g['vertices']) for g in groups.values() if g['garden_foliage'] or g['character_cloth'])
     if protected > budget:
         raise RuntimeError(f'{name}: foliage alone exceeds its real-time geometry budget')
     def weight(key, group):
         factor = (3.0 if key[-1]=='face' else 1.7 if key[-1]=='hands' else .4 if key[5]==2 else 1.0) if human_asset else 1.0
+        if human_asset and character_art.CITY_DETAIL and name != 'walker_hades':
+            factor = .9 if key[-1]=='face' else .6 if key[-1]=='hands' else .35 if key[5]==2 else 1.0
         return math.sqrt(len(group['vertices']))*factor
     weights = sum(weight(key,g) for key,g in groups.items() if not (g['garden_foliage'] or g['character_cloth']))
     for number, (key, group) in enumerate(groups.items()):
@@ -658,7 +672,7 @@ def export(name):
             for frame in range(count):
                 if label == 'walk' and frame == 0 and not shown_in_clips: continue
                 fn(frame)
-                current = {obj: xyz for obj, xyz, _, _, _ in evaluated(objects, collapse_hidden=bool(shown_in_clips))}
+                current = {obj: xyz for obj, xyz, _, _, _ in evaluated(objects, collapse_hidden=bool(shown_in_clips), positions_only=human_asset and character_art.CITY_DETAIL)}
                 for ob, sources, closest, offset in mappings:
                     combined = np.concatenate([current[obj][indices] for obj, indices, _ in sources])
                     positions = combined[closest] + offset
@@ -733,6 +747,11 @@ def export(name):
         report['building_activity'] = {'revision':'authored_work_v1','frames':8,'inactive':'inactive','fps_at_normal_speed':10,
             'dynamic_source_objects':len(dynamic),'allocation_target':budget,'base_sha256':hashlib.sha256(base.read_bytes()).hexdigest(),
             'state':'native working (staff, shutdown, inputs and overlay eligibility); native clock, no simulation RNG'}
+        if name.startswith('common_house_'):
+            from godot_housing import ART
+            report['building_activity'].update(work_rate=.2, occupied_only=True, fps_at_normal_speed=2,
+                max_triangles=ART['resident_activity']['triangle_budgets'][name],
+                state='native common-house people > 0 and not on fire; four-second household loop; no rules/RNG changes')
     if human_asset:
         import wardrobe
         for identity in identities:
@@ -744,6 +763,9 @@ def export(name):
                                'rest_coordinates':'Godot UV: local rest X/(1-Z), stable through morph poses',
                                'seed':'local stable hashes, never simulation RNG'}
         report['material_mode'] = 'painted_anatomical_skin_rest_clavi_procedural_realtime_finishes'
+        if character_art.CITY_DETAIL and name != 'walker_hades':
+            report['character']['city_detail'] = {'groom':'fitted_caps_no_strands_painted_brows',
+                'allocation_target':budget, 'use':'city camera; character panels use generated images'}
         if god_float.is_god(name):
             report['character']['floating'] = god_float.REVISION
         if name == 'walker_hades':

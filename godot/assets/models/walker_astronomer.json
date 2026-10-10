@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "eZeus/tools/godot_science_walkers.py",
   "file": "walker_astronomer.glb",
-  "bytes": 5189736,
-  "vertices": 15608,
+  "bytes": 2147064,
+  "vertices": 6400,
   "surfaces": 3,
-  "source_surfaces": 16,
+  "source_surfaces": 13,
   "bounds_blender": [
     [
-      -0.19289176166057587,
-      -0.17033950984477997,
+      -0.19309625029563904,
+      -0.17036806046962738,
       0.0004999842494726181
     ],
     [
       0.23999999463558197,
       0.23000001907348633,
-      0.8497558236122131
+      0.845525324344635
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Astronomer",
@@ -62,6 +62,7 @@
           "seed": 9827
         },
         "body_height": 0.8700360760558397,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "bbc27809bfd567a9fdef44cc4728d144a28955f717f7e96b8f11e1dcce091919",
         "clavi_srgb": [
           0.46,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

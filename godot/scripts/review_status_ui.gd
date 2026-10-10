@@ -61,7 +61,7 @@ func menu_review() -> void:
 		root.get_node("UiAccess").apply(sizes.x,sizes.y)
 		for frame in 12:await process_frame
 		var screen:=Rect2(Vector2.ZERO,menu.size)
-		for name in ["Continue","NewGame","LoadGame","Language","Sound","Interface","Quit"]:
+		for name in ["Continue","NewGame","LoadGame","Interface","Quit"]:
 			var fits:=screen.encloses(menu.get_node("%"+name).get_global_rect());okay=okay and fits;checks+=1
 			print("STATUS_MENU_CHECK ","PASS " if fits else "FAIL ",locale," ",sizes," ",name)
 		if sizes.x==125:
@@ -69,13 +69,11 @@ func menu_review() -> void:
 			root.get_texture().get_image().save_png("res://captures/status-ui-menu-720-"+locale+".png")
 	menu.get_node("%Interface").pressed.emit()
 	for frame in 6:await process_frame
-	var hub: Window=null
-	for child in menu.get_children():
-		if child is Window and child.get("settings_buttons")!=null:hub=child
-	var hub_ready: bool=hub!=null and hub.visible and hub.settings_buttons.size()==3 and Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(Rect2(Vector2(hub.position),Vector2(hub.size)))
+	var hub: Control=menu.navigation.settings_page
+	var hub_ready: bool=hub.visible and menu.navigation.settings_buttons.size()==6 and Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(hub.get_global_rect())
 	okay=okay and hub_ready;checks+=1
-	print("STATUS_MENU_CHECK ","PASS " if hub_ready else "FAIL ","menu gear opens bounded game settings with display/interface/controls links")
-	if hub!=null:hub.settings_buttons.display.pressed.emit()
+	print("STATUS_MENU_CHECK ","PASS " if hub_ready else "FAIL ","Settings opens a bounded hub with six distinct categories")
+	if hub!=null:menu.navigation.settings_buttons.display.pressed.emit()
 	for frame in 6:await process_frame
 	var display: Window=null
 	for child in menu.get_children():
@@ -85,7 +83,7 @@ func menu_review() -> void:
 	print("STATUS_MENU_CHECK ","PASS " if display_ready else "FAIL ","menu settings opens display settings")
 	if display!=null:display.cancel()
 	for frame in 6:await process_frame
-	if hub!=null:hub.settings_buttons.interface.pressed.emit()
+	if hub!=null:menu.navigation.settings_buttons.interface.pressed.emit()
 	for frame in 6:await process_frame
 	var dialog: Window=null
 	for child in menu.get_children():

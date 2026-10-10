@@ -12,6 +12,7 @@ for directory in ['art/_kit','art/characters/identities','art/characters/roman',
 import ezkit as K, human, identity, wardrobe
 import godot_god_face as face
 import godot_character_realism as natural
+natural.CITY_DETAIL = False  # Ruler render sources retain their private portrait detail.
 ap=argparse.ArgumentParser();ap.add_argument('--start',type=int,default=0);ap.add_argument('--count',type=int,default=99)
 a=ap.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 OUT=ROOT/'eZeus/godot/assets/envoys';OUT.mkdir(parents=True,exist_ok=True)

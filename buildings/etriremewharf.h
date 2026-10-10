@@ -33,6 +33,14 @@ public:
     void triremeLeaving();
     bool abroad() const { return mAbroad; }
     bool hasTrireme() const;
+    eTrireme* trireme() const;
+
+    // Poseidon's crews: a wharf at work (not shut down) with workers mans its trireme; only a manned trireme takes orders or
+    // sails abroad. Shutting the wharf down sends the crew home (its workers go back to the city's labour).
+    bool crewed() const;
+    // The trireme sails off with an army (eEnlistedForces) and comes back with it (triremeCameBack), or is lost abroad.
+    bool sendAbroad();
+    void triremeLost();
     bool isAtWharf() const;
 
     eTile* triremeTile() const;

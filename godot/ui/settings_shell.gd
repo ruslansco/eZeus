@@ -1,5 +1,5 @@
 extends Node
-# Presentation for start-menu settings only. The original dialogs own their drafts,
+# Presentation for menu settings. The original dialogs own their drafts,
 # callbacks, key capture, persistence and display-preview/revert lifecycle.
 const FRAME = preload("res://ui/settings_art/bronze_frame.svg")
 const ARROW = preload("res://ui/settings_art/choice_arrow.svg")
@@ -7,23 +7,27 @@ const GRIP = preload("res://ui/settings_art/slider_grip.svg")
 const CLOSE = preload("res://ui/settings_art/close.svg")
 const CHECK_ON = preload("res://ui/settings_art/check_on.svg")
 const CHECK_OFF = preload("res://ui/settings_art/check_off.svg")
+const PanelSkin = preload("res://ui/city_panel_skin.gd")
 const PATHS := ["display_dialog.gd", "graphics_dialog.gd", "sound_dialog.gd",
 	"interface_dialog.gd", "controls_dialog.gd", "game_settings_dialog.gd"]
 var dialog: AcceptDialog
 var menu: Control
 var refreshing := false
 var finished := false
+var wood_frame := false
 
 static func accepts(node: Node) -> bool:
 	return node is AcceptDialog and node.get_script() != null and node.get_script().resource_path.get_file() in PATHS
 
-func setup(window: AcceptDialog, host: Control) -> void:
+func setup(window: AcceptDialog, host: Control, use_wood := false) -> void:
 	dialog = window
 	menu = host
+	wood_frame = use_wood
 	dialog.add_child(self)
 	dialog.set_meta("settings_shell", self)
 	# Menu settings are modal even for the two legacy non-exclusive dialogs.
 	dialog.exclusive = true
+	dialog.transparent_bg = true
 	menu.get_node("/root/UiAccess").changed.connect(refresh.call_deferred)
 	menu.get_viewport().size_changed.connect(fit.call_deferred)
 	refresh()
@@ -42,13 +46,31 @@ func face(fill: Color, edge: Color, horizontal := 14, vertical := 9) -> StyleBox
 
 func refresh() -> void:
 	if not is_instance_valid(dialog) or dialog.is_queued_for_deletion(): return
-	var theme: Theme = menu.theme.duplicate()
+	var source: Theme = menu.theme if menu.theme != null else menu.get_node("/root/UiAccess").shared
+	var theme: Theme = source.duplicate()
 	var factor: float = menu.get_node("/root/UiAccess").text_size / 100.0
-	install_frame(theme,factor)
+	if not wood_frame: install_frame(theme,factor)
+	else: install_wood_frame(theme,factor)
 	install_controls(theme,factor)
 	dialog.theme = theme
 	if dialog.is_node_ready(): align_fields()
 	fit.call_deferred()
+
+static func install_wood_frame(theme: Theme, factor: float) -> void:
+	var frame := PanelSkin.wood(24,20)
+	frame.expand_margin_top = 72
+	frame.expand_margin_left = 6; frame.expand_margin_right = 6; frame.expand_margin_bottom = 6
+	for kind in ["Window","AcceptDialog","ConfirmationDialog"]:
+		theme.set_stylebox("embedded_border",kind,frame)
+		theme.set_stylebox("embedded_unfocused_border",kind,frame)
+		theme.set_font("title_font",kind,theme.get_font("font","Subheading"))
+		theme.set_font_size("title_font_size",kind,roundi(24*factor))
+		theme.set_color("title_color",kind,Color("f1dfb5"))
+		theme.set_constant("title_height",kind,72)
+		theme.set_constant("close_h_offset",kind,30)
+		theme.set_constant("close_v_offset",kind,38)
+		theme.set_icon("close",kind,CLOSE)
+		theme.set_icon("close_pressed",kind,CLOSE)
 
 static func install_frame(theme: Theme, factor: float) -> void:
 	# Shared by menu pages' native confirmations and the detailed settings windows.
@@ -71,7 +93,10 @@ static func install_frame(theme: Theme, factor: float) -> void:
 		theme.set_icon("close_pressed", kind, CLOSE)
 
 func install_controls(theme: Theme, factor: float) -> void:
-	var content := StyleBoxEmpty.new()
+	var content: StyleBox = face(Color("101e26"),Color("675737"),32,22) if wood_frame else StyleBoxEmpty.new()
+	if wood_frame:
+		content.expand_margin_left = -18; content.expand_margin_right = -18
+		content.expand_margin_bottom = -18
 	content.content_margin_left = 32; content.content_margin_right = 32
 	content.content_margin_top = 22; content.content_margin_bottom = 24
 	for kind in ["AcceptDialog", "ConfirmationDialog"]:
@@ -119,7 +144,11 @@ func finish() -> void:
 	if finished or dialog.is_queued_for_deletion(): return
 	finished = true
 	if dialog is ConfirmationDialog:
-		dialog.get_ok_button().theme_type_variation = "SettingsApply"
+		dialog.get_ok_button().theme_type_variation = "GameMenuPrimary" if wood_frame else "SettingsApply"
+	if wood_frame:
+		dialog.get_ok_button().theme_type_variation = "GameMenuPrimary"
+		for button in dialog.get_ok_button().get_parent().get_children(true):
+			if button is Button and button != dialog.get_ok_button(): button.theme_type_variation = "GameMenuAction"
 	dialog.confirmed.connect(pad_actions.call_deferred)
 	dialog.canceled.connect(pad_actions.call_deferred)
 	dialog.theme_changed.connect(pad_actions.call_deferred)
@@ -131,7 +160,7 @@ func finish() -> void:
 
 func pad_actions() -> void:
 	if dialog.is_queued_for_deletion(): return
-	var minimum := Vector2(128,42)
+	var minimum := Vector2(150,48) if wood_frame else Vector2(128,42)
 	for button in dialog.get_ok_button().get_parent().get_children(true):
 		if not button is Button: continue
 		var font: Font = button.get_theme_font("font")
@@ -188,9 +217,10 @@ func fit() -> void:
 	var viewport := menu.get_viewport_rect().size
 	if dialog.get_script().resource_path.get_file() == "controls_dialog.gd":
 		var overhead: float = dialog.get_contents_minimum_size().y - dialog.scroller.get_combined_minimum_size().y
-		dialog.scroller.custom_minimum_size.y = clampf(viewport.y - 98 - overhead, 180, 580)
+		dialog.scroller.custom_minimum_size.y = clampf(viewport.y - dialog.get_theme_constant("title_height") - 38 - overhead, 120, 580)
 	dialog.reset_size()
 	dialog.popup_centered()
 	# Center the complete frame, including the reserved title above Window's body.
-	dialog.position = Vector2i(roundi((viewport.x-dialog.size.x)/2),roundi((viewport.y-dialog.size.y-66)/2+60))
+	var title_height := dialog.get_theme_constant("title_height")
+	dialog.position = Vector2i(roundi((viewport.x-dialog.size.x)/2),roundi((viewport.y-dialog.size.y+title_height-6)/2))
 	refreshing = false

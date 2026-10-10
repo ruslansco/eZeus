@@ -212,4 +212,9 @@ void eBoardCity::read(eReadStream& src) {
         mHistory.read(src);
         mTradeLedger.read(src);
     }
+
+    if(src.formatVersion() >= eFileFormat::zeusGuide) {
+        src >> mStockpiled;
+        src >> mAutoDefend;
+    }
 }

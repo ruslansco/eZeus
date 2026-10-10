@@ -3,7 +3,7 @@
 Installed inside disposable background Blender exports. Reuses the local CC0
 male/female sculpts and their rigs; keeps child anatomy, hand targets and props.
 """
-import copy, os, random
+import copy, os, random, types
 import hashlib
 import math
 import sys
@@ -13,7 +13,9 @@ import numpy as np
 from mathutils import Vector
 from mathutils.kdtree import KDTree
 
-REVISION = 'natural_people_v1'
+REVISION = 'city_people_v2'
+# Portrait render sources can still opt into their private, high-detail adapter.
+CITY_DETAIL = True
 ROOT = Path(__file__).resolve().parents[2]
 HUMANS = []
 ASSETS = {'philosopher', 'walker_philosopher', 'physician', 'transporter', 'settlers1'}
@@ -71,6 +73,20 @@ def install():
     for folder in ['art/characters/people','art/characters/roman','art/characters/identities']:
         sys.path.insert(0,str(ROOT/folder))
     import identity, person_kit, human, wardrobe
+    if CITY_DETAIL:
+        # Tiny swept tubes read as spikes at the city's camera distance. Do not
+        # construct them, including the braided temple tubes on female heads.
+        identity.hair_details = lambda h, K: None
+        human.Human._shell = lambda *args, **kwargs: None
+        # Keep anatomical eyes from the native refinement, but skip constructing
+        # tens of thousands of offline-render fibers that would then be hidden.
+        source=(ROOT/'art/characters/people/realism.py').read_text()
+        source=source[:source.index('    # Replace solid helmet/beard shells')]
+        source=source.replace('range(64)', 'range(12)').replace('/64', '/12').replace('%64', '%12')
+        module=types.ModuleType('realism')
+        exec(compile(source,'<Godot city eyes>','exec'),module.__dict__)
+        sys.modules['realism']=module
+        human.Skinned.deform=city_deform
     make = person_kit.make_person
     def make_person(K, P, name, *args, **kwargs):
         identity.PROFILES[name] = profile(name, identity.PROFILES.get(name))
@@ -106,10 +122,16 @@ def paint_skin(h):
     colors[:,:3]=colors[:,:3]*(1-lips[:,None])+np.array([.44,.21,.17])*lips[:,None]
     under=(.045 if p['age']<12 else .12 if p['age']<60 else .20)*(patch(.020,ez-.007,.014,.004)+patch(-.020,ez-.007,.014,.004))
     colors[:,:3]*=1-under[:,None]
-    if p['age']>=60:
+    if not CITY_DETAIL and p['age']>=60:
         creases=sum(np.exp(-((z-ez-level)/.00095)**2) for level in [.022,.030,.038])
         colors[:,:3]*=1-.075*(creases*front*np.exp(-(x/.032)**4))[:,None]
-    colors[:,:3]*=1+.015*(np.sin(x*193+y*61)*np.sin(z*207-y*89))[:,None]
+    if not CITY_DETAIL:
+        colors[:,:3]*=1+.015*(np.sin(x*193+y*61)*np.sin(z*207-y*89))[:,None]
+    else:
+        # Brows are colour on the face, rather than additional thick tubes.
+        brow=(patch(.022,ez+.012,.014,.003)+patch(-.022,ez+.012,.014,.003))*.65
+        hair=np.array(p['hair'][0])*(1-p['grey'])+np.array([.49,.47,.43])*p['grey']
+        colors[:,:3]=colors[:,:3]*(1-brow[:,None])+hair*brow[:,None]
     mesh=h.parts[0].ob.data
     attr=mesh.color_attributes.get('GodotPalette') or mesh.color_attributes.new(name='GodotPalette',type='FLOAT_COLOR',domain='POINT')
     attr.data.foreach_set('color',colors.ravel())
@@ -121,12 +143,19 @@ def groom(h,K):
     sphere, and no internal strand mesh duplicated through 35 morph targets.
     """
     p=h.godot_identity; co=h.body_rest
+    kept=[]
     for part in h.parts:
-        if any(term in part.ob.name for term in ['strand groom','beard groom','Eyebrow groom','Shaved stubble']):
+        label=part.ob.name.lower()
+        replaced = any(term in label for term in ['groom','stubble','curled hair','beard','swept curl','braided','eyebrow'])
+        if replaced:
             part.ob.hide_render=True
+        else:
+            kept.append(part)
+    # Native show() toggles every part: removing replaced pieces from the pose
+    # list prevents them from reappearing in work, combat or death samples.
+    h.parts=kept
     colour=tuple(a*(1-p['grey'])+b*p['grey'] for a,b in zip(p['hair'][0],(.49,.47,.43)))
     base=K.material(h.name+' natural hair',colour,rough=.72)
-    grey=K.material(h.name+' silver locks',(.49,.47,.43),rough=.72)
     def attach_curve(ob):
         bpy.ops.object.select_all(action='DESELECT')
         ob.select_set(True);bpy.context.view_layer.objects.active=ob
@@ -140,9 +169,9 @@ def groom(h,K):
     for label,mask in masks:
         faces=[face for face in h.polys if all(mask[i] for i in face)]
         if not faces:continue
-        v=co.copy()+h.normals*(.0018 if label=='scalp' else .0010)
+        v=co.copy()+h.normals*(.0018 if label=='scalp' else .0008)
         if label=='beard':
-            length=p['beard_length']
+            length=min(p['beard_length'],.012) if CITY_DETAIL else p['beard_length']
             lower=np.clip((h.eye_z-.032-co[:,2])/.035,0,1)
             v[:,2]-=length*.60*lower
             v[:,1]+=length*.12*lower
@@ -150,7 +179,7 @@ def groom(h,K):
         # A continuous cap shares normals. Cutting every grey face into a
         # separate material group creates faceted seams after simplification.
         h._add(ob,v,np.repeat(h._rigid('head')[None],len(v),axis=0))
-        if label=='beard' and p['beard_length']>.009:
+        if not CITY_DETAIL and label=='beard' and p['beard_length']>.009:
             candidates=np.array(sorted({i for face in faces for i in face}))
             rng=np.random.default_rng(p['seed']+37)
             for idx in rng.choice(candidates,min(70,len(candidates)),replace=False):
@@ -160,10 +189,10 @@ def groom(h,K):
                 for i in range(9):
                     t=i/8; angle=t*math.tau
                     pts.append(tuple(root+normal*(.001+size*.35*math.sin(math.pi*t))+Vector((size*.22*math.sin(angle),0,-size*t))))
-                lock=K.curve(h.name+' beard lock',pts,.00085,grey if rng.random()<p['grey'] else base,h.root)
+                lock=K.curve(h.name+' beard lock',pts,.00085,base,h.root)
                 attach_curve(lock)
     # Eyebrows follow each individual orbital ridge, not oversize painted dots.
-    for side in [-1,1]:
+    for side in ([] if CITY_DETAIL else [-1,1]):
         pts=[]
         for i in range(15):
             t=i/14; x=side*(.010+.023*t)
@@ -173,10 +202,23 @@ def groom(h,K):
         brow=K.curve(h.name+' anatomical eyebrow',pts,.0009,base,h.root)
         attach_curve(brow)
     # Direct-source physician/transporter have no identity.hair_details call.
-    if h.name.startswith('Greek '):
+    if not CITY_DETAIL and h.name.startswith('Greek '):
         import identity
         h.identity=p
         identity.hair_details(h,K)
+
+def city_deform(part,R,T):
+    """Same linear skinning, evaluating only nonzero source bone weights."""
+    out=np.zeros_like(part.rest)
+    for bone in range(part.W.shape[1]):
+        ids=np.flatnonzero(part.W[:,bone])
+        if len(ids):
+            out[ids]+=(part.rest[ids]@R[bone].T+T[bone])*part.W[ids,bone,None]
+    if part.floor is not None:
+        out[:,2]=np.maximum(out[:,2],part.floor)
+    part.ob.data.vertices.foreach_set('co',out.ravel())
+    part.ob.data.update()
+
 
 def prepare(K):
     import identity
@@ -197,6 +239,7 @@ def prepare(K):
         h.parts[0].ob['godot_skin']=True
     return [dict(name=h.name,sex=h.sex,profile=h.godot_identity,
                  body_height=float(np.ptp(h.body_rest[:,2])),
+                 grooming='fitted_caps_no_strands_painted_brows' if CITY_DETAIL and h.name!='Hades' else 'authored',
                  body_sha256=hashlib.sha256(h.body_rest.tobytes()).hexdigest()) for h in HUMANS]
 
 def philosopher_robe(h,K):

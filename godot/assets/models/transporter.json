@@ -1,21 +1,22 @@
 {
   "asset": "transporter",
+  "variant_of": null,
   "source": "art/characters/transporter/build_sprites.py",
   "file": "transporter.glb",
-  "bytes": 5206680,
-  "vertices": 15679,
+  "bytes": 2162152,
+  "vertices": 6429,
   "surfaces": 3,
-  "source_surfaces": 19,
+  "source_surfaces": 17,
   "bounds_blender": [
     [
       -0.3375000059604645,
-      -0.18522456288337708,
-      -0.004181132651865482
+      -0.18530669808387756,
+      -0.004105016589164734
     ],
     [
       0.3375000059604645,
       1.0764110088348389,
-      0.841968834400177
+      0.8419981598854065
     ]
   ],
   "walk_samples": 24,
@@ -26,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Greek transporter",
@@ -61,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "f3cc88862ce3fc6a4eac31d861fde3d0b6c6f89f8d106dbb0de42e7bbe489c89",
         "clavi_srgb": [
           0.82,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

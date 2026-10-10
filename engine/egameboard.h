@@ -224,6 +224,11 @@ public:
     bool manTowers(const eCityId cid) const;
     void setManTowers(const eCityId cid, const bool m);
 
+    eResourceType stockpiled(const eCityId cid) const;
+    void setStockpiled(const eCityId cid, const eResourceType r, const bool s);
+    bool autoDefend(const eCityId cid) const;
+    void setAutoDefend(const eCityId cid, const bool a);
+
     std::vector<eAgoraBase*> agoras(const eCityId cid) const;
 
     void updateResources(const eCityId cid);
@@ -431,6 +436,8 @@ public:
     void removeRootGameEvent(const stdsptr<eGameEvent>& e);
 
     void addGameEvent(eGameEvent* const e);
+    // Every game event on the board (roots, consequences and triggers); the oracle reads their next dates.
+    const std::vector<eGameEvent*>& allGameEvents() const { return mAllGameEvents; }
     void removeGameEvent(eGameEvent* const e);
 
     using eGoals = std::vector<stdsptr<eEpisodeGoal>>;

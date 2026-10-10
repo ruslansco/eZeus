@@ -104,7 +104,7 @@ func run() -> void:
 			if building.asset in names:
 				if building.working:working_instances += 1
 				# Palace/baths are native decorative buildings, without employment.
-				if int(building.workers) == 0 and building.asset not in ["palace","baths"]:
+				if int(building.workers) == 0 and building.asset not in ["palace","baths"] and not str(building.asset).begins_with("common_house_"):
 					inactive += 1;staffing = staffing and not building.working
 			if building.asset == "olive_press" and building.working:processor=building
 		check(staffing,lang+" empty buildings never show workers at work")
@@ -131,10 +131,10 @@ func run() -> void:
 			for step in 4:core.advance(.05)
 			var state: Dictionary = core.snapshot(false)
 			activity.receive(state);activity.advance(.1)
-			check(is_equal_approx(activity.phase-float(clock)/30.0,float([24,60,120,1200][speed])/30.0),"%s work motion follows native speed %d"%[lang,speed])
+			check(is_equal_approx(activity.phase-float(clock)/30.0,float([60,60,120,240][speed])/30.0),"%s work motion follows native speed %d"%[lang,speed])
 			clock=state.time;core.command("pause 1")
 		core.command("speed 3");core.command("pause 0")
-		for step in 40:core.advance(.05)
+		for step in 200:core.advance(.05)
 		var blocked: Dictionary=core.snapshot(false);activity.receive(blocked);phase=activity.phase
 		core.advance(.25);activity.receive(core.snapshot(false));activity.advance(1)
 		check(blocked.blocked and activity.phase == phase,lang+" pending decision freezes motion without choosing an outcome")

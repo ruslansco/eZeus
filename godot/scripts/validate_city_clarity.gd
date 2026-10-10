@@ -113,10 +113,10 @@ func run() -> void:
 	for i in 5:
 		city.city_help.step=i;city.city_help.render()
 		check(city.city_help.milestone(i)==(int(report.settlement.get(city.city_help.STEPS[i][2],0))>0),"guide milestone %d uses native city observations"%(i+1))
-	check(not city.city_help.milestone(5),"a city with vacant jobs is not marked sustainable")
+	check(not city.city_help.milestone(5),"the final learning step asks players to review their objectives or sandbox issues")
 	var native_report: Dictionary=city.city_help.report
 	city.city_help.report={"items":[],"settlement":{"fed":3,"watered":3,"maintenance":1,"employed":12}}
-	check(city.city_help.milestone(5),"a supplied, maintained and staffed settlement meets the final guide milestone")
+	check(not city.city_help.milestone(5),"staffing and supplies do not substitute for reviewing the next objective")
 	city.city_help.report=native_report
 	city.city_help.step=0;city.city_help.render();await frames();await capture("guide")
 	await guide_checks()
@@ -250,58 +250,7 @@ func issues_checks() -> void:
 
 # The stepper: tabs, live status, dock pointers, Build and view actions, Back/Next, folding and the opt-out link.
 func guide_checks() -> void:
-	var help: Control=city.city_help
-	var Settings=preload("res://scripts/user_settings.gd")
-	check(help.tab_buttons.guide.button_pressed and not help.tab_buttons.attention.button_pressed,"the Guide tab is the selected segment")
-	var settlement: Dictionary=help.report.get("settlement",{})
-	var chip: Node=help.body.find_child("StepStatus",true,false)
-	var chip_text: String=chip.find_children("*","Label",true,false)[0].text if chip!=null else ""
-	check(chip!=null and chip.theme_type_variation==("GuideChipDone" if help.milestone(0) else "GuideChipTodo") and chip_text.contains(city.tr("Done") if help.milestone(0) else city.tr("Not yet")) and chip_text.contains(city.hud.group_digits(int(settlement.get("roads",0)))),"the current step shows its native state and road count: "+chip_text)
-	check(help.scroll.custom_minimum_size.y<=help.body.get_combined_minimum_size().y+1,"the guide card is sized to its content")
-	var map: Control=city.hud.get_node("%MinimapPanel")
-	if map.is_visible_in_tree():check(not help.card.get_global_rect().intersects(map.get_global_rect()),"the guide stops above the open minimap")
-	var native_report: Dictionary=help.report
-	help.age=-1000.0  # hold the five-second refresh so the fresh-city sample stays in place
-	help.report={"items":[],"settlement":{"roads":14,"houses":0,"residents":0,"watered":0,"fed":0,"employed":0,"maintenance":0}}
-	help.step=1;help.render();await frames()
-	var house: Control=city.hud.tool_buttons.get("house")
-	var marks: Array=help.targets()
-	check(house!=null and marks.size()==1 and marks[0]==house,"a step not yet done points at the dock tool that builds it")
-	chip=help.body.find_child("StepStatus",true,false)
-	check(chip.theme_type_variation=="GuideChipTodo" and chip.find_children("*","Label",true,false)[0].text.contains(city.tr("Not yet")),"an unfinished step says Not yet with its count")
-	await capture("guide-fresh")
-	help.body.find_child("NextStep",true,false).pressed.emit();await frames()
-	check(help.step==2,"Next step advances exactly one step")
-	var category: Control=city.hud.category_buttons.get("Health and water")
-	if category!=null:
-		marks=help.targets()
-		check(marks.size()==1 and marks[0]==category,"the water step points at the Health and water category")
-		var build: Array=help.body.find_children("*","Button",true,false).filter(func(node):return node.text==city.tr("Health and water"))
-		build[0].pressed.emit();await frames()
-		check(city.hud.get_node("%BuildTray").visible and city.hud.active_category=="Health and water" and help.targets().is_empty(),"Build opens the step's category and the pointer stops once it is open")
-		city.hud.close_build_tray();await frames()
-	help.view_button.pressed.emit();await frames()
-	check(city.hud.current_overlay=="water","the step's view button shows its overlay")
-	help.view_button.pressed.emit();await frames()
-	check(city.hud.current_overlay=="normal","pressing the view button again returns to the normal view")
-	# Each overlay change posts a timed notice pill. Let it finish here: later pauses stretch it into the draw-call profile.
-	var notice: Control=city.hud.get_node("%Feedback");var waited:=0.0
-	while notice.visible and waited<6.0:await process_frame;waited+=get_root().get_process_delta_time()
-	var back: Array=help.body.find_children("*","Button",true,false).filter(func(node):return node.text==city.tr("Back"))
-	back[0].pressed.emit();await frames()
-	check(help.step==1,"Back returns one step")
-	var tall: float=help.card.size.y
-	help.set_folded(true);await frames()
-	check(help.summary.visible and not help.scroll.visible and help.card.size.y<tall*.4 and help.summary.text.contains(city.tr(help.STEPS[1][0])),"the collapsed guide keeps a one-line tracker with the current step")
-	await capture("guide-folded")
-	help.summary.pressed.emit();await frames()
-	check(not help.folded and help.scroll.visible,"the tracker line expands the guide again")
-	var skip: Array=help.body.find_children("*","Button",true,false).filter(func(node):return node.text==city.tr("Don't offer again"))
-	skip[0].pressed.emit()
-	check(not help.visible and Settings.get_value("interface","settlement_guide_finished",false),"Don't offer again hides the guide and stops automatic offers")
-	Settings.set_value("interface","settlement_guide_finished",false)
-	help.report=native_report;city.open_city_help("guide");help.step=0;help.render();await frames()
-	check(help.age<5.0,"reopening the guide restores its normal refresh")
+	await preload("res://scripts/settlement_guide_checks.gd").new().run(city,check,capture)
 
 func inspector_status_checks() -> void:
 	var summary=load("res://ui/inspection_summary.gd").new()

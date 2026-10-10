@@ -1,5 +1,126 @@
 # City interface — 3 October 2026
 
+## Calendar and three-speed transport panel — 10 October 2026
+
+The clock under the circular map now places its full date on a quiet slate row,
+a thin month-progress track below it, and Play/Pause followed by three original
+arrow/multiplier buttons (1×, 2×, 4×). Keep exact native date observation, one
+selected pace, visible keyboard focus, mouse-up activation and pointer blocking
+inside the panel. The map fold/reopen controls and measured corner column remain.
+
+Normal is the old second speed; Fast/Very fast are 2×/4× relative to it. The
+player-facing three slots use native IDs 1..3. Older zero-speed preferences in
+save metadata map to Normal. [ / ] uses the player's bindings and clamps to these
+three choices; choosing a pace never resumes pause or answers a required decision.
+Clock* shared Theme types use the focused --clock-only generator merge.
+
+The reference image informs the transport hierarchy; no reference artwork is
+embedded. Three relative rates are a game-specific pacing choice, not a universal
+industry requirement. [Ubisoft's Anno accessibility discussion](https://news.ubisoft.com/en-gb/article/6xDLQxuay1FASfTGQyquJl/anno-1800-console-edition-accessibility-spotlight)
+supports giving players control of pacing; all current pause/decision controls
+remain available. Human pacing acceptance remains pending.
+
+
+## Settings wood frames and single ownership — 10 October 2026
+
+Main-menu and in-city Display, Graphics, Sound, Interface, Controls and Game
+details use the same private SettingsShell wood mode. It explicitly installs the
+original `assets/ui/greek_panel_v1.png` frame rather than inheriting a host's older
+bronze frame, reserves a 72-pixel title band, keeps embedded windows transparent
+around the art and pads the slate reading inset. Measured native footer actions
+use GameMenuAction/Primary enamel with a 48-pixel minimum. Generic controls retain
+17-pixel baseline text and aligned fields; the long rebindable-key list retains
+its bounded native scroller. Full category-page artwork hides behind each detail.
+
+Each hub has six categories. GameSettingsDialog defaults to only play options;
+old nested category links are an explicit compatibility opt-in, never used by
+normal main-menu/city routes. In-city native difficulty remains available.
+
+Interface owns the sole interface-language selector, with English/Русский names.
+No language shortcut remains on the main page or city Settings hub. Language is
+a draft until Apply, which retains UiAccess's size/motion save and calls the
+host's existing language callback with an explicit locale. Cancel/close/Escape
+restores size/motion preview and does not change language. Native voice-language
+preferences remain separate. Host Controls stay stable through retranslation;
+parent/opener focus and native pause/command-queue restoration are unchanged.
+
+## Game-menu pages and readable actions — 10 October 2026
+
+The current Escape layout supersedes the earlier three-column page. A six-choice
+root separates Resume, Saved games, Settings, City views, Help and Main menu.
+Saved games exposes the existing four save/load actions; Settings exposes six
+categories. Interface owns language. City views and help keep their existing native routes.
+Graphics is promoted directly, and GameSettingsDialog accepts an optional flag
+that explicitly enables the legacy nested links; ordinary routes omit them.
+
+`escape_menu.gd` builds stable page Controls once, switches visibility, restores
+opener focus after a native window closes, and makes Back/Escape/right-click go
+up one level. Root dismissal still uses main.gd's exact pause/command-queue
+restoration. Explicit Tab next/previous paths wrap within each visible page.
+The dimming layer remains while a page is suspended behind a native child window
+and is freed with the menu. It adds no simulation commands or native decisions.
+
+Generator-owned GameMenuAction/Primary use original blue-enamel SVG, 18-pixel
+serif labels, 22/10 padding and 52-pixel minimum action height. GameMenuTitle is
+26; form choices have a restrained slate/gold surface. Frame width/columns
+follow measured full labels and viewport room; fonts never shrink to fit.
+Navigation pages have no scroll containers. SettingsShell's optional wood mode
+uses a private Theme copy, slate reading inset, 17-pixel form text, aligned fields
+and measured 48-pixel native footers. Small generic HUD controls remain unchanged;
+long key-binding data retains its bounded scroller. Display/graphics preview,
+Apply/Cancel, key capture and all original callbacks remain authoritative.
+
+
+## In-game wood-frame foundation — 10 October 2026
+
+`GODOT_PANEL_DESIGN.md` audits the families and defines a hierarchy: rich frames
+for focused windows/character/campaign screens; slim bronze for live inspectors;
+lightweight persistent HUD. The first pass implements only the focused families,
+preserving compact panels and all native command/decision/pause/picking contracts.
+
+`ui/city_panel_skin.gd` installs declared Theme types through the generator's
+`--panels-only` merge. Raw `assets/ui/greek_panel_v1.png` is original built-in image
+generation, using approved menu art as a style reference. Exact prompt/hash and
+1536×1024 RGBA source remain intact; lossless384 import and 48-pixel corner slices
+keep the ornament compact. Content insets44 reserve the corners. Dense City pages
+use slate CityLedger; text/font sizes and semantic status colors remain intact.
+
+Embedded window title bands reserve72 pixels. HUD prepares their transparency so
+viewport clears cannot cover border art; native input rectangles remain unchanged.
+Their lower content inset36 keeps footer actions above gold rails. City tabs fit
+available viewport bounds and recenter without recreating controls or drafts.
+Escape uses native Your city/Settings/City views groups in three columns, with
+fallback layout and keyboard scrolling at narrower sizes. Only explicit Escape
+actions use the enamel texture. Small keys and quantity controls remain clean.
+
+Character "also here" controls are outside the prose/inventory scroller, retaining
+native selection callbacks while long content remains bounded. Ordinary cards
+have more height; scaled/card inventory bounds stay subject to the owned reviewer.
+Current validation distinguishes interface assertions and protected-file checks
+from existing renderer/texture cleanup diagnostics; no full accessibility or
+platform/performance acceptance is claimed.
+
+## Roomier reading areas and themed footer buttons — 10 October 2026
+
+`menu_navigation.gd` gives Profiles/Load a 1040×860 bounded frame and reserves
+13% of its height below content, keeping buttons above the carved rail. Profile
+rows use 16-pixel normal / 8-pixel compact gaps. Briefings can occupy 1560×980
+within 32-pixel viewport clearance; the paper gets expanding width while ordinary
+objectives use a bounded 26% column. Large lists retain their two-column goal grid.
+All native goals remain visible without objective switching or internal scrolling.
+Original story font sizes remain 14/16 pixels before independent text scaling;
+three-pixel leading and clean 32/40-pixel paper side padding reduce last-page spills.
+Preserve full measured prose pages and fallback paging at larger text sizes.
+
+Explicit `MenuPagePrimary`, `MenuPageChoice`, `MenuPageDanger` and `MenuPagePager`
+use original `settings_art/menu_action.svg` nine-sliced blue enamel/bronze bevels.
+Text is inset 24 pixels horizontally / 10 vertically; pager arrows use smaller
+padding. Serif ivory labels, state modulation and silhouette focus match the
+Greek frame while keeping decoration outside lettering. Generic settings/key
+buttons stay on their clean native styles. Create/Delete/pager callbacks and
+delete confirmation authority remain unchanged. Current validation records
+ready-status/profile footer clearance and actual page-one campaign coverage.
+
 ## Full-page and utility-frame hierarchy — 10 October 2026
 
 Use the ornate walnut/bronze/ivory frame for full main-menu pages and restrained

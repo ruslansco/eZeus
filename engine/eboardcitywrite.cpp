@@ -153,4 +153,7 @@ void eBoardCity::write(eWriteStream& dst) const {
 
     mHistory.write(dst);
     mTradeLedger.write(dst);
+
+    dst << mStockpiled;
+    dst << mAutoDefend;
 }

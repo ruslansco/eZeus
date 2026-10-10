@@ -97,8 +97,8 @@ func run(city: Node, check: Callable) -> void:
 	var saved: Dictionary=city.state;var pause: bool=city.core.simulation.snapshot(false).paused
 	city.state=city.state.duplicate();city.state.housing={"people":0}
 	Engine.set_meta("ezeus_offer_settlement_guide",true);city.offer_settlement_guide()
-	check.call(city.city_help.visible and city.city_help.tab=="guide" and city.core.simulation.snapshot(false).paused==pause,"first empty settlement offers the non-modal guide without changing pause")
-	city.city_help.step=5;city.city_help.render()
+	check.call(city.city_help.visible and city.city_help.tab=="guide" and city.city_help.welcome and city.core.simulation.snapshot(false).paused==pause,"first empty settlement offers an optional introduction without changing pause")
+	city.city_help.begin_guide();city.city_help.step=5;city.city_help.objectives_reviewed=true;city.city_help.render()
 	var finish: Array=city.city_help.body.find_children("*","Button",true,false).filter(func(node):return node.text==city.tr("Finish guide"))
 	finish[0].pressed.emit()
 	Engine.set_meta("ezeus_offer_settlement_guide",true);city.offer_settlement_guide()

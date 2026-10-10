@@ -1,5 +1,228 @@
 # Preserve the simulation, replace the presentation
 
+## Three measured city paces — 10 October 2026
+
+The user's speed request supersedes the four-speed presentation contract. The
+embedded service uses Normal/Fast/Very-fast command IDs 1/2/3 with native time
+increments 15/30/60 per 50 ms tick. Normal is 2.5× the former index-zero pace;
+the new relative ratios are 1×/2×/4×. ID 0 aliases Normal on commands and old
+PRESENTATION 1 metadata reads. New sessions default to 1. The embedded top pace
+no longer invokes the old five-iteration maximum-speed burst. The shared native
+stepper and SDL reference speeds remain intact; economy/pathfinding/RNG/save
+layout are unchanged. Existing selected speed metadata is still written normally.
+
+HUD SPEED_IDS separates native IDs from the three UI positions. Rebindable [ / ]
+shortcuts stop at 1 and 3. Date sits above controls and a thin month track; the
+content-sized bottom-left column still reserves map/dock space. Clock* Theme
+variations merge via build_ui_theme.gd -- --clock-only. Original SVG arrows are
+font-independent. Hover help and rates use CSV EN/RU strings.
+
+BuildingActivity retains its time/30 interpolation and modulo-40 work clock.
+A session-relative city_effect_clock derives seconds from the same phase for
+building/altar flames and smoke; fire lights/soot consume native phase deltas.
+No wall-clock animation continues through pause or required decisions. Housing's
+.2 material rate and native work/occupancy flags remain unchanged. This supersedes
+older references to four exact embedded speeds; seeded fixed-tick replay remains
+separate from selectable wall-clock pacing. See current validation for scope.
+
+
+## Settings theme consistency and interface language — 10 October 2026
+
+Both Settings hubs now open the six detailed forms in the shared original walnut,
+antique-gold and ivory frame with slate reading areas and larger enamel footers.
+Explicit private frame installation supersedes the main-menu detail forms' thin
+bronze skin. Game defaults to its own play options, with no repeated links to
+other settings; explicit compatibility callers can still exercise nested revert.
+
+Interface language moves from main-menu/Settings-hub shortcuts into Interface.
+Apply commits the selected English/Русский locale through existing host callbacks
+and preference paths; Cancel/Escape leaves language unchanged and restores size/
+motion previews. Native voice language and core-language semantics remain intact.
+No simulation rules, saved-city fields, model assets or live player files change.
+See current interface/validation evidence for scoped EN/RU layouts and behavior.
+
+## Occupancy-aware household animation — 10 October 2026
+
+The seven common-house static models now export only architecture and yard
+props. Their GPU activity derivatives contain residents and moving hand props,
+using the existing native `working` delta and an occupancy threshold of one
+person, excluding fire. Houses do not use workplace enabled/overlay flags. Empty homes, architecture fallback and placement ghosts show no people.
+First arrival/final departure only update instance data. Starter women replace
+the held forward-reaching pose with relaxed arms, subtle weight shift/breathing
+and planted feet. Higher levels reuse authored household tasks. A per-material
+rate of .2 gives housing a four-second loop at normal speed; wrapping the shared
+clock at 40 preserves both housing and the existing eight-sample work cycles.
+No simulation rules, RNG calls or serialization fields are added. The activity
+catalog grows from 47 to 54 assets. Explicit resident allocations and triangle
+ceilings retain the pre-split occupied tier, rather than growing from the smaller
+architecture-only source. See the housing/activity contracts and current
+validation evidence. Painted materials and user visual acceptance remain open.
+
+## Zeus guide parity: original keys and missing gameplay — 10 October 2026
+
+The user supplied the GameFAQs *Zeus: Master of Olympus* guide (`../ZEUS_GAME_GUIDE.md`,
+Jim Chamberlin, v0.3, copyrighted: read it, never copy it into the project) and
+asked that the Godot game support every core Zeus/Poseidon feature, hotkey and
+gameplay rule in it. Each feature the guide names was checked against the Godot
+game and the native engine. The engine work is shared with the SDL reference;
+saves use the new `eFileFormat::zeusGuide` version (older saves still load; the
+user accepted that new saves are for the new build).
+
+**Added to the native engine (and exposed in Godot, EN/RU):**
+
+- *Stockpiling* (the original Distribution tab): `eBoardCity::stockpiled()`;
+  carts (`eCartTransporterAction::findTarget`) take a stockpiled good out of
+  storage only for another granary/storehouse, never bring it to a trade post,
+  and foreign traders and two-way partners do not buy it (`eTradePost::buy`).
+  Sanctuary construction and horse ranches wait, as the guide describes. Godot:
+  a tick per good on the City window's storage page (`stockpile <res> <0|1>`).
+- *Auto Defend* (the original Options menu): `eBoardCity::autoDefend()`; a
+  player's city runs the AI's `updateCityDefense` (its companies go home only
+  after a defence it called). Manual army orders answer `auto_defend` while it
+  is on. Godot: the Army panel switch and the City window's military page.
+- *The Oracle* of Zeus' Stronghold and the Oracle of Apollo:
+  `eSanctuary::consultOracle()` foretells the soonest invasion, angry god,
+  monster, request, troop call, gift, quest or disaster due within two years
+  (`eGameBoard::allGameEvents`), then is silent for the god-help period. Godot:
+  "Consult the Oracle" with a readiness bar in the sanctuary inspector.
+- *Trireme crews and the navy abroad* (Poseidon): a trireme is crewed when its
+  wharf works and has workers (`eTriremeWharf::crewed`; the wharf's own workforce
+  is the crew, so native labour rules are unchanged). Only a crewed trireme
+  takes orders. `crew_all <0|1>` is "Crew All"/send every crew home.
+  `eEnlistedForces::fTriremes` sails manned triremes with an army to a city the
+  sea reaches (`eWorldCity::waterTrade`), adds their strength, loses its share
+  of casualties and returns them through `eArmyReturnEvent`. Godot: a Navy
+  section ("not accessible by sea") in Enlist Forces, navy counts and crew
+  buttons on the military page, and a hint on clicking an uncrewed ship.
+
+**Added to the Godot presentation:** the original hotkeys (`scripts/city_hotkeys.gd`,
+`KeyBindings.EXTRA`) and a selectable **Classic Zeus** key layout in Controls
+(`KeyBindings.CLASSIC`). Changing difficulty during play is in Game settings,
+and Poseidon's "Dispatch Hero" button is in the hero hall's inspector.
+
+| Guide key | eZeus layout (default) | Classic Zeus layout |
+| --- | --- | --- |
+| 1–9, 0 build tabs | Shift+1–9, Shift+0 | 1–9, 0 (a second press goes to the tab's next category) |
+| - Overview | Shift+- (City window) | - |
+| Ctrl+F1–F4 / F1–F4 bookmarks | Ctrl/Cmd+F1–F4 set, Alt+F1–F4 go | Ctrl/Cmd+F1–F4 set, F1–F4 go |
+| F5 windowed | Alt+Enter | F5 |
+| F6 / F7 800×600 / 1024×768 | unassigned | F6 / F7 |
+| Print Screen | F12 | Print Screen |
+| P pause | P (and Space) | P |
+| Space switch views | unassigned | Space (normal ↔ last overlay) |
+| Home face north | unassigned (Home fits the city) | Home (End fits the city) |
+| PgUp / PgDn quarter turns | PgUp / PgDn | PgUp / PgDn |
+| Arrow keys scroll | arrows (second pan keys) | arrows |
+| Alt+X exit | Alt+X (asks first) | Alt+X |
+| Tab overview map | unassigned (Tab = problems overlay) | Tab |
+| ] / [ speed | ] / [ (four native steps) | ] / [ |
+| Ctrl+1–5 / Alt+1–5 company keys | Ctrl/Cmd+1–5, Alt+1–5 | same |
+| M hold a sanctuary footprint | unassigned (M mutes) | M (mute Alt+M) |
+
+**Guide features already present** (verified, not changed): every building of
+the guide's tabs and its Poseidon additions in the Build menu; common/elite
+housing and the house card; storage/trade orders (accept, get, empty, limits);
+wages, unemployment and workforce priorities; the 25 overlays including hygiene,
+unrest, culture and science; palace, taxes and the hippodrome with crosswalks;
+sanctuaries with artisans, halt/resume, prayer, sacrifices, god attacks, the
+mythology page, 17 monsters, 8 heroes with hall requirements and quests (the City
+window's overview sends heroes as the Overview tab did); pyramids; companies,
+banners, raids, conquest, bribes, tribute and vassals; five difficulty levels;
+adventures, colonies and the adventure editor.
+
+**Remaining differences:** the native core has four game speeds, so `[`/`]`
+step through them rather than in 10% steps; bookmarks and company keys last for
+the session; Mac keyboards lack Print Screen (F12 in the default layout);
+Poseidon frigates are not a separate ship type in the engine (triremes only).
+Validation is in `GODOT_VALIDATION.md` (Zeus guide parity).
+
+## Optional, action-based settlement coaching — 10 October 2026
+
+Replaced the dense six-step checklist as the default new-city experience with an
+optional introduction and one current task. The roadmap stays available on
+demand; Continue checks completion, while Skip records a distinct skipped state.
+New-city offers capture the native starting road count, so pre-authored roads do
+not claim a player's construction action. The six stages teach a three-tile road,
+two homes plus immigration, actual water delivery, a context-sensitive food chain,
+working maintenance and reviewing the chapter goals (or sandbox issues).
+
+`ui/settlement_steps.gd` derives coaching from existing `city_attention`, current
+building/stock observations and the offered native catalog. It grants no content
+or new simulation rules. Direct actions use the original tool/overlay/objective/
+inspector callbacks and exact native prices. Food setup accommodates local source
+choices, available partner tools, existing trading posts and supplied food stock.
+Unavailable tasks explain their chapter restriction and allow continuation.
+Placed infrastructure alone never implies residents, water, food or workers.
+
+Visible guide reports refresh once per second; Issues retains its five-second
+reading hold. Derived tasks cache between renders, avoiding per-frame building
+scans. Held button presses defer a refresh, named keyboard actions retain focus
+through live rebuilds, and guide navigation holds camera controls. Selecting a
+placement tool releases that hold. Deferred toolbar focus release now checks
+that its Control is still in the tree, preserving normal separated mouse-up
+activation when a completed task replaces its button.
+
+Shared Guide-only Theme variants provide larger body/headings, quiet disabled
+Continue states and wrapping translated headings. EN/RU CSV text keeps complete
+instructions and actual shortcuts. Learned/skipped stages and the road baseline
+are session presentation state; no native save migration is introduced. The
+existing explicit opt-out/completion preference remains, and manual reopening is
+available. Current validation separates presentation coaching fixtures from real
+native empty-settlement construction and whole-game onboarding acceptance.
+
+## Game-menu navigation hierarchy — 10 October 2026
+
+Replaced the overloaded nineteen-action Escape page with a six-choice root and
+focused Saved games, Settings, City views and Help pages. All native commands
+remain reachable. Graphics opens directly from Settings; the in-game Gameplay
+form omits duplicate category links while the legacy/default form keeps them.
+Controls remain stable through page/language changes; Tab order wraps within the
+current page, and Back/Escape/right-click restores the parent/opener without
+resuming the city until the root is closed.
+
+Dedicated GameMenu Theme variations enlarge action targets to 52 logical pixels
+and baseline labels to 18, with protected enamel insets and no navigation-page
+scrolling. The existing SettingsShell also supports private in-game wood/slate
+forms, aligned readable fields and 48-pixel footer actions. The shade remains
+behind child windows. The long controls list stays bounded and scrollable.
+This is presentation/navigation work; native clock/queue, decisions, settings
+preview/persistence, player saves, models and live game/Blender are preserved.
+
+
+## In-game panel art foundation — 10 October 2026
+
+Audited modal, character/campaign, live inspector and persistent HUD families in
+`GODOT_PANEL_DESIGN.md`. The first pass uses a new original generated RGBA wood/
+gold/ivory frame on EscapeCard, CharacterCard, EpisodeShell and embedded dialogs,
+with a dark slate CityLedger for dense data. A focused shared Theme generator
+merge preserves unrelated styles and font baselines. Source/prompt/hash provenance
+and compact lossless import settings are retained. No live decorative 3D viewport
+or per-frame panel rebuilding is introduced.
+
+The game menu now groups native actions into three columns with a narrow-width
+fallback. Dialog title bands and viewport transparency keep the whole frame
+visible without changing input rectangles. City data reflows/recenters without
+resetting tab/draft state. Character co-located choices sit outside the scrolling
+prose/inventory area. Compact inspectors/dock/resources/map retain their current
+lighter styles and are the next design layer. Current validation records native
+EN/RU interface checks and the separate existing renderer teardown limitation.
+
+## Menu spacing and wider briefings — 10 October 2026
+
+Profiles/Load now have larger viewport-bounded frames and a generous lower wood
+inset. Explicit roster gaps keep creation, status and footer controls apart.
+Briefings grow up to 1560×980, give ordinary stories the remaining space beside a
+content-sized objectives column, and retain the wider goal grid for large lists.
+Paper padding/leading are tightened while preserving the existing font baselines,
+full native wording and measured pagination. Every objective remains visible.
+
+Original `settings_art/menu_action.svg` supplies blue enamel, beveled bronze and
+small corner details for explicit footer/Create/Delete/pager Theme variations.
+Full labels stay within plain enamel interiors; the generic settings/key Button
+skin remains untouched. All changes are menu-owned presentation. Current
+validation records sequential EN/RU protected-profile spacing, normal page-one
+coverage, enlarged complete prose and native campaign navigation.
+
 ## Menu hierarchy and single story route — 10 October 2026
 
 The approved ornate full-page frame is retained across the main menu, adventure

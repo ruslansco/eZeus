@@ -157,7 +157,7 @@ func run() -> void:
 			for index in range(4):
 				core.advance(.05)
 			state = core.snapshot(false)
-			var expected: int = [24, 60, 120, 1200][speed]
+			var expected: int = [60, 60, 120, 240][speed]
 			check(state.time - clock == expected, "%s native speed %d preserves exact tick increments" % [lang, speed])
 			core.command("pause 1")
 		check(core.command("speed 4").has("error") and core.command("pause 9").has("error"), lang + " invalid controls rejected")
@@ -166,9 +166,9 @@ func run() -> void:
 		clock = state.time
 		core.advance(20)
 		state = core.snapshot(false)
-		check(state.time - clock == 30, lang + " frame stall clamps to five ticks")
+		check(state.time - clock == 75, lang + " frame stall clamps to five ticks")
 		core.command("speed 3"); core.command("pause 0")
-		for index in range(40):
+		for index in range(200):
 			core.advance(.05)
 		state = core.snapshot(false)
 		check(state.blocked and not state.running and not state.events.is_empty(), lang + " pending native decision pauses simulation")

@@ -121,6 +121,7 @@ func run() -> void:
 	menu.open_adventures(); await create_timer(.25).timeout; await frames()
 	check(menu.listing.size() >= 31 and menu.listing[0].ref == "First Light Harbor Chapters" and menu.listing[1].ref == "Bronze River Chapters" and menu.listing[2].ref == "Stonewatch Chapters" and menu.listing[3].ref == "Sunlit Terraces Chapters" and menu.listing[4].ref == "Tidebound Covenant Chapters","five authored campaigns appear first in the normal library")
 	check(index_of("First Light Harbor") == -1,"previous prototype is reserved for existing saves")
+	var opening_pages: Dictionary = {}
 	for ref in ["First Light Harbor Chapters","Bronze River Chapters","Stonewatch Chapters","Sunlit Terraces Chapters","Tidebound Covenant Chapters"]:
 		var selected := index_of(ref); menu.navigation.adventure_pager.select_index(selected); menu.show_adventure(selected)
 		await create_timer(.25).timeout; await frames()
@@ -139,12 +140,17 @@ func run() -> void:
 		check(menu.page == "intro" and int(menu.opened.command("episode").episode_number) == 1,"previewing chapter three still starts a new game at chapter one")
 		var introduction: String = menu.opened.command("episode").introduction
 		check("".join(menu.navigation.story_pages) == introduction,"Start shows the complete native story on the next screen")
+		opening_pages[ref] = menu.navigation.story_pages.size()
+		menu.navigation.story_page = 0; menu.navigation.show_intro_story(); await frames()
+		await capture("story-"+str(selected))
 		var fits := true
 		for part in menu.navigation.story_pages.size():
 			menu.navigation.story_page = part; menu.navigation.show_intro_story(); await frames()
 			fits = fits and menu.intro_text.get_minimum_size().y <= menu.navigation.story_slot.size.y+1
 		check(fits,"every story page fits on the normal briefing screen without scrolling")
 		menu.close_intro(); await frames()
+	print("CAMPAIGN_STORY_PAGES ",JSON.stringify(opening_pages))
+	check(opening_pages.values().filter(func(count): return count == 1).size() >= 3,"most featured opening stories fit on page one at normal sizes without shrinking text")
 	for size in [Vector2i(1280,800),Vector2i(1280,720)]:
 		DisplayServer.window_set_size(size); root.get_node("UiAccess").apply(125,130); await frames(25)
 		check(Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(menu.get_node("%AdventurePage").get_global_rect()),"campaign page fits enlarged interface/text at "+str(size))

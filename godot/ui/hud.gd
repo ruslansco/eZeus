@@ -38,7 +38,10 @@ const UiText = preload("res://scripts/ui_text.gd")
 const BuildCatalog = preload("res://scripts/build_catalog.gd")
 const ObjectiveCard = preload("res://ui/objective_card.gd")
 const Overlays = preload("res://scripts/overlays.gd")
-const SPEEDS := ["Speed 1", "Speed 2", "Speed 3", "Speed 4"]
+const SPEEDS := ["Normal speed", "Fast speed", "Very fast speed"]
+# Retain command/save IDs 1..3; the retired slow ID 0 loads as Normal.
+const SPEED_IDS := [1, 2, 3]
+const SPEED_MULTIPLIERS := [1, 2, 4]
 const MINIMAP_PREFERENCE_VERSION := 2
 const MoodFace = preload("res://ui/mood_face.gd")
 # The top bar's gauges: the month's progress behind the date, and the housing in use.
@@ -118,7 +121,7 @@ var welfare_buttons := {}
 @onready var population_label: Label = %Population
 @onready var pause_button: Button = %Pause
 @onready var speed_row: HBoxContainer = %Speed
-# One chevron button per native speed (0..3), lit up to the chosen one.
+# Three exclusive paces, independent of the pause control.
 var speed_buttons: Array[Button] = []
 var mood: Control
 @onready var tool_row: HBoxContainer = %ToolButtons
@@ -201,6 +204,8 @@ var journal_filter := "all"
 var journal_filters := {}
 
 func _ready() -> void:
+	child_entered_tree.connect(preload("res://ui/city_panel_skin.gd").prepare_window)
+	for child in get_children(): preload("res://ui/city_panel_skin.gd").prepare_window(child)
 	# `hint` stays the city's message sink (hidden); the notice pill shows its own copy, since the placement line keeps
 	# rewriting `hint` while a notice is up.
 	hint.visible = false
@@ -498,13 +503,16 @@ func build_top_bar() -> void:
 	for index in SPEEDS.size():
 		var button := ToolbarButton.new()
 		button.name = "Speed%d" % (index + 1)
-		button.text = str(index + 1)
+		button.text = "%d×" % SPEED_MULTIPLIERS[index]
+		button.icon = icon("time_%d" % (index + 1))
+		button.alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.toggle_mode = true
 		button.button_group = group
 		button.focus_mode = Control.FOCUS_ALL
-		button.theme_type_variation = "HeaderSpeed"
-		button.custom_minimum_size = Vector2(28, 26)
-		button.pressed.connect(func(): speed_selected.emit(index))
+		button.theme_type_variation = "ClockSpeed"
+		button.custom_minimum_size = Vector2(50, 30)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.pressed.connect(func(): speed_selected.emit(SPEED_IDS[index]))
 		speed_row.add_child(button)
 		speed_buttons.append(button)
 	mood = MoodFace.new()
@@ -587,7 +595,7 @@ func set_paused(value: bool) -> void:
 
 func set_speed(index: int) -> void:
 	for button_index in speed_buttons.size():
-		speed_buttons[button_index].set_pressed_no_signal(button_index == index)
+		speed_buttons[button_index].set_pressed_no_signal(SPEED_IDS[button_index] == maxi(1,index))
 
 func set_undo_available(available: bool) -> void:
 	undo_button.disabled = not available
@@ -800,8 +808,8 @@ func retranslate() -> void:
 
 	set_paused(paused)
 	for index in speed_buttons.size():
-		speed_buttons[index].tooltip_text = tr(SPEEDS[index])
-		speed_buttons[index].help_detail = tr("Choose the pace of city time. This does not resume a paused city.")
+		speed_buttons[index].tooltip_text = tr(SPEEDS[index]) + " · %d×" % SPEED_MULTIPLIERS[index]
+		speed_buttons[index].help_detail = tr("City time, walkers and building activity follow this pace. Changing speed keeps the city paused.") + "\n" + tr("Slower: %s · Faster: %s") % [KeyBindings.label("speed_down"), KeyBindings.label("speed_up")]
 	for key in tool_buttons:
 		for entry in tool_entries:
 			if entry[0] == key:
@@ -1129,6 +1137,8 @@ func _wire_toolbar_help(button: BaseButton) -> void:
 
 func toolbar_has_focus() -> bool:
 	var focused := get_viewport().gui_get_focus_owner()
+	var help := get_node_or_null("CityHelp")
+	if help != null and help.has_navigation_focus(): return true
 	if %LayersPanel.visible: return true
 	if focused != null and (%BottomBar.is_ancestor_of(focused) or focused == %MapToggle): return true
 	return _toolbar_popup(build_menu.get_popup()) or _toolbar_popup(overlay_catalog.get_popup())
@@ -1442,11 +1452,11 @@ func set_resources_open(open: bool) -> void:
 		_layout_panels(), resources_fraction, target, .24).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	resources_tween.finished.connect(func(): _layout_panels())
 
-# Date and occupancy labels live over gauges, so the gauges must measure their text explicitly.
+# Date stays readable above a thin month-progress track. Occupancy stays over its gauge.
 # Keep a content-sized city strip; wrap the stats only when the viewport cannot fit them.
 func _layout_header() -> float:
 	%MonthProgress.custom_minimum_size.x = maxf(150, date_label.get_minimum_size().x+16)
-	%MonthProgress.custom_minimum_size.y = maxf(24, date_label.get_minimum_size().y+4)
+	%MonthProgress.custom_minimum_size.y = 3
 	%HousingGauge.custom_minimum_size.x = maxf(128, %HousingText.get_minimum_size().x+14)
 	%HousingGauge.custom_minimum_size.y = maxf(24, %HousingText.get_minimum_size().y+4)
 	var city_font: Font = %CityName.get_theme_font("font")
@@ -1708,6 +1718,7 @@ func show_notice(text: String) -> void:
 
 # Shared Escape-menu labels preserve all native actions and rebindable shortcuts.
 func menu_action_text(action: String) -> String:
+	if action=="graphics":return tr("Graphics settings…")
 	if action=="attention":return tr("City attention…")
 	if action=="guide":return tr("Settlement guide…")
 	var index: int=GAME_ACTIONS.find(action)

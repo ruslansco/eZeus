@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Read-only proof of building VAT poses, retained geometry/UVs and asset budgets."""
-import hashlib,json,struct,sys
+import argparse,hashlib,json,struct,sys
 from pathlib import Path
 from bake_walker_vat import decode_floats
 from optimize_glb_memory import accessor_signature,read_glb
@@ -9,6 +9,11 @@ REPO=Path(__file__).resolve().parents[1]
 def main():
     folder=REPO/'godot/assets/building_activity'
     names=json.loads(Path(__file__).with_name('building_activity_assets.json').read_text())
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--assets',nargs='+',choices=names)
+    args=parser.parse_args()
+    names=args.assets or names
+    housing=json.loads((REPO/'godot/data/housing_art.json').read_text())['resident_activity']['triangle_budgets']
     frames=0;worst=0.;problems=[]
     for name in names:
         manifest=json.loads((folder/'runtime'/f'{name}.json').read_text())
@@ -22,7 +27,10 @@ def main():
         base,_=read_glb(original)
         triangle_count=lambda doc:sum(doc['accessors'][p['indices']]['count']//3 for m in doc['meshes'] for p in m['primitives'])
         # Separating dynamic pieces may add a few seams, not a new geometry tier.
-        if triangle_count(runtime)>triangle_count(base)*1.05:problems.append(name+': exceeds original triangle budget by 5%')
+        budget = housing.get(name,triangle_count(base)*1.05)
+        if name in housing and manifest['building_activity'].get('max_triangles')!=budget:
+            problems.append(name+': resident triangle ceiling differs from housing contract')
+        if triangle_count(runtime)>budget:problems.append(name+': exceeds declared triangle budget')
         if len(runtime['meshes'])>6:problems.append(name+': more than six static/dynamic finish groups')
         texture=(folder/'runtime'/f'{name}.vat').read_bytes()
         for sm,rm in zip(source['meshes'],runtime['meshes']):

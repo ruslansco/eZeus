@@ -263,6 +263,27 @@ void eTriremeWharf::triremeLeaving() {
     mTrireme.clear();
 }
 
+eTrireme* eTriremeWharf::trireme() const {
+    return mTrireme;
+}
+
+bool eTriremeWharf::crewed() const {
+    return !shutDown() && employed() > 0;
+}
+
+bool eTriremeWharf::sendAbroad() {
+    if(!mTrireme || mAbroad || !crewed()) return false;
+    const auto a = mTrireme->triremeAction();
+    if(!a) return false;
+    a->goAbroad();
+    return true;
+}
+
+void eTriremeWharf::triremeLost() {
+    // The wharf builds the next one.
+    mAbroad = false;
+}
+
 bool eTriremeWharf::hasTrireme() const {
     return mTrireme || mAbroad;
 }

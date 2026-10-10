@@ -1,6 +1,6 @@
 extends AcceptDialog
 # The play options that are neither keys nor sizes (scripts/play_settings.gd): how often the city saves itself and how many autosaves are kept,
-# the language of the voices and links to display/interface/controls settings. Each change applies at once and is remembered per user (user://settings.cfg).
+# and voice language. Each change applies at once and is remembered per user (user://settings.cfg).
 
 signal changed
 
@@ -8,9 +8,15 @@ const PlaySettings = preload("res://scripts/play_settings.gd")
 
 var choices: Dictionary = {}
 var settings_buttons: Dictionary = {}
+var navigation_links := false
+# In a city: the campaign's difficulty, which the original game's Options menu could change during play (the core's `difficulty`).
+var core: Node
+var difficulty_choice: OptionButton
 
-static func open(parent: Node) -> Window:
+static func open(parent: Node, include_navigation := false, core_node: Node = null) -> Window:
 	var dialog: Window = load("res://ui/game_settings_dialog.gd").new()
+	dialog.navigation_links = include_navigation
+	dialog.core = core_node
 	parent.add_child(dialog)
 	dialog.popup_centered()
 	return dialog
@@ -34,10 +40,13 @@ func _ready() -> void:
 	note.theme_type_variation = "Caption"
 	column.add_child(note)
 	option_row(column, "voice_language", "Voice language", func(value): return tr("Same as the interface") if str(value) == "auto" else ("English" if str(value) == "en" else "Русский"))
+	if core != null:
+		difficulty_row(column)
 	for spec in [["display", "Display settings…", "res://ui/display_dialog.gd"],
 		["graphics", "Graphics settings…", "res://ui/graphics_dialog.gd"],
 		["interface", "Interface options…", "res://ui/interface_dialog.gd"],
 		["controls", "Controls…", "res://ui/controls_dialog.gd"]]:
+		if not navigation_links: continue
 		var button := Button.new()
 		button.text = tr(spec[1])
 		button.pressed.connect(func(): open_settings(spec[2]))
@@ -69,6 +78,29 @@ func option_row(parent: Control, option: String, caption: String, word: Callable
 	row.add_child(choice)
 	parent.add_child(row)
 	choices[option] = choice
+
+func difficulty_row(parent: Control) -> void:
+	var answer: Dictionary = core.query("difficulty")
+	if answer.get("kind", "") != "difficulty":
+		return
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 14)
+	var label := Label.new()
+	label.text = tr("Difficulty")
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.custom_minimum_size.x = 190
+	row.add_child(label)
+	difficulty_choice = OptionButton.new()
+	difficulty_choice.custom_minimum_size.x = 210
+	difficulty_choice.focus_mode = Control.FOCUS_NONE
+	for name in answer.get("names", []):
+		difficulty_choice.add_item(str(name))
+	difficulty_choice.select(int(answer.get("value", 2)))
+	difficulty_choice.item_selected.connect(func(index):
+		core.query("difficulty %d" % index)
+		changed.emit())
+	row.add_child(difficulty_choice)
+	parent.add_child(row)
 
 func open_settings(script: String) -> void:
 	hide()

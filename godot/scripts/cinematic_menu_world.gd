@@ -3,11 +3,15 @@ extends "res://scripts/login_scene_3d.gd"
 # plane. The composition is art-directed; only ambient effects and UI are realtime.
 const PLATE := preload("res://assets/menu/aegean_cinematic_v2.png")
 const PORTAL_DISTANCE := preload("res://assets/menu/aegean_portal_distance.png")
+const GUARDIAN := preload("res://assets/menu/hades_portal_guardian.glb")
 # Inner opening measured on the original 1672x941 artwork. Never use viewport UVs.
 const APERTURE := Rect2(1194.0/1672.0,204.0/941.0,268.0/1672.0,468.0/941.0)
 const DEPTH := 20.0
 var plate_node: MeshInstance3D
 var portal_node: MeshInstance3D
+var guardian_node: Node3D
+var guardian_light: OmniLight3D
+var mist_node: MeshInstance3D
 var last_size := Vector2.ZERO
 var image_rect := Rect2()
 var view_motion := Vector2.ZERO
@@ -25,15 +29,38 @@ func _ready() -> void:
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	plate_node = _plane("CinematicBackdrop",material)
-	var portal_material := _animated("res://shaders/login_portal.gdshader")
-	portal_material.set_shader_parameter("registered_aperture",true)
+	var portal_material := _animated("res://shaders/hades_portal.gdshader")
 	portal_material.set_shader_parameter("aperture_distance",PORTAL_DISTANCE)
 	portal_material.set_shader_parameter("distance_to_portal_units",256.0*9.2/268.0)
 	portal_node = _plane("LivingPortal",portal_material)
+	guardian_node = GUARDIAN.instantiate()
+	guardian_node.name = "HadesPortalGuardian"
+	camera.add_child(guardian_node)
+	var stone_material := ShaderMaterial.new()
+	stone_material.shader = preload("res://shaders/hades_guardian_stone.gdshader")
+	for node in guardian_node.find_children("*","MeshInstance3D",true,false):
+		node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		node.lod_bias = .8
+		for surface in node.mesh.get_surface_count():
+			var finish: Material = node.mesh.surface_get_material(surface)
+			if finish != null and finish.resource_name.begins_with("Guardian weathered"):
+				node.set_surface_override_material(surface,stone_material)
+	guardian_light = OmniLight3D.new()
+	guardian_light.name = "PortalGreenSpill"
+	guardian_light.light_color = Color(.32,1.0,.04)
+	guardian_light.light_energy = 2.0
+	guardian_light.omni_range = 5.5
+	camera.add_child(guardian_light)
+	var mist_material := _animated("res://shaders/hades_portal_mist.gdshader")
+	mist_material.set_shader_parameter("aperture_distance",PORTAL_DISTANCE)
+	mist_node = _plane("PortalForegroundMist",mist_material)
 	_layout()
 	get_viewport().size_changed.connect(_layout)
-	geometry_triangles = 4
-	mesh_instances = 2
+	geometry_triangles = 6
+	mesh_instances = 3
+	for node in guardian_node.find_children("*","MeshInstance3D",true,false):
+		mesh_instances += 1
+		geometry_triangles += node.mesh.get_faces().size()/3
 	build_msec = Time.get_ticks_msec()-started
 
 func finish(color: Color, metallic := 0.0, rough := .78) -> StandardMaterial3D:
@@ -104,6 +131,15 @@ func _layout() -> void:
 	_place(plate_node,image_rect,DEPTH)
 	var portal_rect := Rect2(image_rect.position+APERTURE.position*dimensions,APERTURE.size*dimensions)
 	_place(portal_node,portal_rect,DEPTH-.04)
+	_place(mist_node,portal_rect,DEPTH-1.8)
+	# Register the real sculpture in source pixels, on the sill inside the portal.
+	var source_scale := dimensions/Vector2(1672,941)
+	var foot := image_rect.position+Vector2(1282,667)*source_scale
+	var head := foot-Vector2(0,350*source_scale.y)
+	guardian_node.position = camera.to_local(camera.project_position(foot,DEPTH-.6))
+	var world_height := camera.project_position(foot,DEPTH-.6).distance_to(camera.project_position(head,DEPTH-.6))
+	guardian_node.scale = Vector3.ONE*(world_height/6.44)
+	guardian_light.position = guardian_node.position+Vector3(1.6,world_height*.52,1.4)
 	last_size = size
 
 func _process(delta: float) -> void:
@@ -117,6 +153,7 @@ func _process(delta: float) -> void:
 			_layout()
 		return
 	scene_time += delta
+	guardian_light.light_energy = 1.8+sin(scene_time*1.7)*.15+sin(scene_time*3.1)*.07
 	for material in animated_materials:
 		material.set_shader_parameter("scene_time",scene_time)
 	# Both the plate and its effect share the same cover/crop transform. This

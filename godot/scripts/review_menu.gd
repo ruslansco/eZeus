@@ -26,6 +26,21 @@ func scenery_safe(node: Node) -> bool:
 		if not scenery_safe(child): return false
 	return true
 
+func apply_language(menu: Control, locale: String) -> void:
+	await click(menu.get_node("%Interface"))
+	await click(menu.navigation.settings_buttons.interface)
+	var options: Window
+	for child in menu.get_children():
+		if child is Window and child.get("language_choice") != null: options = child
+	options.language_choice.select(1 if locale == "ru" else 0)
+	for pressed in [true,false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT; event.pressed = pressed
+		event.position = Vector2(options.position)+options.get_ok_button().get_global_rect().get_center()
+		root.push_input(event,true)
+	await frames(8)
+	await click(menu.navigation.settings_back)
+
 func _initialize() -> void:
 	call_deferred("run")
 func run() -> void:
@@ -66,13 +81,13 @@ func run() -> void:
 	check(backdrop.geometry_triangles<400000 and backdrop.mesh_instances<=32,"bounded menu geometry")
 	check(not backdrop.get_node("WorldEnvironment").environment.ssr_enabled and not backdrop.get_node("WorldEnvironment").environment.ssao_enabled,"Mobile uses supported effects")
 	var bounds := Rect2(Vector2.ZERO,root.get_visible_rect().size)
-	for button in [menu.new_game_button,menu.language_button,menu.sound_button,menu.quit_button]:
+	for button in [menu.new_game_button,menu.get_node("%Interface"),menu.quit_button]:
 		check(bounds.encloses(button.get_global_rect()),"button fits viewport: "+button.name)
 	var old_label: String=menu.new_game_button.text
-	await click(menu.language_button)
-	check(menu.new_game_button.text!=old_label,"actual mouse click switches language")
-	await click(menu.language_button)
-	check(menu.new_game_button.text==old_label,"actual mouse click switches back")
+	await apply_language(menu,"en" if language == "ru" else "ru")
+	check(menu.new_game_button.text!=old_label,"Interface Apply switches language through actual mouse input")
+	await apply_language(menu,language)
+	check(menu.new_game_button.text==old_label,"Interface Apply switches back")
 	await click(menu.new_game_button)
 	check(menu.page=="adventures" and menu.listing.size()>=20,"actual mouse click opens adventures")
 	await click(menu.adventure_back)

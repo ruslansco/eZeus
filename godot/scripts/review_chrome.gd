@@ -450,7 +450,7 @@ func run() -> void:
 	check(not hud.get_node("%MinimapPanel").visible and not hud.get_node("%MapPeek").visible and not hud.preferred_minimap_open() and hud.get_node("%MapToggle").visible, "map fold uses real input and remembers the explicit choice without restoring the corner shortcut")
 	await click(hud.get_node("%MapToggle"))
 	check(hud.get_node("%MinimapPanel").visible and hud.preferred_minimap_open() and city.core.commands.is_empty(), "corner button reopens the map and remembers the choice without a native command")
-	check(hud.speed_buttons.size() == 4, "all four native speed indices remain available")
+	check(hud.speed_buttons.size() == 3, "Normal, Fast and Very fast remain available")
 	var base_income_font: int = hud.get_node("%Income").get_theme_font_size("font_size")
 	var base_speed_font: int = hud.speed_buttons[0].get_theme_font_size("font_size")
 	# These use actual GUI callbacks; each queued command is inspected, then discarded without execution.
@@ -468,12 +468,12 @@ func run() -> void:
 	city.state.paused = bool(before.paused)
 	hud.set_paused(bool(before.paused))
 	check(hud.pause_button.tooltip_text.contains(Bindings.label("pause")), "pause hover text retains the configured shortcut")
-	for index in 4:
+	for index in 3:
 		await click(hud.speed_buttons[index])
-		check(city.core.commands == ["speed %d" % index], "speed control %d preserves its native index %d" % [index + 1, index])
+		check(city.core.commands == ["speed %d" % (index + 1)], "speed control %d uses its native command ID %d" % [index + 1, index + 1])
 		city.core.commands.clear()
 	hud.set_speed(int(before.speed))
-	check(hud.speed_buttons[int(before.speed)].button_pressed and hud.speed_buttons.filter(func(button): return button.button_pressed).size() == 1, "chosen speed restores the exact native setting with a single marker")
+	check(hud.speed_buttons[maxi(1,int(before.speed)) - 1].button_pressed and hud.speed_buttons.filter(func(button): return button.button_pressed).size() == 1, "chosen speed restores the exact native setting with a single marker")
 	check(hud.speed_buttons.all(func(button): return not button.tooltip_text.is_empty()), "every native speed control has translated hover text")
 	bounds("1920 × 1080 default")
 	await capture("overview")

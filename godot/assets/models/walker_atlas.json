@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_atlas.glb",
-  "bytes": 13839532,
-  "vertices": 16072,
+  "bytes": 5907896,
+  "vertices": 6653,
   "surfaces": 3,
-  "source_surfaces": 19,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.5977907180786133,
-      -0.49799999594688416,
-      -0.012000000104308128
+      -0.597204327583313,
+      -0.4979760944843292,
+      -0.010796654969453812
     ],
     [
-      0.6038278937339783,
-      0.47347021102905273,
-      3.345325469970703
+      0.6046550869941711,
+      0.4759546220302582,
+      3.3442800045013428
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Atlas",
@@ -62,6 +62,7 @@
           "seed": 62405
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "ba0605c4ea0c147b2d2af188ece9513adfc35f5723f9be7636896e9d5cdf4c2c",
         "clavi_srgb": [
           0.2,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

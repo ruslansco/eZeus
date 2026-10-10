@@ -107,6 +107,12 @@ func run() -> void:
 		anchored = anchored or (preload("res://scripts/god_float.gd").is_god(asset) and lowest > -.005 and lowest < .3)
 		check(finite and anchored and frames_ok and movement > .01,"%s: finite geometry, ground anchor and every walk/idle sample survive import" % asset)
 		check(materials_ok and semantics.has(0) and semantics.has(2) and semantics.has(3) and skin_colors.size()>20 and meshes.size()<=3 and manifest.vertices <= manifest.character.vertex_budget,"%s: painted skin, fitted hair, eyes, shared finishes and geometry budget" % asset)
+		if asset != "walker_hades":
+			var detail: Dictionary = manifest.character.get("city_detail", {})
+			var groomed := not detail.is_empty() and detail.get("groom", "") == "fitted_caps_no_strands_painted_brows"
+			for person in manifest.character.identities:
+				groomed = groomed and person.get("grooming", "") == "fitted_caps_no_strands_painted_brows"
+			check(groomed and manifest.vertices <= int(detail.get("allocation_target", 0))*1.4, "%s: simplified city face/hands and fitted hair without protruding strands" % asset)
 		for person in manifest.character.identities:
 			bodies[person.name] = person
 		scene.free()

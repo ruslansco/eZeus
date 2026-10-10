@@ -64,7 +64,7 @@ func briefing_bounds(description: String) -> void:
 	var page: Control = menu.get_node("%IntroPage")
 	var frame := page.get_global_rect()
 	# The inner walnut area excludes the crest, carved corners and lower gold rail.
-	var reading := frame.grow_individual(-frame.size.x*.075,-frame.size.y*.155,-frame.size.x*.075,-frame.size.y*.095)
+	var reading := frame.grow_individual(-frame.size.x*.07,-frame.size.y*.145,-frame.size.x*.07,-frame.size.y*.11)
 	check(Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(frame),description+": frame stays on screen")
 	check([menu.intro_card.heading,menu.intro_card.subtitle,menu.intro_card.episode_progress,menu.intro_card.difficulty_row,menu.intro_back,menu.intro_begin].all(func(control): return not control.is_visible_in_tree() or reading.encloses(control.get_global_rect())),description+": story header and footer stay inside the wood, clear of the frame")
 	check(button_text_fits(menu.intro_back) and button_text_fits(menu.intro_begin),description+": complete footer labels fit their clean padded controls")

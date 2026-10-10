@@ -1,5 +1,137 @@
 # Godot 3D city rebuild
 
+## Three city speeds and a clearer clock — 10 October 2026
+
+The time panel below the map now shows the full date above a slim month-progress
+track, then Play/Pause and three illustrated arrow buttons: **Normal 1×**, **Fast
+2×**, **Very fast 4×**. Normal is the old second speed, 2.5 times the former slow
+default. Hover help includes the actual [ / ] speed shortcuts. Changing speed
+while paused selects the pace for later without resuming the city.
+
+Building workers, occupied households and water workers retain their native-time
+animation. Building/altar flames, smoke, fire-light flicker and soot now follow
+that clock too. Required decisions still stop simulation and animated effects.
+Old speed-zero saves load at Normal; existing Fast/Very-fast choices remain
+recognized. Relaunch **Launch Godot 3D.command** for the native pacing update.
+
+
+## Matching Settings frames and interface language — 10 October 2026
+
+All six Settings detail screens now share wood-and-gold borders, ivory corners,
+readable slate interiors and larger blue-enamel action buttons in both the main
+menu and city. Each category owns its options; Game no longer repeats links to
+Display, Graphics, Interface and Controls.
+
+Choose **Settings → Interface → Interface language** for English or Русский.
+The main-menu language shortcut and in-game Settings-hub selector are removed.
+Language changes on **Apply**; Cancel/Escape keeps the previous language and
+restores size/motion previews. Existing display/graphics previews, key bindings,
+sound, autosaves and in-city difficulty retain their behavior. Relaunch
+**Launch Godot 3D.command** to load the changes.
+
+## Residents appear only in occupied homes — 10 October 2026
+
+Newly placed common homes and placement previews contain no residents. A
+household appears after the first native occupant arrives and disappears when
+the home empties. Starter residents have a relaxed, slow idle with planted feet;
+upper-level households keep their authored chores at the same slower pace.
+Pause, speed and required decisions control this motion through the shared
+activity clock. All seven housing levels preserve their architecture and native
+occupancy/evolution/save behavior. Restart an already running game to load the
+updated native observation layer and model derivatives.
+
+## Original Zeus keys and the guide's gameplay — 10 October 2026
+
+Game → Controls → **Key layout** offers *eZeus (this game)*, the default, and
+*Classic Zeus*, the original game's keys: P pauses, Space switches between the
+normal view and the last overlay, 1–0 open the build tabs (pressing a key again
+moves to the next category of that tab), - opens the City window, Tab the city map,
+Home faces north, F1–F4 go to bookmarks (Ctrl/Cmd+F1–F4 sets them), F5 toggles
+the window, F6/F7 set the old window sizes, Print Screen takes a screenshot, and
+M holds a sanctuary's footprint in place. Changing the layout resets custom keys.
+In both layouts, the Zeus-only keys work: PgUp/PgDn turn the city a quarter,
+arrows pan, ]/[ change speed, Ctrl/Cmd+1–5 gives the selected company a key and
+Alt+1–5 selects it, P is a second pause key, F12 takes a screenshot (saved to
+Pictures/eZeus), and Alt+X asks before quitting. In the default layout,
+Shift+1–0 and Shift+- open the tabs and the City window.
+
+New gameplay from the guide (native engine): tick a good on the City window's
+storage page to **stockpile** it; **Auto Defend** in the Army panel or on the
+military page; **Consult the Oracle** in a finished Zeus or Apollo sanctuary;
+trireme **crews** ("Crew all" / "Send all crews home" on the military page), and
+crewed triremes can join an army abroad from Enlist Forces when the sea reaches
+the target. Game settings can change the **difficulty** during play, and a
+hero's hall offers **Dispatch on the quest**. Code: `scripts/city_hotkeys.gd`,
+`KeyBindings.EXTRA`/`CLASSIC`. Checks: `validate_controls.gd`,
+`validate_guide_parity.gd` (headless) and `tools/review_original_keys.py
+--parity` (windowed). Details are in `docs/GODOT_MIGRATION.md`.
+
+## Guided first settlement — 10 October 2026
+
+New empty cities now offer **Start guided setup** or **Explore on my own**. The
+guide presents one current task with short instructions, a direct tool action,
+measurable progress and optional service views. All steps remain available from
+**View all steps**; skipped tasks are distinct from completed tasks.
+
+Existing map roads no longer complete the first task: add three new road tiles.
+Then place two homes and wait for real residents. Water, food and maintenance
+complete only from native service observations. Food setup follows the granary,
+available local source or food trade, agora and vendor. Paused-time and worker
+shortage hints explain why delivery may be waiting. Unavailable chapter buildings
+can be passed, and sandbox maps get their own final guidance.
+
+Reopen the guide from **? → Guide** or the Game menu's Help page. It retains your
+pause and required decisions; Resume is an explicit action. Close, collapse,
+Skip this step and Don't offer again remain available. Relaunch to load the new
+interface. The guide updates only presentation preferences; native rules and
+saved cities retain their existing format. See validation for EN/RU review scope.
+
+## Clearer Game menu and larger buttons — 10 October 2026
+
+Escape now opens six clear choices: Return to city, Saved games, Settings,
+City views, Help and Main menu. Saved games contains Save/Load and their quick
+shortcuts; Settings contains Display, Graphics, Sound, Interface, Controls,
+Gameplay. Interface language is inside Interface. Detailed gameplay options no
+longer repeat category links.
+
+Larger blue-enamel buttons, readable labels and protected spacing share the
+wood-and-gold theme. Detailed settings use quieter slate reading surfaces.
+Back/Escape returns one page at a time and restores the button you came from;
+Tab stays within the visible page. Menu pages fit without scrolling, including
+larger interface/text settings. The long key-binding list retains its scroller.
+Native pause, queued commands, previews and confirmations keep their behavior.
+Relaunch **Launch Godot 3D.command** to see the result.
+
+
+## First in-game wood-and-gold panel pass — 10 October 2026
+
+The game menu, City and other dialog windows, character windows and campaign
+screens now share an original dark-walnut/antique-gold frame with compact ivory
+corners. The game menu groups Your city, Settings and City views side by side.
+Blue enamel actions match the main menu; dense City data has a quiet slate page.
+Titles and footers sit clear of the frame. Character “also here” choices remain
+accessible beside long prose/inventory lists.
+
+The [panel design guide](../docs/GODOT_PANEL_DESIGN.md) records the audit and next
+layer for compact inspectors/HUD. The first pass preserves their current size
+and lighter styling. Native actions, settings previews, pause/queue and campaign
+callbacks remain intact. Relaunch **Launch Godot 3D.command** to see the result.
+Current validation distinguishes scoped checks from renderer teardown limits.
+
+## Roomier frames and matching buttons — 10 October 2026
+
+Profiles and Load game have larger wood-and-gold frames with more space above
+the lower carved rail. Profile creation, ready status and footer actions stay
+separate, including at larger text sizes. Footer/Create/Delete/page buttons now
+use original beveled blue enamel with bronze trim, readable ivory serif labels,
+protected padding and subtle focus states.
+
+Briefings use more of the window and give the parchment a wider reading column.
+Most featured opening stories fit on page 1 at normal sizes; every objective stays
+visible together. Long stories or enlarged text keep complete readable pages.
+The story font size and native wording are unchanged. Relaunch **Launch Godot
+3D.command** to see it. Current validation records EN/RU spacing and page coverage.
+
 ## Consistent menu frame hierarchy — 10 October 2026
 
 The ornate wood-and-gold frame remains the signature for full menu pages:

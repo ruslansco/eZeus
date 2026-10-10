@@ -168,7 +168,7 @@ private:
     // Counts the engine's "what may be built changed" calls (a hall unlocked by a monster, a building allowed by an event):
     // the snapshot's `buildable_revision`, which tells the front end to ask `buildable` again.
     std::atomic<int> mBuildableRevision{0};
-    int mSpeed = 0, mX = 0, mY = 0, mW = 0, mH = 0, mFocusX = 0, mFocusY = 0;
+    int mSpeed = 1, mX = 0, mY = 0, mW = 0, mH = 0, mFocusX = 0, mFocusY = 0;
     // The district under the middle of the view (the SDL view's viewed city) and the last of the player's own cities viewed:
     // the pages, the Build menu and the header follow the player's city in view. The leader's name fills the messages.
     eCityId mViewedCity = eCityId::neutralFriendly, mPlayerCity = eCityId::neutralFriendly;

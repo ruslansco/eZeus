@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_apollo.glb",
-  "bytes": 10116240,
-  "vertices": 15605,
+  "bytes": 4375704,
+  "vertices": 6509,
   "surfaces": 3,
-  "source_surfaces": 23,
+  "source_surfaces": 22,
   "bounds_blender": [
     [
       -0.671870768070221,
-      -0.46981507539749146,
-      -0.012000000104308128
+      -0.4683217704296112,
+      -0.010796654969453812
     ],
     [
       0.6074184775352478,
       1.970076560974121,
-      2.65842866897583
+      2.6572253704071045
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Apollo",
@@ -62,6 +62,7 @@
           "seed": 61606
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "0066a57176f9233459986cdb4e375231d8789abb76d85b4bfe06e91aa6d48f10",
         "clavi_srgb": [
           0.88,
@@ -71,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

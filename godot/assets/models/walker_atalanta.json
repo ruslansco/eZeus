@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_atalanta.glb",
-  "bytes": 9087628,
-  "vertices": 15388,
+  "bytes": 3856416,
+  "vertices": 6451,
   "surfaces": 3,
-  "source_surfaces": 21,
+  "source_surfaces": 20,
   "bounds_blender": [
     [
       -0.2508317530155182,
-      -0.2249203324317932,
+      -0.22406888008117676,
       0.0005600449512712657
     ],
     [
-      0.22054758667945862,
+      0.22087524831295013,
       0.7391999959945679,
-      0.9484936594963074
+      0.9491406679153442
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Atalanta",
@@ -63,6 +63,7 @@
           "seed": 51202
         },
         "body_height": 0.8700665268115699,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "f2022c964d9e318e3cbf9c79fb0ba71c8ccc11124b3af01c6408a09fb0d8fe52",
         "clavi_srgb": [
           0.34,
@@ -72,11 +73,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

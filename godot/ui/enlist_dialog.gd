@@ -6,7 +6,7 @@ extends RefCounted
 # least one company or hero. Used by the world map (raids, conquest) and by the decision of a troop request.
 
 const Goods = preload("res://scripts/goods.gd")
-const SECTIONS := [["horseman", "Horsemen"], ["hoplite", "Hoplites"], ["hero", "Heroes"], ["mythical", "Amazons and warriors of Ares"], ["ally", "Troops of allied cities"]]
+const SECTIONS := [["horseman", "Horsemen"], ["hoplite", "Hoplites"], ["hero", "Heroes"], ["mythical", "Amazons and warriors of Ares"], ["navy", "Navy"], ["ally", "Troops of allied cities"]]
 
 var window: AcceptDialog
 var core: Node
@@ -17,6 +17,8 @@ var city_id := -1
 var chosen_soldiers: Dictionary = {}
 var chosen_heroes: Dictionary = {}
 var chosen_ally := -1
+# Poseidon's navy: the manned triremes (by the core's index) that sail with the army to a city the sea reaches.
+var chosen_triremes: Dictionary = {}
 var plunder: OptionButton
 var list: VBoxContainer
 var summary: Label
@@ -143,6 +145,12 @@ func rebuild_list() -> void:
 			"ally":
 				for ally in session.allies:
 					rows.append(["a", int(ally.index), "%s  —  %s" % [str(ally.name), tr("%d troops") % int(ally.troops)], bool(ally.abroad)])
+			"navy":
+				var number := 0
+				for ship in session.get("triremes", []):
+					if int(ship.city) == city_id:
+						number += 1
+						rows.append(["t", int(ship.index), tr("Trireme %d") % number, not bool(ship.reachable), tr("not accessible by sea")])
 		if rows.is_empty():
 			continue
 		var heading := Label.new()
@@ -154,7 +162,8 @@ func rebuild_list() -> void:
 			button.toggle_mode = true
 			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 			button.focus_mode = Control.FOCUS_NONE
-			button.text = String(entry[2]) + ("   (%s)" % tr("abroad") if bool(entry[3]) else "")
+			var why: String = String(entry[4]) if entry.size() > 4 else tr("abroad")
+			button.text = String(entry[2]) + ("   (%s)" % why if bool(entry[3]) else "")
 			button.disabled = bool(entry[3])
 			button.set_pressed_no_signal(is_chosen(String(entry[0]), entry[1]))
 			var kind: String = entry[0]
@@ -174,6 +183,7 @@ func is_chosen(kind: String, key) -> bool:
 		"s": return chosen_soldiers.has(int(key))
 		"h": return chosen_heroes.has(String(key))
 		"a": return chosen_ally == int(key)
+		"t": return chosen_triremes.has(int(key))
 	return false
 
 func choose(kind: String, key, pressed: bool) -> void:
@@ -185,6 +195,9 @@ func choose(kind: String, key, pressed: bool) -> void:
 		"h":
 			if pressed: chosen_heroes[String(key)] = true
 			else: chosen_heroes.erase(String(key))
+		"t":
+			if pressed: chosen_triremes[int(key)] = true
+			else: chosen_triremes.erase(int(key))
 		"a":
 			# Only one allied city's troops may go along: choosing another replaces it.
 			chosen_ally = int(key) if pressed else -1
@@ -196,6 +209,7 @@ func choose(kind: String, key, pressed: bool) -> void:
 func clear_all() -> void:
 	chosen_soldiers.clear()
 	chosen_heroes.clear()
+	chosen_triremes.clear()
 	chosen_ally = -1
 	status.text = ""
 	rebuild_list()
@@ -208,6 +222,9 @@ func enlist_all() -> void:
 	for hero in session.heroes:
 		if not bool(hero.abroad):
 			chosen_heroes["%d:%d" % [int(hero.city), int(hero.hero)]] = true
+	for ship in session.get("triremes", []):
+		if bool(ship.reachable):
+			chosen_triremes[int(ship.index)] = true
 	for ally in session.allies:
 		if not bool(ally.abroad):
 			chosen_ally = int(ally.index)
@@ -220,6 +237,8 @@ func update_summary() -> void:
 		if chosen_soldiers.has(int(soldier.id)):
 			soldiers += int(soldier.count)
 	var text := tr("Enlisted: %d soldiers in %d companies, %d heroes") % [soldiers, chosen_soldiers.size(), chosen_heroes.size()]
+	if not chosen_triremes.is_empty():
+		text += "  •  " + tr("%d triremes") % chosen_triremes.size()
 	if chosen_ally >= 0:
 		for ally in session.allies:
 			if int(ally.index) == chosen_ally:
@@ -237,11 +256,15 @@ func command_text() -> String:
 		command += " h:" + ",".join(chosen_heroes.keys())
 	if chosen_ally >= 0:
 		command += " a:%d" % chosen_ally
+	if not chosen_triremes.is_empty():
+		command += " t:" + ",".join(chosen_triremes.keys().map(func(index): return str(index)))
 	return command
 
 func reason(code: String) -> String:
 	var messages := {
-		"no_forces": "Choose at least one company or hero first.",
+		"no_forces": "Choose at least one company, hero or trireme first.",
+		"no_crew": "That trireme has no crew: switch its wharf on to call the crew.",
+		"not_by_sea": "That city cannot be reached by sea.",
 		"already_abroad": "That force is already abroad.",
 		"one_ally_only": "Only one allied city's troops may go along.",
 		"not_enlistable": "That force cannot be enlisted now.",

@@ -60,7 +60,8 @@ func controls_text_fits(window: Window) -> bool:
 		if button.is_visible_in_tree() and not text_fits(button): return false
 	return true
 func settings_fits(window: Window) -> bool:
-	var frame := Rect2(Vector2(window.position)-Vector2(6,60),Vector2(window.size)+Vector2(12,66))
+	var title_height := window.get_theme_constant("title_height")
+	var frame := Rect2(Vector2(window.position)-Vector2(6,title_height),Vector2(window.size)+Vector2(12,title_height+6))
 	if not Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(frame): return false
 	for button in window.get_ok_button().get_parent().find_children("*","Button",true,false):
 		if button.is_visible_in_tree() and (not text_fits(button) or not Rect2(Vector2.ZERO,window.size).encloses(button.get_global_rect())):
@@ -77,13 +78,24 @@ func window_click(button: Button, window: Window) -> void:
 		root.push_input(event,true)
 	await frames(15)
 func settings_themed(window: Window) -> bool:
-	return window.has_meta("settings_shell") and window.get_meta("settings_shell").finished and window.theme != menu.theme and window.theme.get_stylebox("embedded_border","Window") is StyleBoxTexture and not menu.navigation.settings_page.visible and not menu.navigation.frames.settings.visible and menu.navigation.settings_shade.visible and window.exclusive
+	var frame: StyleBox = window.get_theme_stylebox("embedded_border")
+	return window.has_meta("settings_shell") and window.get_meta("settings_shell").finished and window.get_meta("settings_shell").wood_frame and window.theme != menu.theme and frame is StyleBoxTexture and frame.texture.resource_path == "res://assets/ui/greek_panel_v1.png" and window.transparent_bg and not menu.navigation.settings_page.visible and not menu.navigation.frames.settings.visible and menu.navigation.settings_shade.visible and window.exclusive and window.get_ok_button().size.y >= 48
+
+func language_settings() -> Window:
+	if menu.page != "settings": await click(menu.get_node("%Interface"))
+	await click(menu.navigation.settings_buttons.interface)
+	return dialog("language_choice")
 func category_content_fits() -> bool:
 	var page: Control = menu.navigation.settings_page
 	var frame := page.get_global_rect()
 	var reading := frame.grow_individual(-frame.size.x*.10,-frame.size.y*.13,-frame.size.x*.08,-frame.size.y*.07)
 	var controls: Array = [page.get_child(0).get_child(0),menu.navigation.settings_back]+menu.navigation.settings_buttons.values()
 	return controls.all(func(control): return reading.encloses(control.get_global_rect()))
+func profile_content_fits() -> bool:
+	var frame: Rect2 = menu.pages.leaders.get_global_rect()
+	var reading := frame.grow_individual(-frame.size.x*.09,-frame.size.y*.14,-frame.size.x*.09,-frame.size.y*.12)
+	var controls := [menu.leader_heading,menu.leader_list,menu.navigation.profile_pager.search,menu.navigation.profile_pager.previous,menu.navigation.profile_pager.next,menu.leader_name,menu.leader_create,menu.leader_status,menu.leader_delete,menu.leader_back,menu.leader_proceed]
+	return Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(frame) and controls.all(func(control): return not control.is_visible_in_tree() or reading.encloses(control.get_global_rect())) and [menu.leader_create,menu.leader_delete,menu.leader_back,menu.leader_proceed].all(func(button): return text_fits(button))
 func run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--lang="): language = argument.get_slice("=",1)
@@ -101,7 +113,7 @@ func run() -> void:
 	check(menu.page == "main", "chosen leader opens directly on main menu")
 	check(not menu.get_node("%ContinueCard").visible and menu.continue_button.disabled and menu.load_game_button.disabled and not menu.new_game_button.disabled, "empty profile emphasizes New game and hides empty Continue card")
 	check(root.gui_get_focus_owner() == menu.new_game_button, "New game gets keyboard focus with no saves")
-	check(menu.language_button.text == ("Русский" if language == "ru" else "English") and menu.get_node("%Interface").text == menu.tr("Settings") and menu.get_node("%Interface").focus_mode == Control.FOCUS_ALL, "current language and named keyboard-accessible Settings are clear")
+	check(not menu.has_node("%Language") and menu.get_node("%Interface").text == menu.tr("Settings") and menu.get_node("%Interface").focus_mode == Control.FOCUS_ALL, "language is removed from the main menu; named Settings remains keyboard-accessible")
 	check(menu.new_game_button.get_theme_stylebox("normal") is StyleBoxTexture and menu.navigation.frames.main.texture != null, "generated Greek frame and enamel button artwork load")
 	check(menu.new_game_button.get_theme_stylebox("focus") is StyleBoxTexture and menu.new_game_button.get_theme_stylebox("focus").texture == menu.new_game_button.get_theme_stylebox("normal").texture, "keyboard focus follows the enamel silhouette without a rectangular border")
 	var cursor := root.get_node("GameCursor")
@@ -128,10 +140,18 @@ func run() -> void:
 		print("MAIN_MENU_VALIDATION ","PASS" if okay else "FAIL"," checks=",checks," language=",language," art_only=true")
 		quit(0 if okay else 1)
 		return
-	await click(menu.language_button)
-	check(menu.language_button.text != ("Русский" if language == "ru" else "English") and menu.new_game_button.text == menu.tr("New game"), "language click updates labels and current language")
-	await click(menu.language_button)
-	check(menu.language == language, "language cycles back to requested locale")
+	var language_dialog := await language_settings()
+	check(language_dialog != null and language_dialog.language_choice.item_count == 2 and language_dialog.original_language == language,"Settings → Interface owns the two-language choice and opens on the current locale")
+	language_dialog.language_choice.select(0 if language == "ru" else 1)
+	check(menu.language == language,"selecting a language keeps the menu unchanged until Apply")
+	await window_click(language_dialog.get_cancel_button(),language_dialog)
+	check(menu.language == language and menu.navigation.settings_page.visible,"language Cancel preserves the locale and restores the category hub")
+	for wanted in ["en" if language == "ru" else "ru",language]:
+		language_dialog = await language_settings()
+		language_dialog.language_choice.select(1 if wanted == "ru" else 0)
+		await window_click(language_dialog.get_ok_button(),language_dialog)
+		check(menu.language == wanted and preload("res://scripts/user_settings.gd").language() == wanted and menu.navigation.settings_buttons.interface.text == menu.tr("Interface") and menu.new_game_button.text == menu.tr("New game"),"Interface Apply persists the chosen language and retranslates stable menu controls")
+	await click(menu.navigation.settings_back)
 	var engine: String = menu.engine
 	var source := engine.path_join("Save/Hippodamus/CLAUDE-TESTING-ADVENTURE.ez")
 	var name := "The city of Solon - A new beginning on the Aegean coastline"
@@ -202,6 +222,13 @@ func run() -> void:
 	await click(menu.leader_change)
 	check(menu.page == "leaders" and menu.leader_list.item_count == 2, "profile action opens roster without changing saves")
 	await capture("leaders")
+	menu.leader_name.text = "Spacing Review"
+	await click(menu.leader_create)
+	check(menu.leader_status.text.contains("Spacing Review") and profile_content_fits(),"profile ready status, creation row and all footer labels have clear space inside the wood")
+	check(menu.leader_create.get_theme_stylebox("normal") is StyleBoxTexture and menu.leader_delete.theme_type_variation == "MenuPageDanger","profile actions use original blue enamel and bronze bevels with distinct destructive styling")
+	await capture("leaders-ready")
+	Leaders.delete("Spacing Review")
+	menu.open_leaders()
 	var other := Leaders.list().find("Aspasia Review")
 	menu.leader_list.select(other)
 	await click(menu.leader_proceed)
@@ -237,7 +264,7 @@ func run() -> void:
 	var settings := dialog("preview_options")
 	check(settings != null, "Display category opens the existing preview/revert dialog")
 	if settings != null:
-		check(settings_themed(settings) and settings_fits(settings), "Display uses one padded bronze/slate shell with no competing category frame")
+		check(settings_themed(settings) and settings_fits(settings), "Display uses one readable wood-and-gold shell with no competing category frame")
 		check(settings.choices.values().all(func(choice): return is_equal_approx(choice.size.x,settings.choices.window_size.size.x)), "translated display choices align in one readable column")
 		await capture("display")
 		await window_click(settings.get_ok_button(),settings)
@@ -271,13 +298,7 @@ func run() -> void:
 			check(root.get_node("UiAccess").ui_size == 125 and root.get_node("UiAccess").text_size == 130 and child.theme.get_font_size("font_size","Button") == 22 and settings_fits(child), "Interface preview keeps drafts and updates its own themed text/spacing live")
 			await capture("interface-preview")
 		if child != null and spec[0] == "game":
-			child.open_settings("res://ui/display_dialog.gd")
-			await frames()
-			var nested := dialog("preview_options")
-			check(nested != null and not child.visible and settings_themed(nested), "nested Game to Display keeps only the active settings shell visible")
-			if nested != null: nested.canceled.emit()
-			await frames()
-			check(child.visible and settings_themed(child) and settings_fits(child), "nested Back restores Game settings without exposing the hub")
+			check(child.settings_buttons.is_empty() and child.choices.has_all(["autosave_minutes","autosave_slots","voice_language"]),"Game contains its own options without repeating Display/Graphics/Interface/Controls")
 		if child != null and spec[0] == "controls":
 			check(child.key_buttons.orbit_left.get_theme_stylebox("normal") is StyleBoxFlat and controls_text_fits(child), "compact key and dialog labels fit clear surfaces without ornamental overlap")
 			await capture("controls")
@@ -301,12 +322,20 @@ func run() -> void:
 		DisplayServer.window_set_size(size)
 		root.get_node("UiAccess").apply(125,130)
 		await frames(25)
+		menu.open_leaders()
+		await frames(20)
+		menu.leader_status.text = menu.tr("Leader %s is ready") % "Solon Review"
+		await frames()
+		check(profile_content_fits(),"profile fields/status/actions clear the carved rail at enlarged "+str(size))
+		await capture("leaders-large-%d" % size.y)
+		menu.show_page("main")
+		await frames()
 		check(Rect2(Vector2.ZERO,root.get_visible_rect().size).encloses(panel.get_global_rect()), "125% UI / 130% text shell fits " + str(size))
 		menu.get_node("%Interface").grab_focus()
 		await frames(15)
 		check(menu.get_node("%MainScroll").get_global_rect().has_point(menu.get_node("%Interface").get_global_rect().get_center()) and menu.get_node("%Interface").size.x >= menu.get_node("%Interface").get_minimum_size().x, "Settings stays fully visible without scrolling")
 		var actions_visible := true
-		for button in [menu.continue_button,menu.new_game_button,menu.load_game_button,menu.get_node("%Interface"),menu.navigation.extras_button,menu.quit_button,menu.language_button]:
+		for button in [menu.continue_button,menu.new_game_button,menu.load_game_button,menu.get_node("%Interface"),menu.navigation.extras_button,menu.quit_button]:
 			if button.visible: actions_visible = actions_visible and panel.get_global_rect().encloses(button.get_global_rect())
 		check(actions_visible, "all main choices remain fully visible at enlarged sizes")
 		check(cursor.cursor_size == 60 and cursor.hotspots.arrow.x < 12 and cursor.hotspots.arrow.y < 12, "cursor follows interface size with its tip hotspot aligned")

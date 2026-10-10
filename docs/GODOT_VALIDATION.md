@@ -1,5 +1,254 @@
 # Godot embedding validation — 9 October 2026
 
+## Optional settlement coaching and honest progress — 10 October 2026
+
+The default guide now offers an introduction and one current task, with a
+revisitable roadmap. New-city roads are measured against the captured starting
+count; two homes still wait for real residents. Native water/food delivery and
+working maintenance remain the service milestones. Food setup handles granaries,
+available source choices, partner/import routes, existing posts, agora/vendor
+placement and delivery. Continue, explicit Skip and completed history have
+separate meanings; missing chapter tools and sandbox maps have clear exits.
+
+Final owned sequential Apple M4 Metal/Forward Mobile results:
+
+- `python3 tools/review_settlement_guide.py --lang en` / `ru`: **57 each**.
+  Optional/explore/reopen flow, pre-authored road baseline, incomplete Continue
+  guard, real separated mouse clicks, keyboard camera hold/release, exact native
+  costs, paused-time and pending-decision guards, worker shortfalls, full food
+  chain/import alternatives, unsupported tools, skipped history, roadmap/folding,
+  live focus preservation and complete imported EN/RU control/help strings pass.
+  At 1920×1080 and 1280×720, both 100%/100% and 125% UI/130% text keep introduction,
+  task and primary actions bounded and reachable without scrolling. Every native
+  snapshot field agrees before/after apart from its observation sequence.
+- Retained `tools/review_city_clarity.py --lang en` / `ru`: **167 each**. This
+  includes actual native demolition in a disposable designated copy, an empty
+  settlement, fourteen new road cells, one empty house and edge-connected
+  fountain/maintenance construction with genuine workforce shortages. No fake
+  residents or stock are installed. Twenty attention reads preserve same-session
+  serialized state; seeded sixty-tick gameplay digests/sections agree and worker
+  RNG remains zero. Issues filters/targets/staleness, native inspectors/undo,
+  guide offers/menu/pause/Escape, translated advice, shared finish/audio and
+  return-to-menu checks remain intact.
+- Toolbar sparse/disabled-category integration: `tools/review_toolbar.py
+  --context --lang en` passes **54**. The empty-city guide fixture skips unavailable
+  targets without altering native permissions. Separated mouse-up/toggle/menu
+  input via `validate_toolbar_input.gd` passes **18**, preserving the earlier
+  click fix after guarding deferred release on a removed Control.
+
+These final runs total **520 scoped assertions**, including repeated coaching
+checks in the native regression suite. Evidence: `captures/settlement-{en,ru}-engine.log`,
+`settlement-{en,ru}-guide-welcome.png`, `settlement-en-guide-road.png`,
+`settlement-{en,ru}-guide-food.png`, `settlement-ru-task-1280-125.png`, retained
+`city-clarity-{en,ru}-engine.log`/JSON, `toolbar-context-en-engine.log`, and
+`settlement-toolbar-input-engine.log`. Welcome/road and enlarged Russian task
+captures were visually inspected. Final visible logs contain no engine/script
+errors; review processes exit normally. All designated/copy save hashes and final
+preference guards pass. CSV structure/imported values, Python syntax and focused
+whitespace checks pass. Theme regeneration merges Guide/Issue types only.
+
+Review/implementation repairs during validation: typed GDScript test/hold values
+explicitly, handled the designated city's actual sandbox ending, guarded focus
+release when task Controls are replaced, wrapped the enlarged heading, and quoted
+a Russian comma-containing CSV value. An earlier Russian run passed all UI/native
+assertions but detected a live preference fingerprint change while it ran. The
+review's writes remained routed through its scratch metadata; live preferences
+contained no reviewer leader. The current file was preserved, and a repeat against
+its current fingerprint exits with the preference guard passing.
+
+Learning/skipped history and the new-road baseline remain session presentation
+state, with the existing explicit opt-out in per-user interface preferences.
+Whole new-adventure food-chain playthroughs, newcomer comprehension/pacing,
+screen narration/controller certification and other-platform/minimum-device
+review remain pending. No native rules, RNG, save format, art/UV/VAT/LODs or live
+game/Blender changes are part of this interface slice.
+
+## Zeus guide parity: original keys and gameplay — 10 October 2026
+
+Scope: the original Zeus hotkeys and Classic layout, stockpiling, Auto Defend,
+the oracle, trireme crews with the navy abroad, difficulty during play and the
+hall's Dispatch button (see the migration document). Apple M4, Metal/Forward
+Mobile; designated test city in memory; scratch settings; protected files unchanged.
+
+- `validate_controls.gd` (headless) **81 PASS**: the table's 39 earlier controls
+  keep their keys; 46 original-game controls (`EXTRA`) are given only where free,
+  and an older custom key keeps priority; the Classic layout has the guide's keys
+  with no duplicate, is remembered, resets custom keys, refuses an unknown layout;
+  the Controls dialog's layout choice relabels every row; the ten tabs open real
+  categories; PgUp/PgDn quarter turns and face-north easing; Russian text.
+- `validate_guide_parity.gd` (headless) **31 PASS**: stockpile marks/refusals;
+  with olives stockpiled no cart fed a waiting olive press over 60 steps, and the
+  carts resumed once released; a finished Oracle of Apollo answered "request from
+  Gades in about 2 months", then was silent (0% ready), and a stale token was refused;
+  a wharf's crewed trireme took orders, sending crews home left it without orders
+  (`trireme_move` refused), and Crew All restored them; the Enlist Forces session
+  listed the manned trireme, refused a city out of sea reach, sailed it with an
+  army to a port (`test_sea`) and brought it home; with Auto Defend on, manual
+  orders answered `auto_defend` and test invaders made the city call out its
+  companies; off again, orders worked.
+- Retained headless: embedded PASS, military 49, trade 36, industry 140, saves 34.
+- `tools/review_original_keys.py --parity` (windowed): **EN 26 + 12 PASS**;
+  **RU 26 + 13 PASS** (rerun at 16:30 with 3.6 GB free; the first RU run lost
+  only F12 to a full disk. The rerun's log has load errors for
+  `common_house_2a/5a.glb`, which another session was re-exporting at that
+  moment; no check depended on them). Covered: Shift+digit tabs and cycling, ]/[ speed,
+  PgUp/PgDn, bookmarks, company keys, P, F12, Alt+X confirm/cancel; Classic 1/8
+  tabs, Space switch views, Tab map, Home north, F1, M footprint hold, - City window,
+  P; the storage page's 20 stockpile ticks; the military Auto Defend switch; the
+  Army panel switch disabling Call all and the core's refusal wording; the Enlist
+  dialog's Navy section with "not accessible by sea"; the oracle's wording (RU Cyrillic).
+
+Not proven: the full `--validate` run with the two new suites; an uncrewed-ship
+click and the hall Dispatch button in a running city (both tested only at the
+core level); the Oracle and stockpile behaviour across a long campaign.
+
+## Game-menu hierarchy and readable submenus — 10 October 2026
+
+The six-choice root supersedes the earlier nineteen-choice/three-group page.
+Saved games, Settings, City views and Help have focused pages. The original
+native actions remain accessible; Graphics is promoted directly. The in-game
+Gameplay form contains its own options without repeated category links, while
+legacy/default callers retain the old nested route.
+
+Explicit GameMenu actions use 52-logical-pixel targets and 18-pixel baseline
+serif labels. Settings use aligned 17-pixel form text, restrained slate interiors
+and measured 48-pixel native footer actions. Original walnut/gold frame and enamel
+art are reused. Navigation pages do not scroll or shrink fonts. Stable Controls,
+contextual Back/Escape text, focus restoration and explicit Tab cycles preserve
+navigation; the shade persists behind child windows. The long key list remains
+bounded/scrollable. No native rules, decisions, model assets or live files changed.
+
+Owned sequential Apple M4 Metal/Forward Mobile reviews:
+
+- Escape **181 EN / 181 RU**: six-choice root; all existing actions/languages and
+  direct Graphics; actual mouse navigation through subpages/native windows;
+  complete labels and frame/target bounds at 1600×1000, 1280×720 and 1920×1080,
+  both 100%/100% and 125% UI / 130% text; all five pages' actual Tab focus cycles;
+  larger scaled footers on nine dialog families; parent/opener restoration;
+  retained legacy nested display/graphics revert; exact pause/queue/city/events.
+- Retained main-menu/settings **92 EN / 92 RU**, `--menu-only --tag game-menu-compat`:
+  all six forms, nested returns, full enlarged 720p shells/footers, original frame/
+  cursor/portal, retained single briefing route, disposable profiles and saves.
+
+All **546 scoped menu assertions** pass, and the protected-file guards remain
+unchanged. Captures/logs are `escape-page-*`, `escape-dialog-*`, `escape-{en,ru}-engine.log`
+and `game-menu-compat-*`. EN normal and RU enlarged pages/forms were visually
+inspected. `git diff --check` passes. Existing console-only renderer texture/RID
+teardown diagnostics remain separate from successful interaction assertions.
+
+The broader read-only translation gate passes **6/7**: every scanned literal has
+its RU translation, language cycling and digit grouping pass, but the strict
+unused-row check flags older entries, including removed Read chapter briefing
+and strings displaced by concurrent settlement-guide work. That separate guide
+work is preserved; no unrelated catalog rows were deleted to force this gate
+through. Current menu labels are translated in both visible reviews. This is
+scoped UI evidence, not full accessibility/gamepad/platform/release acceptance.
+
+
+## First in-game wood-frame family — 10 October 2026
+
+The design audit is `GODOT_PANEL_DESIGN.md`. This first pass implements EscapeCard,
+CharacterCard, EpisodeShell, narrative EpisodePaper, CityLedger and embedded
+dialog surrounds. Compact inspectors, decisions/journal chips and the persistent
+Nova dock/resource/map controls retain their lighter layouts. No native behavior,
+saved city, model/UV/LOD source or live game/Blender changes are claimed.
+
+The original generated in-game surround is **1536×1024 RGBA**, with zero-alpha
+exterior pixels verified. Raw source, exact built-in prompt and SHA-256 are in
+`assets/ui/greek_panel_v1.{png,prompt.txt,provenance.json}`. A lossless384 import and
+48-pixel slices make ornament compact; 44-pixel reading margins protect text.
+City data gets a quiet slate inset, campaign prose reuses original parchment,
+and explicit primary actions use the existing original enamel vector.
+
+`city_panel_skin.gd` is merged by `build_ui_theme.gd -- --panels-only`, preserving
+unrelated authored styles and font baselines. HUD sets embedded-window
+transparency without changing input rectangles; reserved72-pixel title bands
+and lower insets keep titles/actions off gold rails. City data adapts to viewport
+bounds without rebuilding drafts. The three-group game menu reduces vertical
+travel; narrow layouts retain keyboard reachability. Character co-located choices
+stay outside prose/inventory scrolling, preserving their native selection.
+
+Owned sequential Apple M4 Metal/Forward Mobile review assertions:
+
+- Escape/menu/dialog **87 EN / 87 RU**: all existing actions/languages, full
+  button labels at normal/enlarged sizes, wood-frame loading, dialog artwork,
+  exact pause/queue restoration, nested Apply/Cancel/preview return, dismissal,
+  terrain picking exclusions and native city/timing/event state retained.
+- Character **115 EN / 115 RU**: native person/god/hero/animal information,
+  portraits/model fallback, speech/voice, “also here” selection, inventories,
+  reachable scaled footers and pause/queue/city state retained. The first pass
+  caught a clipped co-located choice; moving this row outside the scroller and
+  adding card height fixed it. One interrupted native process was rerun.
+- Episode/campaign **39 EN / 39 RU**: full native story/goals, normal/enlarged
+  independent reading areas, difficulty, victory, next episode, defeat/retry/end,
+  exact callbacks, owned-save guards and retained start-menu briefing behavior.
+
+All **482 scoped assertions** pass. Review logs are `godot/captures/escape-*`,
+`character-*` and `episode-panel-*`; corresponding menu, City, character/inventory
+and story/result captures were inspected. `git diff --check` passes. The baseline
+before art changes and completed visible runs also emit existing console-only
+texture/RID/ImageTexture cleanup diagnostics at renderer teardown. Thus this is
+successful scoped UI/native interaction evidence, not a claim of a clean full-
+game shutdown or release/platform/performance acceptance. Sandbox headless import
+retains its unrelated system-certificate/editor-preference diagnostics.
+
+A disk shortage interrupted one Russian review before launch. Only this chat's
+failed/interrupted debug PNGs were removed; old owned menu-only review saves were
+losslessly gzip archived and hash-verified. Player/source files and recorded
+results/art/screenshots remain. `build-content-research/campaign-library/OWNED_REVIEW_ARCHIVES.md`
+explains exact fixture restoration. The final Russian reviews ran afterward.
+
+## Larger frames, profile clearance and enamel actions — 10 October 2026
+
+Profiles/Load now grow to a bounded 1040×860; 13% lower reading clearance and
+explicit roster gaps keep Create/status/Delete/Back/Proceed above the carved rail.
+Briefings grow to 1560×980 within the viewport and give ordinary story parchment
+more width beside a bounded objectives column. All goals remain visible together.
+The existing 14/16-pixel story font baselines are retained; clean paper padding
+and three-pixel leading reduce story spillover. Complete paging remains available
+for longer prose and enlarged text.
+
+Original `ui/settings_art/menu_action.svg` supplies blue enamel, beveled bronze,
+small corner details and protected plain label areas. Explicit primary/secondary/
+destructive/pager variations use readable serif text and silhouette focus. Generic
+settings/key buttons remain clean, with their existing private dialog skins.
+Native profile/deletion, settings and campaign callbacks are preserved.
+
+Sequential owned macOS Metal/Forward Mobile evidence:
+
+- `review_main_menu.py --lang en` / `ru --tag menu-spacing --menu-only`: **92 each**.
+  New assertions create a disposable profile through its real button and check
+  ready-status/creation/footer spacing, action styling and full translated labels.
+  Profiles clear the rail at 125% UI / 130% text at 1280×800/720. Retained catalog,
+  keyboard/navigation, six settings and native preview/Cancel checks pass.
+- `review_adventure_cards.py --lang en` / `ru`: **70 each**, plus **18** artwork
+  mappings each. Wider parchment, all native objectives, complete full-text pages,
+  carved reading bounds and all action labels fit at default/enlarged sizes,
+  including the seven-goal fixture at enlarged 720p.
+- `review_campaign_library.py --lang en` / `ru --menu-only`: **86 each**. Five native
+  campaign openings retain exact prose/goals and ordinary chapter-one progression.
+  A new gate verifies most complete opening stories fit page one at normal sizes,
+  preserving font size. Logs record actual page counts; longer stories still page.
+  Owned slot/source bytes, earlier profiles and enlarged catalog bounds pass.
+
+At the normal 1600×1000 review window, First Light Harbor, Bronze River and
+Tidebound Covenant fit one page in both languages. English Stonewatch also fits
+one page. Sunlit Terraces uses two pages in English; Russian Stonewatch/Sunlit
+use two. All objectives stay visible throughout. Thus **4/5 English and 3/5
+Russian** complete featured openings fit page one, retaining full native wording.
+
+These are **496 focused checks** across both languages, excluding repeated art
+metadata assertions. Evidence is `godot/captures/menu-spacing-{en,ru}-engine.log`,
+their `leaders-ready` / `leaders-large-720` PNGs, current `adventure-card-*` logs/
+captures and `build-content-research/campaign-library/review-{en,ru}-visible-menus/latest.json`.
+Source/profile/preference guards and `git diff --check` pass. Normal/enlarged profile
+and story captures were visually inspected. No native simulation, saved city,
+shared city Theme, model source or live game/Blender was changed. Larger text can
+require more story pages; full-city shutdown, wider platforms/high-DPI and user
+visual acceptance remain separate scope.
+All final visible logs exit successfully without engine/script errors. A stable
+English example is `godot/captures/menu-spacing-en-bronze-story.png`.
+
 ## Ornate menu hierarchy and single briefing route — 10 October 2026
 
 The approved wood-and-gold frame remains on full menu pages; detailed settings

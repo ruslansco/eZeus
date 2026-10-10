@@ -11,6 +11,7 @@ var from_phase := 0.0
 var to_phase := 0.0
 var age := 0.0
 var phase := 0.0
+var effect_origin := 0.0
 var initialized := false
 var running := false
 
@@ -63,6 +64,7 @@ func apply(node: Node, asset: String) -> void:
 			finish.set_shader_parameter("work_frames",frames)
 			finish.set_shader_parameter("inactive_pose",int(part.frames.get("inactive",-1)))
 			finish.set_shader_parameter("smooth_work",true)
+			finish.set_shader_parameter("work_rate",float(info.metadata.building_activity.get("work_rate",1.0)))
 			var original: Material = node.mesh.surface_get_material(0)
 			if original is StandardMaterial3D:
 				finish.set_shader_parameter("surface_roughness",original.roughness)
@@ -74,14 +76,23 @@ func apply(node: Node, asset: String) -> void:
 
 func receive(snapshot: Dictionary) -> void:
 	var target := float(snapshot.get("time",0))/30.0
-	running = bool(snapshot.get("running",false))
+	if not initialized or target < to_phase: effect_origin = target
+	running = bool(snapshot.get("running",false)) and not bool(snapshot.get("blocked",false))
 	from_phase = phase if initialized and running and target >= to_phase else target
 	to_phase = target;age=0.0;initialized=true
 	if not running:phase=target
-	RenderingServer.global_shader_parameter_set(CLOCK,fposmod(phase,8.0))
+	_publish_clock()
 
 func advance(dt: float) -> void:
 	if not initialized:return
 	age += dt
 	phase = lerpf(from_phase,to_phase,clampf(age/.1,0.0,1.0)) if running else to_phase
-	RenderingServer.global_shader_parameter_set(CLOCK,fposmod(phase,8.0))
+	_publish_clock()
+
+# Session-relative seconds: native time, without a visible wrap in fire/smoke noise.
+func effect_seconds() -> float:
+	return maxf(0.0,(phase-effect_origin)/10.0)
+
+func _publish_clock() -> void:
+	RenderingServer.global_shader_parameter_set(CLOCK,fposmod(phase,40.0))
+	RenderingServer.global_shader_parameter_set("city_effect_clock",effect_seconds())

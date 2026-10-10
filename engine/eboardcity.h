@@ -144,6 +144,18 @@ public:
     bool manTowers() const { return mManTowers; }
     void setManTowers(const bool m);
 
+    // The original game's stockpiling (Distribution tab): a stockpiled good stays in the city's granaries and storehouses.
+    // They move it only among themselves; no workshop, vendor, construction site, trade post or foreign trader gets it.
+    eResourceType stockpiled() const { return mStockpiled; }
+    bool stockpiled(const eResourceType r) const
+    { return static_cast<bool>(mStockpiled & r); }
+    void setStockpiled(const eResourceType r, const bool s);
+
+    // Auto Defend (the original Options menu): the city calls out its own companies against an invasion and sends them home
+    // after it, as an AI city does; the player does not command them meanwhile.
+    bool autoDefend() const { return mAutoDefend; }
+    void setAutoDefend(const bool a);
+
     void distributeEmployees(const eSector s);
     void distributeEmployees();
 
@@ -580,6 +592,8 @@ private:
     std::vector<stdsptr<eHippodrome>> mHippodromes;
 
     bool mManTowers = true;
+    eResourceType mStockpiled = eResourceType::none;
+    bool mAutoDefend = false;
 
     bool mShutdownLandTrade = false;
     bool mShutdownSeaTrade = false;

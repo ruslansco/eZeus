@@ -37,11 +37,20 @@ func show_menu(language: String) -> Control:
 	await frames(3)
 	return menu
 
+func apply_language(menu: Control, locale: String) -> void:
+	menu.show_page("settings")
+	var options: Window = preload("res://ui/interface_dialog.gd").open(menu)
+	await frames(3)
+	options.language_choice.select(1 if locale == "ru" else 0)
+	options.confirmed.emit()
+	await frames(3)
+	menu.show_page("main")
+
 func run() -> void:
 	scratch = ProjectSettings.globalize_path("res://captures/validation-start-%d" % Time.get_ticks_usec())
 	DirAccess.make_dir_recursive_absolute(scratch)
 	Engine.set_meta("ezeus_save_directory", scratch)
-	# The language button remembers its choice; keep that out of the player's real settings.
+	# Interface settings remember language; keep that out of the player's real settings.
 	Engine.set_meta("ezeus_settings_path", scratch.path_join("settings.cfg"))
 	var StartMenu = load("res://ui/start_menu.gd")
 	check(not StartMenu.automated(), "a plain launch is not automation, so it opens the menu")
@@ -64,12 +73,10 @@ func run() -> void:
 	check(menu.continue_button.disabled and menu.load_game_button.disabled and menu.continue_info.text == "No saved games yet", "with no saves Continue and Load are off")
 	check(not menu.new_game_button.disabled, "New game is always available")
 
-	# Language: the button switches the whole page, remembered by the next screen.
-	menu.language_button.pressed.emit()
-	await frames(2)
-	check(menu.new_game_button.text == "Новая игра" and menu.continue_info.text == "Сохранённых игр пока нет", "the language button switches the page to Russian")
-	menu.language_button.pressed.emit()
-	await frames(2)
+	# Language lives under Settings → Interface, remembered by the next screen.
+	await apply_language(menu,"ru")
+	check(menu.new_game_button.text == "Новая игра" and menu.continue_info.text == "Сохранённых игр пока нет", "Interface Apply switches the page to Russian")
+	await apply_language(menu,"en")
 	check(menu.new_game_button.text == "New game", "and back to English")
 
 	# The list of adventures.
@@ -158,8 +165,7 @@ func run() -> void:
 	check(menu.get_node("%MainPage").visible, "Back returns to the main page")
 
 	# Russian: the adventure list is in Russian.
-	menu.language_button.pressed.emit()
-	await frames(2)
+	await apply_language(menu,"ru")
 	menu.new_game_button.pressed.emit()
 	await frames(2)
 	var russian: Array = menu.listing.filter(func(item): return String(item.title).unicode_at(0) >= 0x400)

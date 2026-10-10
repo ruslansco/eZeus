@@ -3,20 +3,20 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_artemis.glb",
-  "bytes": 9686304,
-  "vertices": 15404,
+  "bytes": 4242568,
+  "vertices": 6487,
   "surfaces": 3,
-  "source_surfaces": 23,
+  "source_surfaces": 22,
   "bounds_blender": [
     [
       -0.671870768070221,
-      -0.5340725183486938,
-      -0.012000000104308128
+      -0.5301900506019592,
+      -0.010796654969453812
     ],
     [
-      0.5650339722633362,
+      0.5645803809165955,
       1.9800000190734863,
-      2.65842866897583
+      2.6572253704071045
     ]
   ],
   "walk_samples": 24,
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Artemis",
@@ -63,6 +63,7 @@
           "seed": 61707
         },
         "body_height": 0.8700665268115699,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "c3bba9bc696b4dab54fef48ffec071c4a4da392d5b952745acba38ccd284d227",
         "clavi_srgb": [
           0.3,
@@ -72,11 +73,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

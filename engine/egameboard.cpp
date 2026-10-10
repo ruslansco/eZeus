@@ -309,6 +309,9 @@ void eGameBoard::enlistForces(const eEnlistedForces& forces) {
     for(const auto& a : forces.fAllies) {
         a->setAbroad(true);
     }
+    for(const auto& w : forces.fTriremes) {
+        if(w) w->sendAbroad();
+    }
 }
 
 void eGameBoard::clearBannerSelection() {
@@ -2262,6 +2265,30 @@ void eGameBoard::setManTowers(const eCityId cid, const bool m) {
     city->setManTowers(m);
 }
 
+eResourceType eGameBoard::stockpiled(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return eResourceType::none;
+    return city->stockpiled();
+}
+
+void eGameBoard::setStockpiled(const eCityId cid, const eResourceType r, const bool s) {
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    city->setStockpiled(r, s);
+}
+
+bool eGameBoard::autoDefend(const eCityId cid) const {
+    const auto city = boardCityWithId(cid);
+    if(!city) return false;
+    return city->autoDefend();
+}
+
+void eGameBoard::setAutoDefend(const eCityId cid, const bool a) {
+    const auto city = boardCityWithId(cid);
+    if(!city) return;
+    city->setAutoDefend(a);
+}
+
 std::vector<eAgoraBase*> eGameBoard::agoras(const eCityId cid) const {
     const auto city = boardCityWithId(cid);
     if(!city) return {};
@@ -2723,6 +2750,14 @@ void eGameBoard::requestForces(const eEnlistAction& action,
             f.fHeroes.clear();
             f.fAllies.clear();
             f.fAres = false;
+            f.fTriremes.clear();
+        }
+        for(const auto& c : exclude) {
+            const auto cid = c->cityId();
+            const auto ts = f.fTriremes;
+            for(const auto& w : ts) {
+                if(w && w->cityId() == cid) eVectorHelpers::remove(f.fTriremes, w);
+            }
         }
 
         const auto ss = f.fSoldiers;

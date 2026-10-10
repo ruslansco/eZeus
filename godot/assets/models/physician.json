@@ -1,11 +1,12 @@
 {
   "asset": "physician",
+  "variant_of": null,
   "source": "art/characters/physician/build_sprites.py",
   "file": "physician.glb",
-  "bytes": 7603452,
-  "vertices": 15899,
+  "bytes": 3202508,
+  "vertices": 6620,
   "surfaces": 3,
-  "source_surfaces": 16,
+  "source_surfaces": 14,
   "bounds_blender": [
     [
       -0.19080370664596558,
@@ -13,9 +14,9 @@
       -0.001259485026821494
     ],
     [
-      0.21113049983978271,
-      0.240465447306633,
-      0.8307411074638367
+      0.21183063089847565,
+      0.24110910296440125,
+      0.8275161981582642
     ]
   ],
   "walk_samples": 24,
@@ -26,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "breathing",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Greek physician",
@@ -61,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "a4c92408814a7af24c45e064a3f8c71de6b057db786250e09c2b530c15b23a23",
         "clavi_srgb": [
           0.45,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

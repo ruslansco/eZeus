@@ -51,9 +51,23 @@ func _ready() -> void:
 	confirmed.connect(queue_free)
 	canceled.connect(queue_free)
 	close_requested.connect(queue_free)
+	get_tree().root.size_changed.connect(fit_screen.call_deferred)
+	get_tree().root.get_node("UiAccess").changed.connect(fit_screen.call_deferred)
+
+func fit_screen() -> void:
+	if tabs == null or is_queued_for_deletion(): return
+	var available := get_tree().root.get_visible_rect().size
+	tabs.custom_minimum_size = Vector2(minf(960, maxf(420,available.x-96)), minf(490,maxf(160,available.y-180)))
+	reset_size()
+	if visible:
+		popup_centered()
+		# Center the full drawn window, including its reserved title above the body.
+		var title_height := get_theme_constant("title_height")
+		position.y = maxi(title_height+8,roundi((available.y-size.y+title_height-6)/2))
 
 func build() -> void:
 	tabs = TabContainer.new()
+	tabs.theme_type_variation = "CityLedger"
 	tabs.custom_minimum_size = Vector2(960, 490)
 	add_child(tabs)
 	for page in PAGES:
@@ -69,6 +83,7 @@ func build() -> void:
 	tabs.tab_changed.connect(func(_index): fill())
 	if core.has_signal("command_completed"):
 		core.command_completed.connect(_on_command_completed)
+	fit_screen.call_deferred()
 
 func show_page(id: String) -> void:
 	for index in PAGES.size():
@@ -385,10 +400,21 @@ func fill_storage(column: VBoxContainer, page: Dictionary) -> void:
 	grid.name = "Goods"
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 18)
+	# The original game's Distribution tab: a ticked good is stockpiled (it stays in the granaries and storehouses).
+	caption(column, tr("Tick a good to stockpile it: it then stays in the granaries and storehouses, and no workshop, vendor, construction or trade takes it."))
 	for good in page.get("goods", []):
-		var name_label := Label.new()
+		var name_label := CheckBox.new()
+		name_label.name = "Stockpile%d" % int(good.resource)
 		name_label.text = str(good.name)
+		name_label.focus_mode = Control.FOCUS_NONE
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		name_label.button_pressed = bool(good.get("stockpiled", false))
+		name_label.tooltip_text = tr("Stockpiled") if name_label.button_pressed else tr("Distributed")
+		if name_label.button_pressed:
+			name_label.add_theme_color_override("font_color", Color(.98, .82, .36))
+			name_label.add_theme_color_override("font_pressed_color", Color(.98, .82, .36))
+		var resource := int(good.resource)
+		name_label.toggled.connect(func(on): send("stockpile %d %d" % [resource, 1 if on else 0]))
 		grid.add_child(name_label)
 		var count := Label.new()
 		count.text = str(int(good.count))
@@ -420,6 +446,34 @@ func fill_military(column: VBoxContainer, page: Dictionary) -> void:
 	var manning := bool(towers.get("manning", false))
 	towers_button.pressed.connect(func(): send("man_towers %d" % (0 if manning else 1)))
 	column.add_child(towers_button)
+	# The original game's Options menu: Auto Defend.
+	var defend := CheckButton.new()
+	defend.name = "AutoDefend"
+	defend.text = tr("Auto Defend")
+	defend.tooltip_text = tr("The city calls its companies out against invaders and sends them home afterwards; your orders wait while it is on.")
+	defend.focus_mode = Control.FOCUS_NONE
+	defend.button_pressed = bool(page.get("auto_defend", false))
+	defend.toggled.connect(func(on): send("auto_defend %d" % (1 if on else 0)))
+	column.add_child(defend)
+	# Poseidon's navy: a trireme sails only with its crew, the workers of its wharf ("Crew All" calls every crew).
+	var navy: Dictionary = page.get("navy", {})
+	if int(navy.get("wharves", 0)) > 0:
+		column.add_child(HSeparator.new())
+		line(column, tr("Triremes"), tr("%d built, %d abroad") % [int(navy.get("triremes", 0)), int(navy.get("abroad", 0))], -1)
+		line(column, tr("Crewed wharves"), "%d / %d" % [int(navy.get("crewed", 0)), int(navy.get("wharves", 0))], 0 if int(navy.get("crewed", 0)) == int(navy.get("wharves", 0)) else 1)
+		var crews := HBoxContainer.new()
+		crews.add_theme_constant_override("separation", 8)
+		for spec in [["CrewAll", "Crew all", 1, "Every wharf calls its crew: the triremes can take orders and sail abroad."], ["CrewHome", "Send all crews home", 0, "Every crew goes back to work in the city; the triremes wait at their wharves."]]:
+			var button := Button.new()
+			button.name = spec[0]
+			button.text = tr(spec[1])
+			button.tooltip_text = tr(spec[3])
+			button.focus_mode = Control.FOCUS_NONE
+			button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			var value: int = spec[2]
+			button.pressed.connect(func(): send("crew_all %d" % value))
+			crews.add_child(button)
+		column.add_child(crews)
 
 # The mythology page is the core's `mythology` answer, as in the Mythology window.
 func fill_mythology(column: VBoxContainer) -> void:

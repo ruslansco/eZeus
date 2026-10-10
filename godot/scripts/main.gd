@@ -120,6 +120,7 @@ var walker_vat = WalkerVat.new()
 var walker_contact=preload("res://scripts/walker_ground_contact.gd").new()
 var citizen_lod = CitizenLod.new()
 var road_drag = RoadDrag.new()
+var hotkeys = preload("res://scripts/city_hotkeys.gd").new()
 var message_log = MessageLog.new()
 var autosave_age := 0.0
 var autosave_interval := AUTOSAVE_SECONDS
@@ -384,6 +385,7 @@ func _ready() -> void:
 	world.add_child(footprint_cells)
 	world.add_child(plazas)
 	world.add_child(altar_fires)
+	building_fires.activity = static_batches.activity
 	world.add_child(building_fires)
 	world.add_child(building_auras)
 	world.add_child(disaster_effects)
@@ -476,6 +478,7 @@ func offer_settlement_guide() -> void:
 	Engine.remove_meta("ezeus_offer_settlement_guide")
 	if requested and not UserSettings.get_value("interface","settlement_guide_finished",false) and int(state.get("housing",{}).get("people",0))==0 and editor_panel==null:
 		open_city_help("guide")
+		city_help.offer()
 
 func material(color: Color, transparent := false) -> StandardMaterial3D:
 	var result := StandardMaterial3D.new()
@@ -670,10 +673,10 @@ func setup_ui() -> void:
 	set_tool(mode)
 	refresh_inspection()
 
-# Cycles the interface language. Controls are not rebuilt: texts are re-applied from the translations, and the
+# Changes the interface language. Controls are not rebuilt: texts are re-applied from the translations, and the
 # parts that show live data are refreshed. The core's own language (messages, names) is chosen when the city opens.
-func change_language() -> void:
-	language = UiText.set_language(UiText.next_language(language))
+func change_language(requested := "") -> void:
+	language = UiText.set_language(UiText.next_language(language) if requested.is_empty() else requested)
 	if persist_language:
 		UserSettings.set_language(language)
 	Engine.set_meta("ezeus_language", language)
@@ -776,6 +779,8 @@ func reason_text(code: String) -> String:
 		"no_monument": "There is no monument there.",
 		"already_finished": "It is built already.",
 		"not_finished": "The sanctuary is not finished yet.",
+		"no_oracle": "Only Zeus and Apollo keep an oracle.",
+		"auto_defend": "Auto Defend commands the companies. Turn it off in the Army panel to give them orders.",
 		"no_hall": "No hero's hall is there.",
 		"already_summoned": "The hero has been summoned already.",
 		"requirements_not_met": "The hero's requirements are not all met.",
@@ -948,7 +953,7 @@ func refresh_placement() -> void:
 			child.free()
 		ghost_asset = asset
 		# Use exactly the same imported mesh transforms and fitting as the live batch.
-		for piece in static_batches.template(asset):
+		for piece in static_batches.preview_template(asset):
 			var mesh := MeshInstance3D.new()
 			mesh.mesh = piece.mesh
 			mesh.material_override = piece.material
@@ -1112,6 +1117,12 @@ func command_finished(command: String, result: Dictionary) -> void:
 			hint.text = reason_text(str(result.get("error", "")))
 	elif command.begins_with("building_switch"):
 		hint.text = (tr("The wharf builds triremes again.") if command.ends_with(" 1") else tr("The wharf is shut down.")) if not result.has("error") else reason_text(str(result.error))
+	elif command.begins_with("auto_defend"):
+		hint.text = tr("Auto Defend is on: the city defends itself.") if command.ends_with(" 1") else tr("Auto Defend is off: the companies follow your orders.")
+	elif command.begins_with("crew_all"):
+		hint.text = tr("Every wharf calls its crew.") if command.ends_with(" 1") else tr("The crews go back to work in the city.")
+	elif command.begins_with("stockpile"):
+		hint.text = tr("The good is stockpiled: it stays in the granaries and storehouses.") if command.ends_with(" 1") else tr("The good is distributed again.")
 	elif command.begins_with("set_tax"):
 		hint.text = tr("The tax rate is set.") if not result.has("error") else reason_text(str(result.error))
 	elif command.begins_with("set_wage"):
@@ -1130,6 +1141,11 @@ func command_finished(command: String, result: Dictionary) -> void:
 		hint.text = tr("The company returns to the palace.")
 	elif command.begins_with("banner_move"):
 		hint.text = tr("The banner is moved.")
+	elif command.begins_with("world_quest") and not inspector.visible:
+		pass
+	elif command.begins_with("world_quest"):
+		hint.text = tr("The hero sets out on the quest.")
+		refresh_inspection()
 	elif command.begins_with("hero_summon"):
 		hint.text = tr("The hero is summoned.") if not result.has("error") else reason_text(str(result.error))
 	elif command.begins_with("monument_halt"):
@@ -1137,10 +1153,13 @@ func command_finished(command: String, result: Dictionary) -> void:
 	elif command.begins_with("sanctuary_help") and result.has("help") and result.help != null:
 		hint.text = str(result.help.text)
 		inspector_controls.show_help_answer(result.help)
+	elif command.begins_with("oracle ") and result.has("oracle_answer") and result.oracle_answer != null:
+		hint.text = BuildingInspector.oracle_text(result.oracle_answer)
+		inspector_controls.show_oracle_answer(result.oracle_answer)
 	elif command.begins_with("sanctuary_attack") and result.has("attack_answer") and result.attack_answer != null:
 		hint.text = str(result.attack_answer.text)
 		inspector_controls.show_attack_answer(result.attack_answer)
-	if command.begins_with("demolish_ruin") or command.begins_with("storage") or command.begins_with("industry") or command.begins_with("building_switch") or command.begins_with("trade ") or command.begins_with("hero_summon") or command.begins_with("monument_halt") or command.begins_with("sanctuary_help") or command.begins_with("sanctuary_attack"):
+	if command.begins_with("demolish_ruin") or command.begins_with("storage") or command.begins_with("industry") or command.begins_with("building_switch") or command.begins_with("trade ") or command.begins_with("hero_summon") or command.begins_with("monument_halt") or command.begins_with("sanctuary_help") or command.begins_with("sanctuary_attack") or command.begins_with("oracle "):
 		inspector_controls.command_done(command, not result.has("error"))
 	refresh_inspection()
 
@@ -1262,7 +1281,9 @@ func open_army() -> void:
 		army_panel.close()
 		return
 	close_inspection()
-	per_banner = int(core.query("army").get("per_banner", per_banner))
+	var army: Dictionary = core.query("army")
+	per_banner = int(army.get("per_banner", per_banner))
+	army_panel.set_auto_defend(bool(army.get("auto_defend", false)))
 	army_panel.set_banners(banners, per_banner)
 	army_panel.open()
 
@@ -1311,13 +1332,15 @@ func game_action(action: String) -> void:
 			SoundDialog.open(hud)
 		"display":
 			preload("res://ui/display_dialog.gd").open(hud)
+		"graphics":
+			preload("res://ui/graphics_dialog.gd").open(hud)
 		"interface":
-			preload("res://ui/interface_dialog.gd").open(hud)
+			preload("res://ui/interface_dialog.gd").open(hud,change_language)
 		"controls":
 			var controls: Window = ControlsDialog.open(hud)
 			controls.changed.connect(hud.retranslate)
 		"settings":
-			var settings: Window = GameSettingsDialog.open(hud)
+			var settings: Window = GameSettingsDialog.open(hud,false,core if core.simulation != null else null)
 			settings.changed.connect(apply_play_settings)
 		"trade":
 			TradeDialog.open(hud, core)
@@ -2063,6 +2086,7 @@ func update_walkers() -> void:
 		entry.field_load = int(walker.get("field_load", 0))
 		entry.field_task = str(walker.get("field_task", ""))
 		entry.selectable = bool(walker.get("selectable", false))
+		entry.own = bool(walker.get("own", false))
 		# A cart, or an ox cart's trailer, shows its load (cart_cargo.gd).
 		if CartCargo.BEDS.has(entry.asset):
 			CartCargo.update(self, entry, walker)
@@ -2186,6 +2210,8 @@ func set_overlay(id: String, toggle := false) -> void:
 		id = "normal"
 	if not overlay_view.set_mode(core, id):
 		return
+	if id != "normal":
+		hotkeys.last_overlay = id
 	apply_overlay_visibility()
 	hud.set_overlay(id)
 	hint.text = tr(Overlays.MODES[id][0]) if id != "normal" else tr("Normal view")
@@ -2455,6 +2481,11 @@ func review_city_models() -> void:
 	get_tree().quit()
 
 func pick_tile(screen: Vector2) -> void:
+	# A placement held in place (the original game's M) stays on its tile while the camera looks around.
+	if hotkeys.holds_placement(self):
+		picked = hotkeys.frozen_cell
+		refresh_placement()
+		return
 	var query := PhysicsRayQueryParameters3D.create(orbit.camera.project_ray_origin(screen), orbit.camera.project_ray_origin(screen) + orbit.camera.project_ray_normal(screen) * 2000)
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
@@ -2526,6 +2557,10 @@ func _unhandled_input(event: InputEvent) -> void:
 					hud.activate_dock_action(action)
 					get_viewport().set_input_as_handled()
 					return
+			# The original game's keys (build tabs, bookmarks, companies, speed, quarter turns ...): scripts/city_hotkeys.gd.
+			if hotkeys.handle(self, event):
+				get_viewport().set_input_as_handled()
+				return
 		# The keys the player may rebind (scripts/key_bindings.gd); Escape, Delete and the mouse stay as they are.
 		if KeyBindings.matches(event, "pause"):
 			core.send("pause %d" % (0 if state.get("paused", true) else 1))
@@ -2631,6 +2666,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				hint.text = tr("Trireme selected  •  right-click the water to send it  •  Escape lets it go")
 				return
 			trireme_orders.clear()
+			if trireme_orders.uncrewed_at(self, picked) >= 0:
+				hint.text = tr("This trireme has no crew. Switch its wharf on, or choose Crew all on the City window's military page.")
 			var banner_id := army_view.banner_at(picked)
 			if banner_id >= 0:
 				# A banner is selected, not the ground under it: the army panel takes the inspector's place.
@@ -2651,6 +2688,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if not placement_result.get("valid", false):
 				return
 			core.send("build %s %d %d %d%s" % [mode, placement_cell.x, placement_cell.y, orientation, partner_suffix()])
+			hotkeys.release_placement()
 			# A trade post is built for one partner: the tool ends with the placement, as in the SDL view.
 			if mode in ["trade_post", "pier"]:
 				set_tool("select")
@@ -2900,7 +2938,6 @@ func open_escape_menu() -> void:
 	if menu_resume:core.snapshot_received.emit(core.query("pause 1"))
 	escape_menu=EscapeMenu.new();escape_menu.hud=hud;hud.add_child(escape_menu)
 	escape_menu.closed.connect(close_escape_menu)
-	escape_menu.language_requested.connect(change_language)
 	escape_menu.action_requested.connect(escape_menu_action)
 
 func close_escape_menu() -> void:

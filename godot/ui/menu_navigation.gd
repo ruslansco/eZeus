@@ -54,7 +54,7 @@ func setup(menu: Control) -> void:
 	host.get_node("%MainEmblem").hide()
 	host.title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	host.tagline.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	host.get_node("MainAnchor/MainPage/MainScroll/MainColumn/MainFooter").alignment = BoxContainer.ALIGNMENT_CENTER
+	host.get_node("MainAnchor/MainPage/MainScroll/MainColumn/MainFooter").hide()
 	settings_page = simple_page("SettingsPage","Settings")
 	extras_page = simple_page("ExtrasPage","Extras")
 	host.pages.settings = settings_page
@@ -68,7 +68,9 @@ func setup(menu: Control) -> void:
 			button.reparent(grid)
 		else:
 			button = Button.new(); grid.add_child(button)
-			button.pressed.connect(func(): load(spec[2]).open(host))
+			button.pressed.connect(func():
+				if spec[0] == "game": load(spec[2]).open(host,false)
+				else: load(spec[2]).open(host))
 		button.theme_type_variation = "MenuChoice"; button.icon = null; button.alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.set_meta("caption",spec[1]); button.text = tr(spec[1]); button.name = "Settings_"+spec[0]
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -114,6 +116,10 @@ func setup(menu: Control) -> void:
 		button.theme_type_variation = "MenuPagePrimary"
 	for button in [host.adventure_back,host.load_back,host.leader_back,host.intro_back,settings_back,extras_back]:
 		button.theme_type_variation = "MenuPageChoice"
+	host.leader_create.theme_type_variation = "MenuPageChoice"
+	host.leader_delete.theme_type_variation = "MenuPageDanger"
+	for pager in [adventure_pager,save_pager,profile_pager]:
+		for button in [pager.previous,pager.next]: button.theme_type_variation = "MenuPagePager"
 	host.get_node("/root/UiAccess").changed.connect(fit)
 	get_viewport().size_changed.connect(fit)
 	settings_shade = ColorRect.new()
@@ -133,7 +139,7 @@ func settings_added(child: Node) -> void:
 	settings_page.hide()
 	frames.settings.hide()
 	settings_shade.show()
-	SettingsShell.new().setup(child, host)
+	SettingsShell.new().setup(child, host, true)
 	child.tree_exited.connect(func():
 		settings_windows.erase(child)
 		if settings_windows.is_empty() and host.page == "settings":
@@ -177,7 +183,6 @@ func back_button(page: PanelContainer) -> Button:
 func retranslate() -> void:
 	extras_button.text = tr("Extras")
 	host.leader_change.text = tr("Profiles")
-	host.language_button.text = "Русский" if host.language == "ru" else "English"
 	for page in [settings_page,extras_page]:
 		for child in page.get_child(0).get_children():
 			if child is Label or child is Button:
@@ -227,11 +232,10 @@ func fit() -> void:
 		button.custom_minimum_size = Vector2(0,38 if compact else 58)
 		host.theme.set_font_size("font_size","MenuChoice",roundi((17 if compact else 21)*host.get_node("/root/UiAccess").text_size/100.0))
 	host.leader_change.custom_minimum_size.y = 26
-	host.language_button.custom_minimum_size.y = 24 if compact else 32
-	var desired := Vector2(minf(1260,viewport.x-48),minf(850,viewport.y-40))
+	var desired := Vector2(minf(1400,viewport.x-40),minf(900,viewport.y-40))
 	var adventure: PanelContainer = host.get_node("%AdventurePage")
 	adventure.custom_minimum_size = desired
-	skin.clear_panel(adventure,Vector4(desired.x*.08,desired.y*.16,desired.x*.08,desired.y*.10))
+	skin.clear_panel(adventure,Vector4(desired.x*.08,desired.y*.16,desired.x*.08,desired.y*.12))
 	host.adventure_list.custom_minimum_size.x = clampf(desired.x*.27,220,320)
 	host.get_node("%AdventureHint").custom_minimum_size.x = host.adventure_list.custom_minimum_size.x
 	host.get_node("%AdventureHint").visible = not compact
@@ -247,11 +251,15 @@ func fit() -> void:
 	for key in ["load","leaders","settings","extras"]:
 		var page: PanelContainer = host.pages[key]
 		var size := Vector2(minf(860,viewport.x-64),minf(740,viewport.y-48))
+		if key in ["load","leaders"]: size = Vector2(minf(1040,viewport.x-48),minf(860,viewport.y-40))
 		page.custom_minimum_size = size
-		skin.clear_panel(page,Vector4(size.x*.11,size.y*.14,size.x*.09,size.y*.08))
-	var intro_size := Vector2(minf(1260,viewport.x-48),minf(850,viewport.y-40))
+		skin.clear_panel(page,Vector4(size.x*.10,size.y*.15,size.x*.10,size.y*.13))
+	host.leader_list.get_parent().add_theme_constant_override("separation",8 if compact else 16)
+	for button in [host.leader_create,host.leader_delete,host.leader_back,host.leader_proceed,host.adventure_back,host.adventure_start,host.load_back,host.load_open,host.intro_back,host.intro_begin]:
+		button.custom_minimum_size.y = 46 if compact else 54
+	var intro_size := Vector2(minf(1560,viewport.x-32),minf(980,viewport.y-32))
 	host.get_node("%IntroPage").custom_minimum_size = intro_size
-	skin.clear_panel(host.get_node("%IntroPage"),Vector4(intro_size.x*.08,intro_size.y*.16,intro_size.x*.08,intro_size.y*.10))
+	skin.clear_panel(host.get_node("%IntroPage"),Vector4(intro_size.x*.075,intro_size.y*.15,intro_size.x*.075,intro_size.y*.12))
 	skin.clear_panel(host.intro_card.get_node("Banner"),Vector4.ZERO)
 	host.intro_card.get_node("%Medal").hide()
 	fit_intro(viewport)
@@ -318,15 +326,17 @@ func fit_intro(viewport: Vector2) -> void:
 	card.get_node("%Content").vertical = short
 	var content = card.get_node("%Content")
 	content.move_child(card.get_node("%GoalsPanel"),0 if short else 1)
-	var goals_width := minf(1260,viewport.x-48)*.84*.65 if many else 350.0
+	var inner_width := minf(1560,viewport.x-32)*.85
+	var goals_width := inner_width*.62 if many else clampf(inner_width*.26,270,350)
 	card.get_node("%GoalsPanel").custom_minimum_size.x = 0 if short else goals_width
-	card.get_node("%GoalsPanel").size_flags_horizontal = Control.SIZE_FILL if many else Control.SIZE_EXPAND_FILL
+	card.get_node("%GoalsPanel").size_flags_horizontal = Control.SIZE_FILL
+	card.get_node("%StoryPanel").size_flags_stretch_ratio = 1
 	card.get_node("%GoalsPanel").size_flags_vertical = Control.SIZE_SHRINK_BEGIN if short else Control.SIZE_EXPAND_FILL
 	card.goals.columns = 2 if many else (mini(3,maxi(1,card.goals.get_child_count())) if short else 1)
 	card.scroll.custom_minimum_size.y = 80
 	card.goal_scroll.custom_minimum_size.y = 0
 	card.add_theme_constant_override("separation",6 if tight else 12)
-	card.scroll.get_parent().add_theme_constant_override("separation",4 if tight else 10)
+	card.scroll.get_parent().add_theme_constant_override("separation",4 if tight else 6)
 	card.get_node("%Content").add_theme_constant_override("separation",8 if tight else 18)
 	for row in card.goals.get_children(): row.visible = true; row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 

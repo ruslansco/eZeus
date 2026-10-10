@@ -1,4 +1,5 @@
 shader_type spatial;
+global uniform float city_effect_clock;
 render_mode unshaded, blend_add, depth_draw_never, cull_disabled;
 // A burning building's flames (scripts/building_fires.gd): tongues of fire that sway, leap and flicker, after the altar's flame
 // (ritual_flame.gdshader) but larger and wilder. COLOR.r is the tongue's own number (its phase); `seed` keeps neighbouring fires
@@ -13,16 +14,16 @@ float noise(vec2 p) {
 void vertex() {
 	float tip=1.0-UV.y;
 	float phase=COLOR.r*21.0+seed*7.0;
-	VERTEX.x+=sin(TIME*5.1+phase+tip*5.0)*.09*tip;
-	VERTEX.z+=cos(TIME*4.4+phase*.8+tip*6.0)*.09*tip;
-	VERTEX.y*=1.0+.25*sin(TIME*6.3+phase)*tip+.15*sin(TIME*11.0+phase*1.7)*tip;
+	VERTEX.x+=sin(city_effect_clock*5.1+phase+tip*5.0)*.09*tip;
+	VERTEX.z+=cos(city_effect_clock*4.4+phase*.8+tip*6.0)*.09*tip;
+	VERTEX.y*=1.0+.25*sin(city_effect_clock*6.3+phase)*tip+.15*sin(city_effect_clock*11.0+phase*1.7)*tip;
 }
 void fragment() {
 	float s=COLOR.r*17.0+seed*3.0;
 	float y=1.0-UV.y;
-	float n=noise(vec2(UV.x*4.0+s,y*4.0-TIME*4.2));
-	float m=noise(vec2(UV.x*9.0-s,y*9.0-TIME*6.0));
-	float center=.5+sin(y*7.0-TIME*5.0+s)*y*.1;
+	float n=noise(vec2(UV.x*4.0+s,y*4.0-city_effect_clock*4.2));
+	float m=noise(vec2(UV.x*9.0-s,y*9.0-city_effect_clock*6.0));
+	float center=.5+sin(y*7.0-city_effect_clock*5.0+s)*y*.1;
 	float width=min(.46,(1.0-y)*.42+n*.14);
 	float fire=(1.0-smoothstep(width*.3,width,abs(UV.x-center)))*(1.0-smoothstep(.35,1.0,y+n*.25+m*.1));
 	float edge=smoothstep(0.0,.08,UV.x)*(1.0-smoothstep(.92,1.0,UV.x));

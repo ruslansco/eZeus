@@ -1,9 +1,44 @@
 {
   "revision": 1,
   "source": "eZeus/tools/godot_housing.py",
-  "native_footprint": [2, 2],
-  "architecture_heights": [0.96, 1.16, 1.36, 1.58, 1.84, 2.18, 2.56],
+  "native_footprint": [
+    2,
+    2
+  ],
+  "architecture_heights": [
+    0.96,
+    1.16,
+    1.36,
+    1.58,
+    1.84,
+    2.18,
+    2.56
+  ],
   "vertex_budget": 24000,
   "design": "Original starter wattle-and-daub cottage, improved mud-brick dwelling, then retained Greek courtyard and upper-storey architecture; muted soil, limestone and reed materials",
-  "rights_status": "needs_evidence"
+  "rights_status": "needs_evidence",
+  "resident_activity": {
+    "revision": 1,
+    "visibility": "native people > 0; architecture-only static models, occupied-only runtime residents",
+    "loop_seconds_at_normal_speed": 4,
+    "vertex_allocations": {
+      "common_house_0a": 17607,
+      "common_house_1a": 18171,
+      "common_house_2a": 17314,
+      "common_house_3a": 18214,
+      "common_house_4a": 21339,
+      "common_house_5a": 21061,
+      "common_house_6a": 21194
+    },
+    "triangle_budgets": {
+      "common_house_0a": 40896,
+      "common_house_1a": 41564,
+      "common_house_2a": 39898,
+      "common_house_3a": 41407,
+      "common_house_4a": 46070,
+      "common_house_5a": 46276,
+      "common_house_6a": 42086
+    },
+    "budget_reference": "At most five percent over the seven occupied original GLB triangle counts before resident separation; no other family changes"
+  }
 }

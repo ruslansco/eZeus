@@ -129,6 +129,9 @@ func run() -> void:
 	check(not str(info.voice).is_empty() and (panel.speaking or audio.muted() or not audio.enabled), "the voice line plays when the window opens")
 	await create_timer(1.2).timeout
 	await capture("person")
+	if not panel.speaking:
+		panel.speak()
+		await frames()
 	panel.voice_button.pressed.emit()
 	await frames()
 	check(not panel.speaking, "the voice can be stopped")
@@ -236,7 +239,8 @@ func run() -> void:
 		var cached: ShaderMaterial = city.character_appearance.materials.get("walker_curator")
 		check(cached == null or not cached.get_shader_parameter("elder_portrait"), "city material retains its ordinary finish")
 		panel.set_figure("walker_homeless")
-		check(not panel.still.visible and panel.figure != null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_ALWAYS, "a role without an image returns to the live 3D figure")
+		check(panel.still.visible and panel.figure == null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED, "homeless traveler uses his generated portrait without live 3D rendering")
+		await capture("homeless")
 		panel.set_figure("walker_curator")
 		panel.typed = panel.typing; panel.speech.visible_ratio = 1.0
 		await capture("curator")
@@ -256,8 +260,20 @@ func run() -> void:
 	city.open_character(person)
 	await frames()
 	panel = city.character_panel
-	for file: String in images:
-		var role := file.get_basename()
+	var people_images := 0
+	for file: String in DirAccess.get_files_at("res://assets/models"):
+		if not file.ends_with(".json"):
+			continue
+		var contract: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/models/" + file))
+		if not contract.has("character"):
+			continue
+		panel.set_figure(file.get_basename())
+		if panel.still.visible and panel.still.texture != null and panel.figure == null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED:
+			people_images += 1
+	check(people_images == 104, "all 104 people roles and variants use images with the 3D portrait viewport disabled (%d)" % people_images)
+	# Keep one explicit offline-render override probe. Normal gameplay has
+	# already checked every people role above without instantiating 104 models.
+	for role: String in ["walker_curator"]:
 		panel.portrait_models.append(role)
 		panel.set_figure(role)
 		var modelled: bool = panel.figure != null and not panel.still.visible and panel.viewport.render_target_update_mode == SubViewport.UPDATE_ALWAYS

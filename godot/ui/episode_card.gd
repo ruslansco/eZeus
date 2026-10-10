@@ -35,6 +35,7 @@ var colony_indices: Array = []
 var menu_layout := false
 
 func _ready() -> void:
+	primary.theme_type_variation = "CityPanelPrimary"
 	primary.pressed.connect(func(): primary_pressed.emit())
 	secondary.pressed.connect(func(): secondary_pressed.emit())
 	colonies.item_activated.connect(func(_row): _choose())

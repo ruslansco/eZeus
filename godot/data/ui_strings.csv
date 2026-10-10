@@ -244,7 +244,6 @@ Storage,Склады
 Storage and trade,Склады и торговля
 Storage orders updated. Carts will follow the new orders.,Заказы склада изменены. Повозки выполнят новые указания.
 Stored goods,Запасы
-Switch language,Сменить язык
 Tax collection,Сбор налогов
 "Terrain, a citizen or a banner blocks this space","Мешает ландшафт, житель или знамя"
 Terrain: %s,Местность: %s
@@ -509,7 +508,6 @@ Choose a building tile to start placement.,"Выберите карточку з
 Click to place. Facing follows the native connection; Esc returns to inspection.,Щелкните для размещения. Направление задает соединение; Esc возвращает к осмотру.
 Interface options,Настройки интерфейса
 Interface options…,Настройки интерфейса…
-Preview changes now. Apply remembers them; Cancel restores your previous sizes.,Изменения видны сразу. «Применить» сохраняет их; «Отмена» возвращает прежние размеры.
 Interface size,Размер интерфейса
 Text size,Размер текста
 Restore default sizes,Вернуть стандартные размеры
@@ -692,7 +690,11 @@ Place this on a straight piece of the hippodrome,Поставьте это на 
 "Build more sheds, dairies or corrals for more animals","Для новых животных постройте больше чесален, сыроварен или загонов"
 Game menu,Меню игры
 Settings,Настройки
+Saved games,Сохранения
+Help,Помощь
+Gameplay,Игра
 City paused · Escape to return,Город на паузе · Escape — вернуться
+City paused · Escape to go back,Город на паузе · Escape — назад
 Return to city,Вернуться в город
 Interface language,Язык интерфейса
 Show resources,Показать ресурсы
@@ -1166,3 +1168,174 @@ Search profiles,Поиск правителей
 Page %d of %d,Страница %d из %d
 Objective %d of %d,Цель %d из %d
 No matches,Ничего не найдено
+New road tiles: %d / 3,Новые клетки дороги: %d / 3
+"Extend an existing road by 3 tiles. Click and drag over open land, leaving room for houses on both sides.","Продлите существующую дорогу на 3 клетки. Нажмите и протяните по свободной земле, оставляя место для домов с обеих сторон."
+Homes placed: %d / 2,Построено домов: %d / 2
+Place 2 common houses beside the connected road. An edge of each house must touch the road.,Поставьте 2 обычных дома у соединённой дороги. Сторона каждого дома должна примыкать к дороге.
+Let city time run until your first residents arrive. They will fill the jobs in your service buildings.,Запустите время и дождитесь первых жителей. Они займут рабочие места в городских службах.
+"If no one arrives, check that the houses connect to the city's entry road.","Если никто не приходит, проверьте связь домов с дорогой от входа в город."
+Place a fountain near your houses and connect it to the road. Let residents staff it and supply the homes.,Поставьте фонтан рядом с домами и соедините его с дорогой. Дождитесь работников и подачи воды в дома.
+"Completion means a home has received water, not just that a fountain exists.","Задача выполнена, когда дом получил воду. Одного построенного фонтана недостаточно."
+Build a granary on the road. It stores food for the market; a warehouse does not store food.,Поставьте амбар у дороги. Он хранит еду для рынка; склад не принимает пищу.
+Choose a food source in Agriculture and connect it to the granary's road. Place it beside the resource or on suitable farmland.,Выберите источник пищи в разделе «Сельское хозяйство» и соедините его с дорогой к амбару. Разместите его у нужного ресурса или на плодородной земле.
+Use a source suited to this map. Hunting needs animals; fishing needs the shore; farms need fertile land.,"Выберите подходящий для карты источник. Для охоты нужны животные, для рыбалки — берег, для ферм — плодородная земля."
+Open Trade to find a partner that sells food. Build its trading post and set a food import order.,"Откройте «Торговлю» и найдите город, продающий еду. Постройте его торговый пост и настройте импорт пищи."
+Place an agora along the road near your houses. It provides spaces for market vendors.,Поставьте агору вдоль дороги рядом с домами. На ней размещаются рыночные торговцы.
+Place a Food Vendor inside the agora. The peddler takes food from the granary and delivers it to homes.,Поставьте торговца едой внутри агоры. Разносчик забирает пищу из амбара и доставляет её в дома.
+"Let the food vendor collect food and visit a home. Keep the source, granary and agora on the same road network.","Дождитесь, пока торговец едой соберёт пищу и посетит дом. Источник еды, амбар и агора должны быть в одной дорожной сети."
+"If food is not reaching homes, inspect the vendor's stock and check the Issues tab for missing workers or road access.","Если еда не доходит до домов, проверьте запасы торговца и вкладку «Проблемы»: хватает ли работников и есть ли доступ к дороге."
+Place a maintenance office on your settlement's road. Its workers patrol to reduce fire and collapse risk.,Поставьте пост обслуживания у дороги поселения. Его работники обходят город и снижают риск пожаров и обрушений.
+"Review this chapter's objectives. Keep food, water and service jobs working before expanding the city.","Посмотрите задачи главы. Прежде чем расширять город, наладьте подачу еды и воды и работу городских служб."
+The settlement guide teaches the basics. Your adventure objectives decide how the chapter is won.,Руководство знакомит с основами. Для победы в главе нужно выполнить задачи приключения.
+Review your next objective,Посмотрите следующую задачу
+"This map has no chapter objectives. Build freely, and use Issues to check whether your city needs help.",На этой карте нет задач главы. Стройте свободно и проверяйте состояние города во вкладке «Проблемы».
+Sandbox: build at your own pace,Песочница: стройте в своём темпе
+The buildings for this task are not available in this chapter. Continue to the next available task.,Здания для этой задачи недоступны в текущей главе. Перейдите к следующей доступной задаче.
+Unavailable in this chapter,Недоступно в этой главе
+Select %s,Выбрать: %s
+Choose a food source,Выбрать источник пищи
+Open Trade,Открыть торговлю
+Review objectives,Посмотреть задачи
+Review city issues,Проверить проблемы города
+Resume city time,Запустить время
+Check city issues,Проверить проблемы города
+The guide does not place buildings or change city time automatically.,Руководство не строит здания и не меняет ход времени автоматически.
+Hide all steps,Скрыть все шаги
+View all steps,Все шаги
+Skipped,Пропущено
+Start your settlement,Начните поселение
+Would you like help building your first neighborhood?,Помочь вам построить первый жилой квартал?
+"Learn roads, homes, water and food one action at a time. The guide checks your city as you build, and you can close or reopen it at any time.","Освойте дороги, дома, воду и пищу по одному действию за раз. Руководство проверяет город по мере строительства. Его можно закрыть и снова открыть в любое время."
+Your city stays under your control. No buildings are placed automatically.,Вы управляете городом. Никакие здания не строятся автоматически.
+Start guided setup,Начать с подсказками
+Explore on my own,Разобраться самостоятельно
+City paused: use Play to continue.,"Время остановлено: нажмите «Пуск», чтобы продолжить."
+City running: waiting for delivery.,Время идёт: ждём результат.
+Check %s,Проверить: %s
+"Complete this task to continue, or choose Skip this step.","Выполните задачу, чтобы продолжить, или выберите «Пропустить шаг»."
+Skip this step,Пропустить шаг
+Build tabs,Вкладки строительства
+Bookmarks,Закладки
+Companies,Отряды
+Pan forward (second key),Сдвиг вперёд (вторая клавиша)
+Pan back (second key),Сдвиг назад (вторая клавиша)
+Pan left (second key),Сдвиг влево (вторая клавиша)
+Pan right (second key),Сдвиг вправо (вторая клавиша)
+Turn the city a quarter left,Повернуть город на четверть влево
+Turn the city a quarter right,Повернуть город на четверть вправо
+Face north,Повернуть на север
+Hold the placement in place,Закрепить место постройки
+Pause or resume (second key),Пауза или продолжение (вторая клавиша)
+Faster game speed,Быстрее
+Slower game speed,Медленнее
+Show or hide the city map,Показать или скрыть карту города
+Screenshot,Снимок экрана
+Exit the game,Выйти из игры
+Window 800 × 600,Окно 800 × 600
+Window 1024 × 768,Окно 1024 × 768
+Population tab,Вкладка «Население»
+Husbandry tab,Вкладка «Хозяйство»
+Industry tab,Вкладка «Промышленность»
+Distribution tab,Вкладка «Распределение»
+Hygiene and safety tab,Вкладка «Гигиена и безопасность»
+Administration tab,Вкладка «Управление»
+Culture tab,Вкладка «Культура»
+Mythology tab,Вкладка «Мифология»
+Military tab,Вкладка «Армия»
+Aesthetics tab,Вкладка «Красота»
+Go to bookmark 1,Перейти к закладке 1
+Go to bookmark 2,Перейти к закладке 2
+Go to bookmark 3,Перейти к закладке 3
+Go to bookmark 4,Перейти к закладке 4
+Set bookmark 1,Поставить закладку 1
+Set bookmark 2,Поставить закладку 2
+Set bookmark 3,Поставить закладку 3
+Set bookmark 4,Поставить закладку 4
+Give the chosen company key 1,Назначить выбранному отряду клавишу 1
+Give the chosen company key 2,Назначить выбранному отряду клавишу 2
+Give the chosen company key 3,Назначить выбранному отряду клавишу 3
+Give the chosen company key 4,Назначить выбранному отряду клавишу 4
+Give the chosen company key 5,Назначить выбранному отряду клавишу 5
+Choose company 1,Выбрать отряд 1
+Choose company 2,Выбрать отряд 2
+Choose company 3,Выбрать отряд 3
+Choose company 4,Выбрать отряд 4
+Choose company 5,Выбрать отряд 5
+Switch views (normal and the last overlay),Сменить вид (обычный и последний слой)
+eZeus (this game),eZeus (эта игра)
+Classic Zeus,Классический Zeus
+Key layout,Раскладка клавиш
+Every key now follows the %s layout.,Все клавиши теперь по раскладке «%s».
+Nothing in this tab can be built in this city now.,В этом городе сейчас нельзя построить ничего из этой вкладки.
+Bookmark %d set. %s comes back here.,Закладка %d поставлена. %s вернёт сюда.
+Bookmark %d is not set yet: %s sets it.,Закладка %d ещё не поставлена: её ставит %s.
+Bookmark %d,Закладка %d
+Choose a company first: click its banner or pick it in the Army panel.,Сначала выберите отряд: щёлкните по его знамени или выберите его в панели армии.
+%s chooses this company now.,Теперь %s выбирает этот отряд.
+No company has key %d: choose one and press %s.,Клавиша %d не назначена отряду: выберите отряд и нажмите %s.
+The placement follows the pointer again.,Место постройки снова следует за указателем.
+Choose a building and point at its place first.,Сначала выберите здание и укажите место для него.
+"The placement holds its place: look around, click to build there, %s lets it go.","Место постройки закреплено: осмотритесь, щёлкните, чтобы построить здесь, %s отпускает."
+Screenshot saved: %s,Снимок экрана сохранён: %s
+The screenshot could not be saved.,Не удалось сохранить снимок экрана.
+Window %d × %d,Окно %d × %d
+Leave the game now? Anything not saved is lost.,Выйти из игры? Всё несохранённое будет потеряно.
+Exit,Выйти
+Shift + 1–0,Shift и 1–0
+Open a build tab in this game's layout (Shift + -: the City window),Открыть вкладку строительства в раскладке этой игры (Shift + -: окно города)
+Reply to the pending decision before city time can resume.,"Ответьте на ожидающее решение, чтобы запустить время."
+"Lay a short road of at least 3 tiles near the city's entry point. Click and drag over open land, leaving room for houses.","Проложите дорогу длиной хотя бы 3 клетки у входа в город. Нажмите и протяните по свободной земле, оставляя место для домов."
+Consult the Oracle,Спросить оракула
+Ask the Oracle what will come to the city,"Спросить оракула, что ждёт город"
+The Oracle speaks: in about %d months an army will march on the city from %s.,Оракул изрекает: примерно через %d мес. на город двинется войско из %s.
+The Oracle speaks: in about %d months an angry god will strike the city: %s.,Оракул изрекает: примерно через %d мес. разгневанный бог обрушится на город: %s.
+The Oracle speaks: in about %d months a monster will be loose in the city: %s.,Оракул изрекает: примерно через %d мес. в городе появится чудовище: %s.
+The Oracle speaks: in about %d months a request will come from %s.,Оракул изрекает: примерно через %d мес. придёт просьба от %s.
+The Oracle speaks: in about %d months a call for troops will come from %s.,Оракул изрекает: примерно через %d мес. %s попросит войска.
+The Oracle speaks: in about %d months a gift will come from %s.,Оракул изрекает: примерно через %d мес. придёт дар от %s.
+The Oracle speaks: in about %d months a god will set the city a quest: %s.,Оракул изрекает: примерно через %d мес. бог даст городу задание: %s.
+The Oracle speaks: in about %d months a disaster will strike the city: %s.,Оракул изрекает: примерно через %d мес. город постигнет бедствие: %s.
+The Oracle is silent. Ask again later (%d%% ready).,Оракул молчит. Спросите позже (готовность %d%%).
+"The Oracle speaks: no army, angry god, monster or disaster will reach the city in the next two years.","Оракул изрекает: в ближайшие два года ни войско, ни разгневанный бог, ни чудовище, ни бедствие не придут в город."
+Only Zeus and Apollo keep an oracle.,Оракул есть только у Зевса и Аполлона.
+Auto Defend commands the companies. Turn it off in the Army panel to give them orders.,"Отрядами командует автозащита. Выключите её в панели армии, чтобы отдавать приказы."
+Auto Defend,Автозащита
+Auto Defend commands the companies,Отрядами командует автозащита
+The city calls its companies out against invaders and sends them home afterwards; your orders wait while it is on.,"Город сам выводит отряды против захватчиков и затем отправляет их домой; пока она включена, ваши приказы не действуют."
+Auto Defend is on: the city defends itself.,Автозащита включена: город защищается сам.
+Auto Defend is off: the companies follow your orders.,Автозащита выключена: отряды выполняют ваши приказы.
+The good is stockpiled: it stays in the granaries and storehouses.,Товар накапливается: он остаётся в амбарах и складах.
+The good is distributed again.,Товар снова распределяется.
+"Tick a good to stockpile it: it then stays in the granaries and storehouses, and no workshop, vendor, construction or trade takes it.","Отметьте товар, чтобы накапливать его: он останется в амбарах и складах, и его не возьмут ни мастерские, ни торговцы, ни стройки, ни торговля."
+Stockpiled,Накапливается
+Distributed,Распределяется
+Triremes,Триеры
+"%d built, %d abroad","построено %d, за морем %d"
+Crewed wharves,Верфи с командой
+Crew all,Собрать все команды
+Send all crews home,Распустить все команды
+Every wharf calls its crew: the triremes can take orders and sail abroad.,Каждая верфь собирает команду: триеры могут получать приказы и уходить в поход.
+Every crew goes back to work in the city; the triremes wait at their wharves.,Все команды возвращаются к работе в городе; триеры ждут у верфей.
+Navy,Флот
+Trireme %d,Триера %d
+not accessible by sea,недоступно по морю
+%d triremes,триер: %d
+"Choose at least one company, hero or trireme first.","Сначала выберите хотя бы один отряд, героя или триеру."
+That trireme has no crew: switch its wharf on to call the crew.,"У этой триеры нет команды: включите её верфь, чтобы собрать команду."
+That city cannot be reached by sea.,До этого города не добраться по морю.
+"This trireme has no crew. Switch its wharf on, or choose Crew all on the City window's military page.",У этой триеры нет команды. Включите её верфь или выберите «Собрать все команды» на военной странице окна города.
+Every wharf calls its crew.,Каждая верфь собирает команду.
+The crews go back to work in the city.,Команды возвращаются к работе в городе.
+Plan your next steps,Спланируйте дальнейшие шаги
+Completed earlier,Выполнено ранее
+%d jobs are unfilled. Add road-connected homes if your services need more workers.,"Свободных рабочих мест: %d. Добавьте дома у дороги, если городским службам нужны работники."
+Inspect your trading post and check its food imports. A partner must sell food before you can enable an import order.,"Осмотрите торговый пост и проверьте импорт пищи. Включить импорт можно только у партнёра, который продаёт еду."
+Inspect food trade,Проверить торговлю пищей
+Dispatch %s on the quest,Отправить %s выполнять задание
+The hero sets out on the quest.,Герой отправляется выполнять задание.
+Preview size and motion changes now. Language changes take effect when you apply.,Размеры и анимация меняются при просмотре. Язык изменится после нажатия «Применить».
+Normal speed,Обычная скорость
+Fast speed,Высокая скорость
+Very fast speed,Очень высокая скорость
+"City time, walkers and building activity follow this pace. Changing speed keeps the city paused.","Время города, жители и анимации зданий следуют этому темпу. Смена скорости не снимает паузу."
+Slower: %s · Faster: %s,Медленнее: %s · Быстрее: %s

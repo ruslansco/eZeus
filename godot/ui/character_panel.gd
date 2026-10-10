@@ -13,9 +13,27 @@ const VOICE_ICON := preload("res://ui/icons/voice.svg")
 const STOP_ICON := preload("res://ui/icons/stop.svg")
 # Portrait images: res://assets/portraits/<asset>.png (painted, art/ai_portraits) is shown instead of the 3D figure.
 # To go back to the live 3D model, list the role in portrait_models below (or set PORTRAIT_IMAGES false for every role);
-# the image files can stay. Roles without an image always show their 3D model.
+# the image files can stay. Related city roles share a generated portrait.
 const PORTRAIT_DIR := "res://assets/portraits/"
 const PORTRAIT_IMAGES := true
+const PORTRAIT_ROLES := {
+	"settlers1":"walker_homeless", "walker_deerhunter":"walker_hunter", "walker_goatherd":"walker_shepherd",
+	"walker_rancher":"walker_oxhandler", "walker_orichalcminer":"walker_bronzeminer",
+	"walker_archerposeidon":"walker_archer", "walker_hopliteposeidon":"walker_hoplite",
+	"walker_greekhoplite":"walker_hoplite", "walker_greekrockthrower":"walker_rockthrower",
+	"walker_greekhorseman":"walker_horseman", "walker_greekchariot":"walker_horseman", "walker_chariotposeidon":"walker_horseman",
+	"walker_trojanhoplite":"walker_hoplite", "walker_trojanspearthrower":"walker_hoplite", "walker_trojanhorseman":"walker_horseman",
+	"walker_persianhoplite":"walker_hoplite", "walker_persianarcher":"walker_archer", "walker_persianhorseman":"walker_horseman",
+	"walker_egyptianhoplite":"walker_hoplite", "walker_egyptianarcher":"walker_archer", "walker_egyptianchariot":"walker_horseman",
+	"walker_atlanteanhoplite":"walker_hoplite", "walker_atlanteanarcher":"walker_archer", "walker_atlanteanchariot":"walker_horseman",
+	"walker_mayanhoplite":"walker_hoplite", "walker_mayanarcher":"walker_archer",
+	"walker_phoenicianarcher":"walker_archer", "walker_phoenicianhorseman":"walker_horseman",
+	"walker_centaurarcher":"walker_archer", "walker_centaurhorseman":"walker_horseman",
+	"walker_oceanidhoplite":"walker_priestess", "walker_oceanidspearthrower":"walker_priestess",
+	"walker_amazonspear":"walker_atalanta", "walker_amazonarcher":"walker_atalanta", "walker_areswarrior":"walker_ares",
+	"walker_racechariot0":"walker_horseman", "walker_racechariot1":"walker_horseman",
+	"walker_racechariot2":"walker_horseman", "walker_racechariot3":"walker_horseman"
+}
 const POSE_TURN := .26         # The rendered portraits' three-quarter turn.
 const KIND_TEXT := {"god": "Olympian", "hero": "Hero", "monster": "Monster"}
 const Inventory = preload("res://ui/character_inventory.gd")
@@ -300,7 +318,9 @@ func build_text() -> Control:
 	others_row.add_theme_constant_override("h_separation", 6)
 	others_row.add_theme_constant_override("v_separation", 6)
 	others_box.add_child(others_row)
-	content.add_child(others_box)
+	# Keep native co-located people available beside the reading area even when a
+	# long quote or inventory needs scrolling; choosing one never loses its callback.
+	column.add_child(others_box)
 	return column
 
 func build_footer() -> Control:
@@ -321,7 +341,7 @@ func fit() -> void:
 	if not is_node_ready():
 		return
 	var width := minf(860, maxf(0, size.x - 48))
-	var desired_height := 580 if inventory.data.get("kind", "") == "agora" else 470 if inventory.visible else 440
+	var desired_height := 580 if inventory.data.get("kind", "") == "agora" else 500 if inventory.visible else 470
 	var height := minf(desired_height, maxf(0, size.y - 48))
 	card.custom_minimum_size = Vector2(width, height)
 	portrait_frame.custom_minimum_size = Vector2(clampf(width * .29, 160, 250), minf(320, height - 120))
@@ -391,7 +411,7 @@ func set_figure(asset: String) -> void:
 	viewport.mesh_lod_threshold = 1.0
 	viewport.scaling_3d_scale = 1.0
 	stage.get_node("PortraitKey").light_energy = 1.25
-	var image := PORTRAIT_DIR + asset + ".png"
+	var image := portrait_image(asset)
 	var pictured := pictured_role(asset)
 	still.visible = pictured
 	holder.visible = not pictured
@@ -420,7 +440,18 @@ func set_figure(asset: String) -> void:
 # Whether the window shows the role's portrait image rather than its 3D model.
 func pictured_role(asset: String) -> bool:
 	return PORTRAIT_IMAGES and portrait_source.is_empty() and not asset.is_empty() and not asset in portrait_models \
-		and ResourceLoader.exists(PORTRAIT_DIR + asset + ".png")
+		and not portrait_image(asset).is_empty()
+
+func portrait_image(asset: String) -> String:
+	var exact := PORTRAIT_DIR + asset + ".png"
+	if ResourceLoader.exists(exact):
+		return exact
+	var base := asset
+	if asset.ends_with("_v2") or asset.ends_with("_v3"):
+		base = asset.left(-3)
+	var role: String = PORTRAIT_ROLES.get(base, base)
+	var related := PORTRAIT_DIR + role + ".png"
+	return related if ResourceLoader.exists(related) else ""
 
 # A man's portrait model (tools/godot_portrait_export.py), loaded only by the portrait renderer from `portrait_source`.
 func portrait_model(asset: String) -> Node3D:

@@ -11,6 +11,7 @@ const Overlays = preload("res://scripts/overlays.gd")
 const ControlsDialog = preload("res://ui/controls_dialog.gd")
 const GameSettingsDialog = preload("res://ui/game_settings_dialog.gd")
 const Orbit = preload("res://scripts/orbit_camera.gd")
+const BuildCatalog = preload("res://scripts/build_catalog.gd")
 
 var okay := true
 var checks := 0
@@ -21,6 +22,22 @@ const DEFAULTS := {"build_house":KEY_H,"build_road":KEY_B,"build_roadblock":KEY_
 	"world_map": KEY_F2, "army": KEY_F4, "mythology": KEY_F6, "city": KEY_F7, "mute": KEY_M, "details": KEY_F3,
 	"overlay_normal": KEY_0, "overlay_water": KEY_1, "overlay_supplies": KEY_2, "overlay_hygiene": KEY_3, "overlay_hazards": KEY_4, "overlay_appeal": KEY_5,
 	"overlay_taxes": KEY_6, "overlay_unrest": KEY_7, "overlay_security": KEY_8, "overlay_roads": KEY_9, "overlay_problems": KEY_TAB, "overlay_normal_alt": KEY_QUOTELEFT}
+# The original game's keys in this game's own layout: only the ones that clash with nothing are given (the rest wait for the player or
+# the Classic layout).
+const ORIGINAL := {"pan_forward_alt": KEY_UP, "pan_back_alt": KEY_DOWN, "pan_left_alt": KEY_LEFT, "pan_right_alt": KEY_RIGHT,
+	"rotate_left": KEY_PAGEUP, "rotate_right": KEY_PAGEDOWN, "face_north": 0, "freeze_footprint": 0, "pause_alt": KEY_P,
+	"speed_up": KEY_BRACKETRIGHT, "speed_down": KEY_BRACKETLEFT, "overview_map": 0, "screenshot": KEY_F12, "quit_game": KEY_X | KEY_MASK_ALT,
+	"window_800": 0, "window_1024": 0, "switch_view": 0,
+	"bookmark_go_1": KEY_F1 | KEY_MASK_ALT, "bookmark_go_4": KEY_F4 | KEY_MASK_ALT, "bookmark_set_1": KEY_F1 | KEY_MASK_CTRL, "bookmark_set_4": KEY_F4 | KEY_MASK_CTRL,
+	"company_set_1": KEY_1 | KEY_MASK_CTRL, "company_set_5": KEY_5 | KEY_MASK_CTRL, "company_select_1": KEY_1 | KEY_MASK_ALT, "company_select_5": KEY_5 | KEY_MASK_ALT,
+	"category_1": 0, "category_10": 0}
+# The Classic Zeus layout: the Zeus guide's hotkey list.
+const CLASSIC := {"pause": KEY_P, "switch_view": KEY_SPACE, "face_north": KEY_HOME, "rotate_left": KEY_PAGEUP, "rotate_right": KEY_PAGEDOWN,
+	"overview_map": KEY_TAB, "speed_up": KEY_BRACKETRIGHT, "speed_down": KEY_BRACKETLEFT, "fullscreen": KEY_F5, "window_800": KEY_F6, "window_1024": KEY_F7,
+	"screenshot": KEY_PRINT, "quit_game": KEY_X | KEY_MASK_ALT, "freeze_footprint": KEY_M, "city": KEY_MINUS,
+	"category_1": KEY_1, "category_2": KEY_2, "category_9": KEY_9, "category_10": KEY_0,
+	"bookmark_go_1": KEY_F1, "bookmark_go_2": KEY_F2, "bookmark_go_3": KEY_F3, "bookmark_go_4": KEY_F4, "bookmark_set_1": KEY_F1 | KEY_MASK_CTRL, "bookmark_set_4": KEY_F4 | KEY_MASK_CTRL,
+	"company_set_1": KEY_1 | KEY_MASK_CTRL, "company_select_5": KEY_5 | KEY_MASK_ALT, "pan_left_alt": KEY_LEFT, "orbit_left": KEY_Q, "tilt_up": KEY_R}
 
 func check(value: bool, message: String) -> void:
 	checks += 1
@@ -77,15 +94,21 @@ func run() -> void:
 	for id in DEFAULTS:
 		if KeyBindings.code(id) != int(DEFAULTS[id]):
 			wrong.append(id)
-	check(wrong.is_empty() and KeyBindings.actions().size() == DEFAULTS.size() + 1, "the table has the defaults the game always had (%d controls, plus Alt+Enter for fullscreen) %s" % [DEFAULTS.size(), str(wrong)])
+	check(wrong.is_empty() and KeyBindings.actions().size() == DEFAULTS.size() + 1 + KeyBindings.EXTRA.size(), "the table has the defaults the game always had (%d controls, plus Alt+Enter for fullscreen and %d of the original game's) %s" % [DEFAULTS.size(), KeyBindings.EXTRA.size(), str(wrong)])
+	var original_wrong: Array = []
+	for id in ORIGINAL:
+		if KeyBindings.code(id) != int(ORIGINAL[id]):
+			original_wrong.append(id)
+	check(original_wrong.is_empty() and KeyBindings.layout() == "ezeus", "the original game's keys that clash with nothing are given in this game's layout, the others wait %s" % str(original_wrong))
 	var seen := {}
 	var duplicated: Array = []
 	var illegal: Array = []
 	for entry in KeyBindings.actions():
-		if seen.has(KeyBindings.code(entry.id)):
+		var value := KeyBindings.code(entry.id)
+		if value != 0 and seen.has(value):
 			duplicated.append(entry.id)
-		seen[KeyBindings.code(entry.id)] = true
-		if not KeyBindings.problem(entry.id, KeyBindings.code(entry.id)).is_empty():
+		seen[value] = true
+		if not KeyBindings.problem(entry.id, value).is_empty():
 			illegal.append(entry.id)
 	check(duplicated.is_empty() and illegal.is_empty(), "no two controls share a key and every default is allowed %s %s" % [str(duplicated), str(illegal)])
 	var hotkeys := Overlays.hotkeys()
@@ -97,8 +120,11 @@ func run() -> void:
 	var held_ok := true
 	for id in KeyBindings.HELD:
 		var events := InputMap.action_get_events(id)
-		held_ok = held_ok and events.size() == 1 and events[0] is InputEventKey and int(events[0].physical_keycode) == int(DEFAULTS[id])
-	check(held_ok, "the eight held camera keys are InputMap actions with the original keys (Q E R F W A S D)")
+		var second: int = int(ORIGINAL.get(KeyBindings.SECOND.get(id, ""), 0))
+		held_ok = held_ok and events.size() == (2 if second != 0 else 1) and events[0] is InputEventKey and int(events[0].physical_keycode) == int(DEFAULTS[id])
+		if second != 0:
+			held_ok = held_ok and int(events[1].physical_keycode) == second
+	check(held_ok, "the eight held camera keys are InputMap actions with the original keys (Q E R F W A S D), and the arrows pan too")
 	check(KeyBindings.label("pause") == "Space" and KeyBindings.label("quick_save") == "F5" and KeyBindings.label("turn_placement") == "T" and KeyBindings.label("undo").ends_with("+Z") and KeyBindings.label("fullscreen").ends_with("Enter"), "keys are named as printed: %s, %s, %s, %s" % [KeyBindings.label("pause"), KeyBindings.label("quick_save"), KeyBindings.label("undo"), KeyBindings.label("fullscreen")])
 
 	# ----------------------------------------------------------------------------------------------- what an event is
@@ -166,6 +192,76 @@ func run() -> void:
 	KeyBindings.reload()
 	check(KeyBindings.code("build_road") == KEY_N and KeyBindings.code("army") == KEY_B, "a formerly occupied dock shortcut can be rebound and restored without changing the older custom action")
 	check(Overlays.MODES.has("water") and KeyBindings.overlay_for(key_event(KEY_1)) == "water", "overlays are unaffected by the file")
+	# An older choice keeps its key when the original game's keys arrive: the newcomer that wanted it waits unassigned.
+	damaged = ConfigFile.new()
+	damaged.set_value("keys", "army", KEY_P)
+	damaged.save(path)
+	KeyBindings.reload()
+	check(KeyBindings.code("army") == KEY_P and KeyBindings.code("pause_alt") == 0 and KeyBindings.owner_of(KEY_P) == "army", "a player's older key (Army on P) keeps it; the second pause key waits unassigned")
+
+	# ------------------------------------------------------------------------------------------- the Classic Zeus layout
+	path = fresh_settings("layout.cfg")
+	KeyBindings.assign("turn_placement", KEY_U)
+	check(KeyBindings.set_layout("classic") and KeyBindings.layout() == "classic" and not KeyBindings.any_custom() and str(stored(path, "controls", "layout")) == "classic" and stored(path, "keys", "turn_placement") == null, "choosing the Classic layout is remembered and forgets the changes made against the other layout")
+	var classic_wrong: Array = []
+	for id in CLASSIC:
+		if KeyBindings.code(id) != int(CLASSIC[id]):
+			classic_wrong.append("%s=%s" % [id, KeyBindings.label(id)])
+	check(classic_wrong.is_empty(), "the Classic layout has the Zeus guide's keys %s" % str(classic_wrong))
+	seen = {}
+	duplicated = []
+	illegal = []
+	for entry in KeyBindings.actions():
+		var value := KeyBindings.code(entry.id)
+		if value != 0 and seen.has(value):
+			duplicated.append(entry.id)
+		seen[value] = true
+		if not KeyBindings.problem(entry.id, value).is_empty():
+			illegal.append(entry.id)
+	check(duplicated.is_empty() and illegal.is_empty() and KeyBindings.code("camera_home") == KEY_END and KeyBindings.code("mute") == (KEY_M | KEY_MASK_ALT), "and no two of its controls share a key (the overview moves to End, mute to Alt+M) %s %s" % [str(duplicated), str(illegal)])
+	check(KeyBindings.overlay_for(key_event(KEY_1)) == "" and KeyBindings.matches(key_event(KEY_1), "category_1") and KeyBindings.matches(key_event(KEY_SPACE), "switch_view") and KeyBindings.matches(key_event(KEY_P), "pause"), "in it 1 opens the Population tab instead of an overlay, Space switches views and P pauses")
+	KeyBindings.reload()
+	check(KeyBindings.layout() == "classic" and KeyBindings.code("pause") == KEY_P, "the layout comes back the next time the settings are read")
+	result = KeyBindings.assign("pause", KEY_K)
+	KeyBindings.reload()
+	check(result.ok and KeyBindings.code("pause") == KEY_K and int(stored(path, "keys", "pause")) == KEY_K, "a change in the Classic layout is remembered against its keys")
+	KeyBindings.reset_all()
+	check(KeyBindings.code("pause") == KEY_P and KeyBindings.layout() == "classic", "and restoring the defaults gives the Classic keys back")
+	KeyBindings.set_layout("ezeus")
+	check(KeyBindings.code("pause") == KEY_SPACE and KeyBindings.code("overlay_water") == KEY_1 and KeyBindings.code("category_1") == 0 and str(stored(path, "controls", "layout")) == "ezeus", "this game's layout returns with its own keys")
+	var damaged_layout := ConfigFile.new()
+	damaged_layout.set_value("controls", "layout", "dvorak")
+	damaged_layout.save(path)
+	KeyBindings.reload()
+	check(KeyBindings.layout() == "ezeus" and KeyBindings.code("pause") == KEY_SPACE and not KeyBindings.set_layout("dvorak"), "an unknown layout in the file is ignored, and refused")
+
+	# ------------------------------------------------------------------------------------------- the original game's keys at work
+	var Hotkeys := load("res://scripts/city_hotkeys.gd")
+	var claimed := {}
+	for category in BuildCatalog.CATEGORIES:
+		claimed[category[0]] = true
+	var unknown_tabs: Array = []
+	for tab in Hotkeys.TABS:
+		for title in tab:
+			if not claimed.has(title):
+				unknown_tabs.append(title)
+	check(Hotkeys.TABS.size() == 10 and unknown_tabs.is_empty(), "the ten build tabs open categories the Build menu has %s" % str(unknown_tabs))
+	var turner: Node3D = Orbit.new()
+	root.add_child(turner)
+	await process_frame
+	var turns: Array = []
+	for case in [[45.0, -1], [45.0, 1], [60.0, -1], [60.0, 1], [135.0, 1], [315.0, 1]]:
+		turner.turn_goal = NAN
+		turner.yaw = case[0]
+		turner.turn_quarter(case[1])
+		turns.append(fposmod(turner.turn_goal, 360.0))
+	check(turns == [315.0, 135.0, 45.0, 135.0, 225.0, 45.0], "PgUp and PgDn turn to the next of the four views, from a view or between two %s" % str(turns))
+	turner.yaw = 200.0
+	turner.face_north()
+	for step in 120:
+		turner.step_turn(1.0 / 60.0)
+	check(is_nan(turner.turn_goal) and is_equal_approx(turner.yaw, 45.0), "facing north eases the view back to the city's own (%.1f)" % turner.yaw)
+	turner.queue_free()
 
 	# --------------------------------------------------------------------------------------- the Controls dialog
 	path = fresh_settings("dialog.cfg")
@@ -193,6 +289,11 @@ func run() -> void:
 	check(KeyBindings.code("pause") == KEY_SPACE and dialog.message.text.contains("Esc") , "a reserved key is refused in words: %s" % dialog.message.text)
 	dialog.reset_key("demolish")
 	check(KeyBindings.code("demolish") == KEY_X and KeyBindings.code("turn_placement") == KEY_G, "Reset puts one control back")
+	var told_before: int = heard.changed
+	dialog.choose_layout("classic")
+	check(KeyBindings.layout() == "classic" and dialog.layout_choice.selected == 1 and dialog.key_buttons.pause.text == "P" and dialog.key_buttons.category_1.text == "1" and dialog.key_buttons.overlay_water.text == tr("Unassigned") and heard.changed == told_before + 1, "the layout choice puts every row on the Classic keys (Pause P, the Population tab 1) and tells the interface")
+	dialog.choose_layout("ezeus")
+	check(KeyBindings.layout() == "ezeus" and dialog.key_buttons.pause.text == "Space" and dialog.key_buttons.turn_placement.text == "T", "and back on this game's own")
 	check(dialog.speed_choices.size() == 3 and PlaySettings.get_option("pan_percent") == 100, "three camera speeds are offered, all at 100%")
 	dialog.speed_choices.pan_percent.item_selected.emit(4)
 	check(PlaySettings.get_option("pan_percent") == 150 and int(stored(path, "camera", "pan_percent")) == 150, "choosing one applies it and remembers it")
@@ -305,7 +406,14 @@ func run() -> void:
 	texts.append_array(["Unassigned", "Controls", "Game settings", "Controls…", "Game settings…", "Restore defaults", "Reset", "Press a key…", "Camera speed", "Fixed controls", "Autosave", "Off", "Every %d minutes", "Autosaves kept", "Voice language", "Same as the interface", "Fullscreen",
 		"Click a key to change it; Escape cancels.", "Press the new key for %s. Escape cancels.", "Nothing was changed.", "%s is now %s.", "%s is now %s. %s took %s.", "%s cannot be used for a control.", "%s takes a plain key, without Ctrl, Cmd or Alt.",
 		"%s is used for %s, which cannot take %s.", "%s is back to %s.", "All controls are back to their defaults.", "Autosaves count only while the game is running, and rotate through the slots.",
-		"Select a building to inspect  ·  %s / %s orbit  ·  %s / %s tilt", "%s / %s orbit · %s / %s tilt up / down · %s pan · Wheel zoom · Middle drag orbit / tilt · %s pauses · %s city overview · %s turns placement"])
+		"Select a building to inspect  ·  %s / %s orbit  ·  %s / %s tilt", "%s / %s orbit · %s / %s tilt up / down · %s pan · Wheel zoom · Middle drag orbit / tilt · %s pauses · %s city overview · %s turns placement",
+		"Key layout", "Every key now follows the %s layout.", "Nothing in this tab can be built in this city now.", "Bookmark %d set. %s comes back here.",
+		"Bookmark %d is not set yet: %s sets it.", "Bookmark %d", "Choose a company first: click its banner or pick it in the Army panel.", "%s chooses this company now.",
+		"No company has key %d: choose one and press %s.", "The placement follows the pointer again.", "Choose a building and point at its place first.",
+		"The placement holds its place: look around, click to build there, %s lets it go.", "Screenshot saved: %s", "The screenshot could not be saved.", "Window %d × %d",
+		"Leave the game now? Anything not saved is lost.", "Exit"])
+	for name in KeyBindings.LAYOUT_NAMES.values():
+		texts.append(name)
 	TranslationServer.set_locale("ru")
 	for text in texts:
 		var russian := TranslationServer.translate(text)

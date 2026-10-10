@@ -4,6 +4,7 @@ const SHEET := preload("res://assets/menu/greek_menu_sheet_v3.png")
 const SettingsSkin = preload("res://ui/settings_shell.gd")
 const BUTTON := preload("res://assets/menu/greek_menu_button_v3.png")
 const PAPER := preload("res://assets/menu/aged_parchment_v1.png")
+const ACTION := preload("res://ui/settings_art/menu_action.svg")
 var button_texture: ImageTexture
 
 func install(host: Control, compact: bool) -> void:
@@ -59,26 +60,30 @@ func install_pages(theme: Theme, factor: float) -> void:
 	# Full pages keep the carved frame; compact forms/confirmations and secondary
 	# navigation use restrained matching controls with generous text padding.
 	SettingsSkin.install_frame(theme,factor)
-	for kind in ["MenuPageChoice","MenuPagePrimary"]:
+	for kind in ["MenuPageChoice","MenuPagePrimary","MenuPageDanger","MenuPagePager"]:
 		theme.set_type_variation(kind,"Button")
-		theme.set_font_size("font_size",kind,roundi(17*factor))
-		for state in ["normal","hover","pressed","disabled","focus"]:
-			var surface := StyleBoxFlat.new()
-			surface.bg_color = Color("244456") if kind == "MenuPagePrimary" else Color("142d3b")
-			if state == "hover": surface.bg_color = Color("2a4c5d")
-			if state == "pressed": surface.bg_color = Color("0b202c")
-			if state == "disabled": surface.bg_color = Color("101d24")
-			surface.border_color = Color("c3a15e") if kind == "MenuPagePrimary" else Color("796343")
-			if state == "hover" or state == "focus": surface.border_color = Color("ddc18a")
-			if state == "disabled": surface.border_color = Color("49483e")
-			surface.set_border_width_all(1); surface.set_corner_radius_all(3)
-			surface.content_margin_left = 18; surface.content_margin_right = 18
-			surface.content_margin_top = 9; surface.content_margin_bottom = 9
-			if state == "focus": surface.draw_center = false
+		theme.set_font_size("font_size",kind,roundi(18*factor))
+		theme.set_font("font",kind,theme.get_font("font","Subheading"))
+		for state in ["normal","hover","pressed","hover_pressed","disabled","focus"]:
+			var surface := StyleBoxTexture.new()
+			surface.texture = ACTION
+			surface.texture_margin_left = 20; surface.texture_margin_right = 20
+			surface.texture_margin_top = 18; surface.texture_margin_bottom = 18
+			surface.content_margin_left = 14 if kind == "MenuPagePager" else 24
+			surface.content_margin_right = surface.content_margin_left
+			surface.content_margin_top = 4 if kind == "MenuPagePager" else 10
+			surface.content_margin_bottom = surface.content_margin_top
+			surface.modulate_color = Color.WHITE if kind == "MenuPagePrimary" else (Color(1,.79,.67) if kind == "MenuPageDanger" else Color(.78,.83,.88))
+			if state == "hover": surface.modulate_color *= Color(1.22,1.18,1.10)
+			if state in ["pressed","hover_pressed"]: surface.modulate_color *= Color(.68,.70,.75)
+			if state == "disabled": surface.modulate_color *= Color(.46,.48,.50)
+			if state == "focus": surface.modulate_color = Color(1.2,1.15,1,.30)
 			theme.set_stylebox(state,kind,surface)
-		for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]:
-			theme.set_color(state,kind,Color("eee5cf"))
+		for state in ["font_color","font_hover_color","font_pressed_color","font_hover_pressed_color","font_focus_color"]:
+			theme.set_color(state,kind,Color("f6e8c4"))
 		theme.set_color("font_disabled_color",kind,Color("a9a596"))
+		theme.set_color("font_shadow_color",kind,Color(0,0,0,.8))
+		theme.set_constant("shadow_offset_y",kind,1)
 
 func install_preview(theme: Theme) -> void:
 	# Parchment belongs to prose. The library uses a quiet enamel/slate reading surface.
@@ -107,15 +112,15 @@ func install_paper(theme: Theme, factor: float, compact: bool) -> void:
 	paper.texture = PAPER
 	# Scale the sheet as a whole; fixed-size torn edges would consume short pages.
 	# Keep dark ink away from the weathered perimeter, including short pages.
-	paper.content_margin_left = 36 if compact else 48
+	paper.content_margin_left = 32 if compact else 40
 	paper.content_margin_right = paper.content_margin_left
-	paper.content_margin_top = 28 if compact else 38
-	paper.content_margin_bottom = 24 if compact else 36
+	paper.content_margin_top = 24 if compact else 30
+	paper.content_margin_bottom = 24 if compact else 28
 	for kind in ["EpisodePaper","ParchmentSheet"]:
 		theme.set_type_variation(kind,"PanelContainer")
 		theme.set_stylebox("panel",kind,paper)
 	theme.set_font_size("font_size","EpisodeBody",roundi((14 if compact else 16)*factor))
-	theme.set_constant("line_spacing","EpisodeBody",3 if compact else 5)
+	theme.set_constant("line_spacing","EpisodeBody",3)
 	theme.set_color("font_color","EpisodeBody",Color("302419"))
 	theme.set_font_size("font_size","EpisodePaperHeading",roundi((17 if compact else 20)*factor))
 	theme.set_color("font_color","EpisodePaperHeading",Color("47321e"))

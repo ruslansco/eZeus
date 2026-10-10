@@ -8,6 +8,7 @@ uniform int inactive_pose = -1;
 uniform float surface_roughness = .85;
 uniform float surface_metallic = 0.0;
 uniform bool smooth_work = true;
+uniform float work_rate = 1.0;
 vec3 displacement(int pose_index, ivec2 cell) {
 	if (pose_index < 0) return vec3(0.0);
 	int row = int(work_layout.x+.5) + pose_index*int(work_layout.y+.5) + cell.y;
@@ -18,7 +19,7 @@ void vertex() {
 	if (INSTANCE_CUSTOM.r < .5) {
 		VERTEX += displacement(inactive_pose,cell);
 	} else {
-		float phase = mod(building_work_clock + INSTANCE_CUSTOM.g,8.0);
+		float phase = mod(building_work_clock * work_rate + INSTANCE_CUSTOM.g,8.0);
 		int first = int(floor(phase));
 		int second = (first+1)%8;
 		vec3 a=displacement(work_frames[first],cell);

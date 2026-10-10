@@ -26,7 +26,6 @@ const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--captur
 @onready var continue_info: Label = %ContinueInfo
 @onready var new_game_button: Button = %NewGame
 @onready var load_game_button: Button = %LoadGame
-@onready var language_button: Button = %Language
 @onready var quit_button: Button = %Quit
 @onready var sound_button: Button = %Sound
 @onready var adventure_heading: Label = %AdventureHeading
@@ -118,7 +117,6 @@ func _ready() -> void:
 	continue_button.pressed.connect(func(): load_save(latest_save.get("path", "")))
 	new_game_button.pressed.connect(open_adventures)
 	load_game_button.pressed.connect(open_saves)
-	language_button.pressed.connect(change_language)
 	quit_button.pressed.connect(func(): get_tree().quit())
 	sound_button.pressed.connect(func(): SoundDialog.open(self))
 	%Interface.icon=load("res://ui/icons/gear.svg")
@@ -213,8 +211,6 @@ func retranslate() -> void:
 	continue_button.text = tr("Continue")
 	new_game_button.text = tr("New game")
 	load_game_button.text = tr("Load game")
-	language_button.text = language.to_upper()
-	language_button.tooltip_text = tr("Switch language")
 	quit_button.text = tr("Quit")
 	sound_button.text = tr("Sound")
 	%Interface.tooltip_text=tr("Game settings")
@@ -266,8 +262,8 @@ func refresh_main() -> void:
 func fit_main_page() -> void:
 	if navigation != null: navigation.fit()
 
-func change_language() -> void:
-	language = UiText.set_language(UiText.next_language(language))
+func change_language(requested := "") -> void:
+	language = UiText.set_language(UiText.next_language(language) if requested.is_empty() else requested)
 	UserSettings.set_language(language)
 	Engine.set_meta("ezeus_language", language)
 	retranslate()

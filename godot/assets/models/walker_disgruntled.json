@@ -1,21 +1,22 @@
 {
   "asset": "walker_disgruntled",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_disgruntled.glb",
-  "bytes": 8253668,
-  "vertices": 16028,
+  "bytes": 3436180,
+  "vertices": 6598,
   "surfaces": 3,
-  "source_surfaces": 16,
+  "source_surfaces": 13,
   "bounds_blender": [
     [
-      -0.19228607416152954,
-      -0.17924624681472778,
+      -0.19222843647003174,
+      -0.1793283224105835,
       0.0004999842494726181
     ],
     [
-      0.2082887589931488,
-      0.18021810054779053,
-      0.8486673831939697
+      0.20875956118106842,
+      0.18048034608364105,
+      0.8453733921051025
     ]
   ],
   "walk_samples": 24,
@@ -26,13 +27,13 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Disgruntled citizen",
         "sex": "male",
         "profile": {
-          "age": 53,
+          "age": 83,
           "jaw": 0.96,
           "cheek": 1.06,
           "nose": 0.006,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 1424177663,
           "skin": [
             0.57,
@@ -61,6 +62,7 @@
           ]
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "b028caf156d25ccf2e2eec411ff3e1fcbdc1014696e4401c086b7aaba57dc31e",
         "clavi_srgb": [
           0.32,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

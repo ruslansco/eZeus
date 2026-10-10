@@ -134,7 +134,13 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
     const auto ttask = std::make_shared<eCartTask>();
 
     const auto bType = mBuilding->type();
-    const auto finalTile = [buildingRect, bType, ttask, tasks, bx, by]
+    // The city's stockpiled goods (the original game's Distribution tab): only its granaries and storehouses take them (from
+    // one another), and no cart brings them to a trade post.
+    const auto stockpiled = board().stockpiled(mBuilding->cityId());
+    const bool storageCart = bType == eBuildingType::warehouse ||
+                             bType == eBuildingType::granary;
+    const auto finalTile = [buildingRect, bType, ttask, tasks, bx, by,
+                            stockpiled, storageCart]
                            (eThreadTile* const t) {
         if(!t->isUnderBuilding()) return false;
         const bool r = eWalkableHelpers::sTileUnderBuilding(t, buildingRect);
@@ -143,6 +149,12 @@ void eCartTransporterAction::findTarget(const std::vector<eCartTask>& tasks) {
         const auto& ub = t->underBuilding();
         for(const auto& task : tasks) {
             const auto res = task.fResource;
+            const bool kept = static_cast<bool>(stockpiled & res);
+            if(kept) {
+                if(task.fType == eCartActionType::take && !storageCart) continue;
+                if(task.fType == eCartActionType::give &&
+                   ub.type() == eBuildingType::tradePost) continue;
+            }
             if(task.fType == eCartActionType::take) {
                 if(bType == eBuildingType::warehouse ||
                    bType == eBuildingType::granary ||

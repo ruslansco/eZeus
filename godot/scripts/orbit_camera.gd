@@ -32,6 +32,11 @@ const MINIMUM_DISTANCE := 10.0
 const PULL_START := 45.0
 const EDGE_PULL := .7
 const ZOOM_EASE := 18.0
+# The original game's four views: the city's own (yaw 45, "north") and its quarter turns. PgUp/PgDn ease the yaw onto the next quarter and
+# "face north" back onto 45 (the yaw a city opens with); turning or dragging by hand ends the easing.
+const NORTH_YAW := 45.0
+const TURN_EASE := 9.0
+var turn_goal := NAN
 var wheel_distance := -1.0
 var wheel_screen := Vector2.ZERO
 var wheel_applied_distance := -1.0
@@ -64,6 +69,26 @@ func refresh() -> void:
 func step_orbit(axis: float, dt: float) -> void:
 	if axis == 0.0: return
 	yaw = fposmod(yaw + axis * 65.0 * dt * PlaySettings.turn_scale(), 360.0)
+	refresh()
+
+# Turns to the next quarter view to the left (-1, the way orbit left turns) or right (+1); a turn under way counts from its goal.
+func turn_quarter(direction: int) -> void:
+	var base := yaw if is_nan(turn_goal) else turn_goal
+	var steps := (base - NORTH_YAW) / 90.0
+	var step := (ceilf(steps - .001) - 1.0) if direction < 0 else (floorf(steps + .001) + 1.0)
+	turn_goal = NORTH_YAW + step * 90.0
+
+func face_north() -> void:
+	turn_goal = NORTH_YAW
+
+func step_turn(dt: float) -> void:
+	if is_nan(turn_goal): return
+	var difference := rad_to_deg(angle_difference(deg_to_rad(yaw), deg_to_rad(turn_goal)))
+	if absf(difference) < .05:
+		yaw = fposmod(turn_goal, 360.0)
+		turn_goal = NAN
+	else:
+		yaw = fposmod(yaw + difference * (1.0 - exp(-TURN_EASE * dt)), 360.0)
 	refresh()
 
 func adjust_pitch(degrees: float) -> void:
@@ -207,7 +232,10 @@ func _process(dt: float) -> void:
 		cancel_wheel_zoom()
 		return
 	advance_wheel_zoom(dt)
-	step_orbit(Input.get_axis("orbit_left", "orbit_right"), dt)
+	var turning := Input.get_axis("orbit_left", "orbit_right")
+	if turning != 0.0 or dragging: turn_goal = NAN
+	step_turn(dt)
+	step_orbit(turning, dt)
 	step_tilt(Input.get_axis("tilt_down", "tilt_up"), dt)
 	var move := Vector2(Input.get_axis("pan_left", "pan_right"), Input.get_axis("pan_back", "pan_forward"))
 	if move.length_squared() > 0:

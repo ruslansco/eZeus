@@ -9,7 +9,8 @@ func _ready() -> void:
 	# Godot's armed press before a normal, later mouse-up can activate the button.
 	gui_input.connect(func(event):
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
-			release_focus.call_deferred())
+			(func():
+				if is_inside_tree(): release_focus()).call_deferred())
 
 func _make_custom_tooltip(_text: String) -> Object:
 	return HoverHelp.build(tooltip_text, help_detail, self)

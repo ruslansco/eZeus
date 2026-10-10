@@ -25,6 +25,16 @@ func trireme_at(city, cell: Vector2i) -> int:
 			best = int(id)
 	return best
 
+# One of the player's triremes near the tile that cannot take orders now (no crew: its wharf is shut down or has no workers), or -1.
+func uncrewed_at(city, cell: Vector2i) -> int:
+	for id in city.walkers:
+		var entry: Dictionary = city.walkers[id]
+		if entry.asset != "trireme" or entry.get("selectable", false) or not entry.get("own", false):
+			continue
+		if city.tile_coordinates(entry.native_position).distance_to(Vector2(cell.x, cell.y)) < PICK_RADIUS:
+			return int(id)
+	return -1
+
 func select(city, id: int) -> void:
 	clear()
 	if id < 0 or not city.walkers.has(id):

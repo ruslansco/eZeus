@@ -26,7 +26,9 @@ const CELLS := [0.1, 0.2, 0.4, 0.8, 1.6]
 const MIN_GAIN := 0.15
 const MIN_TRIANGLES := 24
 const MIN_SURFACE_TRIANGLES := 300
-const KEPT_FORMAT_FLAGS := Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES | Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS
+# VAT texel addresses use custom float channels. Retain their element formats
+# when rebuilding a guarded surface, as well as its UVs and vertex ordering.
+const KEPT_FORMAT_FLAGS := Mesh.ARRAY_FLAG_COMPRESS_ATTRIBUTES | Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS | (Mesh.ARRAY_FORMAT_CUSTOM_MASK << Mesh.ARRAY_FORMAT_CUSTOM0_SHIFT) | (Mesh.ARRAY_FORMAT_CUSTOM_MASK << Mesh.ARRAY_FORMAT_CUSTOM1_SHIFT) | (Mesh.ARRAY_FORMAT_CUSTOM_MASK << Mesh.ARRAY_FORMAT_CUSTOM2_SHIFT) | (Mesh.ARRAY_FORMAT_CUSTOM_MASK << Mesh.ARRAY_FORMAT_CUSTOM3_SHIFT)
 
 func _post_import(scene: Node) -> Object:
 	var coverage = Coverage.new()

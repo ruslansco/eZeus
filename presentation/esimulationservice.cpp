@@ -57,6 +57,10 @@
 #include "buildings/pyramids/epyramidtile.h"
 #include "buildings/epalacetile.h"
 #include "buildings/sanctuaries/esanctuary.h"
+#include "gameEvents/egodattackevent.h"
+#include "gameEvents/ecityeventvalue.h"
+#include "gameEvents/egodeventvalue.h"
+#include "gameEvents/emonstereventvalue.h"
 #include "buildings/sanctuaries/esanctuaryblueprint.h"
 #include "buildings/sanctuaries/etemplebuilding.h"
 #include "buildings/sanctuaries/etempletilebuilding.h"
@@ -155,7 +159,8 @@ struct eEnlistSession {
     std::function<void(const eEnlistedForces&,eResourceType)> action; std::vector<eResourceType> plunder;
 };
 namespace {
-constexpr int speeds[] = {6,15,30,60};
+// Three player paces: 1x / 2x / 4x. Slot zero aliases Normal for older clients/saves.
+constexpr int speeds[] = {15,15,30,60};
 using Creator = std::function<stdsptr<eBuilding>(eGameBoard&, eCityId)>;
 // How a build command works: most buildings fill a rectangle, an agora is laid over a stretch of road found from the
 // tile under the pointer, and a vendor replaces the empty space of an agora. A gatehouse is two towers laid around
@@ -555,7 +560,9 @@ std::string monumentInfo(eMonument* const m) {
     bool first=true; for(const auto& line:lines) { if(!first) o << ','; first=false; o << quote(line); }
     o << "],\"description\":" << quote(description) << ",\"help_label\":" << quote(helpLabel)
       << ",\"help_fraction\":" << (sanctuary&&finished?sanctuary->helpTimeFraction():0.0) << ",\"sacrificing\":" << (sanctuary&&sanctuary->sacrificing()?"true":"false")
-      << ",\"god_abroad\":" << (sanctuary&&sanctuary->godAbroad()?"true":"false") << attackInfo(sanctuary) << '}';
+      << ",\"god_abroad\":" << (sanctuary&&sanctuary->godAbroad()?"true":"false")
+      << ",\"oracle\":" << (sanctuary&&finished&&sanctuary->hasOracle()?"true":"false") << ",\"oracle_fraction\":" << (sanctuary&&finished?sanctuary->oracleTimeFraction():0.0)
+      << attackInfo(sanctuary) << '}';
     return o.str();
 }
 // The pieces of a pyramid. How many tiles on a side a piece covers (the tile of a larger piece is its far corner; its other tiles are
@@ -949,7 +956,7 @@ void eSimulationService::close() {
     detach();
     mEditor.reset();
     mCampaign.reset(); mView.reset();
-    mFacings.clear();mSaveFailure.clear();mSavedCamera.reset();mSpeed=0;
+    mFacings.clear();mSaveFailure.clear();mSavedCamera.reset();mSpeed=1;
 }
 void eSimulationService::setSaveDirectory(const std::string& directory) { mSaveDir = directory; }
 eSimulationService::FacingKey eSimulationService::facingKey(const eBuilding* b) const {
@@ -977,7 +984,7 @@ bool eSimulationService::readFacingMetadata(const std::string& text) {
     std::map<FacingKey,int> faces;
     for(size_t i=0;i<count;++i){FacingKey key{};int facing;for(auto& field:key)if(!(in>>field))return false;
         if(!(in>>facing) || facing<0 || facing>3 || key[0]<-1 || key[0]>1000 || key[6]<1 || key[7]<1 || key[6]>1024 || key[7]>1024 || !faces.emplace(key,facing).second)return false;}
-    in>>std::ws;if(!in.eof())return false;mFacings=std::move(faces);mSpeed=speed;mSavedCamera=camera;mCameraBoard=board;return true;
+    in>>std::ws;if(!in.eof())return false;mFacings=std::move(faces);mSpeed=std::max(1,speed);mSavedCamera=camera;mCameraBoard=board;return true;
 }
 std::string eSimulationService::checkSave(const std::string& path) const {
     const auto checked=eSaveStore::inspect(path,eFileFormat::version);
@@ -1450,7 +1457,7 @@ void eSimulationService::advance(double delta) {
     while(mAccumulator >= 50 && steps++ < 5) {
         mAccumulator -= 50;
         const auto began = std::chrono::steady_clock::now();
-        if(!eSimulationStep(*mBoard,speeds[mSpeed],mSpeed==3,[this]() { return !mPaused && !mBlocked; })) {
+        if(!eSimulationStep(*mBoard,speeds[mSpeed],false,[this]() { return !mPaused && !mBlocked; })) {
             mBlocked = mTerminal = true; mVictory = false; notify("Episode lost","The native simulation ended this episode.",eEventData());
         }
         const double us = std::chrono::duration<double,std::micro>(std::chrono::steady_clock::now()-began).count();
@@ -1647,9 +1654,13 @@ std::string eSimulationService::snapshot(bool full) {
         // Use native overlay eligibility (including production inputs and patrol
         // availability). Storage overlays alone are always enabled, so staffing
         // and shutdown must also gate their authored workers.
-        const bool working = active && b->overlayEnabled() && !b->isOnFire() &&
+        // Houses do not use the employer/overlay enabled flag. Their household
+        // sprites follow actual residents, including the first arrival.
+        const bool working = !b->isOnFire() && (type == eBuildingType::commonHouse ?
+            static_cast<const eSmallHouse*>(b)->people() > 0 :
+            active && b->overlayEnabled() &&
             (!employer || (workers > 0 && !employer->shutDown())) &&
-            (type != eBuildingType::corral || static_cast<const eCorral*>(b)->processingCattle());
+            (type != eBuildingType::corral || static_cast<const eCorral*>(b)->processingCattle()));
         const int animationOffset = ((b->textureTime()-board.frame())/4)%8;
         // A piece of a sanctuary (or pyramid) rises as the workers build it: how much of it stands, in percent.
         int grow = 100; bool stretch = false;
@@ -1765,7 +1776,8 @@ std::string eSimulationService::snapshot(bool full) {
         // The player's triremes that may be given orders (at home, the wharf working), as the SDL view lets one select them.
         if(c->type()==eCharacterType::trireme) {
             const auto trireme=static_cast<eTrireme*>(c);
-            o << ",\"selectable\":" << (trireme->playerId()==board.personPlayer() && trireme->selectable()?"true":"false");
+            o << ",\"selectable\":" << (trireme->playerId()==board.personPlayer() && trireme->selectable()?"true":"false")
+              << ",\"own\":" << (trireme->playerId()==board.personPlayer()?"true":"false");
         }
         o << '}';
     }
@@ -1989,12 +2001,15 @@ std::string eSimulationService::cityData() {
              verdict("",eCityData::foodOpinion(husbandry->canSupport(),population)),
              {text(57,27)+" "+std::to_string(husbandry->storedFood())+" "+text(57,28),""}});
     }
-    // Storage: the basic goods in store (the cached counts).
+    // Storage: the basic goods in store (the cached counts), each marked when the city stockpiles it (the original game's
+    // Distribution tab: `stockpile <resource> <0|1>`).
     {
         std::ostringstream goods; goods << ",\"goods\":["; bool first=true;
+        const auto kept=mBoard->stockpiled(cid);
         if(const auto stored=mBoard->resources(cid)) for(const auto& item:*stored) {
             if(!first) goods << ','; first=false;
-            goods << "{\"resource\":" << int(item.first) << ",\"name\":" << quote(eResourceTypeHelpers::typeName(item.first)) << ",\"count\":" << item.second << '}';
+            goods << "{\"resource\":" << int(item.first) << ",\"name\":" << quote(eResourceTypeHelpers::typeName(item.first)) << ",\"count\":" << item.second
+                  << ",\"stockpiled\":" << (static_cast<bool>(kept & item.first)?"true":"false") << '}';
         }
         goods << ']';
         page("storage",{{4,"distribution"}},{},goods.str());
@@ -2052,7 +2067,16 @@ std::string eSimulationService::cityData() {
         extra << ",\"soldiers\":{\"text\":" << quote(text(51,eCityData::soldiersText(soldiers))) << ",\"tooltip\":" << quote(text(68,eCityData::soldiersTooltip(soldiers)))
               << ",\"action\":" << quote(soldiers==eCityData::eSoldiers::none?"":soldiers==eCityData::eSoldiers::allCalled?"army_home":"army_call")
               << "},\"towers\":{\"text\":" << quote(text(51,eCityData::towersText(towers,manning))) << ",\"tooltip\":" << quote(text(68,eCityData::towersTooltip(towers,manning)))
-              << ",\"count\":" << towers << ",\"manning\":" << (manning?"true":"false") << '}';
+              << ",\"count\":" << towers << ",\"manning\":" << (manning?"true":"false") << '}'
+              << ",\"auto_defend\":" << (mBoard->autoDefend(cid)?"true":"false");
+        int wharves=0, crewed=0, ships=0, away=0;
+        for(const auto b:mBoard->buildings(cid,eBuildingType::triremeWharf)) {
+            const auto wharf=static_cast<eTriremeWharf*>(b); ++wharves;
+            if(wharf->crewed()) ++crewed;
+            if(wharf->trireme()) ++ships;
+            if(wharf->abroad()) ++away;
+        }
+        extra << ",\"navy\":{\"wharves\":" << wharves << ",\"crewed\":" << crewed << ",\"triremes\":" << ships << ",\"abroad\":" << away << '}';
         page("military",{{16,"security"}},{{text(51,1),std::to_string(abroad)},{text(51,0),std::to_string(inCity)},{text(51,2),std::to_string(standingDown)}},extra.str());
     }
     // The tax rates in the order of their percentage (the enum's veryLow is 7%, low 3%), each with its id for set_tax.
@@ -3731,7 +3755,8 @@ std::string eSimulationService::armyInfo() {
         << ",\"hoplites\":" << mBoard->countSoldiers(eBannerType::hoplite,cid) << ",\"horsemen\":" << mBoard->countSoldiers(eBannerType::horseman,cid)
         << ",\"rabble\":" << mBoard->countSoldiers(eBannerType::rockThrower,cid)
         << ",\"invasion\":" << (mBoard->hasActiveInvasions(cid)?"true":"false") << ",\"invaders\":" << invaderCount()
-        << ",\"monsters\":" << monsterCount() << ",\"banners\":" << bannersJson() << '}';
+        << ",\"monsters\":" << monsterCount() << ",\"auto_defend\":" << (mBoard->autoDefend(cid)?"true":"false")
+        << ",\"banners\":" << bannersJson() << '}';
     return out.str();
 }
 
@@ -3795,6 +3820,20 @@ std::string eSimulationService::enlistInfo() {
     for(const auto& ally:session.forces.fAllies) {
         if(!first) out << ','; first=false;
         out << "{\"index\":" << worldIndex(ally) << ",\"name\":" << quote(ally->name()) << ",\"troops\":" << ally->troops() << ",\"abroad\":" << (ally->abroad()?"true":"false") << '}';
+    }
+    // Poseidon's navy: the manned triremes at home, each with whether the target can be reached by sea from its city ("Not
+    // accessible by sea" in the original Enlist Forces panel). `t:<indexes>` in enlist_dispatch sends them.
+    out << "],\"triremes\":[";
+    first=true;
+    {
+        const auto target=worldCity(session.city);
+        for(size_t i=0;i<session.forces.fTriremes.size();++i) {
+            const auto& wharf=session.forces.fTriremes[i]; if(!wharf) continue;
+            const auto home=wharf->centerTile();
+            if(!first) out << ','; first=false;
+            out << "{\"index\":" << i << ",\"city\":" << int(wharf->cityId()) << ",\"x\":" << (home?home->x():0) << ",\"y\":" << (home?home->y():0)
+                << ",\"reachable\":" << (target && target->waterTrade(wharf->cityId())?"true":"false") << '}';
+        }
     }
     out << "],\"plunder\":[";
     first=true;
@@ -4132,7 +4171,14 @@ std::string eSimulationService::inspect(int x,int y) {
                     << ",\"status\":" << quote(city?eHerosHall::sHeroRequirementStatusText(requirement,*city):std::string())
                     << ",\"met\":" << (requirement.met()?"true":"false") << '}';
             }
-            out << "]}";
+            out << ']';
+            // Poseidon's "Dispatch Hero": the first of the player's quests asking for this hero (its index for world_quest), once he is here.
+            int questIndex=-1, index=0; std::string questName;
+            for(const auto* quest:mBoard->godQuests(mBoard->personPlayer())) {
+                if(questIndex<0 && quest->godQuest().fHero==hall->heroType()) { questIndex=index; questName=quest->godQuest().name(); }
+                ++index;
+            }
+            out << ",\"quest\":" << (hall->stage()==eHeroSummoningStage::arrived && !hall->heroOnQuest()?questIndex:-1) << ",\"quest_name\":" << quote(questName) << '}';
         }
         {
             // A sanctuary's pieces are inspected as the sanctuary: the monument they belong to.
@@ -4191,7 +4237,7 @@ std::string eSimulationService::command(const std::string& text) {
     }
     if(mEditor && action!="view_tile" && action!="cities" && action!="inspect" && action!="world" && action!="buildable") return "{\"error\":\"editing\"}";
     if(action=="pause" && in >> value && (value==0 || value==1)) mPaused=bool(value);
-    else if(action=="speed" && in >> value && value>=0 && value<=3) mSpeed=value;
+    else if(action=="speed" && in >> value && value>=0 && value<=3) mSpeed=std::max(1,value);
     else if(action=="event") {
         uint64_t id; int choice; if(!(in >> id >> choice)) return "{\"error\":\"invalid_event\"}";
         auto it=mEvents.find(id); if(it==mEvents.end()) return "{\"error\":\"event_expired\"}";
@@ -4500,6 +4546,8 @@ std::string eSimulationService::command(const std::string& text) {
         // Every company of the player's cities that is in the city is called out to its banner, or sent home to the palace.
         settle(*mBoard);
         if(mBlocked) return "{\"error\":\"pending_decision\"}";
+        // With Auto Defend on the city commands its own companies (the original Options menu).
+        if(mBoard->autoDefend(playerCity())) return "{\"error\":\"auto_defend\"}";
         mBoard->clearBannerSelection();
         for(const auto cid:mBoard->personPlayerCitiesOnBoard()) for(const auto& b:mBoard->banners(cid)) if(!b->isAbroad() || b->militaryAid()) mBoard->selectBanner(b.get());
         if(action=="army_call") mBoard->bannersBackFromHome(); else mBoard->bannersGoHome();
@@ -4511,6 +4559,7 @@ std::string eSimulationService::command(const std::string& text) {
         const auto banner=playerBanner(id); if(!banner) return "{\"error\":\"unknown_banner\"}";
         if(mBlocked) return "{\"error\":\"pending_decision\"}";
         if(banner->isAbroad() && !banner->militaryAid()) return "{\"error\":\"banner_abroad\"}";
+        if(mBoard->autoDefend(playerCity())) return "{\"error\":\"auto_defend\"}";
         mBoard->clearBannerSelection(); mBoard->selectBanner(banner);
         if(action=="banner_call") mBoard->bannersBackFromHome(); else mBoard->bannersGoHome();
         mBoard->clearBannerSelection();
@@ -4522,6 +4571,7 @@ std::string eSimulationService::command(const std::string& text) {
         const auto banner=playerBanner(id); if(!banner) return "{\"error\":\"unknown_banner\"}";
         if(mBlocked) return "{\"error\":\"pending_decision\"}";
         if(banner->isAbroad()) return "{\"error\":\"banner_abroad\"}";
+        if(mBoard->autoDefend(playerCity())) return "{\"error\":\"auto_defend\"}";
         const auto tile=(x>=mX && y>=mY && x<mX+mW && y<mY+mH)?mBoard->tile(x,y):nullptr;
         if(!tile) return "{\"error\":\"out_of_map\"}";
         if(tile->cityId()!=banner->onCityId()) return "{\"error\":\"other_district\"}";
@@ -4538,6 +4588,7 @@ std::string eSimulationService::command(const std::string& text) {
         if(ids.empty()) return "{\"error\":\"invalid_banner_command\"}";
         settle(*mBoard);
         if(mBlocked) return "{\"error\":\"pending_decision\"}";
+        if(mBoard->autoDefend(playerCity())) return "{\"error\":\"auto_defend\"}";
         const auto tile=(x>=mX && y>=mY && x<mX+mW && y<mY+mH)?mBoard->tile(x,y):nullptr;
         if(!tile) return "{\"error\":\"out_of_map\"}";
         std::vector<eSoldierBanner*> placing;
@@ -4853,12 +4904,13 @@ std::string eSimulationService::command(const std::string& text) {
         else pb->setBothDirections(!pb->bothDirections());
         pb->updatePath();
         return routeJson();
-    } else if(action=="set_tax" || action=="set_wage" || action=="set_priority" || action=="man_towers") {
+    } else if(action=="set_tax" || action=="set_wage" || action=="set_priority" || action=="man_towers" || action=="stockpile" || action=="auto_defend" || action=="crew_all") {
         // The settings of the SDL data pages: set_tax <0-6> (none ... outrageous), set_wage <0-5> (none ... very high),
         // set_priority <sector 0-7> <0-5> (no priority ... very high; the workers are then shared out again, as the SDL
-        // allocation window does) and man_towers <0|1>. Each answers city_data.
+        // allocation window does) and man_towers <0|1>; and the original game's stockpile <resource> <0|1> (Distribution tab)
+        // and auto_defend <0|1> (Options menu). Each answers city_data.
         int a=-1,b=-1; if(!(in>>a)) return "{\"error\":\"invalid_city_setting\"}";
-        if(action=="set_priority" && !(in>>b)) return "{\"error\":\"invalid_city_setting\"}";
+        if((action=="set_priority" || action=="stockpile") && !(in>>b)) return "{\"error\":\"invalid_city_setting\"}";
         in>>std::ws; if(!in.eof()) return "{\"error\":\"invalid_city_setting\"}";
         mBoard->waitUntilFinished();
         if(mBlocked) return "{\"error\":\"pending_decision\"}";
@@ -4875,6 +4927,17 @@ std::string eSimulationService::command(const std::string& text) {
             const auto distributor=mBoard->employmentDistributor(cid); if(!distributor) return "{\"error\":\"invalid_city_setting\"}";
             distributor->setPriority(static_cast<eSector>(a),static_cast<ePriority>(b));
             mBoard->distributeEmployees(cid);
+        } else if(action=="stockpile") {
+            const auto resource=static_cast<eResourceType>(a);
+            if(!eResourceTypeHelpers::isSingleType(resource) || !static_cast<bool>(resource & eResourceType::allBasic) || (b!=0 && b!=1)) return "{\"error\":\"invalid_city_setting\"}";
+            mBoard->setStockpiled(cid,resource,b==1);
+        } else if(action=="auto_defend") {
+            if(a!=0 && a!=1) return "{\"error\":\"invalid_city_setting\"}";
+            mBoard->setAutoDefend(cid,a==1);
+        } else if(action=="crew_all") {
+            // Poseidon's "Crew All" (1) and its opposite (0): every trireme wharf of the city calls its crew or sends it home.
+            if(a!=0 && a!=1) return "{\"error\":\"invalid_city_setting\"}";
+            for(const auto b:mBoard->buildings(cid,eBuildingType::triremeWharf)) static_cast<eTriremeWharf*>(b)->setShutDown(a==0);
         } else {
             if(a!=0 && a!=1) return "{\"error\":\"invalid_city_setting\"}";
             mBoard->setManTowers(cid,a==1);
@@ -4944,7 +5007,7 @@ std::string eSimulationService::command(const std::string& text) {
         }
         o << "]}";
         return o.str();
-    } else if(action=="monument_halt" || action=="sanctuary_help" || action=="sanctuary_attack") {
+    } else if(action=="monument_halt" || action=="sanctuary_help" || action=="sanctuary_attack" || action=="oracle") {
         // monument_halt <x> <y> <token> <0|1> stops or resumes the building of a monument; sanctuary_help <x> <y> <token> asks the god of
         // a finished sanctuary for its help, as the SDL inspector's button does (the answer's words are in `help`).
         // sanctuary_attack <x> <y> <token> <city> sends the god of a finished sanctuary against an enemy city on the board, as the SDL inspector's
@@ -4961,8 +5024,39 @@ std::string eSimulationService::command(const std::string& text) {
         if(token!=mInspectionToken || mInspectionTarget.get()!=building || building->deleteScheduled()) return "{\"error\":\"inspection_target_changed\"}";
         if(monument->playerId()!=mBoard->personPlayer()) return "{\"error\":\"not_owned\"}";
         if(mBlocked) return "{\"error\":\"pending_decision\"}";
-        std::string help="null", attack="null";
-        if(action=="monument_halt") {
+        std::string help="null", attack="null", oracle="null";
+        if(action=="oracle") {
+            // oracle <x> <y> <token>: the original game's consultation of Zeus' or Apollo's oracle. `oracle_answer` names the soonest
+            // event that will reach the city within two years: its kind, the months until it, who sends it and the event's own name.
+            const auto sanctuary=dynamic_cast<eSanctuary*>(monument);
+            if(!sanctuary || !sanctuary->finished()) return "{\"error\":\"not_finished\"}";
+            if(!sanctuary->hasOracle()) return "{\"error\":\"no_oracle\"}";
+            const double ready=sanctuary->oracleTimeFraction();
+            const auto said=sanctuary->consultOracle();
+            std::ostringstream reply;
+            reply << "{\"granted\":" << (said.fGranted?"true":"false") << ",\"ready\":" << std::clamp(int(std::floor(100*ready)),0,100);
+            if(said.fGranted && said.fEvent) {
+                const auto event=said.fEvent;
+                std::string kind="disaster", who;
+                switch(event->type()) {
+                case eGameEventType::invasion: kind="invasion"; break;
+                case eGameEventType::godAttack: kind="god_attack"; break;
+                case eGameEventType::monsterUnleashed: case eGameEventType::monsterInvasion: kind="monster"; break;
+                case eGameEventType::receiveRequest: kind="request"; break;
+                case eGameEventType::troopsRequest: kind="troops"; break;
+                case eGameEventType::giftFrom: kind="gift"; break;
+                case eGameEventType::godQuest: kind="quest"; break;
+                default: break;
+                }
+                if(const auto value=dynamic_cast<const eCityEventValue*>(event); value && value->city()) who=value->city()->name();
+                else if(const auto value=dynamic_cast<const eGodEventValue*>(event)) who=eGod::sGodName(value->god());
+                else if(const auto value=dynamic_cast<const eMonsterEventValue*>(event)) who=eMonster::sMonsterName(value->monster());
+                else if(const auto attack=dynamic_cast<const eGodAttackEvent*>(event); attack && !attack->types().empty()) who=eGod::sGodName(attack->types().front());
+                reply << ",\"kind\":" << quote(kind) << ",\"months\":" << std::max(1,(said.fDays+29)/30) << ",\"who\":" << quote(who) << ",\"name\":" << quote(event->longName());
+            } else if(said.fGranted) reply << ",\"kind\":\"calm\"";
+            reply << '}';
+            oracle=reply.str();
+        } else if(action=="monument_halt") {
             if(monument->finished()) return "{\"error\":\"already_finished\"}";
             monument->setConstructionHalted(flag!=0);
         } else if(action=="sanctuary_attack") {
@@ -4984,7 +5078,7 @@ std::string eSimulationService::command(const std::string& text) {
                 +",\"text\":"+quote(string>=0?eLanguage::zeusText(132,string):std::string())+"}";
         }
         auto answer=inspect(x,y);
-        if(!answer.empty() && answer.back()=='}') { answer.pop_back(); answer+=",\"help\":"+help+",\"attack_answer\":"+attack+"}"; }
+        if(!answer.empty() && answer.back()=='}') { answer.pop_back(); answer+=",\"help\":"+help+",\"attack_answer\":"+attack+",\"oracle_answer\":"+oracle+"}"; }
         return answer;
     } else if(action=="world_quest") {
         // world_quest <quest index>: sends the hero a god asks for on his quest, as the SDL overview's quest button does (the hero must have arrived).
@@ -5142,7 +5236,7 @@ std::string eSimulationService::command(const std::string& text) {
     } else if(action=="enlist_cancel") {
         mEnlist.reset(); return worldInfo();
     } else if(action=="enlist_dispatch") {
-        // enlist_dispatch <plunder resource, -1 for any> [s:<banner ids>] [h:<city>:<hero>,...] [a:<ally city index>]
+        // enlist_dispatch <plunder resource, -1 for any> [s:<banner ids>] [h:<city>:<hero>,...] [a:<ally city index>] [t:<trireme indexes>]
         if(!mEnlist) return "{\"error\":\"no_enlistment\"}";
         mBoard->waitUntilFinished();
         const auto session=mEnlist; int plunder; if(!(in>>plunder)) return "{\"error\":\"invalid_enlistment\"}";
@@ -5176,11 +5270,22 @@ std::string eSimulationService::command(const std::string& text) {
                         if(++allies>1) return "{\"error\":\"one_ally_only\"}";
                         chosen.fAllies.push_back(ally);
                     }
+                } else if(token[0]=='t') {
+                    const auto target=worldCity(session->city);
+                    for(const auto& part:split(body,',')) {
+                        const int index=std::stoi(part);
+                        if(index<0 || index>=int(session->forces.fTriremes.size())) return "{\"error\":\"not_enlistable\"}";
+                        const auto& wharf=session->forces.fTriremes[index];
+                        if(!wharf || !wharf->trireme() || wharf->abroad() || !wharf->crewed()) return "{\"error\":\"no_crew\"}";
+                        if(!target || !target->waterTrade(wharf->cityId())) return "{\"error\":\"not_by_sea\"}";
+                        bool listed=false; for(const auto& w:chosen.fTriremes) listed=listed || w.get()==wharf.get();
+                        if(!listed) chosen.fTriremes.push_back(wharf);
+                    }
                 } else return "{\"error\":\"invalid_enlistment\"}";
             }
         } catch(const std::exception&) { return "{\"error\":\"invalid_enlistment\"}"; }
         // The SDL dialog sends nothing without a soldier or a hero (an ally's troops alone are not a force).
-        if(chosen.fSoldiers.empty() && chosen.fHeroes.empty()) return "{\"error\":\"no_forces\"}";
+        if(chosen.fSoldiers.empty() && chosen.fHeroes.empty() && chosen.fTriremes.empty()) return "{\"error\":\"no_forces\"}";
         eResourceType resource=eResourceType::none;
         if(plunder>=0) { resource=static_cast<eResourceType>(plunder); if(!eVectorHelpers::contains(session->plunder,resource)) return "{\"error\":\"not_offered\"}"; }
         mEnlist.reset();
@@ -5222,6 +5327,12 @@ std::string eSimulationService::command(const std::string& text) {
         const auto city=worldCity(index); if(!city) return "{\"error\":\"unknown_city\"}";
         if(kind=="ally") city->setRelationship(eForeignCityRelationship::ally); else if(kind=="vassal") city->setRelationship(eForeignCityRelationship::vassal);
         else if(kind=="rival") city->setRelationship(eForeignCityRelationship::rival); else return "{\"error\":\"unsupported_command\"}";
+        return worldInfo();
+    } else if(action=="test_sea") {
+        // Validators only: `test_sea <city index> <0|1>`: the sea reaches (or no longer reaches) a world city from the player's city.
+        int index,value; if(!mAllowTestCommands || !mBoard || !(in>>index>>value)) return "{\"error\":\"unsupported_command\"}";
+        const auto city=worldCity(index); if(!city) return "{\"error\":\"unknown_city\"}";
+        city->setWaterTrade(value==1,playerCity());
         return worldInfo();
     } else if(action=="test_attitude") {
         // Validators only: a world city's regard for the player.

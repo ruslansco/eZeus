@@ -10,6 +10,8 @@ namespace eFileFormat {
         messageLog,
         messageCategory,
         viewState,
+        // The original game's stockpiling, Auto Defend, oracle consultations and trireme crews (the Zeus guide's features).
+        zeusGuide,
 
         nextVersion
     };

@@ -13,6 +13,7 @@ const FIXED := [
 	["Escape", "Cancel the tool, a drag or a window"],
 	["Delete", "Demolition tool (as the demolition key)"],
 	["Shift", "Pan faster; with a wall tool, fill the rectangle"],
+	["Shift + 1–0", "Open a build tab in this game's layout (Shift + -: the City window)"],
 	["Mouse wheel", "Zoom to the pointer"],
 	["Middle button drag", "Orbit and tilt the camera"],
 	["Left button", "Place a building or inspect it"],
@@ -26,6 +27,7 @@ var scroller: ScrollContainer
 var reset_buttons: Dictionary = {}
 var speed_choices: Dictionary = {}
 var message: Label
+var layout_choice: OptionButton
 var waiting := ""
 var access: Node
 
@@ -48,6 +50,22 @@ func _ready() -> void:
 	var outer := VBoxContainer.new()
 	outer.add_theme_constant_override("separation", 8)
 	add_child(outer)
+	# The key layout: this game's own keys, or the original Zeus keys (P pauses, 1-0 open the build tabs, F1-F4 the bookmarks ...).
+	var layout_row := HBoxContainer.new()
+	layout_row.add_theme_constant_override("separation", 8)
+	var layout_label := Label.new()
+	layout_label.text = tr("Key layout")
+	layout_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	layout_row.add_child(layout_label)
+	layout_choice = OptionButton.new()
+	layout_choice.custom_minimum_size.x = 220
+	layout_choice.focus_mode = Control.FOCUS_NONE
+	for name in KeyBindings.LAYOUTS:
+		layout_choice.add_item(tr(KeyBindings.LAYOUT_NAMES[name]))
+	layout_choice.select(KeyBindings.LAYOUTS.find(KeyBindings.layout()))
+	layout_choice.item_selected.connect(func(index): choose_layout(KeyBindings.LAYOUTS[index]))
+	layout_row.add_child(layout_choice)
+	outer.add_child(layout_row)
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(610, 440)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -211,6 +229,18 @@ func reset_key(id: String) -> void:
 		changed.emit()
 	else:
 		message.text = tr("%s cannot go back to its key: another control that cannot take your key for it has it.") % tr(KeyBindings.definition(id).label)
+	refresh()
+
+# Puts every key on the chosen layout's (the player's own changes are forgotten: they were made against the other layout).
+func choose_layout(name: String) -> void:
+	if waiting != "":
+		end_capture()
+	if name == KeyBindings.layout():
+		return
+	KeyBindings.set_layout(name)
+	layout_choice.select(KeyBindings.LAYOUTS.find(name))
+	message.text = tr("Every key now follows the %s layout.") % tr(KeyBindings.LAYOUT_NAMES[name])
+	changed.emit()
 	refresh()
 
 func restore_defaults() -> void:

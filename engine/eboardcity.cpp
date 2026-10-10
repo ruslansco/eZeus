@@ -220,7 +220,8 @@ void eBoardCity::incTime(const int by) {
 
     mCityEvents.handleNewDate(date);
 
-    if(p && !p->isPerson()) {
+    // AI cities always defend themselves; a player's city does when Auto Defend is on.
+    if(p && (!p->isPerson() || mAutoDefend)) {
         const int lookForCityDefenseCheck = 5000;
         mLookForCityDefense += by;
         if(mLookForCityDefense > lookForCityDefenseCheck) {
@@ -609,7 +610,9 @@ void eBoardCity::updateCityDefense() {
         }
         eSoldierBanner::sPlace(bs, tx, ty, mBoard, 3, 3);
         mDefending = true;
-    } else {
+    } else if(!personPlayerOwner() || mDefending) {
+        // A player's companies go home only after a defence Auto Defend called them out for; otherwise they stay where the
+        // player put them.
         for(const auto& b : mSoldierBanners) {
             if(b->isAbroad()) continue;
             b->moveToDefault();
@@ -1315,6 +1318,16 @@ void eBoardCity::disallow(const eBuildingType type,
 
 void eBoardCity::setManTowers(const bool m) {
     mManTowers = m;
+}
+
+void eBoardCity::setStockpiled(const eResourceType r, const bool s) {
+    const auto basic = r & eResourceType::allBasic;
+    if(s) mStockpiled = mStockpiled | basic;
+    else mStockpiled = mStockpiled & ~basic;
+}
+
+void eBoardCity::setAutoDefend(const bool a) {
+    mAutoDefend = a;
 }
 
 void eBoardCity::distributeEmployees(const eSector s) {
@@ -2316,6 +2329,12 @@ eEnlistedForces eBoardCity::getEnlistableForces() const {
         if(s != eHeroSummoningStage::arrived) continue;
         const auto ht = h->heroType();
         result.fHeroes.push_back({mId, ht});
+    }
+
+    for(const auto b : mBoard.buildings(mId, eBuildingType::triremeWharf)) {
+        const auto w = static_cast<eTriremeWharf*>(b);
+        if(!w->trireme() || w->abroad() || !w->crewed()) continue;
+        result.fTriremes.push_back(w);
     }
 
     return result;

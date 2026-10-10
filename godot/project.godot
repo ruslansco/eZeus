@@ -3,6 +3,11 @@ config_version=5
 
 [shader_globals]
 
+city_effect_clock={
+"type": "float",
+"value": 0.0
+}
+
 map_border_points={
 "type": "sampler2D",
 "value": ""

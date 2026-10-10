@@ -1,0 +1,18 @@
+{
+  "asset": "greek_panel_v1.png",
+  "created": "2026-10-10",
+  "method": "built-in image_gen",
+  "intent": "generate, using the approved menu frame only as a style reference",
+  "source_dimensions": [
+    1536,
+    1024
+  ],
+  "source_sha256": "c7c47940f73c240f2249191ecb859c8dfdeae1cbfb282cb8a2a000ad6c923b1f",
+  "alpha": "RGBA; genuine zero-alpha exterior corner verified",
+  "runtime_import_limit": 384,
+  "runtime_slices": 48,
+  "prompt": "greek_panel_v1.prompt.txt",
+  "reference": "../menu/greek_menu_sheet_v3.png",
+  "usage": "first in-game focused-panel family: Escape menu, embedded dialogs, CharacterCard and EpisodeShell; campaign prose reuses existing aged parchment",
+  "limits": "painted raster relief; no new 3D panel meshes; live inspector/HUD art is a later pass"
+}

@@ -9,6 +9,7 @@
 #include "engine/edate.h"
 
 class eBuildingTextures;
+class eGameEvent;
 
 enum class eHelpDenialReason {
     tooSoon,
@@ -55,6 +56,18 @@ public:
     double helpTimeFraction() const;
     double helpAttackTimeFraction() const;
 
+    // The original game's oracle (Zeus' Stronghold and the Oracle of Apollo): a consultation foretells the soonest event that
+    // will reach the city within two years (an invasion, an angry god, a monster, a request, a gift, a quest or a disaster).
+    // The oracle answers again after the god's help period.
+    struct eOracleAnswer {
+        bool fGranted = false;
+        const eGameEvent* fEvent = nullptr; // nullptr: nothing is coming
+        int fDays = 0;
+    };
+    bool hasOracle() const;
+    eOracleAnswer consultOracle();
+    double oracleTimeFraction() const;
+
     static stdsptr<eSanctuary> sCreate(
             const eBuildingType type,
             const int sw, const int sh,
@@ -73,6 +86,7 @@ private:
     bool mAskedForHelp = false;
     int mCheckHelpNeeded = 0;
     int mHelpTimer = 10000000;
+    int mOracleTimer = 10000000;
 
     std::vector<eTile*> mWarriorTiles;
     std::vector<eTile*> mSpecialTiles;

@@ -1,0 +1,48 @@
+{
+ "format": "RGBAH",
+ "width": 1024,
+ "height": 135,
+ "parts": {
+  "common_house_3a_0": {
+   "row": 0,
+   "rows": 8,
+   "poses": 9,
+   "vertices": 8178,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024402141571044922
+  },
+  "common_house_3a_21": {
+   "row": 72,
+   "rows": 7,
+   "poses": 9,
+   "vertices": 6804,
+   "frames": {
+    "work_00": 0,
+    "work_01": 1,
+    "work_02": 2,
+    "work_03": 3,
+    "work_04": 4,
+    "work_05": 5,
+    "work_06": 6,
+    "work_07": 7,
+    "inactive": 8
+   },
+   "max_error": 0.00024390220642089844
+  }
+ },
+ "source": {
+  "file": "common_house_3a.glb",
+  "bytes": 3242536,
+  "mtime": 1791664452
+ }
+}

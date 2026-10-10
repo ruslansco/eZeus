@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "asset": "hades_portal_guardian.glb",
+  "creator": "Original authored geometry by Codex for this project",
+  "source": "art/menu/hades-portal/hades-portal-guardian-v1.blend",
+  "builder": "tools/build_hades_portal_guardian.py",
+  "inspiration": "User-supplied Burning Crusade doorway screenshot: hooded stone guardian, sword, glowing green eyes; original Greek mantle, chiton, brooches and leaf-shaped sword.",
+  "source_sha256": "52ea4b1977ca2ac0d42efbee22b90cf9f4ad79a552c4545ef7d0faa9cd05baf7",
+  "glb_sha256": "9a13e39c63ff29e43bf6c6f22b52dfc9f4e77c1d184740507202a2c6aaa3e126",
+  "triangles": 15874,
+  "surfaces": 4,
+  "uv_sets": 2,
+  "scope": "Menu-only; does not replace native Hades, monsters or older guardian assets",
+  "release_status": "Original development sculpture; reference comparison and user visual acceptance remain pending."
+}

@@ -1,5 +1,7 @@
 #include "esanctuary.h"
 
+#include "fileIO/efileformat.h"
+
 #include "engine/egameboard.h"
 #include "characters/gods/egod.h"
 #include "characters/actions/egodworshippedaction.h"
@@ -316,6 +318,7 @@ bool eSanctuary::sacrificing() const {
 
 void eSanctuary::timeChanged(const int by) {
     mHelpTimer += by;
+    if(mOracleTimer < eNumbers::sGodHelpPeriod) mOracleTimer += by;
     eMonument::timeChanged(by);
 
     if(!mGod && !mGodAbroad && finished()) {
@@ -392,6 +395,10 @@ void eSanctuary::read(eReadStream& src) {
         const auto t = src.readTile(board);
         mSpecialTiles.push_back(t);
     }
+
+    if(src.formatVersion() >= eFileFormat::zeusGuide) {
+        src >> mOracleTimer;
+    }
 }
 
 void eSanctuary::write(eWriteStream& dst) const {
@@ -414,6 +421,58 @@ void eSanctuary::write(eWriteStream& dst) const {
     for(const auto t : mSpecialTiles) {
         dst.writeTile(t);
     }
+
+    dst << mOracleTimer;
+}
+
+bool eSanctuary::hasOracle() const {
+    const auto type = godType();
+    return type == eGodType::zeus || type == eGodType::apollo;
+}
+
+double eSanctuary::oracleTimeFraction() const {
+    return std::min(1., double(mOracleTimer)/eNumbers::sGodHelpPeriod);
+}
+
+eSanctuary::eOracleAnswer eSanctuary::consultOracle() {
+    eOracleAnswer answer;
+    if(!hasOracle() || !finished() || mOracleTimer < eNumbers::sGodHelpPeriod) {
+        return answer;
+    }
+    answer.fGranted = true;
+    mOracleTimer = 0;
+    auto& board = getBoard();
+    const auto today = board.date();
+    const auto cid = cityId();
+    for(const auto e : board.allGameEvents()) {
+        if(!e || e->cityId() != cid || e->finished()) continue;
+        switch(e->type()) {
+        case eGameEventType::invasion:
+        case eGameEventType::godAttack:
+        case eGameEventType::monsterUnleashed:
+        case eGameEventType::monsterInvasion:
+        case eGameEventType::receiveRequest:
+        case eGameEventType::troopsRequest:
+        case eGameEventType::giftFrom:
+        case eGameEventType::godQuest:
+        case eGameEventType::godDisaster:
+        case eGameEventType::earthquake:
+        case eGameEventType::tidalWave:
+        case eGameEventType::lavaFlow:
+        case eGameEventType::sinkLand:
+        case eGameEventType::landSlide:
+            break;
+        default:
+            continue;
+        }
+        const int days = e->nextDate() - today;
+        if(days < 0 || days > 2*365) continue;
+        if(!answer.fEvent || days < answer.fDays) {
+            answer.fEvent = e;
+            answer.fDays = days;
+        }
+    }
+    return answer;
 }
 
 std::vector<eTile*> eSanctuary::warriorTiles() const {

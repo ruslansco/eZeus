@@ -4,8 +4,11 @@ var okay := true
 var checks := 0
 var props: Array = []
 var names := ["Hut", "Shack", "Hovel", "Homestead", "Tenement", "Apartment", "Townhouse"]
+var capture_folder := "res://captures"
 
 func _initialize() -> void:
+	if not OS.get_environment("EZEUS_HOUSING_REVIEW_DIRECTORY").is_empty():
+		capture_folder=OS.get_environment("EZEUS_HOUSING_REVIEW_DIRECTORY")
 	Engine.set_meta("ezeus_settings_path", OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH"))
 	Engine.set_meta("ezeus_save_directory", OS.get_environment("EZEUS_REVIEW_SAVE_DIRECTORY"))
 	call_deferred("run")
@@ -19,7 +22,7 @@ func capture(label: String, target: Vector3, distance: float, yaw := 0.0, pitch 
 	city.orbit.target = target; city.orbit.distance = distance
 	city.orbit.yaw = yaw; city.orbit.pitch = pitch; city.orbit.refresh()
 	await frames(); RenderingServer.force_draw(true, .016)
-	root.get_texture().get_image().save_png("res://captures/housing-%s.png" % label)
+	root.get_texture().get_image().save_png(capture_folder.path_join("housing-%s.png" % label))
 
 func run() -> void:
 	city = load("res://main.tscn").instantiate(); root.add_child(city)
@@ -63,6 +66,40 @@ func run() -> void:
 	await capture("progression",city.world_position(base.x,base.y+1.8,int(free[base][2]))+Vector3.UP*.7,20,0,31)
 	await capture("starter-levels",centers[0].lerp(centers[1],.5)+Vector3.UP*.4,7.5,0,32)
 	await capture("upper-levels",centers[4].lerp(centers[6],.5)+Vector3.UP*1.0,13,0,30)
+	# Render fixtures exercise actual MultiMesh/VAT visibility without editing
+	# native occupancy. The native immigration/save test covers its authority.
+	for prop in props: prop.visible=false
+	var residents := preload("res://scripts/building_batches.gd").new()
+	city.world.add_child(residents)
+	var groups := {}
+	for level in 7:
+		var asset := "common_house_%da" % level
+		var facing := 3 if level in [2,3] else 2
+		groups[asset+"|residents"]=[{"transform":Transform3D(city.model_basis(asset,2,2,facing),centers[level]),"working":false,"animation_offset":0}]
+	residents.rebuild(groups)
+	await capture("residents-empty",centers[0].lerp(centers[1],.5)+Vector3.UP*.4,7.5,0,32)
+	var original_nodes := residents.group_nodes.duplicate()
+	for group in groups: groups[group][0].working=true
+	residents.rebuild(groups)
+	check(residents.last_rebuilt==0 and residents.group_nodes==original_nodes,"occupying all seven render fixtures reuses their geometry")
+	for group in groups:
+		var visible_resident := false
+		for node in residents.group_nodes[group]:
+			if node.multimesh.use_custom_data:
+				visible_resident=visible_resident or node.multimesh.get_instance_custom_data(0).r>.5
+		check(visible_resident,str(group)+": GPU receives occupied visibility")
+	for phase in [0,10,20,30]:
+		RenderingServer.global_shader_parameter_set("building_work_clock",float(phase))
+		await capture("resident-idle-%02d"%phase,centers[0].lerp(centers[1],.5)+Vector3.UP*.4,6.0,0,32)
+	await capture("residents-occupied",city.world_position(base.x,base.y+1.8,int(free[base][2]))+Vector3.UP*.7,20,0,31)
+	for group in groups: groups[group][0].working=false
+	residents.rebuild(groups)
+	var hidden := true
+	for group in groups:
+		for node in residents.group_nodes[group]:
+			if node.multimesh.use_custom_data: hidden=hidden and node.multimesh.get_instance_custom_data(0).r<.5
+	check(hidden and residents.last_rebuilt==0,"final resident departure hides households without replacing geometry")
+	residents.free()
 	# Test the existing level-change replacement with one real building's ID and
 	# unchanged placement. These copies never enter the native core or a save.
 	var live_houses: Array = original.buildings.filter(func(b):return str(b.asset).begins_with("common_house_"))

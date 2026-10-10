@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="64" viewBox="0 0 320 64">
+<defs>
+ <linearGradient id="bronze" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#edcf87"/><stop offset=".24" stop-color="#b48b49"/><stop offset=".6" stop-color="#654223"/><stop offset="1" stop-color="#cfac64"/></linearGradient>
+ <linearGradient id="enamel" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#284862"/><stop offset=".26" stop-color="#172e43"/><stop offset=".8" stop-color="#0b1b2c"/><stop offset="1" stop-color="#1c3449"/></linearGradient>
+</defs>
+<path d="M8 1h304l7 7v48l-7 7H8l-7-7V8z" fill="#040b12"/>
+<path d="M9 3h302l6 6v46l-6 6H9l-6-6V9z" fill="url(#bronze)" stroke="#3e2c18"/>
+<path d="M13 8h294l5 5v38l-5 5H13l-5-5V13z" fill="url(#enamel)" stroke="#e0bc75" stroke-width="1.2"/>
+<path d="M16 12h288M13 17v30m294-30v30M16 52h288" fill="none" stroke="#85a2b8" stroke-opacity=".22"/>
+<path d="m9 8 3 3-3 3-3-3zm302 0 3 3-3 3-3-3zM9 50l3 3-3 3-3-3zm302 0 3 3-3 3-3-3z" fill="#e3bf78"/>
+</svg>

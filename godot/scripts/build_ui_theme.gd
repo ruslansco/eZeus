@@ -692,6 +692,31 @@ func run() -> void:
 			if chosen:face.border_width_bottom=2
 			if state=="focus":face.bg_color=Color.TRANSPARENT
 			theme.set_stylebox(state,kind,face)
+	# Calendar and transport controls: original compact slate/bronze HUD treatment.
+	theme.set_type_variation("ClockPanel", "PanelContainer")
+	var clock_panel := box(Color(.075,.09,.097,.93), Color(GOLD,.55), 1, 4, 8, 6)
+	clock_panel.shadow_color=Color(0,0,0,.25);clock_panel.shadow_size=5
+	theme.set_stylebox("panel", "ClockPanel", clock_panel)
+	theme.set_type_variation("ClockDate", "Label")
+	theme.set_font("font", "ClockDate", medium)
+	theme.set_font_size("font_size", "ClockDate", 14)
+	theme.set_color("font_color", "ClockDate", IVORY)
+	for kind in ["ClockSpeed", "ClockPause"]:
+		theme.set_type_variation(kind, "Button")
+		theme.set_font_size("font_size", kind, 12)
+		theme.set_constant("icon_max_width", kind, 24 if kind=="ClockSpeed" else 18)
+		theme.set_constant("h_separation", kind, 3)
+		for state in ["normal","hover","pressed","hover_pressed","focus","disabled"]:
+			var clock_selected: bool=state in ["pressed","hover_pressed"]
+			var clock_hover: bool=state in ["hover","hover_pressed"]
+			var face:=box(Color(.27,.23,.15) if clock_selected else (Color(.15,.20,.22) if clock_hover else Color(.09,.12,.13,.8)),Color(GOLD_PALE,.9) if clock_selected else Color(GOLD,.5 if clock_hover else .22),1,2,5,4)
+			if clock_selected: face.border_width_bottom=2
+			if state=="focus":face.bg_color=Color.TRANSPARENT;face.border_color=GOLD_PALE
+			theme.set_stylebox(state, kind, face)
+		for state in ["normal","hover","pressed","hover_pressed"]:
+			theme.set_color("icon_"+state+"_color", kind, Color.WHITE)
+		theme.set_color("font_color",kind,IVORY)
+		theme.set_color("font_pressed_color",kind,GOLD_PALE)
 	# The city help card (ui/city_help_panel.gd): segmented Issues/Guide tabs and the settlement guide's stepper. A thin
 	# segmented progress bar, step rows with done/current/upcoming markers, the current step as an inset card with a
 	# gold edge on the left, a full-width status strip (green when done, teal while to do), quiet secondary actions and
@@ -720,7 +745,7 @@ func run() -> void:
 		theme.set_stylebox(state, "GuideIconButton", box(Color(.18, .22, .24) if lit else Color.TRANSPARENT, Color(GOLD_PALE, .9) if state == "focus" else (Color(GOLD, .45) if lit else Color.TRANSPARENT), 1, 4, 6, 6))
 	for entry in [["icon_normal_color", MUTED], ["icon_hover_color", IVORY], ["icon_pressed_color", GOLD_PALE], ["icon_hover_pressed_color", GOLD_PALE], ["icon_focus_color", IVORY]]:
 		theme.set_color(entry[0], "GuideIconButton", entry[1])
-	for entry in [["GuideTitle", 18, IVORY, bold], ["GuideStepTitle", 16, GOLD_PALE, bold], ["GuideMeta", 13, MUTED, null], ["GuideBody", 14, Color(IVORY, .88), null], ["GuideChipDoneText", 14, achieved, medium], ["GuideChipTodoText", 14, to_do, medium]]:
+	for entry in [["GuideTitle", 20, IVORY, bold], ["GuideStepTitle", 18, GOLD_PALE, bold], ["GuideMeta", 14, MUTED, null], ["GuideBody", 16, Color(IVORY, .95), null], ["GuideChipDoneText", 14, achieved, medium], ["GuideChipTodoText", 14, to_do, medium]]:
 		theme.set_type_variation(entry[0], "Label")
 		theme.set_font_size("font_size", entry[0], entry[1])
 		theme.set_color("font_color", entry[0], entry[2])
@@ -775,6 +800,7 @@ func run() -> void:
 	for state in ["normal", "hover", "pressed", "hover_pressed", "focus", "disabled"]:
 		var fill: Color = {"hover": Color(.52, .40, .19), "pressed": Color(.34, .26, .12), "hover_pressed": Color(.34, .26, .12)}.get(state, Color(.42, .32, .15))
 		var face := box(fill, GOLD if state == "normal" else GOLD_PALE, 1, 4, 14, 6)
+		if state == "disabled": face = box(Color(.12,.14,.15),Color(GOLD,.2),1,4,14,6)
 		if state == "focus": face = box(Color.TRANSPARENT, GOLD_PALE, 1, 4, 14, 6)
 		theme.set_stylebox(state, "GuidePrimary", face)
 	for entry in [["font_color", IVORY], ["font_hover_color", Color.WHITE], ["font_pressed_color", GOLD_PALE], ["font_hover_pressed_color", GOLD_PALE], ["font_focus_color", IVORY], ["icon_normal_color", IVORY], ["icon_hover_color", Color.WHITE], ["icon_pressed_color", GOLD_PALE], ["icon_hover_pressed_color", GOLD_PALE]]:
@@ -834,6 +860,7 @@ func run() -> void:
 	theme.set_color("still_activity", "LoadingScreen", Color("b99a62"))
 	theme.set_color("activity", "LoadingScreen", Color("dec08a"))
 	# Focused updates preserve unrelated authored Theme items in the working tree.
+	preload("res://ui/city_panel_skin.gd").install(theme)
 	# Add -- --decisions-only to refresh only the correspondence styles, or -- --guide-only for the city help card's
 	# (its Guide* and Issue* variations).
 	var focused: Array = []
@@ -841,13 +868,18 @@ func run() -> void:
 		focused = ["DecisionCard", "EnvoyPaper", "EnvoyPortrait", "EnvoyBody", "EnvoyCityName", "EnvoyTitleButton", "EnvoyAction", "EnvoyPrimary"]
 	elif OS.get_cmdline_user_args().has("--guide-only"):
 		focused = Array(theme.get_type_list()).filter(func(kind): return str(kind).begins_with("Guide") or str(kind).begins_with("Issue"))
+	elif OS.get_cmdline_user_args().has("--panels-only"):
+		focused = preload("res://ui/city_panel_skin.gd").TYPES
+	elif OS.get_cmdline_user_args().has("--clock-only"):
+		focused = ["ClockPanel", "ClockDate", "ClockSpeed", "ClockPause"]
 	if not focused.is_empty():
-		var current: Theme = load(OUTPUT).duplicate(true)
+		var current: Theme = load(OUTPUT).duplicate()
 		if OS.get_cmdline_user_args().has("--guide-only"):
 			for kind in current.get_type_list():
 				if str(kind).begins_with("Guide") or str(kind).begins_with("Issue"): current.remove_type(kind)
 		for kind in focused:
-			current.set_type_variation(kind, theme.get_type_variation_base(kind))
+			var base: String = theme.get_type_variation_base(kind)
+			if not base.is_empty(): current.set_type_variation(kind, base)
 			for item in theme.get_property_list():
 				var name := str(item.name)
 				if name.begins_with(kind + "/"): current.set(name, theme.get(name))

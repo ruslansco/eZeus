@@ -1,4 +1,5 @@
 shader_type spatial;
+global uniform float city_effect_clock;
 render_mode unshaded, blend_mix, depth_draw_never, cull_disabled, shadows_disabled;
 // The smoke over a burning building (scripts/building_fires.gd): a column that turns to face the camera, billowing upward and
 // thinning out as it rises. `seed` sets each column's own phase; `thickness` is lower over smouldering rubble. Cosmetic only.
@@ -24,7 +25,7 @@ void vertex() {
 }
 void fragment() {
 	float y=1.0-UV.y;
-	vec2 p=vec2(UV.x*2.2+seed*5.0,y*2.6-TIME*.55);
+	vec2 p=vec2(UV.x*2.2+seed*5.0,y*2.6-city_effect_clock*.55);
 	float puff=fbm(p*1.6);
 	float width=.18+y*.32;
 	float body=1.0-smoothstep(width*.4,width,abs(UV.x-.5+(puff-.5)*.25));

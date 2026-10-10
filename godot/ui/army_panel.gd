@@ -43,6 +43,9 @@ var rows: Dictionary = {}
 var swatches: Dictionary = {}
 var host_bounds := Rect2()
 var fit_queued := false
+# Auto Defend (the original game's Options menu): the city calls its companies out against an invasion itself, and the player's orders wait.
+var auto_defend := false
+var auto_defend_check: CheckButton
 
 func _ready() -> void:
 	close_button.pressed.connect(func(): close())
@@ -60,6 +63,15 @@ func _ready() -> void:
 	place_button.pressed.connect(func():
 		if selected_id >= 0:
 			place_requested.emit(selected_id))
+	auto_defend_check = CheckButton.new()
+	auto_defend_check.focus_mode = Control.FOCUS_NONE
+	auto_defend_check.toggled.connect(func(on):
+		auto_defend = on
+		order.emit("auto_defend %d" % (1 if on else 0))
+		refresh())
+	var buttons := call_all.get_parent()
+	buttons.get_parent().add_child(auto_defend_check)
+	buttons.get_parent().move_child(auto_defend_check, buttons.get_index() + 1)
 	group.allow_unpress = false
 	column.minimum_size_changed.connect(queue_fit)
 	header.minimum_size_changed.connect(queue_fit)
@@ -80,6 +92,13 @@ func set_banners(list_value: Array, per: int) -> void:
 	per_banner = per
 	if selected_id >= 0 and selected_banner().is_empty():
 		selected_id = -1
+	if visible:
+		refresh()
+
+func set_auto_defend(on: bool) -> void:
+	auto_defend = on
+	if auto_defend_check != null:
+		auto_defend_check.set_pressed_no_signal(on)
 	if visible:
 		refresh()
 
@@ -163,10 +182,13 @@ func refresh() -> void:
 	empty.visible = banners.is_empty()
 	summary.visible = not banners.is_empty()
 	summary.text = tr("%d companies, %d soldiers, %d called out") % [banners.size(), soldiers, out]
-	call_all.disabled = banners.is_empty()
-	home_all.disabled = banners.is_empty()
-	call_all.tooltip_text = tr("Call all out") + ("\n" + tr("No companies are available") if call_all.disabled else "")
-	home_all.tooltip_text = tr("Send all home") + ("\n" + tr("No companies are available") if home_all.disabled else "")
+	call_all.disabled = banners.is_empty() or auto_defend
+	home_all.disabled = banners.is_empty() or auto_defend
+	var held := "\n" + tr("Auto Defend commands the companies") if auto_defend else ("\n" + tr("No companies are available") if banners.is_empty() else "")
+	call_all.tooltip_text = tr("Call all out") + held
+	home_all.tooltip_text = tr("Send all home") + held
+	if auto_defend_check != null:
+		auto_defend_check.set_pressed_no_signal(auto_defend)
 	var alive := {}
 	for banner in banners:
 		var id := int(banner.id)
@@ -203,8 +225,8 @@ func refresh() -> void:
 		detail_info.text = "%s\n%s" % [str(banner.kind_name), status_text(banner)]
 		toggle_button.text = tr("Call out") if bool(banner.home) else tr("Send home")
 		var movable := not bool(banner.abroad)
-		toggle_button.disabled = bool(banner.abroad) and not bool(banner.aid)
-		place_button.disabled = not movable
+		toggle_button.disabled = (bool(banner.abroad) and not bool(banner.aid)) or auto_defend
+		place_button.disabled = not movable or auto_defend
 		go_button.disabled = not bool(banner.get("placed", false))
 		toggle_button.tooltip_text = toggle_button.text + ("\n" + tr("This company is abroad and cannot be called out or sent home") if toggle_button.disabled else "")
 		place_button.tooltip_text = place_button.text + ("\n" + tr("This company is abroad and its banner cannot be moved") if place_button.disabled else "")
@@ -221,6 +243,9 @@ func retranslate() -> void:
 	empty.text = tr("The city has no soldiers yet. Once the palace stands, well-built houses supply them: common houses rock throwers, elite houses with arms hoplites, and with horses also horsemen.")
 	call_all.text = tr("Call all out")
 	home_all.text = tr("Send all home")
+	if auto_defend_check != null:
+		auto_defend_check.text = tr("Auto Defend")
+		auto_defend_check.tooltip_text = tr("The city calls its companies out against invaders and sends them home afterwards; your orders wait while it is on.")
 	go_button.text = tr("Go to")
 	set_placing(placing)
 	refresh()

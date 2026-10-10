@@ -1,20 +1,21 @@
 {
   "asset": "walker_areswarrior",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_areswarrior.glb",
-  "bytes": 10996684,
-  "vertices": 15854,
+  "bytes": 4574636,
+  "vertices": 6535,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 17,
   "bounds_blender": [
     [
       -0.34317758679389954,
-      -0.19717086851596832,
+      -0.19726115465164185,
       0.0005499827093444765
     ],
     [
-      0.2224564552307129,
-      0.23873648047447205,
+      0.2226094752550125,
+      0.2386760711669922,
       0.971451997756958
     ]
   ],
@@ -26,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Warrior of Ares",
@@ -61,6 +62,7 @@
           "seed": 93026
         },
         "body_height": 0.8700601623859257,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "115fd90b6847f82b7809c4eb46f644f2bb5cb34d8af33391036f37b4895bb14b",
         "clavi_srgb": [
           0.14,
@@ -70,11 +72,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

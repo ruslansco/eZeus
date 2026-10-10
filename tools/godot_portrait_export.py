@@ -48,6 +48,7 @@ ns = {'__file__': str(path), '__name__': '__godot_portrait__', 'PORTRAIT': True,
 exec(compile(src, str(path), 'exec'), ns)
 K = ns['K']
 character_art = ns['character_art']
+character_art.CITY_DETAIL = False
 god_face = ns['god_face']
 sys.path.insert(0, str(REPO / 'tools'))
 import godot_portrait_faces as portrait

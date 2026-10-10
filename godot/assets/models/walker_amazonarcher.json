@@ -1,19 +1,20 @@
 {
   "asset": "walker_amazonarcher",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_amazonarcher.glb",
-  "bytes": 10012344,
-  "vertices": 15211,
+  "bytes": 4160244,
+  "vertices": 6271,
   "surfaces": 3,
-  "source_surfaces": 19,
+  "source_surfaces": 18,
   "bounds_blender": [
     [
       -0.2239569127559662,
-      -0.19292189180850983,
+      -0.19399915635585785,
       0.0005000103265047073
     ],
     [
-      0.1835392862558365,
+      0.18378964066505432,
       0.6599999666213989,
       0.9146886467933655
     ]
@@ -26,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Amazon archer",
@@ -62,6 +63,7 @@
           "seed": 93004
         },
         "body_height": 0.8700665268115699,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "dae75afb023919b8449b10679a4abb0af06bb5aae58fe87aedf16a07688e7bf3",
         "clavi_srgb": [
           0.4,
@@ -71,11 +73,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
-    "seed": "local stable hashes, never simulation RNG"
+    "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    }
   },
   "memory_optimization": {
     "version": 1,

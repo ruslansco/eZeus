@@ -190,6 +190,7 @@ int eTradePost::buy(const int cash) {
         const auto thisC = brd.boardCityWithId(thisCid);
         const auto es = eResourceTypeHelpers::extractResourceTypes(mExports);
         for(const auto e : es) {
+            if(thisC && thisC->stockpiled(e)) continue;
             const int price = brd.price(e);
             if(price > cash) continue;
             const int c = count(e);
@@ -202,11 +203,14 @@ int eTradePost::buy(const int cash) {
             spent += price;
         }
     } else {
+        const auto stockpiled = brd.stockpiled(thisCid);
         for(auto& b : mCity.buys()) {
             const auto expt = mExports & b.fType;
             const int price = brd.price(b.fType);
             const bool exp = static_cast<bool>(expt);
             if(!exp) continue;
+            // A stockpiled good is not sold abroad (the original game's Distribution tab).
+            if(static_cast<bool>(stockpiled & b.fType)) continue;
             if(b.used(thisPid) >= b.fMax) continue;
             if(price > cash) continue;
             const int c = count(b.fType);

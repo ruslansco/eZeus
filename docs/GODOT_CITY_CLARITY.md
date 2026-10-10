@@ -1,5 +1,44 @@
 # City clarity and shared art finish — 7 October 2026
 
+## First-settlement coaching — 10 October 2026
+
+This supersedes the earlier default six-item stepper. New-game Begin still offers
+help only for an empty city after loading and honors the existing opt-out. The
+offer now asks whether to start guided setup or explore independently. Manual
+**? → Guide** and Game → Help retain access at any point.
+
+One current task has a clear instruction, direct native tool and live success
+condition. Continue is disabled until that condition is met; explicit Skip does
+not award completion. The optional roadmap lets players review any stage, including
+completed/skipped work. Closing or collapsing retains the current session task.
+Finishing never certifies campaign victory: the final task opens actual objectives
+or, on a sandbox map, the Issues panel.
+
+Road progress is the increase over the new city's captured starting count (three
+tiles), preventing pre-authored roads from completing the tutorial. A map without
+roads gets first-road instructions. Common housing requires two placed homes and
+actual residents. Native water/food/working-maintenance observations remain the
+authority for service milestones. The food stage offers one part of the chain at
+a time: granary → suitable available local source or food trade → agora → vendor
+→ actual delivery. Existing posts remain inspectable after partner slots are used.
+Missing chapter tools are explained and can be skipped without a dead end.
+
+Paused-time and exact vacancy hints make waiting actionable. Resume is explicit
+and disabled while a required native decision owns time. This card remains
+non-modal and does not auto-build, answer decisions or run simulation ticks.
+Keyboard focus holds camera navigation and survives live data rebuilds; tool
+activation returns input. Derived task data caches between the existing read-only
+report refreshes (one second for Guide, five seconds with reading holds for Issues).
+Headers/body are larger shared Theme variations; long headings wrap at enlarged
+text sizes. No native save, rules, RNG, art or model contract changes are made.
+
+The design follows [Xbox objective clarity guideline 109](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/109)
+for interactive, revisitable tasks and [UI context guideline 114](https://learn.microsoft.com/en-us/xbox/accessibility/xbox-accessibility-guidelines/114)
+for plain instructions and understandable actions. This is scoped implementation,
+not an accessibility certification or substitute for newcomer playtesting. Reviews
+cover designated-city presentation fixtures, normal/enlarged EN/RU and actual
+native empty-settlement construction; see current validation for counts/limits.
+
 These are two bounded implementation passes of the user's city-understanding and art
 priorities. They add actionable help and a manual settlement guide alongside
 bounded presentation refinements. It does not change construction, staffing,

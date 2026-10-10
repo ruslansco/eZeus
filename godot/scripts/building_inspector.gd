@@ -23,6 +23,9 @@ var construction_advice: Label
 var monument_halt_button: Button
 var monument_help_button: Button
 var monument_help_bar: ProgressBar
+var monument_oracle_button: Button
+var monument_oracle_bar: ProgressBar
+var monument_oracle_result: Label
 var monument_help_result: Label
 var monument_attack_button: Button
 var monument_attack_popup: PopupMenu
@@ -30,6 +33,7 @@ var monument_attack_bar: ProgressBar
 var monument_attack_result: Label
 var hall_rows: Array = []
 var summon_button: Button
+var dispatch_button: Button
 # The SDL page's own lines (the hippodrome, the trireme wharf: engine/ebuildinginfotext) and the wharf's switch.
 var notes_label: Label
 var switch_button: Button
@@ -85,6 +89,7 @@ func show_inspection(data: Dictionary) -> void:
 		hall_rows.clear()
 		hall_stage_label = null
 		summon_button = null
+		dispatch_button = null
 		notes_label = null
 		switch_button = null
 		route_button = null
@@ -95,6 +100,9 @@ func show_inspection(data: Dictionary) -> void:
 		monument_halt_button = null
 		monument_help_button = null
 		monument_help_bar = null
+		monument_oracle_button = null
+		monument_oracle_bar = null
+		monument_oracle_result = null
 		monument_help_result = null
 		monument_attack_button = null
 		monument_attack_popup = null
@@ -184,6 +192,16 @@ func build_hall(hall: Dictionary) -> void:
 	summon_button = Button.new()
 	summon_button.focus_mode = Control.FOCUS_NONE
 	add_child(summon_button)
+	# Poseidon's "Dispatch Hero": the hero sets out on the quest a god asks of him (the world map and the City window offer it too).
+	dispatch_button = Button.new()
+	dispatch_button.focus_mode = Control.FOCUS_NONE
+	dispatch_button.visible = false
+	add_child(dispatch_button)
+	dispatch_button.pressed.connect(func():
+		var quest := int(value.get("hall", {}).get("quest", -1))
+		if pending or quest < 0:
+			return
+		action_requested.emit("world_quest %d" % quest))
 	summon_button.pressed.connect(func():
 		if pending or not value.get("hall", {}).get("can_summon", false):
 			return
@@ -235,8 +253,61 @@ func build_monument(monument: Dictionary) -> void:
 			pending = true
 			action_requested.emit("sanctuary_help %d %d %d" % [int(value.x), int(value.y), int(value.target_token)])
 			update_live_data())
+		if bool(monument.get("oracle", false)):
+			build_oracle()
 		if monument.has("attack"):
 			build_attack(monument.attack)
+
+# The original game's oracle (Zeus' Stronghold, the Oracle of Apollo): a consultation foretells the soonest event that will reach the
+# city. The bar is the wait until it answers again; the prophecy is the line under it.
+func build_oracle() -> void:
+	monument_oracle_button = Button.new()
+	monument_oracle_button.focus_mode = Control.FOCUS_NONE
+	monument_oracle_button.text = tr("Consult the Oracle")
+	monument_oracle_button.tooltip_text = tr("Ask the Oracle what will come to the city")
+	add_child(monument_oracle_button)
+	monument_oracle_bar = ProgressBar.new()
+	monument_oracle_bar.min_value = 0
+	monument_oracle_bar.max_value = 100
+	monument_oracle_bar.show_percentage = false
+	monument_oracle_bar.custom_minimum_size = Vector2(0, 10)
+	add_child(monument_oracle_bar)
+	monument_oracle_result = label("")
+	monument_oracle_result.theme_type_variation = "Caption"
+	monument_oracle_button.pressed.connect(func():
+		if pending or not value.get("can_control", false):
+			return
+		pending = true
+		action_requested.emit("oracle %d %d %d" % [int(value.x), int(value.y), int(value.target_token)])
+		update_live_data())
+
+const ORACLE_WORDS := {
+	"invasion": "The Oracle speaks: in about %d months an army will march on the city from %s.",
+	"god_attack": "The Oracle speaks: in about %d months an angry god will strike the city: %s.",
+	"monster": "The Oracle speaks: in about %d months a monster will be loose in the city: %s.",
+	"request": "The Oracle speaks: in about %d months a request will come from %s.",
+	"troops": "The Oracle speaks: in about %d months a call for troops will come from %s.",
+	"gift": "The Oracle speaks: in about %d months a gift will come from %s.",
+	"quest": "The Oracle speaks: in about %d months a god will set the city a quest: %s.",
+	"disaster": "The Oracle speaks: in about %d months a disaster will strike the city: %s.",
+}
+
+# The prophecy in the interface language: the core names the event's kind, the months until it and who sends it.
+static func oracle_text(answer: Dictionary) -> String:
+	if not bool(answer.get("granted", false)):
+		return TranslationServer.translate("The Oracle is silent. Ask again later (%d%% ready).") % int(answer.get("ready", 0))
+	var kind := str(answer.get("kind", "calm"))
+	if not ORACLE_WORDS.has(kind):
+		return TranslationServer.translate("The Oracle speaks: no army, angry god, monster or disaster will reach the city in the next two years.")
+	var subject := str(answer.get("who", ""))
+	if subject.is_empty():
+		subject = str(answer.get("name", ""))
+	return TranslationServer.translate(ORACLE_WORDS[kind]) % [int(answer.get("months", 1)), subject]
+
+func show_oracle_answer(answer: Dictionary) -> void:
+	if monument_oracle_result != null:
+		monument_oracle_result.text = oracle_text(answer)
+		monument_oracle_result.add_theme_color_override("font_color", Color(.62, .86, .55) if answer.get("granted", false) else Color(1.0, .78, .38))
 
 # "God Invasion": send the god against an enemy city on the board (one city is asked at once, several through a small menu). The wait for
 # the next attack is the bar; the god's answer, in the game's words, is the line under it.
@@ -692,6 +763,11 @@ func update_live_data() -> void:
 		summon_button.text = tr("Summon %s") % str(hall.hero_name)
 		summon_button.visible = hall.stage == "none"
 		summon_button.disabled = not hall.can_summon or pending
+		if dispatch_button != null:
+			dispatch_button.visible = int(hall.get("quest", -1)) >= 0
+			dispatch_button.text = tr("Dispatch %s on the quest") % str(hall.hero_name)
+			dispatch_button.tooltip_text = str(hall.get("quest_name", ""))
+			dispatch_button.disabled = pending
 	if value.has("monument"):
 		var monument: Dictionary = value.monument
 		if construction_bar!=null: construction_bar.value=clampf(float(monument.progress),0,100)
@@ -706,6 +782,9 @@ func update_live_data() -> void:
 		if monument_help_button != null:
 			monument_help_bar.value = clampf(float(monument.help_fraction) * 100.0, 5.0, 100.0)
 			monument_help_button.disabled = not value.get("can_control", false) or pending
+		if monument_oracle_button != null:
+			monument_oracle_bar.value = clampf(float(monument.get("oracle_fraction", 0.0)) * 100.0, 5.0, 100.0)
+			monument_oracle_button.disabled = not value.get("can_control", false) or pending
 		if monument_attack_button != null and monument.has("attack"):
 			monument_attack_bar.value = clampf(float(monument.attack.fraction) * 100.0, 5.0, 100.0)
 			monument_attack_button.disabled = not value.get("can_control", false) or pending

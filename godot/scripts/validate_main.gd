@@ -2601,6 +2601,7 @@ func run_checks() -> void:
 		okay = await run_rite_checks() and okay
 		okay = await run_pyramid_checks() and okay
 		okay = await run_controls_checks() and okay
+		okay = await preload("res://scripts/validate_original_keys.gd").new().run(city) and okay
 		okay = await run_city_data_checks() and okay
 		okay = await run_naval_checks() and okay
 		okay = await run_requests_units_checks() and okay

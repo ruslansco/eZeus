@@ -673,31 +673,64 @@ theme_type_variation = &"Caption"
 [node name="TimeBar" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 0
-theme_type_variation = &"ToolbarDock"
+theme_type_variation = &"ClockPanel"
 
 [node name="TimeColumn" type="VBoxContainer" parent="TimeBar"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 5
+
+[node name="Calendar" type="VBoxContainer" parent="TimeBar/TimeColumn"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 3
+
+[node name="TimeCaption" type="Label" parent="TimeBar/TimeColumn/Calendar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Date"
+
+[node name="Date" type="Label" parent="TimeBar/TimeColumn/Calendar"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_type_variation = &"ClockDate"
+
+[node name="MonthProgress" type="ProgressBar" parent="TimeBar/TimeColumn/Calendar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(168, 3)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 1
+max_value = 1.0
+step = 0.0
+show_percentage = false
+script = ExtResource("9_status_info")
+
 
 [node name="TimeRow" type="HBoxContainer" parent="TimeBar/TimeColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="Pause" type="Button" parent="TimeBar/TimeColumn/TimeRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(28, 28)
+custom_minimum_size = Vector2(32, 30)
 layout_mode = 2
 size_flags_vertical = 4
 focus_mode = 2
-theme_type_variation = &"HeaderAction"
+theme_type_variation = &"ClockPause"
 script = ExtResource("8_toolbar")
 
 [node name="SpeedColumn" type="VBoxContainer" parent="TimeBar/TimeColumn/TimeRow"]
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_constants/separation = 2
+theme_override_constants/separation = 3
 
 [node name="SpeedCaption" type="Label" parent="TimeBar/TimeColumn/TimeRow/SpeedColumn"]
 unique_name_in_owner = true
@@ -710,44 +743,8 @@ text = "Speed"
 [node name="Speed" type="HBoxContainer" parent="TimeBar/TimeColumn/TimeRow/SpeedColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 3
 
-[node name="Calendar" type="VBoxContainer" parent="TimeBar/TimeColumn"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_constants/separation = 2
-
-[node name="TimeCaption" type="Label" parent="TimeBar/TimeColumn/Calendar"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-mouse_filter = 2
-theme_type_variation = &"HeaderCaption"
-text = "Date"
-
-[node name="MonthProgress" type="ProgressBar" parent="TimeBar/TimeColumn/Calendar"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(168, 26)
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 1
-max_value = 1.0
-step = 0.0
-show_percentage = false
-script = ExtResource("9_status_info")
-
-[node name="Date" type="Label" parent="TimeBar/TimeColumn/Calendar/MonthProgress"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-theme_type_variation = &"HeaderValue"
 
 [node name="MapToggle" type="Button" parent="."]
 unique_name_in_owner = true

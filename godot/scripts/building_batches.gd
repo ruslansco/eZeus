@@ -81,6 +81,20 @@ func _exit_tree() -> void:
 	var left := ever_requested.keys().filter(func(p): return ResourceLoader.load_threaded_get_status(p) != ResourceLoader.THREAD_LOAD_INVALID_RESOURCE)
 	print("BATCH_LOADS_LEFT ", left.size(), " ", left.slice(0, 5))
 
+func preview_template(asset: String) -> Array:
+	if not asset.begins_with("common_house_"): return template(asset)
+	# Housing ghosts use the architecture-only source. They cannot acquire a
+	# resident through shader defaults or a live occupied instance's work flag.
+	var key := "preview:" + asset
+	if not templates.has(key):
+		var pieces: Array = []
+		var source: Node3D = load_model("res://assets/models/%s.glb" % asset).instantiate()
+		finish.apply(source,asset)
+		collect(source,Transform3D.IDENTITY,pieces)
+		source.free()
+		templates[key] = pieces
+	return templates[key]
+
 func template(asset: String) -> Array:
 	if templates.has(asset):
 		return templates[asset]

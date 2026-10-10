@@ -129,32 +129,32 @@
 			"verts": 128307.0
 		},
 		"common_house_0a": {
-			"tris": 38949,
-			"verts": 94297
+			"tris": 11482,
+			"verts": 24934
 		},
 		"common_house_1a": {
-			"tris": 39585,
-			"verts": 97524
+			"tris": 14762,
+			"verts": 33817
 		},
 		"common_house_2a": {
-			"tris": 37999,
-			"verts": 94732
+			"tris": 10014,
+			"verts": 24403
 		},
 		"common_house_3a": {
-			"tris": 39436,
-			"verts": 95205
+			"tris": 18174,
+			"verts": 39057
 		},
 		"common_house_4a": {
-			"tris": 43877,
-			"verts": 107042
+			"tris": 40430,
+			"verts": 90472
 		},
 		"common_house_5a": {
-			"tris": 44073,
-			"verts": 108829
+			"tris": 38826,
+			"verts": 87898
 		},
 		"common_house_6a": {
-			"tris": 40082,
-			"verts": 100986
+			"tris": 37148,
+			"verts": 88875
 		},
 		"corral": {
 			"tris": 53242.0,
@@ -1309,8 +1309,8 @@
 			"verts": 15958.0
 		},
 		"walker_calydonianboar": {
-			"tris": 20178,
-			"verts": 14480
+			"tris": 20178.0,
+			"verts": 14480.0
 		},
 		"walker_centaurarcher": {
 			"tris": 64836.0,
@@ -1321,16 +1321,16 @@
 			"verts": 30728.0
 		},
 		"walker_cerberus": {
-			"tris": 13975,
-			"verts": 12586
+			"tris": 13975.0,
+			"verts": 12586.0
 		},
 		"walker_chariotposeidon": {
 			"tris": 61963.0,
 			"verts": 34146.0
 		},
 		"walker_chimera": {
-			"tris": 29751,
-			"verts": 24326
+			"tris": 29751.0,
+			"verts": 24326.0
 		},
 		"walker_competitor": {
 			"tris": 29483.0,
@@ -1341,8 +1341,8 @@
 			"verts": 15547.0
 		},
 		"walker_cyclops": {
-			"tris": 27334,
-			"verts": 20535
+			"tris": 27334.0,
+			"verts": 20535.0
 		},
 		"walker_deerhunter": {
 			"tris": 38984.0,
@@ -1361,12 +1361,12 @@
 			"verts": 16028.0
 		},
 		"walker_dragon": {
-			"tris": 26004,
-			"verts": 19374
+			"tris": 26004.0,
+			"verts": 19374.0
 		},
 		"walker_echidna": {
-			"tris": 30161,
-			"verts": 22564
+			"tris": 30161.0,
+			"verts": 22564.0
 		},
 		"walker_egyptianarcher": {
 			"tris": 29106.0,
@@ -1421,12 +1421,12 @@
 			"verts": 19514.0
 		},
 		"walker_harpies": {
-			"tris": 28330,
-			"verts": 23339
+			"tris": 28330.0,
+			"verts": 23339.0
 		},
 		"walker_hector": {
-			"tris": 29207,
-			"verts": 21912
+			"tris": 29207.0,
+			"verts": 21912.0
 		},
 		"walker_hephaestus": {
 			"tris": 29305.0,
@@ -1477,16 +1477,16 @@
 			"verts": 15899.0
 		},
 		"walker_kraken": {
-			"tris": 24342,
-			"verts": 23767
+			"tris": 24342.0,
+			"verts": 23767.0
 		},
 		"walker_lumberjack": {
 			"tris": 29296.0,
 			"verts": 15932.0
 		},
 		"walker_maenads": {
-			"tris": 30908,
-			"verts": 26539
+			"tris": 30908.0,
+			"verts": 26539.0
 		},
 		"walker_marbleminer": {
 			"tris": 29360.0,
@@ -1501,12 +1501,12 @@
 			"verts": 15465.0
 		},
 		"walker_medusa": {
-			"tris": 30355,
-			"verts": 23160
+			"tris": 30355.0,
+			"verts": 23160.0
 		},
 		"walker_minotaur": {
-			"tris": 28532,
-			"verts": 21985
+			"tris": 28532.0,
+			"verts": 21985.0
 		},
 		"walker_oceanidhoplite": {
 			"tris": 29371.0,
@@ -1605,16 +1605,16 @@
 			"verts": 15633.0
 		},
 		"walker_satyr": {
-			"tris": 29558,
-			"verts": 22549
+			"tris": 29558.0,
+			"verts": 22549.0
 		},
 		"walker_scholar": {
 			"tris": 29411.0,
 			"verts": 15992.0
 		},
 		"walker_scylla": {
-			"tris": 26213,
-			"verts": 22676
+			"tris": 26213.0,
+			"verts": 22676.0
 		},
 		"walker_shepherd": {
 			"tris": 39097.0,
@@ -1629,12 +1629,12 @@
 			"verts": 15999.0
 		},
 		"walker_sphinx": {
-			"tris": 26757,
-			"verts": 20897
+			"tris": 26757.0,
+			"verts": 20897.0
 		},
 		"walker_talos": {
-			"tris": 29781,
-			"verts": 21069
+			"tris": 29781.0,
+			"verts": 21069.0
 		},
 		"walker_taxcollector": {
 			"tris": 29323.0,

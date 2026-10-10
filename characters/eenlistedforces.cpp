@@ -4,6 +4,10 @@
 
 #include "engine/egameboard.h"
 #include "enumbers.h"
+#include "fileIO/efileformat.h"
+
+// A trireme's weight in a battle abroad, against a company's soldiers (the original game counted ships with the army).
+const int gTriremeStrength = 10;
 
 std::map<eCityId, eEnlistedForces>
 eEnlistedForces::splitIntoCities() const {
@@ -14,6 +18,10 @@ eEnlistedForces::splitIntoCities() const {
     }
     for(const auto& s : fHeroes) {
         forces[s.first].fHeroes.push_back(s);
+    }
+    for(const auto& w : fTriremes) {
+        if(!w) continue;
+        forces[w->cityId()].fTriremes.push_back(w);
     }
     if(fAres) {
         const auto cid = fAresCity;
@@ -65,6 +73,18 @@ void eEnlistedForces::read(eGameBoard& board,
 
     src >> fAres;
     src >> fAresCity;
+
+    if(src.formatVersion() >= eFileFormat::zeusGuide) {
+        int nt;
+        src >> nt;
+        for(int i = 0; i < nt; i++) {
+            src.readBuilding(&board, [this](eBuilding* const b) {
+                if(const auto w = dynamic_cast<eTriremeWharf*>(b)) {
+                    fTriremes.push_back(w);
+                }
+            });
+        }
+    }
 }
 
 void eEnlistedForces::write(eWriteStream& dst) const {
@@ -86,6 +106,11 @@ void eEnlistedForces::write(eWriteStream& dst) const {
 
     dst << fAres;
     dst << fAresCity;
+
+    dst << fTriremes.size();
+    for(const auto& w : fTriremes) {
+        dst.writeBuilding(w.get());
+    }
 }
 
 void eEnlistedForces::clear() {
@@ -93,6 +118,7 @@ void eEnlistedForces::clear() {
     fHeroes.clear();
     fAllies.clear();
     fAres = false;
+    fTriremes.clear();
 }
 
 void eEnlistedForces::add(const eEnlistedForces& o) {
@@ -104,6 +130,9 @@ void eEnlistedForces::add(const eEnlistedForces& o) {
     }
     for(const auto& a : o.fAllies) {
         fAllies.push_back(a);
+    }
+    for(const auto& w : o.fTriremes) {
+        fTriremes.push_back(w);
     }
     if(o.fAres && !fAres) fAresCity = o.fAresCity;
     fAres = fAres || o.fAres;
@@ -130,6 +159,7 @@ int eEnlistedForces::strength() const {
     }
     str += 8*fHeroes.size();
     if(fAres) str += 8;
+    str += gTriremeStrength*fTriremes.size();
     return std::round(str);
 }
 
@@ -159,6 +189,12 @@ void eEnlistedForces::kill(const double killFrac) const {
     for(const auto& c : fAllies) {
         const int t = c->troops();
         c->setTroops((1 - gHelpFrac*killFrac)*t);
+    }
+    // The same share of the ships is lost; their wharves build new ones.
+    const int lost = std::round(killFrac*fTriremes.size());
+    for(int i = 0; i < lost && i < int(fTriremes.size()); i++) {
+        const auto& w = fTriremes[fTriremes.size() - 1 - i];
+        if(w) w->triremeLost();
     }
 }
 

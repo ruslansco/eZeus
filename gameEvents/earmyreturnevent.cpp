@@ -72,6 +72,10 @@ void eArmyReturnEvent::trigger() {
         a->setAbroad(false);
     }
 
+    for(const auto& w : mForces.fTriremes) {
+        if(w && w->abroad()) w->triremeCameBack();
+    }
+
     eEventData ed(cityId());
     ed.fTile = entryPoint;
     ed.fCity = mCity;

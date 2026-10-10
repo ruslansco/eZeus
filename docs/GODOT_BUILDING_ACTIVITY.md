@@ -1,5 +1,36 @@
 # Building work animation — 1 October 2026
 
+## Three paces and synchronized building effects — 10 October 2026
+
+Normal/Fast/Very-fast now use native increments 15/30/60 per 50 ms tick, with
+relative rates 1×/2×/4×. The former slow index 0 aliases Normal, and the embedded
+maximum no longer takes five native substeps. Work uses the existing time/30
+clock and 100 ms interpolation; housing retains work_rate=.2 and native occupancy.
+The modulo-40 GPU work clock still closes every sampled animation cycle.
+
+A second global city_effect_clock measures session-relative native seconds
+((phase-origin)/10). Building fire, smoke and altar flame shaders use it instead
+of Godot TIME. Fire lights and soot advance only by the work phase delta. This
+keeps gameplay-linked effects frozen under pause/required decisions and scaled
+at each pace, without wrapping noise every four seconds or scanning instances.
+Weather/menu effects retain their separate cosmetic clocks. No art, UV, VAT,
+LOD, work-flag, occupancy or simulation rules change. Older four-speed references
+below are superseded by this contract.
+
+
+## Occupied household activity — 10 October 2026
+
+The catalog now includes all seven common-house levels (54 assets total).
+Architecture-only static models and ghosts show no people. Housing derivatives
+show residents only while native occupancy is greater than zero; homes do not
+require employees. Starter households have relaxed idles and upper levels reuse
+authored chores. Housing materials multiply the shared native clock by .2 for
+a four-second loop; existing building materials retain rate 1. The global clock
+wraps at 40, a complete period for both rates. Empty/fire states use the inactive
+pose. The explicit housing triangle ceilings retain the former occupied tier
+after splitting architecture from residents. See `GODOT_HOUSING_ART.md` for export
+order and the occupancy/save/visible checks.
+
 ## Smoother interpolation — 7 October 2026
 
 All 47 current activity assets retain their existing baked poses, texels, source
@@ -31,7 +62,8 @@ textures. Original building GLBs and native sprite atlases remain unchanged.
 - The work clock is native gameplay `time / 30`: ten sampled phases per second
   at normal speed. Interpolate received clock values over 100 ms. Native pause
   and pending decisions freeze it, and all four native speeds remain exact.
-  Set the global shader clock modulo eight to retain GPU float precision.
+  Set the global shader clock modulo 40 to retain GPU float precision while
+  preserving rate-1 work cycles and the rate-.2 housing loops.
 - Register `building_work_clock` in `project.godot`. Never enumerate global shader
   parameters at runtime: that API is editor-only on the Metal renderer.
 - Dynamic MultiMesh instances carry work flag and phase offset in custom data.

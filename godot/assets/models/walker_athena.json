@@ -3,19 +3,19 @@
   "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_athena.glb",
-  "bytes": 9178460,
-  "vertices": 15474,
+  "bytes": 3994336,
+  "vertices": 6537,
   "surfaces": 3,
-  "source_surfaces": 23,
+  "source_surfaces": 22,
   "bounds_blender": [
     [
-      -0.936050295829773,
-      -0.5340725183486938,
-      -0.012000000104308128
+      -0.9359389543533325,
+      -0.5301900506019592,
+      -0.010796654969453812
     ],
     [
-      0.5891180634498596,
-      0.6488963961601257,
+      0.5894010663032532,
+      0.6491049528121948,
       3.5699596405029297
     ]
   ],
@@ -27,7 +27,7 @@
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
   "character": {
-    "revision": "natural_people_v1",
+    "revision": "city_people_v2",
     "identities": [
       {
         "name": "Athena",
@@ -63,6 +63,7 @@
           "seed": 61404
         },
         "body_height": 0.8700665268115699,
+        "grooming": "fitted_caps_no_strands_painted_brows",
         "body_sha256": "3bc9a49a2c900696e5251556176d99a12b4fc6b47435b541a621a6f41209b196",
         "clavi_srgb": [
           0.22,
@@ -72,11 +73,16 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 6000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
     "seed": "local stable hashes, never simulation RNG",
+    "city_detail": {
+      "groom": "fitted_caps_no_strands_painted_brows",
+      "allocation_target": 6000,
+      "use": "city camera; character panels use generated images"
+    },
     "floating": "floating_gods_v1"
   },
   "memory_optimization": {

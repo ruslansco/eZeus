@@ -257,10 +257,14 @@ func context_checks() -> void:
 	guide.city = city
 	guide.tab = "guide"
 	guide.step = 2
+	var guide_state: Dictionary = city.state
+	city.state = city.state.duplicate()
+	city.state.buildings = []
 	var guide_action: Button = guide.build_action(2)
 	check(guide.targets().is_empty() and guide_action == null, "settlement guidance skips unavailable category targets and actions")
 	if guide_action != null: guide_action.free()
 	guide.free()
+	city.state = guide_state
 	hud.set_catalog([sparse[0]])
 	await frames(16)
 	check(not hud.category_buttons[sparse[0].title].disabled and hud.category_buttons.keys() == row_order, "a newly available category enables in its original position")

@@ -16,6 +16,8 @@ var lights: Array = []          # [OmniLight3D, seed]
 var signature := ""
 var chars: Dictionary = {}      # "x,y" -> {"nodes", "material", "born"}: the soot over a burning building
 var clock := 0.0
+var activity: RefCounted
+var last_phase := -1.0
 var flame_mesh: ArrayMesh
 var smoke_mesh: QuadMesh
 
@@ -122,12 +124,14 @@ func make_fire(fire: Array, height: float, city) -> Node3D:
 	return root
 
 # The lights flicker with the flames, and the soot thickens.
-func _process(dt: float) -> void:
-	clock += dt
+func _process(_dt: float) -> void:
+	if activity != null:
+		if last_phase >= 0.0: clock += maxf(0.0,activity.phase-last_phase)/10.0
+		last_phase = activity.phase
 	for key in chars:
 		var entry: Dictionary = chars[key]
 		entry.material.set_shader_parameter("amount", clampf(.3 + (clock - float(entry.born)) / CHAR_SECONDS * .62, .3, .92))
-	var time := Time.get_ticks_msec() / 1000.0
+	var time := clock
 	for entry in lights:
 		var glow: OmniLight3D = entry[0]
 		if is_instance_valid(glow):
