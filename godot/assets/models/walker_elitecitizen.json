@@ -2,20 +2,20 @@
   "asset": "walker_elitecitizen",
   "source": "art/characters/people/build_person.py",
   "file": "walker_elitecitizen.glb",
-  "bytes": 8258816,
-  "vertices": 16019,
+  "bytes": 8178480,
+  "vertices": 15885,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.19195646047592163,
+      -0.17533783614635468,
       -0.17924624681472778,
       0.0004999842494726181
     ],
     [
-      0.20894187688827515,
-      0.18021810054779053,
-      0.8483685255050659
+      0.18462860584259033,
+      0.18015077710151672,
+      0.8484938740730286
     ]
   ],
   "walk_samples": 24,
@@ -32,7 +32,7 @@
         "name": "Elite citizen",
         "sex": "male",
         "profile": {
-          "age": 53,
+          "age": 83,
           "jaw": 0.99,
           "cheek": 0.96,
           "nose": 0.003,
@@ -51,8 +51,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 1865249879,
           "skin": [
             0.57,
@@ -63,9 +63,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "d17276da0b64bd1b06b5f10e4732d1b04af43fc443119844bbf7033dfe8b9f5e",
         "clavi_srgb": [
-          0.86,
-          0.63,
-          0.23
+          0.4,
+          0.08,
+          0.42
         ]
       }
     ],

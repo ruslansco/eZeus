@@ -1,0 +1,86 @@
+{
+  "asset": "transporter_v2",
+  "variant_of": "transporter",
+  "source": "art/characters/transporter/build_sprites.py",
+  "file": "transporter_v2.glb",
+  "bytes": 5206892,
+  "vertices": 15679,
+  "surfaces": 3,
+  "source_surfaces": 19,
+  "bounds_blender": [
+    [
+      -0.3375000059604645,
+      -0.18522456288337708,
+      -0.004181132651865482
+    ],
+    [
+      0.3375000059604645,
+      1.0764110088348389,
+      0.8417625427246094
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Greek transporter",
+        "sex": "male",
+        "profile": {
+          "age": 50,
+          "jaw": 0.9395058164826563,
+          "cheek": 1.1012656855938963,
+          "nose": 0.008877969659596294,
+          "chin": 0.00473723465903224,
+          "eye": 0.9589645840433824,
+          "hair": [
+            [
+              0.012,
+              0.009,
+              0.007
+            ],
+            [
+              0.04,
+              0.03,
+              0.022
+            ]
+          ],
+          "hair_length": 0.012777171776486735,
+          "beard_length": 0,
+          "grey": 0.06,
+          "seed": 950101535,
+          "skin": [
+            0.69,
+            0.475,
+            0.365
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "e01b3ada1bc2584446c3a6c993f53198cc11dc1409e556dabb8c72fd44790840",
+        "clavi_srgb": [
+          0.82,
+          0.78,
+          0.68
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 105,
+    "targets_after": 72,
+    "uv_attributes_removed": 0
+  }
+}

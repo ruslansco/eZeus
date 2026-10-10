@@ -2,6 +2,7 @@
 #define QFILE_H
 
 #include <fstream>
+#include <cstdint>
 
 class QFile : private std::ifstream {
 public:

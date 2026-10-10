@@ -1,19 +1,20 @@
 {
   "asset": "walker_apollo",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_apollo.glb",
-  "bytes": 10030276,
-  "vertices": 15571,
+  "bytes": 10116240,
+  "vertices": 15605,
   "surfaces": 3,
   "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.671870768070221,
-      -0.5735999345779419,
+      -0.46981507539749146,
       -0.012000000104308128
     ],
     [
-      0.5578754544258118,
+      0.6074184775352478,
       1.970076560974121,
       2.65842866897583
     ]
@@ -80,7 +81,7 @@
   "memory_optimization": {
     "version": 1,
     "targets_before": 273,
-    "targets_after": 148,
+    "targets_after": 149,
     "uv_attributes_removed": 0
   }
 }

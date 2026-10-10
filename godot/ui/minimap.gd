@@ -8,7 +8,9 @@ signal jump_requested(cell: Vector2)
 const WATER := 4
 const WATER_COLOUR := Color(.10, .31, .34)
 const SAND_COLOUR := Color(.74, .64, .44)
-const MEADOW_COLOUR := Color(.40, .50, .26)
+const GRASS_COLOUR := Color(.47, .56, .31)
+# Fertile land: gold, so farmland stands apart from grass and forest at a glance.
+const MEADOW_COLOUR := Color(.86, .72, .26)
 const FOREST_COLOUR := Color(.24, .36, .20)
 const CLEARED_COLOUR := Color(.55, .55, .32)
 const STONE_COLOUR := Color(.52, .52, .50)
@@ -28,6 +30,9 @@ var camera_cell := Vector2.ZERO
 var camera_yaw := 0.0
 var camera_known := false
 var occupied_radius := 1.0
+var building_rows: Array = []
+var building_colours: Dictionary = {}
+var building_paints := 0
 
 func _ready() -> void:
 	clip_contents = true
@@ -49,12 +54,14 @@ func ground_colour(tile: Array) -> Color:
 		return CLEARED_COLOUR
 	if flags & 8:
 		return MEADOW_COLOUR
-	return SAND_COLOUR
+	return SAND_COLOUR if flags & 2 else GRASS_COLOUR
 
 # Full rebuild from the tile dictionary of a city (the snapshot's tiles keyed by absolute cell).
 func set_map(tiles: Dictionary, map_origin: Vector2i, map_extent: Vector2i) -> void:
 	origin = map_origin
 	extent = map_extent
+	building_rows.clear()
+	building_colours.clear()
 	terrain = Image.create(extent.x, extent.y, false, Image.FORMAT_RGBA8)
 	terrain.fill(Color(0, 0, 0, 0))
 	occupied_radius = 1.0
@@ -77,7 +84,7 @@ func paint_tiles(tiles: Dictionary, changed: Array) -> void:
 		if pixel.x >= 0 and pixel.y >= 0 and pixel.x < extent.x and pixel.y < extent.y:
 			var colour := ground_colour(tiles[cell])
 			terrain.set_pixelv(pixel, colour)
-			composed.set_pixelv(pixel, colour)
+			composed.set_pixelv(pixel, building_colours.get(cell, colour))
 	texture.update(composed)
 	queue_redraw()
 
@@ -85,17 +92,29 @@ func paint_tiles(tiles: Dictionary, changed: Array) -> void:
 func set_buildings(buildings: Array) -> void:
 	if terrain == null:
 		return
-	composed.copy_from(terrain)
+	# Inventory, staffing and animation do not change the chart's building layer.
+	# Keep the exact ordered footprints so removal/evolution still repaints it.
+	var rows: Array = []
 	for entry in buildings:
 		var asset := str(entry.asset)
 		if asset in ["native_marker", "terrain_road"]:
 			continue
-		var colour := HOUSE_COLOUR if asset.begins_with("common_house") or asset.begins_with("elite_house") else BUILDING_COLOUR
-		for dy in int(entry.h):
-			for dx in int(entry.w):
-				var pixel := Vector2i(int(entry.x) + dx - origin.x, extent.y - 1 - (int(entry.y) + dy - origin.y))
+		rows.append([int(entry.x), int(entry.y), int(entry.w), int(entry.h), asset.begins_with("common_house") or asset.begins_with("elite_house")])
+	if rows == building_rows:
+		return
+	building_rows = rows
+	building_colours.clear()
+	composed.copy_from(terrain)
+	for row in rows:
+		var colour := HOUSE_COLOUR if row[4] else BUILDING_COLOUR
+		for dy in row[3]:
+			for dx in row[2]:
+				var cell := Vector2i(row[0] + dx, row[1] + dy)
+				var pixel := Vector2i(cell.x - origin.x, extent.y - 1 - (cell.y - origin.y))
 				if pixel.x >= 0 and pixel.y >= 0 and pixel.x < extent.x and pixel.y < extent.y:
+					building_colours[cell] = colour
 					composed.set_pixelv(pixel, colour)
+	building_paints += 1
 	texture.update(composed)
 	queue_redraw()
 

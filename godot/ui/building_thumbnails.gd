@@ -1,20 +1,26 @@
 extends Node
 # One isolated, on-demand viewport; reuses the city's already-loaded models. Only the small
-# finished textures are retained (at most one per catalog asset), never a viewport per card.
-signal thumbnail_ready(asset: String, texture: Texture2D)
+# finished textures are retained (at most one per building design), never a viewport per card.
+signal thumbnail_ready(key: String, texture: Texture2D)
 var factory: Callable
 var cache := {}
-var pending: Array[String] = []
+var pending: Array[Dictionary] = []
 var busy := false
 var rendering_asset := ""
 var viewport: SubViewport
 var stage: Node3D
 var camera: Camera3D
 
-func request(asset: String) -> Texture2D:
-	if cache.has(asset): return cache[asset]
-	if asset != rendering_asset and not pending.has(asset) and DisplayServer.get_name() != "headless":
-		pending.append(asset)
+static func key(item: Dictionary) -> String:
+	# A component mesh is not a building identity: agoras, pyramids and shrines
+	# share components but need different pictures. Trade partners share a design.
+	return str(item.name).get_slice(":", 0)
+
+func request(item: Dictionary) -> Texture2D:
+	var design := key(item)
+	if cache.has(design): return cache[design]
+	if design != rendering_asset and not pending.any(func(next): return key(next) == design) and DisplayServer.get_name() != "headless":
+		pending.append(item.duplicate(true))
 		if not busy: _render_next.call_deferred()
 	return null
 
@@ -52,8 +58,9 @@ func _setup() -> void:
 	viewport.add_child(camera)
 
 func _bounds(node: Node3D, transform: Transform3D, boxes: Array[AABB]) -> void:
+	if not node.visible: return
 	var local := transform * node.transform
-	if node is MeshInstance3D and node.mesh != null and node.visible:
+	if node is MeshInstance3D and node.mesh != null:
 		boxes.append(local * node.get_aabb())
 	for child in node.get_children():
 		if child is Node3D: _bounds(child, local, boxes)
@@ -62,9 +69,10 @@ func _render_next() -> void:
 	if busy or pending.is_empty() or not factory.is_valid(): return
 	busy = true
 	if viewport == null: _setup()
-	var asset: String = pending.pop_front()
+	var item: Dictionary = pending.pop_front()
+	var asset := key(item)
 	rendering_asset = asset
-	var model: Node3D = factory.call(asset)
+	var model: Node3D = factory.call(item)
 	# Roads are terrain, and developer placeholders may have no mesh. Keep their vector icon.
 	if model == null:
 		cache[asset] = null
@@ -75,6 +83,7 @@ func _render_next() -> void:
 	stage.add_child(model)
 	var boxes: Array[AABB] = []
 	_bounds(model, Transform3D.IDENTITY, boxes)
+	if boxes.is_empty(): cache[asset] = null
 	if not boxes.is_empty():
 		var box := boxes[0]
 		for next in boxes.slice(1): box = box.merge(next)

@@ -2,19 +2,19 @@
   "asset": "transporter",
   "source": "art/characters/transporter/build_sprites.py",
   "file": "transporter.glb",
-  "bytes": 5149844,
-  "vertices": 15749,
+  "bytes": 5206680,
+  "vertices": 15679,
   "surfaces": 3,
-  "source_surfaces": 21,
+  "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.3050999641418457,
-      -0.20399753749370575,
-      -0.0028062190394848585
+      -0.3375000059604645,
+      -0.18522456288337708,
+      -0.004181132651865482
     ],
     [
-      0.3050999641418457,
-      1.0561609268188477,
+      0.3375000059604645,
+      1.0764110088348389,
       0.841968834400177
     ]
   ],
@@ -63,9 +63,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "f3cc88862ce3fc6a4eac31d861fde3d0b6c6f89f8d106dbb0de42e7bbe489c89",
         "clavi_srgb": [
-          0.48,
-          0.14,
-          0.075
+          0.82,
+          0.78,
+          0.68
         ]
       }
     ],
@@ -79,7 +79,7 @@
   "memory_optimization": {
     "version": 1,
     "targets_before": 105,
-    "targets_after": 61,
+    "targets_after": 72,
     "uv_attributes_removed": 0
   }
 }

@@ -14,6 +14,7 @@ void eGameBoard::read(eReadStream& src) {
     src >> w;
     int h;
     src >> h;
+    if(w<0 || h<0 || (w==0)!=(h==0) || w>1024 || h>1024 || int64_t(w)*h>1048576)throw std::runtime_error("invalid native board dimensions");
     initialize(w, h);
 
     src >> mFogOfWar;

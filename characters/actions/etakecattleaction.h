@@ -16,6 +16,7 @@ public:
 
     bool decide() override;
     void increment(const int by) override;
+    bool leadingCattle() const { return mStage == eTakeCattleActionStage::goBack && !mNoCattle; }
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

@@ -1,0 +1,10 @@
+{
+  "revision": 3,
+  "wall_walk": 2.0,
+  "tower_platform": 3.05,
+  "tower_safe_half": 0.58,
+  "wall_lane_half": 0.15,
+  "design": "Original Olympian marble adaptation: coursed white stone, Ionic propylon, carved laurel relief, restrained blue/red meander and bronze details",
+  "source": "eZeus/tools/godot_defences.py",
+  "rights_status": "needs_evidence"
+}

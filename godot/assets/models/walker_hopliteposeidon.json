@@ -1,19 +1,20 @@
 {
   "asset": "walker_hopliteposeidon",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hopliteposeidon.glb",
-  "bytes": 7820224,
-  "vertices": 15996,
+  "bytes": 7835120,
+  "vertices": 16026,
   "surfaces": 3,
   "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.3120304346084595,
-      -0.18594591319561005,
+      -0.17924624681472778,
       0.0004999842494726181
     ],
     [
-      0.2069999873638153,
+      0.20849916338920593,
       0.21629825234413147,
       1.1950000524520874
     ]

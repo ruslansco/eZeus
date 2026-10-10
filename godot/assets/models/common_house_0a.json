@@ -1,20 +1,22 @@
 {
   "asset": "common_house_0a",
-  "source": "art/common_house_0a/build_sprites.py",
+  "variant_of": null,
+  "source": "eZeus/tools/godot_housing.py",
   "file": "common_house_0a.glb",
-  "bytes": 14316392,
-  "vertices": 71159,
-  "surfaces": 2,
+  "bytes": 5141224,
+  "vertices": 20009,
+  "surfaces": 3,
+  "source_surfaces": 28,
   "bounds_blender": [
     [
-      -1.0028399229049683,
-      -0.9900000095367432,
-      -0.05999999865889549
+      -0.9599999785423279,
+      -0.9599999785423279,
+      -0.0020104721188545227
     ],
     [
-      0.9900000095367432,
-      0.9900000095367432,
-      1.2400000095367432
+      0.9300000071525574,
+      0.949999988079071,
+      0.9599999785423279
     ]
   ],
   "walk_samples": 0,
@@ -22,12 +24,39 @@
   "stride_tiles": null,
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
-  "source_surfaces": 24,
   "draw_batching": "vertex_palette_compatible_PBR",
-  "memory_optimization": {
-    "version": 1,
-    "targets_before": 0,
-    "targets_after": 0,
-    "uv_attributes_removed": 0
+  "idle_mode": null,
+  "housing": {
+    "revision": 1,
+    "source": "eZeus/tools/godot_housing.py",
+    "native_footprint": [
+      2,
+      2
+    ],
+    "architecture_heights": [
+      0.96,
+      1.16,
+      1.36,
+      1.58,
+      1.84,
+      2.18,
+      2.56
+    ],
+    "vertex_budget": 24000,
+    "design": "Original starter wattle-and-daub cottage, improved mud-brick dwelling, then retained Greek courtyard and upper-storey architecture; muted soil, limestone and reed materials",
+    "rights_status": "needs_evidence",
+    "resident_heights_before": [
+      0.8765847887843847
+    ],
+    "resident_heights_after": [
+      0.8765847831964493
+    ],
+    "measured_architecture_height": 0.9599999785423279,
+    "level": 0,
+    "architecture_height": 0.96,
+    "resident_dimensions": "preserved; floor anchor follows authored architecture",
+    "native_sources": "art/common_house/levels.py retained for levels 2-6; original starter designs for 0-1",
+    "seed": "local source seed only; no native RNG",
+    "allocation_target": 24000
   }
 }

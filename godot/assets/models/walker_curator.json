@@ -1,15 +1,16 @@
 {
   "asset": "walker_curator",
+  "variant_of": null,
   "source": "eZeus/tools/godot_science_walkers.py",
   "file": "walker_curator.glb",
-  "bytes": 5189620,
-  "vertices": 15547,
+  "bytes": 5211684,
+  "vertices": 15612,
   "surfaces": 3,
   "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.1793709099292755,
-      -0.18249481916427612,
+      -0.1932803839445114,
+      -0.17033950984477997,
       0.0004999842494726181
     ],
     [

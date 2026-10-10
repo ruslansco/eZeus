@@ -1,9 +1,10 @@
 {
   "asset": "walker_horseman",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_horseman.glb",
-  "bytes": 18384356,
-  "vertices": 33102,
+  "bytes": 18403480,
+  "vertices": 33134,
   "surfaces": 3,
   "source_surfaces": 28,
   "bounds_blender": [

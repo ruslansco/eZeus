@@ -111,6 +111,8 @@ public:
     eAvailable fPerseusHall = eAvailable::notAvailable;
     eAvailable fTheseusHall = eAvailable::notAvailable;
 
+    // Serialized keyed availability: wonder levels, or an explicit ordinary
+    // episode permission with empty levels. Missing ordinary keys are unrestricted.
     std::map<eBuildingType, ePyramidAvailable> fPyramids;
 
     int fPopulationMonument = 0;

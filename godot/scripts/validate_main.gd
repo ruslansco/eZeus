@@ -82,7 +82,7 @@ func run_construction_checks() -> bool:
 	await city.get_tree().create_timer(.3).timeout
 	okay = city.check(int(city.state.money) == before_rejection, "blocked click cannot charge the treasury") and okay
 	city.set_tool("demolish")
-	city._unhandled_input(click)
+	await demolish_click(city, click)
 	await city.get_tree().create_timer(.4).timeout
 	var free: Dictionary = city.core.query("preview hospital %d %d 0" % [candidate.x, candidate.y])
 	okay = city.check(free.get("valid", false) and not city.state.get("undo_available", true), "demolition click frees native tiles and disables construction undo") and okay
@@ -101,14 +101,14 @@ func run_construction_checks() -> bool:
 		click.position = city.orbit.camera.unproject_position(city.world_position(landmark.x, landmark.y, city.tiles[landmark][2]))
 		city.set_tool("demolish")
 		var before_cancel: int = city.state.money
-		city._unhandled_input(click)
+		await demolish_click(city, click)
 		okay = city.check(city.demolition_dialog.visible and not city.demolition_request.is_empty(), "landmark click opens the localized confirmation dialog") and okay
 		city.demolition_dialog.get_cancel_button().pressed.emit()
 		await city.get_tree().create_timer(.2).timeout
 		okay = city.check(not city.demolition_dialog.visible and city.state.paused and int(city.state.money) == before_cancel, "cancel keeps the landmark and preserves an already-paused game") and okay
 		city.core.send("pause 0")
 		await city.get_tree().create_timer(.25).timeout
-		city._unhandled_input(click)
+		await demolish_click(city, click)
 		await city.get_tree().create_timer(.3).timeout
 		var modal_clock: int = city.state.time
 		await city.get_tree().create_timer(.2).timeout
@@ -411,6 +411,28 @@ func run_road_drag_checks() -> bool:
 	city._unhandled_input(undo)
 	await city.get_tree().create_timer(.4).timeout
 	okay = city.check(int(city.tiles[start][4]) == 0 and int(city.state.money) == money_before, "the single road is undone and refunded") and okay
+	# The demolition tool drags a rectangle the same way: the six roads laid again are tinted, then removed on release for the quoted cost.
+	city.core.send("build_road %d %d %d %d" % [start.x, start.y, finish.x, finish.y])
+	await city.get_tree().create_timer(.5).timeout
+	city.set_tool("demolish")
+	var money_laid: int = city.state.money
+	city._unhandled_input(mouse_event(tile_screen(start), true))
+	okay = city.check(city.road_drag.active and city.road_drag.tool == "demolish", "pressing the demolition tool starts a rectangle drag") and okay
+	city.pick_tile(tile_screen(finish))
+	var erase_plan: Dictionary = city.core.query("preview_demolish_area %d %d %d %d" % [start.x, start.y, finish.x, finish.y])
+	okay = city.check(int(erase_plan.count) == 6 and city.footprint_cells.get_child_count() == 6 and city.hint.text.contains("%d" % int(erase_plan.cost)), "dragging tints the six roads the rectangle would remove and quotes the cost (%d)" % int(erase_plan.cost)) and okay
+	okay = city.check(int(city.state.money) == money_laid, "previewing a demolition spends nothing") and okay
+	city._input(escape)
+	okay = city.check(not city.road_drag.active and city.mode == "demolish" and city.footprint_cells.get_child_count() == 0, "Escape cancels the demolition drag and keeps the tool") and okay
+	city._unhandled_input(mouse_event(tile_screen(start), true))
+	city.pick_tile(tile_screen(finish))
+	await city.get_tree().physics_frame
+	city._unhandled_input(mouse_event(tile_screen(finish), false))
+	await city.get_tree().create_timer(.5).timeout
+	var roads_demolished := 0
+	for point in city.tiles:
+		roads_demolished += int(city.tiles[point][4])
+	okay = city.check(not city.road_drag.active and roads_demolished == roads_before and int(city.state.money) == money_laid - int(erase_plan.cost), "releasing demolishes all six roads for the quoted cost") and okay
 	city.road_drag.guard = true
 	city.set_tool("select")
 	city.orbit.target = saved_target
@@ -2624,7 +2646,7 @@ func run_hud_checks() -> bool:
 	var prior_window := DisplayServer.window_get_size()
 	city.set_tool("select")
 	hud.set_goals_expanded(false)
-	okay = city.check(hud.category_buttons.size() == hud.build_groups.size(), "the dock exposes every available native category") and okay
+	okay = city.check(hud.category_buttons.values().filter(func(button): return not button.disabled).size() == hud.build_groups.size() and hud.build_groups.all(func(group): return hud.category_buttons.has(group.title) and not hud.category_buttons[group.title].disabled), "the dock enables every available native category") and okay
 	await hud_click(hud.category_buttons["Industry"])
 	okay = city.check(hud.get_node("%BuildTray").visible and hud.active_category == "Industry", "clicking a category opens its tray without reaching the map") and okay
 	var expected: Array = hud.build_groups.filter(func(group): return group.title == "Industry")[0].items
@@ -2638,8 +2660,8 @@ func run_hud_checks() -> bool:
 	await hud_click(hud.get_node("%TrayClose"))
 	okay = city.check(not hud.get_node("%BuildTray").visible and not search.has_focus() and city.mode == "olive_press", "closing the tray releases focus and keeps the selected tool") and okay
 	hud.set_minimap_open(true)
-	await hud_click(hud.get_node("%MapToggle"))
-	okay = city.check(not hud.get_node("%MinimapPanel").visible, "the map button collapses the minimap") and okay
+	await hud_click(hud.get_node("%MapClose"))
+	okay = city.check(not hud.get_node("%MinimapPanel").visible, "the visible map fold button collapses the minimap") and okay
 	await hud_click(hud.get_node("%MapToggle"))
 	okay = city.check(hud.get_node("%MinimapPanel").visible, "the map button restores the live minimap") and okay
 	var hospital: Dictionary = city.state.buildings.filter(func(b): return b.asset == "hospital")[0]
@@ -2679,3 +2701,12 @@ func run_hud_checks() -> bool:
 			await city.get_tree().process_frame
 		okay = city.check(not hud.thumbnails.cache.is_empty() and hud.thumbnails.get_child_count() == 1, "building previews use one shared viewport and cached textures") and okay
 	return okay
+
+# A demolition click is a press and release on one tile (a press alone starts a rectangle drag, which the release ends).
+func demolish_click(city: Node, press: InputEventMouseButton) -> void:
+	var release := press.duplicate() as InputEventMouseButton
+	release.pressed = false
+	city.road_drag.guard = false
+	city._unhandled_input(press)
+	city._unhandled_input(release)
+	city.road_drag.guard = true

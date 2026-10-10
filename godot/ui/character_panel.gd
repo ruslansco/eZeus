@@ -18,6 +18,7 @@ const PORTRAIT_DIR := "res://assets/portraits/"
 const PORTRAIT_IMAGES := true
 const POSE_TURN := .26         # The rendered portraits' three-quarter turn.
 const KIND_TEXT := {"god": "Olympian", "hero": "Hero", "monster": "Monster"}
+const Inventory = preload("res://ui/character_inventory.gd")
 
 var city: Node                 # main.gd: models, walker poses and the core link.
 var info: Dictionary = {}
@@ -59,6 +60,12 @@ var others_caption := Label.new()
 var paused_label := Label.new()
 var goto_button := Button.new()
 var close_button := Button.new()
+var inventory := Inventory.new()
+var inventory_elapsed := 0.0
+var body := HBoxContainer.new()
+var content_scroll := ScrollContainer.new()
+var portrait_frame: Control
+var footer := BoxContainer.new()
 var time := 0.0
 var typing := 0.0              # Seconds the line takes to appear.
 var typed := 0.0
@@ -92,11 +99,13 @@ func _ready() -> void:
 	add_child(center)
 	card.theme_type_variation = "CharacterCard"
 	center.add_child(card)
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 24)
-	card.add_child(row)
-	row.add_child(build_portrait())
-	row.add_child(build_text())
+	var layout := VBoxContainer.new(); layout.add_theme_constant_override("separation", 14)
+	card.add_child(layout)
+	body.add_theme_constant_override("separation", 20)
+	body.size_flags_vertical = Control.SIZE_EXPAND_FILL; layout.add_child(body)
+	portrait_frame = build_portrait(); body.add_child(portrait_frame)
+	body.add_child(build_text())
+	layout.add_child(HSeparator.new()); layout.add_child(build_footer())
 	access.changed.connect(fit)
 	resized.connect(fit)
 	retranslate()
@@ -114,9 +123,9 @@ func _ready() -> void:
 func build_portrait() -> Control:
 	var frame := PanelContainer.new()
 	frame.theme_type_variation = "CharacterFrame"
-	frame.custom_minimum_size = PORTRAIT_SIZE
+	frame.custom_minimum_size = Vector2(240, 300)
 	var layers := Control.new()
-	layers.custom_minimum_size = PORTRAIT_SIZE
+	layers.custom_minimum_size = Vector2.ZERO
 	layers.clip_contents = true
 	frame.add_child(layers)
 	# A soft lit backdrop behind the figure: warm light high up fading into the panel's lapis.
@@ -237,25 +246,33 @@ func build_stage() -> void:
 func build_text() -> Control:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 8)
-	column.custom_minimum_size.x = 400
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	role_label.theme_type_variation = "CharacterRole"
 	role_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_label.theme_type_variation = "CharacterName"
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	column.add_child(name_label)
+	var header := HBoxContainer.new()
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL; header.add_child(name_label)
+	var dismiss := Button.new(); dismiss.theme_type_variation = "Quiet"; dismiss.text = "×"
+	dismiss.custom_minimum_size = Vector2(32, 32); dismiss.tooltip_text = tr("Close")
+	dismiss.pressed.connect(func(): closed.emit()); header.add_child(dismiss); column.add_child(header)
 	column.add_child(role_label)
 	var rule := HSeparator.new()
 	rule.add_theme_constant_override("separation", 14)
 	column.add_child(rule)
 	speech.theme_type_variation = "CharacterSpeech"
 	speech.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	speech.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	speech.custom_minimum_size.y = 120
+	content_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	content_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	content_scroll.get_v_scroll_bar().theme_type_variation = "AdventureScrollBar"; column.add_child(content_scroll)
+	var content := VBoxContainer.new(); content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_theme_constant_override("separation", 12); content_scroll.add_child(content)
+	var statement := PanelContainer.new(); statement.theme_type_variation = "CharacterQuote"; content.add_child(statement)
+	var spoken := VBoxContainer.new(); spoken.add_theme_constant_override("separation", 10); statement.add_child(spoken)
 	speech.mouse_filter = Control.MOUSE_FILTER_STOP
 	speech.gui_input.connect(func(event):
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT: typed = typing)
-	column.add_child(speech)
+	spoken.add_child(speech)
 	# The voice: play again or stop, and how far it has got.
 	voice_row.add_theme_constant_override("separation", 10)
 	voice_button.theme_type_variation = "Primary"
@@ -274,17 +291,19 @@ func build_text() -> Control:
 	voice_time.custom_minimum_size.x = 44
 	voice_time.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	voice_row.add_child(voice_time)
-	column.add_child(voice_row)
+	spoken.add_child(voice_row)
 	errand.theme_type_variation = "Caption"
 	errand.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	column.add_child(errand)
+	content.add_child(errand); content.add_child(inventory)
 	others_caption.theme_type_variation = "Eyebrow"
 	others_box.add_child(others_caption)
 	others_row.add_theme_constant_override("h_separation", 6)
 	others_row.add_theme_constant_override("v_separation", 6)
 	others_box.add_child(others_row)
-	column.add_child(others_box)
-	var footer := HBoxContainer.new()
+	content.add_child(others_box)
+	return column
+
+func build_footer() -> Control:
 	footer.add_theme_constant_override("separation", 8)
 	paused_label.theme_type_variation = "Detail"
 	paused_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -296,13 +315,18 @@ func build_text() -> Control:
 	close_button.custom_minimum_size = Vector2(96, 34)
 	close_button.pressed.connect(func(): closed.emit())
 	footer.add_child(close_button)
-	column.add_child(footer)
-	return column
+	return footer
 
 func fit() -> void:
 	if not is_node_ready():
 		return
-	card.custom_minimum_size.x = minf(760, maxf(0, size.x - 48))
+	var width := minf(860, maxf(0, size.x - 48))
+	var desired_height := 580 if inventory.data.get("kind", "") == "agora" else 470 if inventory.visible else 440
+	var height := minf(desired_height, maxf(0, size.y - 48))
+	card.custom_minimum_size = Vector2(width, height)
+	portrait_frame.custom_minimum_size = Vector2(clampf(width * .29, 160, 250), minf(320, height - 120))
+	inventory.grid.columns = 2 if width < 720 else 3
+	paused_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func retranslate() -> void:
 	goto_button.text = tr("Go to")
@@ -315,6 +339,7 @@ func retranslate() -> void:
 # Shows a core `character_info` answer: the figure, the words and the voice.
 func show_character(data: Dictionary) -> void:
 	info = data
+	goto_button.disabled = false
 	name_label.text = str(data.get("name", ""))
 	var occupation := str(data.get("occupation", ""))
 	role_label.text = occupation
@@ -345,6 +370,9 @@ func show_character(data: Dictionary) -> void:
 		chip.pressed.connect(func(): select(other_id))
 		others_row.add_child(chip)
 	others_box.visible = not others.is_empty()
+	inventory.show_inventory(data.get("inventory"))
+	inventory_elapsed = 0.0; content_scroll.scroll_vertical = 0
+	fit()
 	set_figure(str(data.get("asset", "")))
 	speak()
 
@@ -520,6 +548,16 @@ func place_camera() -> void:
 
 func _process(dt: float) -> void:
 	time += dt
+	if inventory.visible:
+		inventory_elapsed += dt
+		if inventory_elapsed >= 1.0:
+			inventory_elapsed = 0.0
+			var answer: Dictionary = city.core.query("character_inventory %d" % int(info.get("id", -1)))
+			if answer.has("error"):
+				inventory.show_inventory(null)
+				goto_button.disabled = true
+			elif int(answer.get("id", -1)) == int(info.get("id", -1)):
+				info.inventory = answer.get("inventory"); inventory.show_inventory(info.inventory)
 	# The figure faces the viewer and sways a little; a drag turns it freely.
 	if not dragging:
 		drag_turn = lerpf(drag_turn, 0.0, 1.0 - exp(-dt * 1.4))

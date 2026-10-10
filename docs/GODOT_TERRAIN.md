@@ -1,5 +1,48 @@
 # Continuous terrain, elevation and shores — 30 September 2026
 
+## Adaptive building base contact — 7 October 2026
+
+`building_sites.gd` closes small exposed gaps beneath eligible static bases with
+limestone skirts sampled against the existing terrain. Cached base hulls overlap
+the source contact band and remain inside the lot/setback; roads, water, missing
+cells and drops above 0.88 tile are excluded. Gates, shore structures and starter
+earth lots retain their earlier bases. Supports use dirty 32-tile section groups.
+Native building foundations stay at their original level heights; no terrain,
+picking, collision, pathfinding, construction eligibility or simulation coordinate
+changes are introduced. See `GODOT_CITY_CLARITY.md` and current validation for
+contact/reuse checks and isolated slope images. Broader art review remains pending.
+
+## Walkable avenues and boulevards — 6 October 2026
+
+This supersedes the earlier planted-median presentation. The native avenue is a
+walkable median plus one flank road (two cells); the boulevard adds both flanks
+(three cells). All these cells now use limestone paving. Street RGBA observations
+retain their schema: R is road, G dressed road, B promenade and A boulevard.
+`ground.gdshader` uses B for a brighter promenade with blue-grey borders and a
+restrained kerb inlay, instead of grass/flowers.
+
+`street_layout.gd` reads native road-kind column 8 and foundations, without
+changing observations. Only straight interior median cells own decorations.
+Outside pockets sit 0.40 tiles from the outermost lane center; statues, benches
+and planters fit a 0.18-tile cross-street envelope. Their repetition leaves ends,
+bends, intersections and building entrances clear. Trees are narrowed across
+the street. Olives distinguish avenues; cypresses distinguish boulevards.
+`street_furniture.gd` is original code-authored art, with vertex colors and cached
+near/far geometry. Existing spatial batching and distance fading remain.
+The avenue layer requires a two-cell dirty-neighbor radius to remove stale
+decorations when a flank/entrance changes across a section boundary; other
+terrain detail layers retain one cell.
+
+`walker_streets.gd` reserves a clear 0.20-tile half-width around outer lane
+centers, with a 0.10-tile citizen body allowance. Native travel and the 0.17-tile
+right-hand lane target remain. The render lane merges at diagonal corners,
+recognizes continuous paved corners and preserves separate easing state so a
+paused figure cannot drift. Heading follows rendered displacement on wide
+roads; native displacement still drives gait phase. Ordinary roads are retained.
+No prop has native collision/navigation authority, and no simulation, terrain
+height, cost, placement or save field changes. Existing streets update on load.
+See validation for the exact fixture scope and remaining live patrol/art review.
+
 ## Hillside limestone finish — 3 October 2026
 
 Exposed native blocked slopes and vertical side faces now use original procedural
@@ -40,8 +83,11 @@ board (`ground.gdshader`) and the countryside (`surroundings.gdshader`) share
 - plain land: grazed grassland, yellower on dry rises, with bare earth patches;
 - chopped forest/scrub: olive maquis ground;
 - forest: moss and leaf litter;
-- fertile meadow: the plain grassland, with no colour or weight of its own (a separate
-  green read as flat patches with a dark fringe where it blended into plain land).
+- fertile meadow: a golden hay meadow (`meadow_colour`) with greener swathes, seed heads
+  and a few poppies and daisies, so farmland reads against the grass. Its weight is the
+  field's B channel, separate from the G cover, so its ragged edge never blends through
+  scrub or forest colours (that showed as a dark fringe). The minimap draws it gold too,
+  with plain land green and beaches sand.
 Sand stays on native beaches and wet banks; roads, minerals and cliffs are
 unchanged. Large-scale variation uses two rotated noise lookups, because a
 single lookup showed the seamless texture's blend skirt as straight bands.
@@ -73,6 +119,16 @@ road mask's 0.5 level is the tile edge, so a straight road paves its whole tile
 (before, the solid paving covered about 0.56 of it and faded out by 0.8), with soft
 rounded outer corners. Paving is worn limestone slabs in staggered courses, with
 dust patches, a light kerb stone along the edge and a shaded gutter inside it.
+Inside-corner follow-up (6 October 2026): `road_contour.gdshaderinc` bounds the
+bilinear paving by a rounded non-road plot with a 0.18-tile radius. The old
+three-road junction could intrude 0.207 tile into its neighboring square plot;
+the tighter curve intrudes about 0.053 tile, clearing even the existing 0.075
+minimum capped building setback. Straight widths, convex outer curves and native
+road-cell observations are retained. The contour considers all four supporting
+road texels on both sides of tile borders. The earlier correction only considered
+the current non-road tile, leaving discontinuous, stacked kerb ends at junctions;
+the continuous distance field supersedes it. There are no new textures, meshes,
+collision, building scaling or CPU tile scans.
 `scripts/walker_streets.gd` makes people easier to see:
 - people (not gods, animals, boats or rite figures) are drawn 12% larger;
 - on road tiles, moving walkers drift 0.17 tiles to the right of their direction of
@@ -92,6 +148,10 @@ and the hover ring.
   monuments, agoras and the like keep their full size. The ground shader paves the freed
   strip with small setts (a pavement band where the road mask is 0.38–0.5). When a road is
   added or removed, the building transforms are rebuilt.
+  Single-building ghosts and area-drag models now apply this same setback (6 October
+  2026), so their horizontal fitting and position match the installed building beside
+  a widened road. Native full-size green/red footprint markers retain their authority;
+  road previews and the existing exempt building types keep their full size.
 - Road kinds: the snapshot tile row has an appended column 8 (0 none, 1 road, 2 avenue,
   3 boulevard; column 4 keeps its 0/1 meaning). `validate_elevation.gd` checks it.
   The avenue and boulevard tiles are the medians the native tool lays beside its streets.

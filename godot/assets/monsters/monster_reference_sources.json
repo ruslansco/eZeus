@@ -1,0 +1,1858 @@
+{
+  "revision": "monster_reference_v1",
+  "created": "2026-10-06",
+  "scope": "Sixteen Godot-only anatomical monster replacements; existing Hydra untouched. Native rules, sprite recipes, simulation and saved city retained.",
+  "rights_status": "needs_evidence",
+  "visual_acceptance": "pending",
+  "generation_tool": "image_gen.imagegen built-in; one call per monster",
+  "generation_records": "art/monsters/generation-records-v1.json",
+  "recipe_sources": [
+    {
+      "path": "eZeus/tools/godot_monster_reference.py",
+      "role": "reproducible background sculpture and pose adapter",
+      "sha256": "a515f3dc48b0a1c2c18789d6487f23934f4bdfb7a9fa400fc6b4a44c33050dd9"
+    },
+    {
+      "path": "eZeus/tools/godot_hydra.py",
+      "role": "shared tube and reptile-head geometry",
+      "sha256": "d42b859621ec8bc83f4765c36c6e0a55e29fcb337b1e26e3f1b5ad04cd79bd33"
+    },
+    {
+      "path": "art/_kit/human.py",
+      "role": "retained CC0 face adapter",
+      "sha256": "5eb861f4407dfb6fbc93a39838a2f112555e2dce319488d0f80ac5e745ab573c"
+    },
+    {
+      "path": "art/_kit/assets/greek_male.npz",
+      "role": "prepared CC0 male face",
+      "sha256": "7b4deab35246f2c4868b531881d46cf9841cf298f5e7eaaabfccab74a18beba3"
+    },
+    {
+      "path": "art/_kit/assets/greek_female.npz",
+      "role": "prepared CC0 female face",
+      "sha256": "296fa9af61a5d91e1845f2722bc69d946efbce292cb82fd91bffe225d3edcbe6"
+    },
+    {
+      "path": "eZeus/godot/shaders/monster_reference.gdshader",
+      "role": "procedural surface finish",
+      "sha256": "1253720086ff40753ef897cd4800743fc9006f950304af146eaf052bf3d5ae6c"
+    },
+    {
+      "path": "eZeus/tools/godot_monster_anatomy.py",
+      "role": "full anatomical monster adapter",
+      "sha256": "d76ce28c9977c100b6570c6de5b15dff5431a02ee929ba0c3854a157e6128095"
+    },
+    {
+      "path": "art/_kit/animal.py",
+      "role": "retained anatomical quadruped rig and surfaces",
+      "sha256": "c0fd30c2f94cc36261bf6b4d497716fa3f3c6f0b746a909cf693ae58db089534"
+    },
+    {
+      "path": "art/characters/animals/species.py",
+      "role": "retained species proportions",
+      "sha256": "1f859eb181d24bb734ae1c69303533737509bd0e965975a1f466ed9d2a91d324"
+    }
+  ],
+  "budgets": {
+    "authored_vertices": 16500,
+    "imported_vertices": 34000,
+    "triangles": 34000,
+    "surfaces": 3
+  },
+  "scale_comparison": {
+    "displayed_citizen_body_height": 0.949,
+    "zeus_body_height": 2.455466,
+    "all_non_death_pose_tops_below_zeus": true
+  },
+  "clips": {
+    "walk": 24,
+    "idle": 12,
+    "fight": 24,
+    "fight2": 24,
+    "die": 30
+  },
+  "previous_runtime": "art/monsters/previous-runtime-v1",
+  "models": [
+    {
+      "species": "cyclops",
+      "asset": "walker_cyclops",
+      "reference_status": "Film design",
+      "design": "Rust-red one-eyed giant; broad chest and dark loincloth.",
+      "source_page": "https://disney.fandom.com/wiki/Cyclops_(Hercules)",
+      "sources": [
+        {
+          "path": "art/monsters/cyclops/cyclops-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "f680ef9c72fe7948dfdd36791948177bff2845e38f811fa5257e691ae7b0848e"
+        },
+        {
+          "path": "art/monsters/cyclops/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "0c4043ec69f08f8b158c69cbff46e81b8090d90a0826a35c0262aefe2dec925d"
+        },
+        {
+          "path": "art/monsters/cyclops/cyclops-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "10ee86d272d46f2f70fb306a7a085f924aea55d87eb78229e7d08292720102bc"
+        },
+        {
+          "path": "art/monsters/cyclops/references/hercules-screen-reference.png",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "fcb739abf85ad39ac2c160f89498aadd79556a96cd6542e8b1a489bb162e8cae"
+        },
+        {
+          "path": "art/monsters/cyclops/cyclops-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "b7b9dacb4e12c370ce28f6e104242e60893a33307c47c46dca24b0ae5f763d7c"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_cyclops.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "7248cf126379c5bda27661d9f7271b9f7550b18a9b0789487902526e3aa8716c"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_cyclops.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "5b8f73d53fa60df732a36264bd7b7c8b5b22ca03f2f3584a32a5785a5f0fd69b"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_cyclops.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "61fbb18875551992642f134148fdba98aede3ff2fd0e8f6ca96a0e3e3dc9df58"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_cyclops.vat",
+          "role": "baked pose texture",
+          "sha256": "cac7f76a3619f843fc156150a9ab8e3f25b4d586a3482e118c8f0a5d502b59c5"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_cyclops.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "1336baa97530fde95e9ac745bb3dfd86589168e04beca13cd27aed14f4a3aaed"
+        }
+      ],
+      "measured": {
+        "vertices": 20535,
+        "triangles": 27334,
+        "surfaces": 2,
+        "height": 2.0800000187009573,
+        "pose_peak": 2.113607883453369,
+        "pose_low": 0.02343273162841797,
+        "fallen": [
+          0.02343273162841797,
+          0.33912307024002075
+        ],
+        "heads": 1,
+        "legs": 2
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "cyclops",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-a20ffc73-8bcf-4447-99a5-f4b838180d84.png",
+        "sha256": "f680ef9c72fe7948dfdd36791948177bff2845e38f811fa5257e691ae7b0848e"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "talos",
+      "asset": "walker_talos",
+      "reference_status": "Original bronze automaton",
+      "design": "Articulated bronze armour, helmet crest and ankle seals. Exact Hercules screen design was not verified.",
+      "source_page": null,
+      "sources": [
+        {
+          "path": "art/monsters/talos/talos-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "2bf32ed9550836c8d088fadc21f6f143597ecc57a59c9772607d98a60b5656e2"
+        },
+        {
+          "path": "art/monsters/talos/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "b8d655976951b894715af13843a40291ceaedd9fec644b52eb291011e7ae5ea6"
+        },
+        {
+          "path": "art/monsters/talos/talos-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "2a150c63cf36e147d7604ee99f38e3d89bf266fa80036283dc0398a801b8f5b1"
+        },
+        {
+          "path": "art/monsters/talos/talos-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "667e55a877abcc5f9b9edb8a358c02a9a5394269330ecb16731707af2ac82f57"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_talos.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "6d9e2daa872f134937c47836bb7097849604ab34c1e3b2eca525ba872681a2a0"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_talos.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "40d71223daf6398e3c63c0e4793d250bbe63268304574116cb748d7813aa5251"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_talos.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "eb7ec5b63372640836f23acd31ddd710709ca0623660518c68f19cc4845201bb"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_talos.vat",
+          "role": "baked pose texture",
+          "sha256": "267e51808d8a09cecbff47b648f1538522838ed6d06fade8380734d73e22c85e"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_talos.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "276d38236b2926a4f75e3ac7be9a18ceeae1100fdb4be81ae5f8756d9b503703"
+        }
+      ],
+      "measured": {
+        "vertices": 21069,
+        "triangles": 29781,
+        "surfaces": 3,
+        "height": 2.1400001998990774,
+        "pose_peak": 2.1700305938720703,
+        "pose_low": 0.023712575435638428,
+        "fallen": [
+          0.023712575435638428,
+          0.273151695728302
+        ],
+        "heads": 1,
+        "legs": 2
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "talos",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-1e07547d-e484-4468-a8a0-bd66e9e3ea97.png",
+        "sha256": "2bf32ed9550836c8d088fadc21f6f143597ecc57a59c9772607d98a60b5656e2"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "hector",
+      "asset": "walker_hector",
+      "reference_status": "Original Trojan warrior",
+      "design": "Bronze helmet and shield, spear, leather skirt and red cloak. No verified Hercules cartoon counterpart.",
+      "source_page": null,
+      "sources": [
+        {
+          "path": "art/monsters/hector/hector-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "f7be6abe6bda73a779da1d7a18c1efaba1af64a8aa290de0a91546f8947e817b"
+        },
+        {
+          "path": "art/monsters/hector/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "33e537e3b83e8e82105a4d62ac80bb12a52706982a63cf0f9570d4472868feaa"
+        },
+        {
+          "path": "art/monsters/hector/hector-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "ccb63495c1dc086198745b7a3d2b721456fa968e8ce319e7e20e18bf7fd08131"
+        },
+        {
+          "path": "art/monsters/hector/hector-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "56cf460ebf55f1f2e21cc9d82c5bb645282ac9913de90fc0b14c2211a8e080f1"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_hector.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "259b6490a2be2a9d24a8675076d66b875ee5baf76f3c8d1f615d7e1c25fa930d"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_hector.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "7d374b22ba6475424cf3b418b34012d773d5ccf0e8f86b1c105f359b1857444e"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_hector.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "8bfe0090a3cd12bfb2cb633d25c711afee3d51622f7401602d49f204e1e499da"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_hector.vat",
+          "role": "baked pose texture",
+          "sha256": "203157126683b47a4115bb2e58ed4da1f4dba0f1d2db833c8bf1b12ce56ef30f"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_hector.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "91e168d47247f3c1d7c8848cd098543ba31823befecf0423d298d138d107d518"
+        }
+      ],
+      "measured": {
+        "vertices": 21912,
+        "triangles": 29207,
+        "surfaces": 3,
+        "height": 1.9199999328702688,
+        "pose_peak": 1.9495134353637695,
+        "pose_low": 0.02499999850988388,
+        "fallen": [
+          0.025000005960464478,
+          0.29723095893859863
+        ],
+        "heads": 1,
+        "legs": 2
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "hector",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-bf5c2a07-a866-4238-af23-bbfb22714b85.png",
+        "sha256": "f7be6abe6bda73a779da1d7a18c1efaba1af64a8aa290de0a91546f8947e817b"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "minotaur",
+      "asset": "walker_minotaur",
+      "reference_status": "TV design",
+      "design": "Brown bull-man, sweeping dark horns, mane and cloven feet.",
+      "source_page": "https://disney.fandom.com/wiki/Minotaur",
+      "sources": [
+        {
+          "path": "art/monsters/minotaur/minotaur-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "f32cf00aaaeb031fd053f0404b3e8d52a5754cda7c7e719a5b146178bd3263d6"
+        },
+        {
+          "path": "art/monsters/minotaur/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "9a155ecd1391950535894894b1fe3ea220838daf4768a0415cc404e60c59be8a"
+        },
+        {
+          "path": "art/monsters/minotaur/minotaur-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "4a59ee96c031778fc8e639548bf1d3d6b53e8de29e7105fa28734a02ddad7498"
+        },
+        {
+          "path": "art/monsters/minotaur/references/hercules-screen-reference.jpg",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "02fe7575fc312b2bc829262a4e6aa0d5d1c2df816bbb440192eaf2117490a94a"
+        },
+        {
+          "path": "art/monsters/minotaur/minotaur-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "982d192535fdde4475f7adbf8611603fe4382efff64afd59b77417e7506e08da"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_minotaur.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "ddca6dfe33445628d885b20c76520115675b9bc921fb4e896a99b3c08037518e"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_minotaur.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "9c59a81b83704980fc10c53ee48ec5e76b9d41e54d772b8b272f2b66e1dfaf13"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_minotaur.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "50a4213c2136718db8e5ebd83d4dccb59642b7a98498c10f5b37d77c31660b9d"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_minotaur.vat",
+          "role": "baked pose texture",
+          "sha256": "ddb32a48885fbcd80e8f5a66e7d7a957afe4992aaed263b3c13bf1080cf732ee"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_minotaur.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "d5990ac6ee337d15daf311b11b761616fabb0bea151e63ef46537c493ca2d03f"
+        }
+      ],
+      "measured": {
+        "vertices": 21985,
+        "triangles": 28532,
+        "surfaces": 2,
+        "height": 2.100000236183405,
+        "pose_peak": 2.1349105834960938,
+        "pose_low": 0.02492421865463257,
+        "fallen": [
+          0.02499997615814209,
+          0.38282275199890137
+        ],
+        "heads": 1,
+        "legs": 2
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "minotaur",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-cfbd1e2e-4435-4f81-b5e4-6103888e5f07.png",
+        "sha256": "f32cf00aaaeb031fd053f0404b3e8d52a5754cda7c7e719a5b146178bd3263d6"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "satyr",
+      "asset": "walker_satyr",
+      "reference_status": "Film Phil anatomy motif",
+      "design": "Original fierce goat-man, curled horns, hoof legs and panpipes. Phil informs anatomy, not the character likeness.",
+      "source_page": "https://es.pinterest.com/pin/389491067791777336/",
+      "sources": [
+        {
+          "path": "art/monsters/satyr/satyr-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "80fa27057dd603ca39b66f04879a35efaab99686e65b04c2e5e72d46c0cd4ace"
+        },
+        {
+          "path": "art/monsters/satyr/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "991ae86c564eddb12845fe0e00172fb55e25920614ecda37ff51ed82d5c5ff6d"
+        },
+        {
+          "path": "art/monsters/satyr/satyr-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "159ea27383e8069b973492dd8409007eca35babe728da6442a65a2b8364eb404"
+        },
+        {
+          "path": "art/monsters/satyr/references/phil-satyr-reference.jpg",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "7c165d2099977e23ea6ee1e04603283127b386db6453bcd38df7ea19de2e1846"
+        },
+        {
+          "path": "art/monsters/satyr/satyr-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "6f49d15678d3bfc8f11922e545bcc7084f3eb5cf43b9ef7668112ace63c64bea"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_satyr.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "0f23a210526d2b9b1b12d61691925b393a063fe695e03aece2d99c6185d0abd1"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_satyr.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "b1a00017766fe25e1637938af04400407e4234e92278099b23b05f43ab394dd1"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_satyr.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "c6450a13feaef7a7ba13b196561d5dfb9bdb6bf1e1515a8d1060adfe5de28837"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_satyr.vat",
+          "role": "baked pose texture",
+          "sha256": "f00ca8ece0ec4d68f24d57ef962e5fd4ab173b621a3f01038230e49dce384c53"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_satyr.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "9fbef7c8afc972e5a92f692e1e06263135ef62e0ed78d806db5907d6658ee744"
+        }
+      ],
+      "measured": {
+        "vertices": 22549,
+        "triangles": 29558,
+        "surfaces": 2,
+        "height": 1.8200001455843449,
+        "pose_peak": 1.8475579023361206,
+        "pose_low": 0.02418285608291626,
+        "fallen": [
+          0.02418285608291626,
+          0.2824970483779907
+        ],
+        "heads": 1,
+        "legs": 2
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "satyr",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-1326a2ec-e8be-4cf9-93fd-f973ee0cfa79.png",
+        "sha256": "80fa27057dd603ca39b66f04879a35efaab99686e65b04c2e5e72d46c0cd4ace"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "medusa",
+      "asset": "walker_medusa",
+      "reference_status": "TV design",
+      "design": "Green humanoid Gorgon, ten snakes, purple Greek dress and gold clasps.",
+      "source_page": "https://disney.fandom.com/wiki/Medusa_%28Hercules%29",
+      "sources": [
+        {
+          "path": "art/monsters/medusa/medusa-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "3437ab524451c46122882e2523261ab7160788c4be024b150068465524c3b2a6"
+        },
+        {
+          "path": "art/monsters/medusa/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "23ba2615d3669fc65df945d9dfef86005b756830cc3d828ed22b238281e28246"
+        },
+        {
+          "path": "art/monsters/medusa/medusa-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "7e7df8bb822e48f029e9fea72101391b3962708d461b112034a581bcd93bf58d"
+        },
+        {
+          "path": "art/monsters/medusa/references/hercules-screen-reference.png",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "2f6f72d0ac5735349e03cb18d93a46fbe02117700c08823a53f9b2fefe3bebf3"
+        },
+        {
+          "path": "art/monsters/medusa/medusa-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "b7af5fd382bf83beebf77aee07cd5b701c5bd56c30ef776780a95b75c698ab50"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_medusa.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "63583dff3203ee13155c56940cf8f306f40a90740e0ba1de8f7b4c96a78022d7"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_medusa.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "aee13997bbca1967032bd8ca85969bdc45bf1f52710485302f9ac03605ed5e53"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_medusa.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "9c4521cfa9f2c90e98017d3413519c60d0d1d6709259e62c593c0908a4ac0de1"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_medusa.vat",
+          "role": "baked pose texture",
+          "sha256": "eef91fab32b43a2cb31316f00f33434558291ab5c2619b32ea5f1a170963c9b2"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_medusa.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "e64a2cca9cf8c61bc35f4ec5e37097471a55a445b0c9e0c3d2501e24c8016ad8"
+        }
+      ],
+      "measured": {
+        "vertices": 23160,
+        "triangles": 30355,
+        "surfaces": 3,
+        "height": 1.9299999233335257,
+        "pose_peak": 1.9604429006576538,
+        "pose_low": 0.024319112300872803,
+        "fallen": [
+          0.024319112300872803,
+          0.26062774658203125
+        ],
+        "heads": 1,
+        "legs": 2
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "medusa",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-1cefa102-81be-4229-afe1-1973334e6f45.png",
+        "sha256": "3437ab524451c46122882e2523261ab7160788c4be024b150068465524c3b2a6"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "maenads",
+      "asset": "walker_maenads",
+      "reference_status": "Original mythological group",
+      "design": "Three ivy-crowned women with Greek dresses and thyrsus staffs. No verified Hercules screen reference.",
+      "source_page": null,
+      "sources": [
+        {
+          "path": "art/monsters/maenads/maenads-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "2bcef0b88c50be0c4b407d0424a51717055958da31a00714b58a7dff54526276"
+        },
+        {
+          "path": "art/monsters/maenads/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "a57314cb6d49d5b6d9441556690dfad80d2919face308daa345fd75c93b3d001"
+        },
+        {
+          "path": "art/monsters/maenads/maenads-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "a01a6f4bbd8d8127ad6c1a414d544c411d3dc25da8ec523b8595bb161504cbee"
+        },
+        {
+          "path": "art/monsters/maenads/maenads-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "102768348a5469de39b1ec287bffa2828e390a6aa5a76702eb4a9fa76b970a4a"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_maenads.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "4aac67e5021ab5e1e148dc8a03c2670a70fc7cecab3b0a8a9b78107f4dc01839"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_maenads.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "0c74ababa23b5aa2bc851f842896b5da466b6b20bc579bee3d6ac26b6b4cf27c"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_maenads.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "2a8b551fe5e4f67268af277923b9524999dfa2abd96721a13f7bafe5245dfe4f"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_maenads.vat",
+          "role": "baked pose texture",
+          "sha256": "15a42327a735bce2534990e06527b705437e646384e45e6d242d440247353373"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_maenads.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "120869b4b7503dab4ec1a44d22624d5959bff0ae1a9d3430a2fae9353e771f94"
+        }
+      ],
+      "measured": {
+        "vertices": 26539,
+        "triangles": 30908,
+        "surfaces": 2,
+        "height": 1.8572468515485525,
+        "pose_peak": 1.8899002075195312,
+        "pose_low": 0.024168789386749268,
+        "fallen": [
+          0.024512410163879395,
+          0.6823479533195496
+        ],
+        "heads": 3,
+        "legs": 6
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "maenads",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-91006d4d-41d8-4125-bebb-fe63112337b5.png",
+        "sha256": "2bcef0b88c50be0c4b407d0424a51717055958da31a00714b58a7dff54526276"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "harpies",
+      "asset": "walker_harpies",
+      "reference_status": "Original mythological pair",
+      "design": "Two bird-women with feather wings, claws and anatomical faces. Exact Hercules screen image was not verified.",
+      "source_page": null,
+      "sources": [
+        {
+          "path": "art/monsters/harpies/harpies-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "60d3f786b4548bd672f158677b45464020ce89f682957a068b1d323b0dcb070c"
+        },
+        {
+          "path": "art/monsters/harpies/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "2cf3e5a931fb5d49cebd394c21aba9dc1837e5bfdbb54b1019238925a6d212ed"
+        },
+        {
+          "path": "art/monsters/harpies/harpies-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "e76ae9f7b5b61dc6306353161426b3245be5f19167fdd3de439bd4973a550007"
+        },
+        {
+          "path": "art/monsters/harpies/harpies-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "f59b326a44040af80faf744f8ce16c22094ee05f116ee1ee4a6c719d8c316d3c"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_harpies.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "aed8acd097d8c9a6f3204c57fa8723cd85ec2d92d270ea668bbb831424f76446"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_harpies.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "6407911732eedfa6cd5bd954c8d4d7536a8a97fe08f9174e6032f7a82e26bfb5"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_harpies.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "f2963f7acb3161796e2eb6756ca051603efd5459ee21d7623035bdb7458c22b5"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_harpies.vat",
+          "role": "baked pose texture",
+          "sha256": "ac60e8cf6548a708fa36428a7fc2f4ccbb5a2f7966d060cfdbe892f8f1c1b54f"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_harpies.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "5316ef3a7ab46ca4cb95ebb8f9b283b4ae69d97d23fc241ae0515674c59f4b12"
+        }
+      ],
+      "measured": {
+        "vertices": 23339,
+        "triangles": 28330,
+        "surfaces": 2,
+        "height": 1.9200001880526543,
+        "pose_peak": 2.0347044467926025,
+        "pose_low": 0.02499997615814209,
+        "fallen": [
+          0.02562415599822998,
+          1.3660528659820557
+        ],
+        "heads": 2,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "harpies",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-42839e32-d877-428f-afd3-3899c524872c.png",
+        "sha256": "60d3f786b4548bd672f158677b45464020ce89f682957a068b1d323b0dcb070c"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "calydonianboar",
+      "asset": "walker_calydonianboar",
+      "reference_status": "Film boar motif; exact species unverified",
+      "design": "Dark bristled body, long curved ivory tusks and cloven feet. Film screenshot is silhouette inspiration, not proof of Calydonian identity.",
+      "source_page": "https://eureka-merl.hatenablog.com/entry/2020/08/10/205103",
+      "sources": [
+        {
+          "path": "art/monsters/calydonianboar/calydonianboar-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "ff69e09fdbe00b3692cd8e59da2dfbe0b19ab7ce0da9d4f65786260b3a142df2"
+        },
+        {
+          "path": "art/monsters/calydonianboar/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "5ceb36c0c721866aa0c99ca945aa4e5ab0c74da3dd0eb0ef517bcb7666f6a6f5"
+        },
+        {
+          "path": "art/monsters/calydonianboar/calydonianboar-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "35f410437542903e4e3202abd7b7e9ca59c3e74c04f3f8f439e1457f12f489c8"
+        },
+        {
+          "path": "art/monsters/calydonianboar/references/hercules-screen-reference.jpg",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "265983d128d0050c733f15bd2d87ef65228985c01e8b8cdd06344b7c898b9ff2"
+        },
+        {
+          "path": "art/monsters/calydonianboar/calydonianboar-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "5d510533afba0cc03647b9376386a09ac1e93c79a5c39c40aebb7d555bae90e9"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_calydonianboar.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "beb3bb8083a09c6f2b68cedb7d16f0c55ca8056e66c924feac4d0c675b234ec1"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_calydonianboar.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "5d591d8ed6523d8b7e5ca9c1f830ef172f72088b2b9fd3b768b2d33cafa8fadb"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_calydonianboar.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "bd973ad05fec0e204d6ce41ea6a6823709d50e83c67d306211595550f8077839"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_calydonianboar.vat",
+          "role": "baked pose texture",
+          "sha256": "e06195f2eacb185626082539b026aaebeaa20448493c695d36c86d32bedda9f1"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_calydonianboar.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "342d50dbae75c8201c2a946c76a238f70ab43e826c5f249774a61457d6a20e2c"
+        }
+      ],
+      "measured": {
+        "vertices": 14480,
+        "triangles": 20178,
+        "surfaces": 2,
+        "height": 1.7899999376386404,
+        "pose_peak": 1.8219168186187744,
+        "pose_low": 0.011758208274841309,
+        "fallen": [
+          0.012128710746765137,
+          0.3258315324783325
+        ],
+        "heads": 1,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "calydonianboar",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-4270a637-5797-4e19-95c5-57699e16fd9a.png",
+        "sha256": "ff69e09fdbe00b3692cd8e59da2dfbe0b19ab7ce0da9d4f65786260b3a142df2"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "cerberus",
+      "asset": "walker_cerberus",
+      "reference_status": "Film design",
+      "design": "Three black mastiff heads, red eyes, muscular quadruped.",
+      "source_page": "https://nondisneyinternationaldubbings.weebly.com/1997-hercules.html",
+      "sources": [
+        {
+          "path": "art/monsters/cerberus/cerberus-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "d4c66fddb45d9245454373e3e181fe7915beac15d0100568826012be820fee6a"
+        },
+        {
+          "path": "art/monsters/cerberus/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "d74742a00eaff38423f6cfc12324d0c96235b40ea18ac14f9c45839f66e044f7"
+        },
+        {
+          "path": "art/monsters/cerberus/cerberus-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "6bd4168b43acef741c87f9cac4c53f66a47d60743b01e657b89d2c4256534042"
+        },
+        {
+          "path": "art/monsters/cerberus/references/hercules-screen-reference.png",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "9651bfc02edc0a65acacea6a9ebf73034bd3ca85ab5ff990d07c90cb57d9af1b"
+        },
+        {
+          "path": "art/monsters/cerberus/cerberus-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "a25de6e2437e70e38281143d04784a398999274adf54ae1234c408380fc59c67"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_cerberus.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "0b4cc25dd6904dccf1211d2fcbd74ff28f40cba2302edd85d022a38968c3f236"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_cerberus.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "dbdaa3e4ef3a0531831ea35dcdab2d6e0a26f5d2419fb97c3d176edabfcb3e37"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_cerberus.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "aca318498797ea4b0ef3b0ecb96cc263fb159ec11d2722232d7f130bdac8984a"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_cerberus.vat",
+          "role": "baked pose texture",
+          "sha256": "aa1706989ba882253d144f2879168f3ba4ed5bc6a44bdcc9f0d11109e0c32ec3"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_cerberus.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "74f6b72a01d23f3e4342351acea045d702af2960174a8cff10a97ece4c951cc8"
+        }
+      ],
+      "measured": {
+        "vertices": 12586,
+        "triangles": 13975,
+        "surfaces": 2,
+        "height": 1.9699998870491982,
+        "pose_peak": 2.0528831481933594,
+        "pose_low": 0.02499997615814209,
+        "fallen": [
+          0.02499997615814209,
+          0.5354412794113159
+        ],
+        "heads": 3,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "cerberus",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-65978c0c-baad-46cc-9cf3-b08368997f38.png",
+        "sha256": "d4c66fddb45d9245454373e3e181fe7915beac15d0100568826012be820fee6a"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit",
+        "CC0 wolf, NewDLC"
+      ]
+    },
+    {
+      "species": "chimera",
+      "asset": "walker_chimera",
+      "reference_status": "TV motif plus mythological anatomy",
+      "design": "Red lion mane and blue-green body; goat head and snake tail retained for the game.",
+      "source_page": "https://disney.fandom.com/wiki/Chimera_(Hercules)",
+      "sources": [
+        {
+          "path": "art/monsters/chimera/chimera-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "0794a8f53c2d977aa0ed02492bbc98aa86b0b553188ddd8a02734672ec9d4d98"
+        },
+        {
+          "path": "art/monsters/chimera/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "f213d68cbb98f04b8c3807153588c9f6281ce7f735530a49b34620d3408ed004"
+        },
+        {
+          "path": "art/monsters/chimera/chimera-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "baa2172376b664d07ca70c718648692eb1297e7d5af64320659789c0a1ca486d"
+        },
+        {
+          "path": "art/monsters/chimera/references/hercules-screen-reference.jpg",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "8cb9d98539211fd2b3636d5b8da83911b993741f52d19277f9ab2b412100d03e"
+        },
+        {
+          "path": "art/monsters/chimera/chimera-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "ebc5e6fc560b903d94bee46517bf1a068113bb0aa03d49efd7d483874d361423"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_chimera.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "d4b8a00331625828005eaafc78414b1a01ac6c14b1c84660cb29149a5594175c"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_chimera.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "b289807a4655247024688f2ac4907f3504f5324cc3be391cdd038e3bb2b16270"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_chimera.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "9dda91f75db0b0b356968a01b5258efce3d526de54d8805d8deb03cfd5a1d52c"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_chimera.vat",
+          "role": "baked pose texture",
+          "sha256": "58a4b6c899280f4aa6a5913816d2b669ee2bc2a48ddaae36e61eefa489fa57de"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_chimera.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "da99c45c1752eb74a2e13a083c2b29dc221983caec904839abbe1f876c376754"
+        }
+      ],
+      "measured": {
+        "vertices": 24326,
+        "triangles": 29751,
+        "surfaces": 2,
+        "height": 1.990080690011382,
+        "pose_peak": 2.015080690383911,
+        "pose_low": 0.02499997615814209,
+        "fallen": [
+          0.02499997615814209,
+          0.2861539125442505
+        ],
+        "heads": 3,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "chimera",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-04a13a88-c43f-4bd9-bc69-77773a562d13.png",
+        "sha256": "0794a8f53c2d977aa0ed02492bbc98aa86b0b553188ddd8a02734672ec9d4d98"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit",
+        "Blender 5.2 cave lion, CC-BY Joanna Kobierska; base Ken Barthelmey"
+      ]
+    },
+    {
+      "species": "sphinx",
+      "asset": "walker_sphinx",
+      "reference_status": "Original game anatomy",
+      "design": "Female head, lion body and feather wings. The TV Sphinx Martindale is a male character; this is a game adaptation.",
+      "source_page": "https://disney.fandom.com/wiki/Sphinx_Martindale",
+      "sources": [
+        {
+          "path": "art/monsters/sphinx/sphinx-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "136f6f68a7ad8a39597841ce2bcb19aca33186aa0dd1d498f358f4395a8be97e"
+        },
+        {
+          "path": "art/monsters/sphinx/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "f206014e29862a587fccb2cf0191a573df23a2f92da71908cef87d002d8253aa"
+        },
+        {
+          "path": "art/monsters/sphinx/sphinx-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "e81979aba5d43003834ff0a75b3b23ca920d111eb828cdcae53f868ae4edb19e"
+        },
+        {
+          "path": "art/monsters/sphinx/sphinx-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "b1bfaca892c75cbcbd8760a93700ff85c0b4716fc5e6b83c2c08d554922e6321"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_sphinx.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "3305436324b979422505d65ebd055961c2d23d36ce68c50a4c26847792b18e13"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_sphinx.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "a3d17305cd46a135af03739d04b59b1a3a5c08b8c5d0eb283b4b632ea57636a1"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_sphinx.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "f9a0a4a92ff31904203c54e68a30e199ec4f9dc752098f34b1905bb0e4e048b4"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_sphinx.vat",
+          "role": "baked pose texture",
+          "sha256": "25163fa1b92fa5e1f7a642e921a12a93343b79ef630a2816e8bcfcd0d8592fe3"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_sphinx.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "c1456ca1579484a3bb4a04e6991172b51ea9aaa150b99d8cc9c8527ddf6b20b8"
+        }
+      ],
+      "measured": {
+        "vertices": 20897,
+        "triangles": 26757,
+        "surfaces": 3,
+        "height": 2.0000000968575478,
+        "pose_peak": 2.1829168796539307,
+        "pose_low": 0.02499985694885254,
+        "fallen": [
+          0.02500009536743164,
+          0.5894384384155273
+        ],
+        "heads": 1,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "sphinx",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-981a2c86-a86d-4f82-9f08-df2a5c480c43.png",
+        "sha256": "136f6f68a7ad8a39597841ce2bcb19aca33186aa0dd1d498f358f4395a8be97e"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "dragon",
+      "asset": "walker_dragon",
+      "reference_status": "Original winged guardian",
+      "design": "Green four-legged reptile, layered neck shields, black horns and scalloped red bat wings. No verified specific Hercules dragon image.",
+      "source_page": null,
+      "sources": [
+        {
+          "path": "art/monsters/dragon/dragon-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "85e2794e1c94cadbbe8a96bd4fde92be2f64774aca45deaee7c134831458047a"
+        },
+        {
+          "path": "art/monsters/dragon/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "fc9e930277012523a43452bca88d673e1f5f551d931f3a0cd5fbe972cfb07338"
+        },
+        {
+          "path": "art/monsters/dragon/dragon-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "16e34b0d9cb701daef8f2a25d26039d05ee6a2adcd6890bee439655df08f4293"
+        },
+        {
+          "path": "art/monsters/dragon/dragon-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "d9563cee79f72c3a509e128d78a4a10e4c95562cfdd39dcaf44615641089e6be"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_dragon.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "bd0f748e1d90a2fd5e4e201a83d773ab991a8aac2016e588292862477a007733"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_dragon.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "d651e95c3d4dc7182d089f3a7bfc8291b62238ae08ef6d44f021a3f5cb843e39"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_dragon.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "ed9dda6b215110a98a5851d10ef5c48196ba22f09109c864218cf16790e14f46"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_dragon.vat",
+          "role": "baked pose texture",
+          "sha256": "2cf2d5946eafe2964dfbc989708c33e07ce7721fdb81ae62fd7aec65640359ae"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_dragon.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "c5ea0480d92b7266b85dd34dbaa756ab4fdf94f51e728f3a1524c27ed517d8ee"
+        }
+      ],
+      "measured": {
+        "vertices": 19374,
+        "triangles": 26004,
+        "surfaces": 2,
+        "height": 2.080093717202544,
+        "pose_peak": 2.323042631149292,
+        "pose_low": 0.02483510971069336,
+        "fallen": [
+          0.024894237518310547,
+          0.5920775532722473
+        ],
+        "heads": 1,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "dragon",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-3e57055c-84f4-482e-a649-f0e26a943d3b.png",
+        "sha256": "85e2794e1c94cadbbe8a96bd4fde92be2f64774aca45deaee7c134831458047a"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit",
+        "CC0 crocodile, Micket"
+      ]
+    },
+    {
+      "species": "echidna",
+      "asset": "walker_echidna",
+      "reference_status": "TV design",
+      "design": "Horned female torso over a four-legged reptile body, cream chest mane and red bat wings.",
+      "source_page": "https://www.shadowlordinc.com/sceneclip.view?Clip.Id=3291",
+      "sources": [
+        {
+          "path": "art/monsters/echidna/echidna-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "7e23d9c5855fa12ab91b3a0e9a07ae1589d8a2c2ea1b0e7ab76119d24c88a636"
+        },
+        {
+          "path": "art/monsters/echidna/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "c588c0a4eb2800759f13ceb6fb0f0e97029c5777000e1da74cffc7f93dd83a20"
+        },
+        {
+          "path": "art/monsters/echidna/echidna-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "0138e0a7c0fdb60132eafe744b8e54c5ab8dd9bc8922c827aab465244b8be7d5"
+        },
+        {
+          "path": "art/monsters/echidna/references/hercules-screen-reference.jpg",
+          "role": "looked-up screen inspiration; release rights unverified",
+          "sha256": "30f5dabe2dc9202715ee1b0143c87f06b0126c00fe8565a9a7bcf1d4805b3dcb"
+        },
+        {
+          "path": "art/monsters/echidna/echidna-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "7f7d9206b97f93d339ce781154c0d238053d8870bca64bcb368e2812d4605a1e"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_echidna.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "9393abf554d085282d7ee6412eda4c3f99ba6cd8eff0d0167448f46929409d87"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_echidna.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "1c485fdcd0194c903f782670faa7a01354152f9154fd18bdb7645fa26672e236"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_echidna.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "d9f1cac3c994764a5a2686e174a62b7969254b958da73dbe6776de7787053f30"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_echidna.vat",
+          "role": "baked pose texture",
+          "sha256": "e0a889b6663ac1e6c89d4a539ff233d7833ae4a2d83e81d1ff9823c1eaa53449"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_echidna.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "1776942e353173f3f94f81d761a7acebe8d153a905837b99b7e8440dbd905d8a"
+        }
+      ],
+      "measured": {
+        "vertices": 22564,
+        "triangles": 30161,
+        "surfaces": 2,
+        "height": 2.0900288578122854,
+        "pose_peak": 2.1212098598480225,
+        "pose_low": 0.024623394012451172,
+        "fallen": [
+          0.025012493133544922,
+          0.4853205978870392
+        ],
+        "heads": 1,
+        "legs": 4
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "echidna",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-eb526cf6-f441-4cea-be21-4c0aea7dca51.png",
+        "sha256": "7e23d9c5855fa12ab91b3a0e9a07ae1589d8a2c2ea1b0e7ab76119d24c88a636"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    },
+    {
+      "species": "scylla",
+      "asset": "walker_scylla",
+      "reference_status": "Original game anatomy; TV association verified",
+      "design": "Crowned female torso and six dog necks: seven mouth anchors. A TV counterpart appears in The Big Sink; exact visual reference was unavailable.",
+      "source_page": "https://disney.fandom.com/wiki/Hercules_and_the_Big_Sink",
+      "sources": [
+        {
+          "path": "art/monsters/scylla/scylla-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "ebbdb3af55d574c32583ff9c1ffa20ccfdfd7c6a47ec37a711f3ca3ee96e4e26"
+        },
+        {
+          "path": "art/monsters/scylla/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "4bade83ddcb64eb886e58ee84a754fffa8c513819e8732e1057c0d1f57523e75"
+        },
+        {
+          "path": "art/monsters/scylla/scylla-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "304dbdd67e5dec5b2e115f7e8e91c9f00ac0a9499051c92a94ecd1b252910084"
+        },
+        {
+          "path": "art/monsters/scylla/scylla-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "e89ff136c9d1ec5351018587516c248e188928958adb7ce46b064b334869b336"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_scylla.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "69bdeb96aa86f6fea6ff1874f2ad23126cd3f46476c563998fe1fec3a0923c5b"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_scylla.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "185be9393667f81234237fac6bb6354504ac64b6265d1e7752f888a7acbe26a8"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_scylla.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "15614b25d94594bcbaabe1508abdeb8e6496c8bfb16f2e8ec259dd7b201ec5dd"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_scylla.vat",
+          "role": "baked pose texture",
+          "sha256": "8a5ca03c90dedbfef5a786a61cacfd616b1b31212b55535315e48eb89b594d7d"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_scylla.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "a5de56e8cb9893618a2a11d2db86c15d822ef64b34251204ca536048a332acab"
+        }
+      ],
+      "measured": {
+        "vertices": 22676,
+        "triangles": 26213,
+        "surfaces": 3,
+        "height": 2.109999753534794,
+        "pose_peak": 2.141542911529541,
+        "pose_low": 0.013056039810180664,
+        "fallen": [
+          0.019014835357666016,
+          0.603907585144043
+        ],
+        "heads": 7,
+        "legs": 0
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "scylla",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-1ad52ce7-d2c0-4d5a-8b02-0ee356610acd.png",
+        "sha256": "ebbdb3af55d574c32583ff9c1ffa20ccfdfd7c6a47ec37a711f3ca3ee96e4e26"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit",
+        "CC0 wolf, NewDLC"
+      ]
+    },
+    {
+      "species": "kraken",
+      "asset": "walker_kraken",
+      "reference_status": "Original mythological creature",
+      "design": "One-eyed purple octopus with eight curling arms and suckers. No verified Hercules cartoon counterpart.",
+      "source_page": null,
+      "sources": [
+        {
+          "path": "art/monsters/kraken/kraken-concept-v1.png",
+          "role": "selected built-in generated concept",
+          "sha256": "9e6033dee1f051e92cb5372ff2abd6552f68fa0056a1cf3fb83961a3023e53cf"
+        },
+        {
+          "path": "art/monsters/kraken/concept-prompt-v1.txt",
+          "role": "exact generation prompt",
+          "sha256": "8670e0af78bba30a2743f0be5a346322dc6953a485343e97fa3609358c0eb371"
+        },
+        {
+          "path": "art/monsters/kraken/kraken-reference-v1.blend",
+          "role": "superseded v1 neutral sculpture; retained history",
+          "sha256": "f2a9ad16e3095e93011d6a337e865f18c156fea43b540d9062775ae935b79fe5"
+        },
+        {
+          "path": "art/monsters/kraken/kraken-reference-v3.blend",
+          "role": "current editable neutral v3 anatomical geometry; pose recipe embedded",
+          "sha256": "c2c5df9d16543c7ca35604522d89c83c04f3edb0bfd113330105c3395cb78a7a"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "eZeus/godot/assets/models/walker_kraken.glb",
+          "role": "optimized source geometry and morphs",
+          "sha256": "d6ef7f010e873ffddb21d2c45edebd04a6a1a3b83f17ccd36c11c6c340d69af0"
+        },
+        {
+          "path": "eZeus/godot/assets/models/walker_kraken.json",
+          "role": "pose/mouth/contact contract",
+          "sha256": "b09e69b591d87a7629fc5f73a6a9e48be436f4f28675db5441b549ce8bd03224"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_kraken.glb",
+          "role": "crowd runtime geometry",
+          "sha256": "5c76d5c23be1cd22e3d42517f9034230bc8a7bdc15e6743111f24914dab8a235"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_kraken.vat",
+          "role": "baked pose texture",
+          "sha256": "530dc61218d03c937ca85361d761237943bb4389462a40913a77040eb8ea1253"
+        },
+        {
+          "path": "eZeus/godot/assets/models/runtime/walker_kraken.vat.json",
+          "role": "freshness and pose table",
+          "sha256": "cfa6d4ad0c6beede132e86cc2d4ba46e3a8f6e876cd282dad87b6f800e394efd"
+        }
+      ],
+      "measured": {
+        "vertices": 23767,
+        "triangles": 24342,
+        "surfaces": 2,
+        "height": 2.0200000777840614,
+        "pose_peak": 2.0458192825317383,
+        "pose_low": 0.02319297194480896,
+        "fallen": [
+          0.02319297194480896,
+          0.988944798707962
+        ],
+        "heads": 1,
+        "legs": 0
+      },
+      "design_revision": "monster_anatomy_v3",
+      "user_reference": {
+        "species": "kraken",
+        "user_reference": "/Users/ruslans/Documents/Monsters/exec-4ca30e32-67d3-4106-96e2-c239834d52ce.png",
+        "sha256": "9e6033dee1f051e92cb5372ff2abd6552f68fa0056a1cf3fb83961a3023e53cf"
+      },
+      "anatomy_libraries": [
+        "Blender Foundation CC0 Human Base Meshes",
+        "eZeus anatomical quadruped kit"
+      ]
+    }
+  ],
+  "release_status": "Development reference models. Generated sheets have finer art detail than the procedural sculptures. User visual acceptance, painted material baking, slope foot IK, minimum-Mac profiling and release rights evidence pending.",
+  "runtime_measurements": {
+    "checks": 210,
+    "geometry": {
+      "walker_calydonianboar": {
+        "last_lod_tris": 316,
+        "lods": 10,
+        "tris": 20178,
+        "verts": 14480
+      },
+      "walker_cerberus": {
+        "last_lod_tris": 912,
+        "lods": 7,
+        "tris": 13975,
+        "verts": 12586
+      },
+      "walker_chimera": {
+        "last_lod_tris": 383,
+        "lods": 10,
+        "tris": 29751,
+        "verts": 24326
+      },
+      "walker_cyclops": {
+        "last_lod_tris": 1110,
+        "lods": 8,
+        "tris": 27334,
+        "verts": 20535
+      },
+      "walker_dragon": {
+        "last_lod_tris": 424,
+        "lods": 9,
+        "tris": 26004,
+        "verts": 19374
+      },
+      "walker_echidna": {
+        "last_lod_tris": 1351,
+        "lods": 8,
+        "tris": 30161,
+        "verts": 22564
+      },
+      "walker_harpies": {
+        "last_lod_tris": 2392,
+        "lods": 7,
+        "tris": 28330,
+        "verts": 23339
+      },
+      "walker_hector": {
+        "last_lod_tris": 1318,
+        "lods": 12,
+        "tris": 29207,
+        "verts": 21912
+      },
+      "walker_kraken": {
+        "last_lod_tris": 368,
+        "lods": 8,
+        "tris": 24342,
+        "verts": 23767
+      },
+      "walker_maenads": {
+        "last_lod_tris": 2512,
+        "lods": 6,
+        "tris": 30908,
+        "verts": 26539
+      },
+      "walker_medusa": {
+        "last_lod_tris": 1010,
+        "lods": 11,
+        "tris": 30355,
+        "verts": 23160
+      },
+      "walker_minotaur": {
+        "last_lod_tris": 1580,
+        "lods": 9,
+        "tris": 28532,
+        "verts": 21985
+      },
+      "walker_satyr": {
+        "last_lod_tris": 1911,
+        "lods": 7,
+        "tris": 29558,
+        "verts": 22549
+      },
+      "walker_scylla": {
+        "last_lod_tris": 1024,
+        "lods": 12,
+        "tris": 26213,
+        "verts": 22676
+      },
+      "walker_sphinx": {
+        "last_lod_tris": 883,
+        "lods": 12,
+        "tris": 26757,
+        "verts": 20897
+      },
+      "walker_talos": {
+        "last_lod_tris": 1484,
+        "lods": 13,
+        "tris": 29781,
+        "verts": 21069
+      }
+    },
+    "okay": true
+  },
+  "design_revision": "monster_anatomy_v3",
+  "anatomy_update_date": "2026-10-07",
+  "anatomy_libraries": {
+    "sources": [
+      {
+        "name": "Blender 5.2 cave lion",
+        "source": "https://www.blender.org/download/demo-files/",
+        "download": "https://download.blender.org/demo/splash/blender-5.2-splash.blend",
+        "license": "CC-BY (as stated by Blender and embedded README)",
+        "authors": [
+          "Joanna Kobierska",
+          "Ken Barthelmey (lion base)"
+        ],
+        "adaptation": "Base facial mesh extracted without executing scripts; transformed to game coordinates, reduced and recoloured for Chimera; jaw, mane, horns and animation original."
+      },
+      {
+        "name": "Blender Foundation Human Base Meshes v1.4.1",
+        "source": "https://www.blender.org/download/demo-files/",
+        "license": "CC0",
+        "local_source": "art/_kit/assets/human-base-meshes-bundle-v1.4.1/human_base_meshes_bundle.blend",
+        "adaptation": "Retained male/female anatomical mesh data, fitted original game clothing and pose sampling."
+      },
+      {
+        "name": "eZeus anatomical quadruped library",
+        "local_source": "art/_kit/animal.py; art/characters/animals/species.py",
+        "adaptation": "Species-specific boar, canine, bovine and caprine ribcages/heads/joints; monster proportions, hybrids and semantic palettes authored in Godot-only adapter."
+      },
+      {
+        "name": "3d wolf",
+        "author": "NewDLC",
+        "source": "https://opengameart.org/content/3d-wolf",
+        "license": "CC0",
+        "download": "https://opengameart.org/sites/default/files/3dwolf_blend.zip",
+        "adaptation": "Canine skull, facial topology and jaw skin weights for Cerberus and Scylla; widened shortened muzzle and folded ears for mastiff proportions; recoloured original UV palette."
+      },
+      {
+        "name": "Crocodile",
+        "author": "Micket",
+        "source": "https://opengameart.org/content/crocodile",
+        "license": "CC0",
+        "download": "https://opengameart.org/sites/default/files/croc2.zip",
+        "adaptation": "Mirrored crocodilian cranial planes for Dragon; original jaw, horns, teeth, creature body, wings and poses."
+      }
+    ],
+    "files": [
+      {
+        "file": "art/monsters/anatomy-v3/vendor/wolf_base.npz",
+        "sha256": "4bafb251bff9e906666410af6a03f8c365b0b95e3c54f543e49bc24273ba4500",
+        "bytes": 71037
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/blender-demo-page.html",
+        "sha256": "87d00b5080c393dad0b8890b12304446dee5ca6a2b6acb855da254788f526d10",
+        "bytes": 178426
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/crocodile_base.npz",
+        "sha256": "c0ccbcba3f5c3654ed5083b3e53a4713de2365697d10019a0b811c9d1406ba64",
+        "bytes": 4885
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/blender-5.2-splash.blend",
+        "sha256": "a48599e3c1972c70c9d4b206934871d12ba58a6dcf8b25f8c68c5baa0a747082",
+        "bytes": 141369967
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/3dwolf_blend.zip",
+        "sha256": "6bd5e25ce8d9f9661f74199a755e7827927545973fa4081eecb4598a9d5e49dc",
+        "bytes": 1654976
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/cave_lion_base.npz",
+        "sha256": "1116b24c5e57441b555b3085980d4600f77b336006d4313176725996ef6b0309",
+        "bytes": 329376
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/croc2.zip",
+        "sha256": "ae7b6f73c105d835b21220cb59cfd44f5bc91c3b74eb6995dcc199701aefd181",
+        "bytes": 78229
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/lion_face.npz",
+        "sha256": "1e6d09002546bb1bea6490c367eba1aae66528a5c07fe15d77da29a578783d1e",
+        "bytes": 582552
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/newdlc-wolf/dog2Color.png",
+        "sha256": "a04c1da566be5c50a42f62b66199f97c13ad3f5ce2dde0f84ed75a61b0e292cb",
+        "bytes": 289490
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/newdlc-wolf/dog2Roughness.png",
+        "sha256": "600a8c9f99c14b70cc744ced86c85bd50f025c18d6d885ab9fd007ac1e6d1630",
+        "bytes": 235872
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/newdlc-wolf/dog2.blend",
+        "sha256": "6f8b59c31c8dd39725b5c533c9d08b8f9216e592177b39218c486d914fe9af65",
+        "bytes": 1468540
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/newdlc-wolf/dog2specular.png",
+        "sha256": "bd375199e6732cda8e7deb3e799962c4f5e3f1461a83963b2916c4fa11c18c12",
+        "bytes": 142491
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/newdlc-wolf/dog2Normal.png",
+        "sha256": "6d536f2279b816aca1556e9eee72f472e2d091c14127f988991d87e78d083347",
+        "bytes": 675541
+      },
+      {
+        "file": "art/monsters/anatomy-v3/vendor/micket-crocodile/croc2.blend",
+        "sha256": "712efa6a08e597ee9b0be0ed5893da3aff9ce7b7c4e390ebe37e2baf5a90ff25",
+        "bytes": 461840
+      }
+    ],
+    "vendor_scripts_executed": false
+  },
+  "anatomy_attribution": "art/monsters/anatomy-v3/ATTRIBUTION.md",
+  "anatomy_gallery": "art/monsters/anatomy-v3/comparison.html",
+  "anatomy_previous_runtime": "art/monsters/anatomy-v3/previous-runtime",
+  "anatomy_source_measurements": {
+    "walker_cyclops": {
+      "vertices": 20535,
+      "triangles": 27334,
+      "surfaces": 2,
+      "height": 2.0800000187009573,
+      "pose_peak": 2.113607883453369,
+      "pose_low": 0.02343273162841797,
+      "fallen": [
+        0.02343273162841797,
+        0.33912307024002075
+      ],
+      "heads": 1,
+      "legs": 2
+    },
+    "walker_talos": {
+      "vertices": 21069,
+      "triangles": 29781,
+      "surfaces": 3,
+      "height": 2.1400001998990774,
+      "pose_peak": 2.1700305938720703,
+      "pose_low": 0.023712575435638428,
+      "fallen": [
+        0.023712575435638428,
+        0.273151695728302
+      ],
+      "heads": 1,
+      "legs": 2
+    },
+    "walker_hector": {
+      "vertices": 21912,
+      "triangles": 29207,
+      "surfaces": 3,
+      "height": 1.9199999328702688,
+      "pose_peak": 1.9495134353637695,
+      "pose_low": 0.02499999850988388,
+      "fallen": [
+        0.025000005960464478,
+        0.29723095893859863
+      ],
+      "heads": 1,
+      "legs": 2
+    },
+    "walker_minotaur": {
+      "vertices": 21985,
+      "triangles": 28532,
+      "surfaces": 2,
+      "height": 2.100000236183405,
+      "pose_peak": 2.1349105834960938,
+      "pose_low": 0.02492421865463257,
+      "fallen": [
+        0.02499997615814209,
+        0.38282275199890137
+      ],
+      "heads": 1,
+      "legs": 2
+    },
+    "walker_satyr": {
+      "vertices": 22549,
+      "triangles": 29558,
+      "surfaces": 2,
+      "height": 1.8200001455843449,
+      "pose_peak": 1.8475579023361206,
+      "pose_low": 0.02418285608291626,
+      "fallen": [
+        0.02418285608291626,
+        0.2824970483779907
+      ],
+      "heads": 1,
+      "legs": 2
+    },
+    "walker_medusa": {
+      "vertices": 23160,
+      "triangles": 30355,
+      "surfaces": 3,
+      "height": 1.9299999233335257,
+      "pose_peak": 1.9604429006576538,
+      "pose_low": 0.024319112300872803,
+      "fallen": [
+        0.024319112300872803,
+        0.26062774658203125
+      ],
+      "heads": 1,
+      "legs": 2
+    },
+    "walker_maenads": {
+      "vertices": 26539,
+      "triangles": 30908,
+      "surfaces": 2,
+      "height": 1.8572468515485525,
+      "pose_peak": 1.8899002075195312,
+      "pose_low": 0.024168789386749268,
+      "fallen": [
+        0.024512410163879395,
+        0.6823479533195496
+      ],
+      "heads": 3,
+      "legs": 6
+    },
+    "walker_harpies": {
+      "vertices": 23339,
+      "triangles": 28330,
+      "surfaces": 2,
+      "height": 1.9200001880526543,
+      "pose_peak": 2.0347044467926025,
+      "pose_low": 0.02499997615814209,
+      "fallen": [
+        0.02562415599822998,
+        1.3660528659820557
+      ],
+      "heads": 2,
+      "legs": 4
+    },
+    "walker_calydonianboar": {
+      "vertices": 14480,
+      "triangles": 20178,
+      "surfaces": 2,
+      "height": 1.7899999376386404,
+      "pose_peak": 1.8219168186187744,
+      "pose_low": 0.011758208274841309,
+      "fallen": [
+        0.012128710746765137,
+        0.3258315324783325
+      ],
+      "heads": 1,
+      "legs": 4
+    },
+    "walker_cerberus": {
+      "vertices": 12586,
+      "triangles": 13975,
+      "surfaces": 2,
+      "height": 1.9699998870491982,
+      "pose_peak": 2.0528831481933594,
+      "pose_low": 0.02499997615814209,
+      "fallen": [
+        0.02499997615814209,
+        0.5354412794113159
+      ],
+      "heads": 3,
+      "legs": 4
+    },
+    "walker_chimera": {
+      "vertices": 24326,
+      "triangles": 29751,
+      "surfaces": 2,
+      "height": 1.990080690011382,
+      "pose_peak": 2.015080690383911,
+      "pose_low": 0.02499997615814209,
+      "fallen": [
+        0.02499997615814209,
+        0.2861539125442505
+      ],
+      "heads": 3,
+      "legs": 4
+    },
+    "walker_sphinx": {
+      "vertices": 20897,
+      "triangles": 26757,
+      "surfaces": 3,
+      "height": 2.0000000968575478,
+      "pose_peak": 2.1829168796539307,
+      "pose_low": 0.02499985694885254,
+      "fallen": [
+        0.02500009536743164,
+        0.5894384384155273
+      ],
+      "heads": 1,
+      "legs": 4
+    },
+    "walker_dragon": {
+      "vertices": 19374,
+      "triangles": 26004,
+      "surfaces": 2,
+      "height": 2.080093717202544,
+      "pose_peak": 2.323042631149292,
+      "pose_low": 0.02483510971069336,
+      "fallen": [
+        0.024894237518310547,
+        0.5920775532722473
+      ],
+      "heads": 1,
+      "legs": 4
+    },
+    "walker_echidna": {
+      "vertices": 22564,
+      "triangles": 30161,
+      "surfaces": 2,
+      "height": 2.0900288578122854,
+      "pose_peak": 2.1212098598480225,
+      "pose_low": 0.024623394012451172,
+      "fallen": [
+        0.025012493133544922,
+        0.4853205978870392
+      ],
+      "heads": 1,
+      "legs": 4
+    },
+    "walker_scylla": {
+      "vertices": 22676,
+      "triangles": 26213,
+      "surfaces": 3,
+      "height": 2.109999753534794,
+      "pose_peak": 2.141542911529541,
+      "pose_low": 0.013056039810180664,
+      "fallen": [
+        0.019014835357666016,
+        0.603907585144043
+      ],
+      "heads": 7,
+      "legs": 0
+    },
+    "walker_kraken": {
+      "vertices": 23767,
+      "triangles": 24342,
+      "surfaces": 2,
+      "height": 2.0200000777840614,
+      "pose_peak": 2.0458192825317383,
+      "pose_low": 0.02319297194480896,
+      "fallen": [
+        0.02319297194480896,
+        0.988944798707962
+      ],
+      "heads": 1,
+      "legs": 0
+    }
+  },
+  "anatomy_validation": {
+    "source_checks": 174,
+    "runtime_checks": 210,
+    "lossless_proof": "eZeus/godot/captures/monster-anatomy-v3-lossless.log",
+    "raw_exports": "art/monsters/anatomy-v3/raw-runtime",
+    "design_revision": "monster_anatomy_v3"
+  }
+}

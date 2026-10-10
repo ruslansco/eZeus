@@ -30,7 +30,7 @@ func update(tiles: Dictionary, map_origin: Vector2i, map_extent: Vector2i, chang
 		origin = map_origin
 		extent = map_extent
 		field_image = Image.create(extent.x, extent.y, false, Image.FORMAT_RGBAH)
-		# R road, G dressed paving, B median bed, A boulevard (see road_pattern).
+		# R road, G dressed paving, B promenade, A boulevard (see road_pattern).
 		road_image = Image.create(extent.x, extent.y, false, Image.FORMAT_RGBA8)
 		mineral_image = Image.create(extent.x,extent.y,false,Image.FORMAT_RGBA8)
 		pattern_image = Image.create(extent.x,extent.y,false,Image.FORMAT_RGBA8)
@@ -48,14 +48,12 @@ func update(tiles: Dictionary, map_origin: Vector2i, map_extent: Vector2i, chang
 		var pixel := cell - origin
 		var flags := int(tile[3])
 		var distance := field_image.get_pixelv(pixel).r
-		# Fertile meadow (bit 8) shares the plain grassland; a weight of its own showed
-		# as flat green patches with a dark forest-coloured fringe where it blended.
+		# Fertile meadow (bit 8) has its own channel (B): sharing G with forest made its
+		# edge blend through scrub and forest colours. Forest on fertile land stays forest.
 		var vegetation := 0.75 if flags & 16 else (0.3 if flags & 32 else 0.0)
-		# Deposits no longer stain the ground: outcrop models mark them and quarries get
-		# their own floor from the mineral field. B stays for future rock ground.
-		var stone := 0.0
+		var fertile := 1.0 if flags & 8 and not flags & 16 else 0.0
 		var sand := 1.0 if flags & 2 else 0.0
-		field_image.set_pixelv(pixel, Color(distance, vegetation, stone, sand))
+		field_image.set_pixelv(pixel, Color(distance, vegetation, fertile, sand))
 		mineral_image.set_pixelv(pixel,mineral_color(flags))
 		pattern_image.set_pixelv(pixel,mineral_pattern(flags))
 	# Dressed paving depends on neighbouring medians, so changed cells refresh them too.
@@ -92,7 +90,7 @@ static func road_kind(tile: Array) -> int:
 	return int(tile[8]) if tile.size() >= 9 else 1
 
 func road_pattern(tiles: Dictionary, cell: Vector2i) -> Color:
-	# An avenue or boulevard tile is the planted median the native tool lays beside its
+	# An avenue or boulevard tile is the walkable median the native tool lays beside its
 	# streets (avenue: median + one street; boulevard: a street on each side). The streets
 	# next to a median get dressed paving, so the whole avenue reads as one grand street.
 	var kind := road_kind(tiles.get(cell, []))
@@ -101,7 +99,7 @@ func road_pattern(tiles: Dictionary, cell: Vector2i) -> Color:
 	var dressed := kind >= 2
 	for offset in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 		dressed = dressed or road_kind(tiles.get(cell + offset, [])) >= 2
-	# R road, G dressed paving, B median bed, A boulevard (a lusher bed with flowers).
+	# R road, G dressed paving, B promenade paving/inlay, A boulevard finish.
 	return Color(1, 1 if dressed else 0, 1 if kind >= 2 else 0, 1 if kind == 3 else 0)
 
 func mineral_color(flags: int) -> Color:

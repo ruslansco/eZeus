@@ -1,1728 +1,1768 @@
 {
 	"assets": {
 		"animal_boar": {
-			"tris": 19944,
-			"verts": 15443
+			"tris": 19944.0,
+			"verts": 15286.0
 		},
 		"animal_cattle": {
-			"tris": 20980,
-			"verts": 14728
+			"tris": 20980.0,
+			"verts": 14728.0
 		},
 		"animal_deer": {
-			"tris": 18952,
-			"verts": 14272
+			"tris": 18952.0,
+			"verts": 14029.0
 		},
 		"animal_donkey": {
-			"tris": 17690,
-			"verts": 12659
+			"tris": 17690.0,
+			"verts": 12659.0
 		},
 		"animal_goat": {
-			"tris": 19144,
-			"verts": 12874
+			"tris": 19144.0,
+			"verts": 12874.0
 		},
 		"animal_horse": {
-			"tris": 20996,
-			"verts": 14644
+			"tris": 20996.0,
+			"verts": 14644.0
 		},
 		"animal_ox": {
-			"tris": 20724,
-			"verts": 14968
+			"tris": 20724.0,
+			"verts": 14968.0
 		},
 		"animal_sheep_fleeced": {
-			"tris": 19888,
-			"verts": 17780
+			"tris": 19888.0,
+			"verts": 17780.0
 		},
 		"animal_sheep_nude": {
-			"tris": 19888,
-			"verts": 13851
+			"tris": 19888.0,
+			"verts": 13851.0
 		},
 		"animal_wolf": {
-			"tris": 20512,
-			"verts": 13946
+			"tris": 20512.0,
+			"verts": 13946.0
 		},
 		"armory": {
-			"tris": 64253,
-			"verts": 155555
+			"tris": 64253.0,
+			"verts": 155555.0
 		},
 		"arms_vendor": {
-			"tris": 48070,
-			"verts": 112464
+			"tris": 48070.0,
+			"verts": 112464.0
 		},
 		"artisans_guild": {
-			"tris": 63243,
-			"verts": 157720
+			"tris": 63243.0,
+			"verts": 157720.0
 		},
 		"baths": {
-			"tris": 64451,
-			"verts": 164698
+			"tris": 64451.0,
+			"verts": 164698.0
 		},
 		"bibliotheke": {
-			"tris": 64159,
-			"verts": 174321
+			"tris": 64159.0,
+			"verts": 174321.0
 		},
 		"black_marble_workshop": {
-			"tris": 25988,
-			"verts": 50693
+			"tris": 25988.0,
+			"verts": 50693.0
 		},
 		"carding_shed": {
-			"tris": 22352,
-			"verts": 49382
+			"tris": 22352.0,
+			"verts": 49382.0
 		},
 		"chariot_factory": {
-			"tris": 65673,
-			"verts": 165932
+			"tris": 65673.0,
+			"verts": 165932.0
 		},
 		"chariot_vendor": {
-			"tris": 51824,
-			"verts": 119402
+			"tris": 51824.0,
+			"verts": 119402.0
 		},
 		"college": {
-			"tris": 66136,
-			"verts": 178327
+			"tris": 66136.0,
+			"verts": 178327.0
 		},
 		"column_corinthian": {
-			"tris": 2104,
-			"verts": 5068
+			"tris": 2104.0,
+			"verts": 5068.0
 		},
 		"column_doric": {
-			"tris": 1104,
-			"verts": 2456
+			"tris": 1104.0,
+			"verts": 2456.0
 		},
 		"column_ionic": {
-			"tris": 1500,
-			"verts": 3136
+			"tris": 1500.0,
+			"verts": 3136.0
 		},
 		"commemorative_0": {
-			"tris": 1972,
-			"verts": 3870
+			"tris": 1972.0,
+			"verts": 3870.0
 		},
 		"commemorative_1": {
-			"tris": 52263,
-			"verts": 127463
+			"tris": 52263.0,
+			"verts": 127463.0
 		},
 		"commemorative_2": {
-			"tris": 1948,
-			"verts": 3852
+			"tris": 1948.0,
+			"verts": 3852.0
 		},
 		"commemorative_3": {
-			"tris": 52015,
-			"verts": 125179
+			"tris": 52015.0,
+			"verts": 125179.0
 		},
 		"commemorative_4": {
-			"tris": 48251,
-			"verts": 117982
+			"tris": 48251.0,
+			"verts": 117982.0
 		},
 		"commemorative_5": {
-			"tris": 51236,
-			"verts": 123689
+			"tris": 51236.0,
+			"verts": 123689.0
 		},
 		"commemorative_6": {
-			"tris": 55538,
-			"verts": 132555
+			"tris": 55538.0,
+			"verts": 132555.0
 		},
 		"commemorative_7": {
-			"tris": 57029,
-			"verts": 147265
+			"tris": 57029.0,
+			"verts": 147265.0
 		},
 		"commemorative_8": {
-			"tris": 53486,
-			"verts": 128307
+			"tris": 53486.0,
+			"verts": 128307.0
 		},
 		"common_house_0a": {
-			"tris": 141228,
-			"verts": 286796
+			"tris": 38949,
+			"verts": 94297
 		},
 		"common_house_1a": {
-			"tris": 145534,
-			"verts": 299624
+			"tris": 39585,
+			"verts": 97524
 		},
 		"common_house_2a": {
-			"tris": 145062,
-			"verts": 299062
+			"tris": 37999,
+			"verts": 94732
 		},
 		"common_house_3a": {
-			"tris": 152714,
-			"verts": 312670
+			"tris": 39436,
+			"verts": 95205
 		},
 		"common_house_4a": {
-			"tris": 180728,
-			"verts": 378381
+			"tris": 43877,
+			"verts": 107042
 		},
 		"common_house_5a": {
-			"tris": 174934,
-			"verts": 362433
+			"tris": 44073,
+			"verts": 108829
 		},
 		"common_house_6a": {
-			"tris": 61520,
-			"verts": 151642
+			"tris": 40082,
+			"verts": 100986
 		},
 		"corral": {
-			"tris": 53242,
-			"verts": 122174
+			"tris": 53242.0,
+			"verts": 122174.0
 		},
 		"dairy": {
-			"tris": 60399,
-			"verts": 151661
+			"tris": 60399.0,
+			"verts": 151661.0
 		},
 		"deco_bench": {
-			"tris": 780,
-			"verts": 1784
+			"tris": 780.0,
+			"verts": 1784.0
 		},
 		"deco_birdbath": {
-			"tris": 6588,
-			"verts": 17288
+			"tris": 6588.0,
+			"verts": 17288.0
 		},
 		"deco_dolphin": {
-			"tris": 54951,
-			"verts": 144340
+			"tris": 54951.0,
+			"verts": 144340.0
 		},
 		"deco_fish_pond": {
-			"tris": 85807,
-			"verts": 236435
+			"tris": 85807.0,
+			"verts": 236435.0
 		},
 		"deco_flower_garden": {
-			"tris": 26860,
-			"verts": 80160
+			"tris": 26860.0,
+			"verts": 80160.0
 		},
 		"deco_gazebo": {
-			"tris": 54787,
-			"verts": 129855
+			"tris": 54787.0,
+			"verts": 129855.0
 		},
 		"deco_hedge_maze": {
-			"tris": 126099,
-			"verts": 345665
+			"tris": 126099.0,
+			"verts": 345665.0
 		},
 		"deco_orrery": {
-			"tris": 30028,
-			"verts": 82016
+			"tris": 30028.0,
+			"verts": 82016.0
 		},
 		"deco_shell_garden": {
-			"tris": 13804,
-			"verts": 35344
+			"tris": 13804.0,
+			"verts": 35344.0
 		},
 		"deco_short_obelisk": {
-			"tris": 112,
-			"verts": 228
+			"tris": 112.0,
+			"verts": 228.0
 		},
 		"deco_spring": {
-			"tris": 62018,
-			"verts": 167581
+			"tris": 62018.0,
+			"verts": 167581.0
 		},
 		"deco_stone_circle": {
-			"tris": 62041,
-			"verts": 168998
+			"tris": 62041.0,
+			"verts": 168998.0
 		},
 		"deco_sundial": {
-			"tris": 9564,
-			"verts": 25424
+			"tris": 9564.0,
+			"verts": 25424.0
 		},
 		"deco_tall_obelisk": {
-			"tris": 444,
-			"verts": 1212
+			"tris": 444.0,
+			"verts": 1212.0
 		},
 		"deco_topiary": {
-			"tris": 43748,
-			"verts": 105269
+			"tris": 43748.0,
+			"verts": 105269.0
 		},
 		"deco_water_park": {
-			"tris": 5474,
-			"verts": 11264
+			"tris": 5474.0,
+			"verts": 11264.0
 		},
 		"drama_school": {
-			"tris": 63707,
-			"verts": 168659
+			"tris": 63707.0,
+			"verts": 168659.0
 		},
 		"elite_house_0a": {
-			"tris": 61140,
-			"verts": 144433
+			"tris": 61140.0,
+			"verts": 144433.0
 		},
 		"elite_house_0b": {
-			"tris": 61021,
-			"verts": 145474
+			"tris": 61021.0,
+			"verts": 145474.0
 		},
 		"elite_house_1a": {
-			"tris": 63479,
-			"verts": 153292
+			"tris": 63479.0,
+			"verts": 153292.0
 		},
 		"elite_house_1b": {
-			"tris": 63719,
-			"verts": 154638
+			"tris": 63719.0,
+			"verts": 154638.0
 		},
 		"elite_house_2a": {
-			"tris": 63258,
-			"verts": 156083
+			"tris": 63258.0,
+			"verts": 156083.0
 		},
 		"elite_house_2b": {
-			"tris": 63286,
-			"verts": 155692
+			"tris": 63286.0,
+			"verts": 155692.0
 		},
 		"elite_house_3a": {
-			"tris": 62969,
-			"verts": 153767
+			"tris": 62969.0,
+			"verts": 153767.0
 		},
 		"elite_house_3b": {
-			"tris": 63079,
-			"verts": 155208
+			"tris": 63079.0,
+			"verts": 155208.0
 		},
 		"elite_house_4a": {
-			"tris": 64473,
-			"verts": 164762
+			"tris": 64473.0,
+			"verts": 164762.0
 		},
 		"elite_house_4b": {
-			"tris": 64522,
-			"verts": 165026
+			"tris": 64522.0,
+			"verts": 165026.0
 		},
 		"enemy_boat": {
-			"tris": 66249,
-			"verts": 63335
+			"tris": 66249.0,
+			"verts": 63335.0
 		},
 		"farm": {
-			"tris": 9816,
-			"verts": 20968
+			"tris": 9816.0,
+			"verts": 20968.0
 		},
 		"fishery": {
-			"tris": 69112,
-			"verts": 171486
+			"tris": 69112.0,
+			"verts": 171486.0
 		},
 		"fishing_boat": {
-			"tris": 27071,
-			"verts": 26747
+			"tris": 27071.0,
+			"verts": 26747.0
 		},
 		"fleece_vendor": {
-			"tris": 46372,
-			"verts": 113189
+			"tris": 46372.0,
+			"verts": 113189.0
 		},
 		"food_vendor": {
-			"tris": 49956,
-			"verts": 119550
+			"tris": 49956.0,
+			"verts": 119550.0
 		},
 		"foundry": {
-			"tris": 59326,
-			"verts": 149038
+			"tris": 59326.0,
+			"verts": 149038.0
 		},
 		"fountain": {
-			"tris": 64061,
-			"verts": 159379
+			"tris": 64061.0,
+			"verts": 159379.0
 		},
 		"gatehouse": {
-			"tris": 3588,
-			"verts": 7082
+			"tris": 16012.0,
+			"verts": 32364.0
 		},
 		"good_armor": {
-			"tris": 2288,
-			"verts": 3116
+			"tris": 2288.0,
+			"verts": 3116.0
 		},
 		"good_blackMarble": {
-			"tris": 96,
-			"verts": 192
+			"tris": 96.0,
+			"verts": 192.0
 		},
 		"good_bronze": {
-			"tris": 1008,
-			"verts": 2016
+			"tris": 1008.0,
+			"verts": 2016.0
 		},
 		"good_carrots": {
-			"tris": 4368,
-			"verts": 3840
+			"tris": 4368.0,
+			"verts": 3840.0
 		},
 		"good_cheese": {
-			"tris": 4368,
-			"verts": 6816
+			"tris": 4368.0,
+			"verts": 6816.0
 		},
 		"good_fish": {
-			"tris": 2976,
-			"verts": 3292
+			"tris": 2976.0,
+			"verts": 3292.0
 		},
 		"good_fleece": {
-			"tris": 4368,
-			"verts": 3380
+			"tris": 4368.0,
+			"verts": 3380.0
 		},
 		"good_grapes": {
-			"tris": 4576,
-			"verts": 4784
+			"tris": 4576.0,
+			"verts": 4784.0
 		},
 		"good_marble": {
-			"tris": 96,
-			"verts": 192
+			"tris": 96.0,
+			"verts": 192.0
 		},
 		"good_meat": {
-			"tris": 2128,
-			"verts": 2300
+			"tris": 2128.0,
+			"verts": 2300.0
 		},
 		"good_oliveOil": {
-			"tris": 4848,
-			"verts": 4320
+			"tris": 4848.0,
+			"verts": 4320.0
 		},
 		"good_olives": {
-			"tris": 5600,
-			"verts": 5680
+			"tris": 5600.0,
+			"verts": 5680.0
 		},
 		"good_onions": {
-			"tris": 6320,
-			"verts": 4968
+			"tris": 6320.0,
+			"verts": 4968.0
 		},
 		"good_oranges": {
-			"tris": 1968,
-			"verts": 2208
+			"tris": 1968.0,
+			"verts": 2208.0
 		},
 		"good_orichalc": {
-			"tris": 912,
-			"verts": 672
+			"tris": 912.0,
+			"verts": 672.0
 		},
 		"good_sculpture": {
-			"tris": 100492,
-			"verts": 75662
+			"tris": 100492.0,
+			"verts": 75662.0
 		},
 		"good_urchin": {
-			"tris": 12432,
-			"verts": 21372
+			"tris": 12432.0,
+			"verts": 21372.0
 		},
 		"good_wheat": {
-			"tris": 4032,
-			"verts": 4148
+			"tris": 4032.0,
+			"verts": 4148.0
 		},
 		"good_wine": {
-			"tris": 6864,
-			"verts": 7296
+			"tris": 6864.0,
+			"verts": 7296.0
 		},
 		"good_wood": {
-			"tris": 576,
-			"verts": 1152
+			"tris": 576.0,
+			"verts": 1152.0
 		},
 		"granary": {
-			"tris": 66396,
-			"verts": 165390
+			"tris": 66396.0,
+			"verts": 165390.0
 		},
 		"granary_food_carrots": {
-			"tris": 1056,
-			"verts": 895
+			"tris": 1056.0,
+			"verts": 895.0
 		},
 		"granary_food_cheese": {
-			"tris": 2120,
-			"verts": 3231
+			"tris": 2120.0,
+			"verts": 3231.0
 		},
 		"granary_food_fish": {
-			"tris": 1212,
-			"verts": 1260
+			"tris": 1212.0,
+			"verts": 1260.0
 		},
 		"granary_food_meat": {
-			"tris": 796,
-			"verts": 658
+			"tris": 796.0,
+			"verts": 658.0
 		},
 		"granary_food_onions": {
-			"tris": 2560,
-			"verts": 1977
+			"tris": 2560.0,
+			"verts": 1977.0
 		},
 		"granary_food_oranges": {
-			"tris": 776,
-			"verts": 811
+			"tris": 776.0,
+			"verts": 811.0
 		},
 		"granary_food_urchin": {
-			"tris": 2560,
-			"verts": 3924
+			"tris": 2560.0,
+			"verts": 3924.0
 		},
 		"granary_food_wheat": {
-			"tris": 456,
-			"verts": 409
+			"tris": 456.0,
+			"verts": 409.0
 		},
 		"growers_lodge": {
-			"tris": 63371,
-			"verts": 163872
+			"tris": 63371.0,
+			"verts": 163872.0
 		},
 		"gymnasium": {
-			"tris": 65772,
-			"verts": 174812
+			"tris": 65772.0,
+			"verts": 174812.0
 		},
 		"harbour": {
-			"tris": 9072,
-			"verts": 18988
+			"tris": 9072.0,
+			"verts": 18988.0
 		},
 		"hero_hall_achilles": {
-			"tris": 49651,
-			"verts": 122673
+			"tris": 49651.0,
+			"verts": 122673.0
 		},
 		"hero_hall_atalanta": {
-			"tris": 49251,
-			"verts": 123994
+			"tris": 49251.0,
+			"verts": 123994.0
 		},
 		"hero_hall_bellerophon": {
-			"tris": 49620,
-			"verts": 122996
+			"tris": 49620.0,
+			"verts": 122996.0
 		},
 		"hero_hall_hercules": {
-			"tris": 49665,
-			"verts": 122897
+			"tris": 49665.0,
+			"verts": 122897.0
 		},
 		"hero_hall_jason": {
-			"tris": 49588,
-			"verts": 122622
+			"tris": 49588.0,
+			"verts": 122622.0
 		},
 		"hero_hall_odysseus": {
-			"tris": 49491,
-			"verts": 122355
+			"tris": 49491.0,
+			"verts": 122355.0
 		},
 		"hero_hall_perseus": {
-			"tris": 49553,
-			"verts": 122537
+			"tris": 49553.0,
+			"verts": 122537.0
 		},
 		"hero_hall_theseus": {
-			"tris": 49578,
-			"verts": 124633
+			"tris": 49578.0,
+			"verts": 124633.0
 		},
 		"hippodrome_0": {
-			"tris": 276,
-			"verts": 528
+			"tris": 276.0,
+			"verts": 528.0
 		},
 		"hippodrome_1": {
-			"tris": 4328,
-			"verts": 6474
+			"tris": 4328.0,
+			"verts": 6474.0
 		},
 		"hippodrome_2": {
-			"tris": 132,
-			"verts": 264
+			"tris": 132.0,
+			"verts": 264.0
 		},
 		"hippodrome_3": {
-			"tris": 4172,
-			"verts": 6162
+			"tris": 4172.0,
+			"verts": 6162.0
 		},
 		"hippodrome_4": {
-			"tris": 132,
-			"verts": 264
+			"tris": 132.0,
+			"verts": 264.0
 		},
 		"hippodrome_5": {
-			"tris": 4328,
-			"verts": 6474
+			"tris": 4328.0,
+			"verts": 6474.0
 		},
 		"hippodrome_6": {
-			"tris": 276,
-			"verts": 528
+			"tris": 276.0,
+			"verts": 528.0
 		},
 		"hippodrome_7": {
-			"tris": 4328,
-			"verts": 6474
+			"tris": 4328.0,
+			"verts": 6474.0
 		},
 		"horse_ranch": {
-			"tris": 39080,
-			"verts": 74928
+			"tris": 39080.0,
+			"verts": 74928.0
 		},
 		"horse_ranch_enclosure": {
-			"tris": 8480,
-			"verts": 21658
+			"tris": 8480.0,
+			"verts": 21658.0
 		},
 		"horse_vendor": {
-			"tris": 56532,
-			"verts": 141903
+			"tris": 56532.0,
+			"verts": 141903.0
 		},
 		"hospital": {
-			"tris": 67483,
-			"verts": 182217
+			"tris": 67483.0,
+			"verts": 182217.0
 		},
 		"hunting_lodge": {
-			"tris": 13920,
-			"verts": 29771
+			"tris": 13920.0,
+			"verts": 29771.0
 		},
 		"inventors_workshop": {
-			"tris": 64573,
-			"verts": 180859
+			"tris": 64573.0,
+			"verts": 180859.0
 		},
 		"laboratory": {
-			"tris": 64900,
-			"verts": 175863
+			"tris": 64900.0,
+			"verts": 175863.0
 		},
 		"maintenance_office": {
-			"tris": 64035,
-			"verts": 149469
+			"tris": 64035.0,
+			"verts": 149469.0
 		},
 		"masonry_shop": {
-			"tris": 9280,
-			"verts": 20370
+			"tris": 9280.0,
+			"verts": 20370.0
 		},
 		"mint": {
-			"tris": 64348,
-			"verts": 159147
+			"tris": 64348.0,
+			"verts": 159147.0
 		},
 		"museum": {
-			"tris": 64614,
-			"verts": 175471
+			"tris": 64614.0,
+			"verts": 175471.0
 		},
 		"observatory": {
-			"tris": 64996,
-			"verts": 179702
+			"tris": 64996.0,
+			"verts": 179702.0
 		},
 		"oil_vendor": {
-			"tris": 53407,
-			"verts": 125037
+			"tris": 53407.0,
+			"verts": 125037.0
 		},
 		"olive_0": {
-			"tris": 3062,
-			"verts": 8336
+			"tris": 3062.0,
+			"verts": 8336.0
 		},
 		"olive_1": {
-			"tris": 4406,
-			"verts": 12279
+			"tris": 4406.0,
+			"verts": 12279.0
 		},
 		"olive_2": {
-			"tris": 4420,
-			"verts": 12368
+			"tris": 4420.0,
+			"verts": 12368.0
 		},
 		"olive_3": {
-			"tris": 4440,
-			"verts": 12469
+			"tris": 4440.0,
+			"verts": 12469.0
 		},
 		"olive_4": {
-			"tris": 3828,
-			"verts": 11063
+			"tris": 3828.0,
+			"verts": 11063.0
 		},
 		"olive_5": {
-			"tris": 4406,
-			"verts": 12882
+			"tris": 4406.0,
+			"verts": 12882.0
 		},
 		"olive_press": {
-			"tris": 7180,
-			"verts": 19790
+			"tris": 7180.0,
+			"verts": 19790.0
 		},
 		"orange_0": {
-			"tris": 4088,
-			"verts": 11250
+			"tris": 4088.0,
+			"verts": 11250.0
 		},
 		"orange_1": {
-			"tris": 4142,
-			"verts": 11449
+			"tris": 4142.0,
+			"verts": 11449.0
 		},
 		"orange_2": {
-			"tris": 4114,
-			"verts": 11511
+			"tris": 4114.0,
+			"verts": 11511.0
 		},
 		"orange_3": {
-			"tris": 4122,
-			"verts": 11561
+			"tris": 4122.0,
+			"verts": 11561.0
 		},
 		"orange_4": {
-			"tris": 4106,
-			"verts": 11614
+			"tris": 4106.0,
+			"verts": 11614.0
 		},
 		"orange_5": {
-			"tris": 4494,
-			"verts": 12822
+			"tris": 4494.0,
+			"verts": 12822.0
 		},
 		"orange_tenders_lodge": {
-			"tris": 6595,
-			"verts": 18658
+			"tris": 6595.0,
+			"verts": 18658.0
 		},
 		"palace": {
-			"tris": 61181,
-			"verts": 163608
+			"tris": 61181.0,
+			"verts": 163608.0
 		},
 		"palace_tile_lamp": {
-			"tris": 1936,
-			"verts": 4258
+			"tris": 1936.0,
+			"verts": 4258.0
 		},
 		"palace_tile_plain": {
-			"tris": 536,
-			"verts": 864
+			"tris": 536.0,
+			"verts": 864.0
 		},
 		"park": {
-			"tris": 10100,
-			"verts": 29902
+			"tris": 10100.0,
+			"verts": 29902.0
 		},
 		"philosopher": {
-			"tris": 29221,
-			"verts": 15844
+			"tris": 29221.0,
+			"verts": 15844.0
 		},
 		"physician": {
-			"tris": 29388,
-			"verts": 15899
+			"tris": 29388.0,
+			"verts": 15899.0
 		},
 		"physician_crowd": {
-			"tris": 8434,
-			"verts": 6249
+			"tris": 8434.0,
+			"verts": 6249.0
 		},
 		"podium": {
-			"tris": 67229,
-			"verts": 183389
+			"tris": 67229.0,
+			"verts": 183389.0
 		},
 		"pyramid_p1_0": {
-			"tris": 1816,
-			"verts": 2150
+			"tris": 1816.0,
+			"verts": 2150.0
 		},
 		"pyramid_p1_1": {
-			"tris": 1804,
-			"verts": 2043
+			"tris": 1804.0,
+			"verts": 2043.0
 		},
 		"pyramid_p1_10": {
-			"tris": 1804,
-			"verts": 1998
+			"tris": 1804.0,
+			"verts": 1998.0
 		},
 		"pyramid_p1_11": {
-			"tris": 2508,
-			"verts": 3598
+			"tris": 2508.0,
+			"verts": 3598.0
 		},
 		"pyramid_p1_12": {
-			"tris": 2316,
-			"verts": 3022
+			"tris": 2316.0,
+			"verts": 3022.0
 		},
 		"pyramid_p1_13": {
-			"tris": 2316,
-			"verts": 3067
+			"tris": 2316.0,
+			"verts": 3067.0
 		},
 		"pyramid_p1_14": {
-			"tris": 2508,
-			"verts": 3649
+			"tris": 2508.0,
+			"verts": 3649.0
 		},
 		"pyramid_p1_15": {
-			"tris": 1804,
-			"verts": 2043
+			"tris": 1804.0,
+			"verts": 2043.0
 		},
 		"pyramid_p1_16": {
-			"tris": 1948,
-			"verts": 2331
+			"tris": 1948.0,
+			"verts": 2331.0
 		},
 		"pyramid_p1_17": {
-			"tris": 1816,
-			"verts": 2150
+			"tris": 1816.0,
+			"verts": 2150.0
 		},
 		"pyramid_p1_18": {
-			"tris": 1804,
-			"verts": 2043
+			"tris": 1804.0,
+			"verts": 2043.0
 		},
 		"pyramid_p1_19": {
-			"tris": 1816,
-			"verts": 2155
+			"tris": 1816.0,
+			"verts": 2155.0
 		},
 		"pyramid_p1_2": {
-			"tris": 1816,
-			"verts": 2155
+			"tris": 1816.0,
+			"verts": 2155.0
 		},
 		"pyramid_p1_20": {
-			"tris": 1804,
-			"verts": 1998
+			"tris": 1804.0,
+			"verts": 1998.0
 		},
 		"pyramid_p1_21": {
-			"tris": 1816,
-			"verts": 2150
+			"tris": 1816.0,
+			"verts": 2150.0
 		},
 		"pyramid_p1_22": {
-			"tris": 1804,
-			"verts": 2043
+			"tris": 1804.0,
+			"verts": 2043.0
 		},
 		"pyramid_p1_23": {
-			"tris": 1816,
-			"verts": 2155
+			"tris": 1816.0,
+			"verts": 2155.0
 		},
 		"pyramid_p1_24": {
-			"tris": 1804,
-			"verts": 1998
+			"tris": 1804.0,
+			"verts": 1998.0
 		},
 		"pyramid_p1_25": {
-			"tris": 3616,
-			"verts": 4084
+			"tris": 3616.0,
+			"verts": 4084.0
 		},
 		"pyramid_p1_26": {
-			"tris": 1948,
-			"verts": 2286
+			"tris": 1948.0,
+			"verts": 2286.0
 		},
 		"pyramid_p1_27": {
-			"tris": 1804,
-			"verts": 1998
+			"tris": 1804.0,
+			"verts": 1998.0
 		},
 		"pyramid_p1_28": {
-			"tris": 2508,
-			"verts": 3598
+			"tris": 2508.0,
+			"verts": 3598.0
 		},
 		"pyramid_p1_29": {
-			"tris": 2316,
-			"verts": 3022
+			"tris": 2316.0,
+			"verts": 3022.0
 		},
 		"pyramid_p1_3": {
-			"tris": 1804,
-			"verts": 1998
+			"tris": 1804.0,
+			"verts": 1998.0
 		},
 		"pyramid_p1_30": {
-			"tris": 2316,
-			"verts": 3067
+			"tris": 2316.0,
+			"verts": 3067.0
 		},
 		"pyramid_p1_31": {
-			"tris": 2508,
-			"verts": 3649
+			"tris": 2508.0,
+			"verts": 3649.0
 		},
 		"pyramid_p1_32": {
-			"tris": 1804,
-			"verts": 2043
+			"tris": 1804.0,
+			"verts": 2043.0
 		},
 		"pyramid_p1_33": {
-			"tris": 1948,
-			"verts": 2331
+			"tris": 1948.0,
+			"verts": 2331.0
 		},
 		"pyramid_p1_4": {
-			"tris": 1816,
-			"verts": 2150
+			"tris": 1816.0,
+			"verts": 2150.0
 		},
 		"pyramid_p1_5": {
-			"tris": 1804,
-			"verts": 2043
+			"tris": 1804.0,
+			"verts": 2043.0
 		},
 		"pyramid_p1_6": {
-			"tris": 1816,
-			"verts": 2155
+			"tris": 1816.0,
+			"verts": 2155.0
 		},
 		"pyramid_p1_7": {
-			"tris": 1804,
-			"verts": 1998
+			"tris": 1804.0,
+			"verts": 1998.0
 		},
 		"pyramid_p1_8": {
-			"tris": 3616,
-			"verts": 4084
+			"tris": 3616.0,
+			"verts": 4084.0
 		},
 		"pyramid_p1_9": {
-			"tris": 1948,
-			"verts": 2286
+			"tris": 1948.0,
+			"verts": 2286.0
 		},
 		"pyramid_p2_0": {
-			"tris": 1828,
-			"verts": 2174
+			"tris": 1828.0,
+			"verts": 2174.0
 		},
 		"pyramid_p2_1": {
-			"tris": 1816,
-			"verts": 2067
+			"tris": 1816.0,
+			"verts": 2067.0
 		},
 		"pyramid_p2_10": {
-			"tris": 2520,
-			"verts": 3622
+			"tris": 2520.0,
+			"verts": 3622.0
 		},
 		"pyramid_p2_11": {
-			"tris": 2328,
-			"verts": 3046
+			"tris": 2328.0,
+			"verts": 3046.0
 		},
 		"pyramid_p2_12": {
-			"tris": 2328,
-			"verts": 3091
+			"tris": 2328.0,
+			"verts": 3091.0
 		},
 		"pyramid_p2_13": {
-			"tris": 2520,
-			"verts": 3673
+			"tris": 2520.0,
+			"verts": 3673.0
 		},
 		"pyramid_p2_14": {
-			"tris": 1816,
-			"verts": 2067
+			"tris": 1816.0,
+			"verts": 2067.0
 		},
 		"pyramid_p2_15": {
-			"tris": 1960,
-			"verts": 2355
+			"tris": 1960.0,
+			"verts": 2355.0
 		},
 		"pyramid_p2_16": {
-			"tris": 1828,
-			"verts": 2174
+			"tris": 1828.0,
+			"verts": 2174.0
 		},
 		"pyramid_p2_17": {
-			"tris": 1816,
-			"verts": 2067
+			"tris": 1816.0,
+			"verts": 2067.0
 		},
 		"pyramid_p2_18": {
-			"tris": 1828,
-			"verts": 2179
+			"tris": 1828.0,
+			"verts": 2179.0
 		},
 		"pyramid_p2_19": {
-			"tris": 1816,
-			"verts": 2022
+			"tris": 1816.0,
+			"verts": 2022.0
 		},
 		"pyramid_p2_2": {
-			"tris": 1828,
-			"verts": 2179
+			"tris": 1828.0,
+			"verts": 2179.0
 		},
 		"pyramid_p2_20": {
-			"tris": 1828,
-			"verts": 2174
+			"tris": 1828.0,
+			"verts": 2174.0
 		},
 		"pyramid_p2_21": {
-			"tris": 1816,
-			"verts": 2067
+			"tris": 1816.0,
+			"verts": 2067.0
 		},
 		"pyramid_p2_22": {
-			"tris": 1828,
-			"verts": 2179
+			"tris": 1828.0,
+			"verts": 2179.0
 		},
 		"pyramid_p2_23": {
-			"tris": 1816,
-			"verts": 2022
+			"tris": 1816.0,
+			"verts": 2022.0
 		},
 		"pyramid_p2_24": {
-			"tris": 1960,
-			"verts": 2310
+			"tris": 1960.0,
+			"verts": 2310.0
 		},
 		"pyramid_p2_25": {
-			"tris": 1816,
-			"verts": 2022
+			"tris": 1816.0,
+			"verts": 2022.0
 		},
 		"pyramid_p2_26": {
-			"tris": 2520,
-			"verts": 3622
+			"tris": 2520.0,
+			"verts": 3622.0
 		},
 		"pyramid_p2_27": {
-			"tris": 2328,
-			"verts": 3046
+			"tris": 2328.0,
+			"verts": 3046.0
 		},
 		"pyramid_p2_28": {
-			"tris": 2328,
-			"verts": 3091
+			"tris": 2328.0,
+			"verts": 3091.0
 		},
 		"pyramid_p2_29": {
-			"tris": 2520,
-			"verts": 3673
+			"tris": 2520.0,
+			"verts": 3673.0
 		},
 		"pyramid_p2_3": {
-			"tris": 1816,
-			"verts": 2022
+			"tris": 1816.0,
+			"verts": 2022.0
 		},
 		"pyramid_p2_30": {
-			"tris": 1816,
-			"verts": 2067
+			"tris": 1816.0,
+			"verts": 2067.0
 		},
 		"pyramid_p2_31": {
-			"tris": 1960,
-			"verts": 2355
+			"tris": 1960.0,
+			"verts": 2355.0
 		},
 		"pyramid_p2_32": {
-			"tris": 64,
-			"verts": 65
+			"tris": 64.0,
+			"verts": 65.0
 		},
 		"pyramid_p2_33": {
-			"tris": 572,
-			"verts": 897
+			"tris": 572.0,
+			"verts": 897.0
 		},
 		"pyramid_p2_34": {
-			"tris": 364,
-			"verts": 689
+			"tris": 364.0,
+			"verts": 689.0
 		},
 		"pyramid_p2_35": {
-			"tris": 36,
-			"verts": 68
+			"tris": 36.0,
+			"verts": 68.0
 		},
 		"pyramid_p2_36": {
-			"tris": 24,
-			"verts": 46
+			"tris": 24.0,
+			"verts": 46.0
 		},
 		"pyramid_p2_37": {
-			"tris": 12,
-			"verts": 24
+			"tris": 12.0,
+			"verts": 24.0
 		},
 		"pyramid_p2_4": {
-			"tris": 1828,
-			"verts": 2174
+			"tris": 1828.0,
+			"verts": 2174.0
 		},
 		"pyramid_p2_5": {
-			"tris": 1816,
-			"verts": 2067
+			"tris": 1816.0,
+			"verts": 2067.0
 		},
 		"pyramid_p2_6": {
-			"tris": 1828,
-			"verts": 2179
+			"tris": 1828.0,
+			"verts": 2179.0
 		},
 		"pyramid_p2_7": {
-			"tris": 1816,
-			"verts": 2022
+			"tris": 1816.0,
+			"verts": 2022.0
 		},
 		"pyramid_p2_8": {
-			"tris": 1960,
-			"verts": 2310
+			"tris": 1960.0,
+			"verts": 2310.0
 		},
 		"pyramid_p2_9": {
-			"tris": 1816,
-			"verts": 2022
+			"tris": 1816.0,
+			"verts": 2022.0
 		},
 		"refinery": {
-			"tris": 12772,
-			"verts": 28598
+			"tris": 12772.0,
+			"verts": 28598.0
 		},
 		"roadblock": {
-			"tris": 576,
-			"verts": 1064
+			"tris": 576.0,
+			"verts": 1064.0
 		},
 		"ruins_0": {
-			"tris": 1336,
-			"verts": 3204
+			"tris": 1336.0,
+			"verts": 3204.0
 		},
 		"ruins_1": {
-			"tris": 1540,
-			"verts": 3706
+			"tris": 1540.0,
+			"verts": 3706.0
 		},
 		"ruins_2": {
-			"tris": 1384,
-			"verts": 3416
+			"tris": 1384.0,
+			"verts": 3416.0
 		},
 		"ruins_3": {
-			"tris": 1572,
-			"verts": 3658
+			"tris": 1572.0,
+			"verts": 3658.0
 		},
 		"ruins_4": {
-			"tris": 1408,
-			"verts": 3528
+			"tris": 1408.0,
+			"verts": 3528.0
 		},
 		"ruins_5": {
-			"tris": 1524,
-			"verts": 3632
+			"tris": 1524.0,
+			"verts": 3632.0
 		},
 		"ruins_6": {
-			"tris": 1552,
-			"verts": 3620
+			"tris": 1552.0,
+			"verts": 3620.0
 		},
 		"ruins_7": {
-			"tris": 1520,
-			"verts": 3614
+			"tris": 1520.0,
+			"verts": 3614.0
 		},
 		"sanctuary_altar": {
-			"tris": 15464,
-			"verts": 35026
+			"tris": 15464.0,
+			"verts": 35026.0
 		},
 		"sanctuary_court_0": {
-			"tris": 10,
-			"verts": 20
+			"tris": 10.0,
+			"verts": 20.0
 		},
 		"sanctuary_court_1": {
-			"tris": 910,
-			"verts": 1397
+			"tris": 910.0,
+			"verts": 1397.0
 		},
 		"sanctuary_court_2": {
-			"tris": 902,
-			"verts": 1385
+			"tris": 902.0,
+			"verts": 1385.0
 		},
 		"sanctuary_court_3": {
-			"tris": 910,
-			"verts": 1397
+			"tris": 910.0,
+			"verts": 1397.0
 		},
 		"sanctuary_court_4": {
-			"tris": 910,
-			"verts": 1397
+			"tris": 910.0,
+			"verts": 1397.0
 		},
 		"sanctuary_court_5": {
-			"tris": 910,
-			"verts": 1397
+			"tris": 910.0,
+			"verts": 1397.0
 		},
 		"sanctuary_monument_aphrodite": {
-			"tris": 63681,
-			"verts": 150666
+			"tris": 63681.0,
+			"verts": 150666.0
 		},
 		"sanctuary_monument_apollo": {
-			"tris": 66333,
-			"verts": 150933
+			"tris": 66333.0,
+			"verts": 150933.0
 		},
 		"sanctuary_monument_ares": {
-			"tris": 63285,
-			"verts": 144353
+			"tris": 63285.0,
+			"verts": 144353.0
 		},
 		"sanctuary_monument_artemis": {
-			"tris": 66030,
-			"verts": 153661
+			"tris": 66030.0,
+			"verts": 153661.0
 		},
 		"sanctuary_monument_athena": {
-			"tris": 64996,
-			"verts": 151454
+			"tris": 64996.0,
+			"verts": 151454.0
 		},
 		"sanctuary_monument_atlas": {
-			"tris": 58823,
-			"verts": 134621
+			"tris": 58823.0,
+			"verts": 134621.0
 		},
 		"sanctuary_monument_demeter": {
-			"tris": 64294,
-			"verts": 150319
+			"tris": 64294.0,
+			"verts": 150319.0
 		},
 		"sanctuary_monument_dionysus": {
-			"tris": 62915,
-			"verts": 145415
+			"tris": 62915.0,
+			"verts": 145415.0
 		},
 		"sanctuary_monument_hades": {
-			"tris": 66659,
-			"verts": 151881
+			"tris": 66659.0,
+			"verts": 151881.0
 		},
 		"sanctuary_monument_hephaestus": {
-			"tris": 64084,
-			"verts": 145474
+			"tris": 64084.0,
+			"verts": 145474.0
 		},
 		"sanctuary_monument_hera": {
-			"tris": 62493,
-			"verts": 147367
+			"tris": 62493.0,
+			"verts": 147367.0
 		},
 		"sanctuary_monument_hermes": {
-			"tris": 63562,
-			"verts": 144031
+			"tris": 63562.0,
+			"verts": 144031.0
 		},
 		"sanctuary_monument_poseidon": {
-			"tris": 56531,
-			"verts": 130447
+			"tris": 56531.0,
+			"verts": 130447.0
 		},
 		"sanctuary_monument_zeus": {
-			"tris": 64586,
-			"verts": 148229
+			"tris": 64586.0,
+			"verts": 148229.0
 		},
 		"sanctuary_statue_aphrodite": {
-			"tris": 61431,
-			"verts": 146088
+			"tris": 61431.0,
+			"verts": 146088.0
 		},
 		"sanctuary_statue_apollo": {
-			"tris": 65125,
-			"verts": 149762
+			"tris": 65125.0,
+			"verts": 149762.0
 		},
 		"sanctuary_statue_ares": {
-			"tris": 61326,
-			"verts": 142899
+			"tris": 61326.0,
+			"verts": 142899.0
 		},
 		"sanctuary_statue_artemis": {
-			"tris": 64618,
-			"verts": 150774
+			"tris": 64618.0,
+			"verts": 150774.0
 		},
 		"sanctuary_statue_athena": {
-			"tris": 63156,
-			"verts": 147967
+			"tris": 63156.0,
+			"verts": 147967.0
 		},
 		"sanctuary_statue_atlas": {
-			"tris": 63264,
-			"verts": 143797
+			"tris": 63264.0,
+			"verts": 143797.0
 		},
 		"sanctuary_statue_demeter": {
-			"tris": 62288,
-			"verts": 146370
+			"tris": 62288.0,
+			"verts": 146370.0
 		},
 		"sanctuary_statue_dionysus": {
-			"tris": 60585,
-			"verts": 142055
+			"tris": 60585.0,
+			"verts": 142055.0
 		},
 		"sanctuary_statue_hades": {
-			"tris": 65622,
-			"verts": 151312
+			"tris": 65622.0,
+			"verts": 151312.0
 		},
 		"sanctuary_statue_hephaestus": {
-			"tris": 62383,
-			"verts": 144486
+			"tris": 62383.0,
+			"verts": 144486.0
 		},
 		"sanctuary_statue_hera": {
-			"tris": 59881,
-			"verts": 142075
+			"tris": 59881.0,
+			"verts": 142075.0
 		},
 		"sanctuary_statue_hermes": {
-			"tris": 62214,
-			"verts": 143329
+			"tris": 62214.0,
+			"verts": 143329.0
 		},
 		"sanctuary_statue_poseidon": {
-			"tris": 59426,
-			"verts": 136983
+			"tris": 59426.0,
+			"verts": 136983.0
 		},
 		"sanctuary_statue_zeus": {
-			"tris": 62841,
-			"verts": 146221
+			"tris": 62841.0,
+			"verts": 146221.0
 		},
 		"sanctuary_temple_0": {
-			"tris": 66537,
-			"verts": 184581
+			"tris": 66537.0,
+			"verts": 184581.0
 		},
 		"sanctuary_temple_1": {
-			"tris": 66523,
-			"verts": 184528
+			"tris": 66523.0,
+			"verts": 184528.0
 		},
 		"sanctuary_temple_2": {
-			"tris": 25164,
-			"verts": 56462
+			"tris": 25164.0,
+			"verts": 56462.0
 		},
 		"sanctuary_temple_3": {
-			"tris": 25164,
-			"verts": 56547
+			"tris": 25164.0,
+			"verts": 56547.0
 		},
 		"sculpture_studio": {
-			"tris": 64896,
-			"verts": 170261
+			"tris": 64896.0,
+			"verts": 170261.0
 		},
 		"settlers1": {
-			"tris": 63027,
-			"verts": 34117
+			"tris": 63027.0,
+			"verts": 34117.0
 		},
 		"stadium": {
-			"tris": 66096,
-			"verts": 179571
+			"tris": 66096.0,
+			"verts": 179571.0
 		},
 		"tax_office": {
-			"tris": 63889,
-			"verts": 152723
+			"tris": 63889.0,
+			"verts": 152723.0
 		},
 		"theater": {
-			"tris": 69416,
-			"verts": 202239
+			"tris": 69416.0,
+			"verts": 202239.0
 		},
 		"timber_mill": {
-			"tris": 27956,
-			"verts": 57900
+			"tris": 27956.0,
+			"verts": 57900.0
 		},
 		"tower": {
-			"tris": 1260,
-			"verts": 2520
+			"tris": 4440.0,
+			"verts": 8880.0
 		},
 		"trade_post": {
-			"tris": 65951,
-			"verts": 163946
+			"tris": 65951.0,
+			"verts": 163946.0
 		},
 		"trade_ship": {
-			"tris": 65303,
-			"verts": 165714
+			"tris": 65303.0,
+			"verts": 165714.0
 		},
 		"trailer": {
-			"tris": 3096,
-			"verts": 5976
+			"tris": 3096.0,
+			"verts": 5976.0
 		},
 		"transporter": {
-			"tris": 29255,
-			"verts": 15749
+			"tris": 29255.0,
+			"verts": 15749.0
+		},
+		"transporter_v2": {
+			"tris": 29398.0,
+			"verts": 15679.0
+		},
+		"transporter_v3": {
+			"tris": 29399.0,
+			"verts": 15674.0
 		},
 		"tree_broadleaf": {
-			"tris": 1448,
-			"verts": 2175
+			"tris": 1448.0,
+			"verts": 2175.0
 		},
 		"tree_cypress": {
-			"tris": 1830,
-			"verts": 2677
+			"tris": 1830.0,
+			"verts": 2677.0
 		},
 		"trireme": {
-			"tris": 66249,
-			"verts": 63335
+			"tris": 66249.0,
+			"verts": 63335.0
 		},
 		"trireme_wharf": {
-			"tris": 66274,
-			"verts": 172370
+			"tris": 66274.0,
+			"verts": 172370.0
 		},
 		"university": {
-			"tris": 64781,
-			"verts": 177533
+			"tris": 64781.0,
+			"verts": 177533.0
 		},
 		"urchin_quay": {
-			"tris": 61548,
-			"verts": 154118
+			"tris": 61548.0,
+			"verts": 154118.0
 		},
 		"vine_0": {
-			"tris": 2276,
-			"verts": 5468
+			"tris": 2276.0,
+			"verts": 5468.0
 		},
 		"vine_1": {
-			"tris": 3076,
-			"verts": 7868
+			"tris": 3076.0,
+			"verts": 7868.0
 		},
 		"vine_2": {
-			"tris": 3512,
-			"verts": 9194
+			"tris": 3512.0,
+			"verts": 9194.0
 		},
 		"vine_3": {
-			"tris": 3656,
-			"verts": 9726
+			"tris": 3656.0,
+			"verts": 9726.0
 		},
 		"vine_4": {
-			"tris": 3931,
-			"verts": 10879
+			"tris": 3931.0,
+			"verts": 10879.0
 		},
 		"vine_5": {
-			"tris": 3846,
-			"verts": 10624
+			"tris": 3846.0,
+			"verts": 10624.0
 		},
 		"walker_achilles": {
-			"tris": 29045,
-			"verts": 15674
+			"tris": 29045.0,
+			"verts": 15674.0
 		},
 		"walker_actor": {
-			"tris": 29311,
-			"verts": 15937
+			"tris": 29311.0,
+			"verts": 15937.0
 		},
 		"walker_amazonarcher": {
-			"tris": 29264,
-			"verts": 15211
+			"tris": 29264.0,
+			"verts": 15211.0
 		},
 		"walker_amazonspear": {
-			"tris": 29359,
-			"verts": 15268
+			"tris": 29359.0,
+			"verts": 15268.0
 		},
 		"walker_aphrodite": {
-			"tris": 29245,
-			"verts": 15486
+			"tris": 29245.0,
+			"verts": 15486.0
 		},
 		"walker_apollo": {
-			"tris": 29074,
-			"verts": 15568
+			"tris": 29074.0,
+			"verts": 15568.0
 		},
 		"walker_archer": {
-			"tris": 28934,
-			"verts": 15889
+			"tris": 28934.0,
+			"verts": 15889.0
 		},
 		"walker_archerposeidon": {
-			"tris": 28956,
-			"verts": 15596
+			"tris": 28956.0,
+			"verts": 15596.0
 		},
 		"walker_ares": {
-			"tris": 28969,
-			"verts": 15947
+			"tris": 28969.0,
+			"verts": 15947.0
 		},
 		"walker_areswarrior": {
-			"tris": 29170,
-			"verts": 15854
+			"tris": 29170.0,
+			"verts": 15854.0
 		},
 		"walker_artemis": {
-			"tris": 29038,
-			"verts": 15362
+			"tris": 29038.0,
+			"verts": 15362.0
 		},
 		"walker_artisan": {
-			"tris": 29365,
-			"verts": 15978
+			"tris": 29365.0,
+			"verts": 15978.0
 		},
 		"walker_astronomer": {
-			"tris": 28725,
-			"verts": 15539
+			"tris": 28725.0,
+			"verts": 15539.0
 		},
 		"walker_atalanta": {
-			"tris": 29129,
-			"verts": 15348
+			"tris": 29129.0,
+			"verts": 15348.0
 		},
 		"walker_athena": {
-			"tris": 29014,
-			"verts": 15466
+			"tris": 29014.0,
+			"verts": 15466.0
 		},
 		"walker_atlanteanarcher": {
-			"tris": 29209,
-			"verts": 15386
+			"tris": 29209.0,
+			"verts": 15386.0
 		},
 		"walker_atlanteanchariot": {
-			"tris": 62211,
-			"verts": 34079
+			"tris": 62211.0,
+			"verts": 34079.0
 		},
 		"walker_atlanteanhoplite": {
-			"tris": 29143,
-			"verts": 15818
+			"tris": 29143.0,
+			"verts": 15818.0
 		},
 		"walker_atlas": {
-			"tris": 29273,
-			"verts": 16022
+			"tris": 29273.0,
+			"verts": 16022.0
 		},
 		"walker_bellerophon": {
-			"tris": 62338,
-			"verts": 32810
+			"tris": 62338.0,
+			"verts": 32810.0
 		},
 		"walker_bronzeminer": {
-			"tris": 29282,
-			"verts": 15958
+			"tris": 29282.0,
+			"verts": 15958.0
 		},
 		"walker_calydonianboar": {
-			"tris": 43314,
-			"verts": 29581
+			"tris": 20178,
+			"verts": 14480
 		},
 		"walker_centaurarcher": {
-			"tris": 64836,
-			"verts": 30243
+			"tris": 64836.0,
+			"verts": 30243.0
 		},
 		"walker_centaurhorseman": {
-			"tris": 65704,
-			"verts": 30728
+			"tris": 65704.0,
+			"verts": 30728.0
 		},
 		"walker_cerberus": {
-			"tris": 44312,
-			"verts": 28331
+			"tris": 13975,
+			"verts": 12586
 		},
 		"walker_chariotposeidon": {
-			"tris": 61963,
-			"verts": 34146
+			"tris": 61963.0,
+			"verts": 34146.0
 		},
 		"walker_chimera": {
-			"tris": 45248,
-			"verts": 29758
+			"tris": 29751,
+			"verts": 24326
 		},
 		"walker_competitor": {
-			"tris": 29483,
-			"verts": 15758
+			"tris": 29483.0,
+			"verts": 15758.0
 		},
 		"walker_curator": {
-			"tris": 28873,
-			"verts": 15547
+			"tris": 28873.0,
+			"verts": 15547.0
 		},
 		"walker_cyclops": {
-			"tris": 29281,
-			"verts": 15904
+			"tris": 27334,
+			"verts": 20535
+		},
+		"walker_deerhunter": {
+			"tris": 38984.0,
+			"verts": 21018.0
 		},
 		"walker_demeter": {
-			"tris": 29169,
-			"verts": 15492
+			"tris": 29169.0,
+			"verts": 15492.0
 		},
 		"walker_dionysus": {
-			"tris": 29079,
-			"verts": 15871
+			"tris": 29079.0,
+			"verts": 15871.0
 		},
 		"walker_disgruntled": {
-			"tris": 29334,
-			"verts": 16028
+			"tris": 29334.0,
+			"verts": 16028.0
 		},
 		"walker_dragon": {
-			"tris": 1286,
-			"verts": 1242
+			"tris": 26004,
+			"verts": 19374
 		},
 		"walker_echidna": {
-			"tris": 47816,
-			"verts": 36614
+			"tris": 30161,
+			"verts": 22564
 		},
 		"walker_egyptianarcher": {
-			"tris": 29106,
-			"verts": 15404
+			"tris": 29106.0,
+			"verts": 15404.0
 		},
 		"walker_egyptianchariot": {
-			"tris": 62178,
-			"verts": 33662
+			"tris": 62178.0,
+			"verts": 33662.0
 		},
 		"walker_egyptianhoplite": {
-			"tris": 29419,
-			"verts": 15562
+			"tris": 29419.0,
+			"verts": 15562.0
 		},
 		"walker_elitecitizen": {
-			"tris": 29382,
-			"verts": 16019
+			"tris": 29382.0,
+			"verts": 16019.0
 		},
 		"walker_firefighter": {
-			"tris": 29424,
-			"verts": 16014
+			"tris": 29424.0,
+			"verts": 16014.0
+		},
+		"walker_goatherd": {
+			"tris": 39165.0,
+			"verts": 21090.0
 		},
 		"walker_greekchariot": {
-			"tris": 62247,
-			"verts": 34116
+			"tris": 62247.0,
+			"verts": 34116.0
 		},
 		"walker_greekhoplite": {
-			"tris": 29163,
-			"verts": 15841
+			"tris": 29163.0,
+			"verts": 15841.0
 		},
 		"walker_greekhorseman": {
-			"tris": 62497,
-			"verts": 32909
+			"tris": 62497.0,
+			"verts": 32909.0
 		},
 		"walker_greekrockthrower": {
-			"tris": 29461,
-			"verts": 15521
+			"tris": 29461.0,
+			"verts": 15521.0
 		},
 		"walker_grower": {
-			"tris": 29425,
-			"verts": 16006
+			"tris": 29268.0,
+			"verts": 15988.0
 		},
 		"walker_gymnast": {
-			"tris": 29429,
-			"verts": 15546
+			"tris": 29429.0,
+			"verts": 15546.0
 		},
 		"walker_hades": {
-			"tris": 35301,
-			"verts": 19514
+			"tris": 35301.0,
+			"verts": 19514.0
 		},
 		"walker_harpies": {
-			"tris": 29550,
-			"verts": 16050
+			"tris": 28330,
+			"verts": 23339
 		},
 		"walker_hector": {
-			"tris": 29034,
-			"verts": 15967
+			"tris": 29207,
+			"verts": 21912
 		},
 		"walker_hephaestus": {
-			"tris": 29305,
-			"verts": 15940
+			"tris": 29305.0,
+			"verts": 15940.0
 		},
 		"walker_hera": {
-			"tris": 29298,
-			"verts": 15510
+			"tris": 29298.0,
+			"verts": 15510.0
 		},
 		"walker_hercules": {
-			"tris": 29283,
-			"verts": 15932
+			"tris": 29283.0,
+			"verts": 15932.0
 		},
 		"walker_hermes": {
-			"tris": 29370,
-			"verts": 15663
+			"tris": 29370.0,
+			"verts": 15663.0
+		},
+		"walker_homeless": {
+			"tris": 29469.0,
+			"verts": 15832.0
 		},
 		"walker_hoplite": {
-			"tris": 29050,
-			"verts": 15673
+			"tris": 29050.0,
+			"verts": 15673.0
 		},
 		"walker_hopliteposeidon": {
-			"tris": 29123,
-			"verts": 15996
+			"tris": 29123.0,
+			"verts": 15996.0
 		},
 		"walker_horseman": {
-			"tris": 62013,
-			"verts": 33102
+			"tris": 62013.0,
+			"verts": 33102.0
 		},
 		"walker_hunter": {
-			"tris": 29258,
-			"verts": 15637
+			"tris": 39158.0,
+			"verts": 21184.0
 		},
 		"walker_hydra": {
-			"tris": 24160,
-			"verts": 27860
+			"tris": 24160.0,
+			"verts": 27860.0
 		},
 		"walker_inventor": {
-			"tris": 28865,
-			"verts": 15555
+			"tris": 28865.0,
+			"verts": 15555.0
 		},
 		"walker_jason": {
-			"tris": 29246,
-			"verts": 15899
+			"tris": 29246.0,
+			"verts": 15899.0
 		},
 		"walker_kraken": {
-			"tris": 2720,
-			"verts": 2196
+			"tris": 24342,
+			"verts": 23767
 		},
 		"walker_lumberjack": {
-			"tris": 29296,
-			"verts": 15932
+			"tris": 29296.0,
+			"verts": 15932.0
 		},
 		"walker_maenads": {
-			"tris": 29899,
-			"verts": 16283
+			"tris": 30908,
+			"verts": 26539
 		},
 		"walker_marbleminer": {
-			"tris": 29360,
-			"verts": 15962
+			"tris": 29360.0,
+			"verts": 15962.0
 		},
 		"walker_mayanarcher": {
-			"tris": 28976,
-			"verts": 15307
+			"tris": 28976.0,
+			"verts": 15307.0
 		},
 		"walker_mayanhoplite": {
-			"tris": 29243,
-			"verts": 15465
+			"tris": 29243.0,
+			"verts": 15465.0
 		},
 		"walker_medusa": {
-			"tris": 28959,
-			"verts": 15436
+			"tris": 30355,
+			"verts": 23160
 		},
 		"walker_minotaur": {
-			"tris": 29323,
-			"verts": 15350
+			"tris": 28532,
+			"verts": 21985
 		},
 		"walker_oceanidhoplite": {
-			"tris": 29371,
-			"verts": 15287
+			"tris": 29371.0,
+			"verts": 15287.0
 		},
 		"walker_oceanidspearthrower": {
-			"tris": 29374,
-			"verts": 15289
+			"tris": 29374.0,
+			"verts": 15289.0
 		},
 		"walker_odysseus": {
-			"tris": 29371,
-			"verts": 15962
+			"tris": 29371.0,
+			"verts": 15962.0
 		},
 		"walker_orangetender": {
-			"tris": 29360,
-			"verts": 15675
+			"tris": 29257.0,
+			"verts": 15981.0
 		},
 		"walker_orichalcminer": {
-			"tris": 29297,
-			"verts": 15673
+			"tris": 29297.0,
+			"verts": 15673.0
 		},
 		"walker_oxhandler": {
-			"tris": 29367,
-			"verts": 15991
+			"tris": 29367.0,
+			"verts": 15991.0
 		},
 		"walker_peddler": {
-			"tris": 29388,
-			"verts": 16027
+			"tris": 29388.0,
+			"verts": 16027.0
+		},
+		"walker_peddler_v2": {
+			"tris": 29163.0,
+			"verts": 16041.0
+		},
+		"walker_peddler_v3": {
+			"tris": 29174.0,
+			"verts": 16050.0
 		},
 		"walker_perseus": {
-			"tris": 29340,
-			"verts": 15660
+			"tris": 29340.0,
+			"verts": 15660.0
 		},
 		"walker_persianarcher": {
-			"tris": 29202,
-			"verts": 15689
+			"tris": 29202.0,
+			"verts": 15689.0
 		},
 		"walker_persianhoplite": {
-			"tris": 29325,
-			"verts": 15733
+			"tris": 29325.0,
+			"verts": 15733.0
 		},
 		"walker_persianhorseman": {
-			"tris": 62588,
-			"verts": 32988
+			"tris": 62588.0,
+			"verts": 32988.0
 		},
 		"walker_phoenicianarcher": {
-			"tris": 29163,
-			"verts": 15672
+			"tris": 29163.0,
+			"verts": 15672.0
 		},
 		"walker_phoenicianhorseman": {
-			"tris": 62521,
-			"verts": 32945
+			"tris": 62521.0,
+			"verts": 32945.0
 		},
 		"walker_porter": {
-			"tris": 29416,
-			"verts": 16026
+			"tris": 29416.0,
+			"verts": 16026.0
 		},
 		"walker_poseidon": {
-			"tris": 29196,
-			"verts": 15956
+			"tris": 29196.0,
+			"verts": 15956.0
 		},
 		"walker_priestess": {
-			"tris": 29341,
-			"verts": 15500
+			"tris": 29341.0,
+			"verts": 15500.0
 		},
 		"walker_racechariot0": {
-			"tris": 62835,
-			"verts": 34267
+			"tris": 62835.0,
+			"verts": 34267.0
 		},
 		"walker_racechariot1": {
-			"tris": 62845,
-			"verts": 33929
+			"tris": 62845.0,
+			"verts": 33929.0
 		},
 		"walker_racechariot2": {
-			"tris": 62847,
-			"verts": 33932
+			"tris": 62847.0,
+			"verts": 33932.0
 		},
 		"walker_racechariot3": {
-			"tris": 62845,
-			"verts": 33929
+			"tris": 62845.0,
+			"verts": 33929.0
+		},
+		"walker_rancher": {
+			"tris": 29323.0,
+			"verts": 15999.0
 		},
 		"walker_rockthrower": {
-			"tris": 29223,
-			"verts": 15633
+			"tris": 29223.0,
+			"verts": 15633.0
 		},
 		"walker_satyr": {
-			"tris": 29470,
-			"verts": 15750
+			"tris": 29558,
+			"verts": 22549
 		},
 		"walker_scholar": {
-			"tris": 29411,
-			"verts": 15992
+			"tris": 29411.0,
+			"verts": 15992.0
 		},
 		"walker_scylla": {
-			"tris": 3008,
-			"verts": 3154
+			"tris": 26213,
+			"verts": 22676
 		},
 		"walker_shepherd": {
-			"tris": 29355,
-			"verts": 15988
+			"tris": 39097.0,
+			"verts": 21147.0
 		},
 		"walker_sick": {
-			"tris": 29371,
-			"verts": 15959
+			"tris": 29371.0,
+			"verts": 15959.0
 		},
 		"walker_silverminer": {
-			"tris": 29280,
-			"verts": 15999
+			"tris": 29280.0,
+			"verts": 15999.0
 		},
 		"walker_sphinx": {
-			"tris": 40792,
-			"verts": 27830
+			"tris": 26757,
+			"verts": 20897
 		},
 		"walker_talos": {
-			"tris": 29784,
-			"verts": 15778
+			"tris": 29781,
+			"verts": 21069
 		},
 		"walker_taxcollector": {
-			"tris": 29323,
-			"verts": 15643
+			"tris": 29323.0,
+			"verts": 15643.0
 		},
 		"walker_theseus": {
-			"tris": 29316,
-			"verts": 15927
+			"tris": 29316.0,
+			"verts": 15927.0
 		},
 		"walker_trader": {
-			"tris": 29292,
-			"verts": 15678
+			"tris": 29292.0,
+			"verts": 15678.0
 		},
 		"walker_trojanhoplite": {
-			"tris": 29145,
-			"verts": 15858
+			"tris": 29145.0,
+			"verts": 15858.0
 		},
 		"walker_trojanhorseman": {
-			"tris": 62290,
-			"verts": 33063
+			"tris": 62290.0,
+			"verts": 33063.0
 		},
 		"walker_trojanspearthrower": {
-			"tris": 29198,
-			"verts": 15709
+			"tris": 29198.0,
+			"verts": 15709.0
 		},
 		"walker_urchin": {
-			"tris": 29625,
-			"verts": 15475
+			"tris": 29625.0,
+			"verts": 15475.0
 		},
 		"walker_watchman": {
-			"tris": 29260,
-			"verts": 15636
+			"tris": 29260.0,
+			"verts": 15636.0
 		},
 		"walker_waterdistributor": {
-			"tris": 29591,
-			"verts": 16845
+			"tris": 29591.0,
+			"verts": 16845.0
+		},
+		"walker_waterdistributor_v2": {
+			"tris": 29591.0,
+			"verts": 16658.0
+		},
+		"walker_waterdistributor_v3": {
+			"tris": 29558.0,
+			"verts": 16413.0
 		},
 		"walker_zeus": {
-			"tris": 29328,
-			"verts": 16018
+			"tris": 29328.0,
+			"verts": 16018.0
 		},
 		"wall_0": {
-			"tris": 240,
-			"verts": 480
+			"tris": 1260.0,
+			"verts": 2520.0
 		},
 		"wall_1": {
-			"tris": 288,
-			"verts": 576
+			"tris": 1404.0,
+			"verts": 2808.0
 		},
 		"wall_10": {
-			"tris": 336,
-			"verts": 672
+			"tris": 1548.0,
+			"verts": 3094.0
 		},
 		"wall_11": {
-			"tris": 384,
-			"verts": 768
+			"tris": 1692.0,
+			"verts": 3380.0
 		},
 		"wall_12": {
-			"tris": 336,
-			"verts": 672
+			"tris": 1020.0,
+			"verts": 2040.0
 		},
 		"wall_13": {
-			"tris": 384,
-			"verts": 768
+			"tris": 1692.0,
+			"verts": 3380.0
 		},
 		"wall_14": {
-			"tris": 384,
-			"verts": 768
+			"tris": 1692.0,
+			"verts": 3380.0
 		},
 		"wall_15": {
-			"tris": 432,
-			"verts": 864
+			"tris": 1836.0,
+			"verts": 3664.0
 		},
 		"wall_2": {
-			"tris": 288,
-			"verts": 576
+			"tris": 1404.0,
+			"verts": 2808.0
 		},
 		"wall_3": {
-			"tris": 336,
-			"verts": 672
+			"tris": 1020.0,
+			"verts": 2040.0
 		},
 		"wall_4": {
-			"tris": 288,
-			"verts": 576
+			"tris": 1404.0,
+			"verts": 2808.0
 		},
 		"wall_5": {
-			"tris": 336,
-			"verts": 672
+			"tris": 1548.0,
+			"verts": 3094.0
 		},
 		"wall_6": {
-			"tris": 336,
-			"verts": 672
+			"tris": 1548.0,
+			"verts": 3094.0
 		},
 		"wall_7": {
-			"tris": 384,
-			"verts": 768
+			"tris": 1692.0,
+			"verts": 3380.0
 		},
 		"wall_8": {
-			"tris": 288,
-			"verts": 576
+			"tris": 1404.0,
+			"verts": 2808.0
 		},
 		"wall_9": {
-			"tris": 336,
-			"verts": 672
+			"tris": 1548.0,
+			"verts": 3094.0
 		},
 		"warehouse": {
-			"tris": 64744,
-			"verts": 160012
+			"tris": 64744.0,
+			"verts": 160012.0
 		},
 		"watch_post": {
-			"tris": 60821,
-			"verts": 145274
+			"tris": 60821.0,
+			"verts": 145274.0
 		},
 		"wine_vendor": {
-			"tris": 51514,
-			"verts": 118184
+			"tris": 51514.0,
+			"verts": 118184.0
 		},
 		"winery": {
-			"tris": 65539,
-			"verts": 163958
+			"tris": 65539.0,
+			"verts": 163958.0
 		}
 	},
 	"note": "Full-detail triangle counts per development GLB. validate_geometry.gd fails if an asset grows more than 5% or lacks a LOD ladder. Regenerate with --write-baseline only for a deliberate art change."

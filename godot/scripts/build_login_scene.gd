@@ -5,5 +5,5 @@ func _initialize() -> void:
 	if scene == null:
 		quit(1)
 		return
-	print("Gates of Hades uses login_scene_3d.gd; no regeneration needed.")
+	print("Cinematic menu uses cinematic_menu_world.gd; earlier procedural scene/bake remains available.")
 	quit()

@@ -1,0 +1,126 @@
+{
+  "asset": "walker_waterdistributor_v3",
+  "variant_of": "walker_waterdistributor",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_waterdistributor_v3.glb",
+  "bytes": 7041256,
+  "vertices": 16413,
+  "surfaces": 3,
+  "source_surfaces": 29,
+  "bounds_blender": [
+    [
+      -0.20633339881896973,
+      -0.4208787679672241,
+      0.0005000140517950058
+    ],
+    [
+      0.25351643562316895,
+      0.5199999809265137,
+      0.8478390574455261
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Water carrier A",
+        "sex": "male",
+        "profile": {
+          "age": 19,
+          "jaw": 1.1798038762742324,
+          "cheek": 0.9986020855590306,
+          "nose": 0.0016946740839558238,
+          "chin": -0.002092940345403009,
+          "eye": 1.004084162721784,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.01714296887037136,
+          "beard_length": 0,
+          "grey": 0.04,
+          "seed": 4066083831,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "4f89b1cf6666d0260b3ac298d8097aa8506725f530f372b5280394711e8885eb",
+        "clavi_srgb": [
+          0.26,
+          0.36,
+          0.46
+        ]
+      },
+      {
+        "name": "Water carrier B",
+        "sex": "male",
+        "profile": {
+          "age": 54,
+          "jaw": 1.0953680971221946,
+          "cheek": 1.0337312218943049,
+          "nose": 0.0034574462508095965,
+          "chin": 0.0051331796915050345,
+          "eye": 0.976718967338097,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.022357202498206965,
+          "beard_length": 0,
+          "grey": 0.6,
+          "seed": 390218931,
+          "skin": [
+            0.58,
+            0.385,
+            0.285
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "70de5ef4bfdbd2cb1fe43ace41de46ddafa326c758f2e667f21a335407140cd3",
+        "clavi_srgb": [
+          0.34,
+          0.18,
+          0.12
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 129,
+    "targets_after": 85,
+    "uv_attributes_removed": 0
+  }
+}

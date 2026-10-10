@@ -3,7 +3,7 @@
 #include "egamedir.h"
 #include "textures/egeometrybatch.h"
 
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 #include <algorithm>
 #include <cmath>

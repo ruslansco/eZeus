@@ -1,19 +1,20 @@
 {
   "asset": "walker_rockthrower",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_rockthrower.glb",
-  "bytes": 9939196,
-  "vertices": 15633,
+  "bytes": 9974336,
+  "vertices": 15688,
   "surfaces": 3,
   "source_surfaces": 18,
   "bounds_blender": [
     [
-      -0.17650486528873444,
+      -0.19266314804553986,
       -0.32332485914230347,
       0.0004999544471502304
     ],
     [
-      0.19227850437164307,
+      0.20755703747272491,
       0.18021810054779053,
       0.9079059958457947
     ]

@@ -114,8 +114,8 @@ func run() -> void:
 	core.command("pause 0")
 	var more: Dictionary = core.command("build road %d %d 0" % [finish.x + 1, finish.y])
 	var overwritten: Dictionary = core.save_city("first save")
-	check(overwritten.has("saved") and DirAccess.get_files_at(directory).size() == 1, "saving under the same name replaces the file")
-	check(core.save_city("second.save-2").has("saved") and DirAccess.get_files_at(directory).size() == 2, "another name makes another file")
+	check(overwritten.has("saved") and FileAccess.file_exists(directory.path_join("first save.ez.bak1")) and Array(DirAccess.get_files_at(directory)).filter(func(file):return file.ends_with(".ez")).size() == 1, "saving under the same name replaces the file and retains its previous copy")
+	check(core.save_city("second.save-2").has("saved") and Array(DirAccess.get_files_at(directory)).filter(func(file):return file.ends_with(".ez")).size() == 2, "another name makes another primary file")
 	check(core.save_city("Сохранение один").has("saved") and FileAccess.file_exists(directory.path_join("Сохранение один.ez")), "a name in another alphabet is saved as written")
 	# Only the configured directory and the designated city can be opened.
 	core.close_city()

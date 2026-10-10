@@ -62,6 +62,7 @@ func apply(node: Node, asset: String) -> void:
 			for i in 8:frames.append(int(part.frames.get("work_%02d"%i,-1)))
 			finish.set_shader_parameter("work_frames",frames)
 			finish.set_shader_parameter("inactive_pose",int(part.frames.get("inactive",-1)))
+			finish.set_shader_parameter("smooth_work",true)
 			var original: Material = node.mesh.surface_get_material(0)
 			if original is StandardMaterial3D:
 				finish.set_shader_parameter("surface_roughness",original.roughness)

@@ -1,19 +1,20 @@
 {
   "asset": "walker_theseus",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_theseus.glb",
-  "bytes": 9557260,
-  "vertices": 15927,
+  "bytes": 9572536,
+  "vertices": 15952,
   "surfaces": 3,
   "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.19770894944667816,
-      -0.20643635094165802,
+      -0.21432489156723022,
+      -0.2007293999195099,
       0.0005599489668384194
     ],
     [
-      0.2154843509197235,
+      0.2337615191936493,
       0.20184427499771118,
       0.9722910523414612
     ]

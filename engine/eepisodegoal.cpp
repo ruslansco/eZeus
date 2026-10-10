@@ -10,6 +10,8 @@
 #include "engine/egameboard.h"
 #include "buildings/pyramids/epyramid.h"
 #include "evectorhelpers.h"
+#include "buildings/etradepost.h"
+#include <set>
 
 stdsptr<eEpisodeGoal> eEpisodeGoal::makeCopy() const {
     const auto result = std::make_shared<eEpisodeGoal>();
@@ -34,6 +36,10 @@ void eEpisodeGoal::write(eWriteStream& dst) const {
 }
 
 bool eEpisodeGoal::met() const {
+    // Date goals store a calendar year, not a target quantity. A negative BC
+    // year must not make an unmet date succeed.
+    if(fType == eEpisodeGoalType::surviveUntil || fType == eEpisodeGoalType::completeBefore)
+        return fStatusCount == 1;
     return fStatusCount >= fRequiredCount;
 }
 
@@ -207,7 +213,8 @@ std::string eEpisodeGoal::text(const bool colonyEpisode,
     case eEpisodeGoalType::tradingPartners: {
         const int c = fRequiredCount;
         const auto cStr = std::to_string(c);
-        auto text = eLanguage::zeusText(194, 34); // trading partners
+        auto text = fEnumInt2 == 1 ? eLanguage::text("working_trade_routes_goal") :
+                                    eLanguage::zeusText(194, 34);
         eStringHelpers::replace(text, "[amount]", cStr);
         return text;
     } break;
@@ -344,7 +351,8 @@ std::string eEpisodeGoal::statusText(const eGameBoard& b) const {
     case eEpisodeGoalType::tradingPartners: {
         const int c = fStatusCount;
         const auto cStr = std::to_string(c);
-        auto text = eLanguage::zeusText(194, 59); // trading partners
+        auto text = fEnumInt2 == 1 ? eLanguage::text("working_trade_routes_status") :
+                                    eLanguage::zeusText(194, 59);
         eStringHelpers::replace(text, "[amount]", cStr);
         return text;
     } break;
@@ -578,7 +586,30 @@ void eEpisodeGoal::update(const eGameBoard& b) {
     } break;
     case eEpisodeGoalType::tradingPartners: {
         const bool wasMet = met();
-        fStatusCount = b.tradingPartners();
+        if(fEnumInt2 == 1) {
+            // Opt-in authoring modifier. Original PAK goals leave enum2 at zero
+            // and keep the original count of available diplomatic partners.
+            std::set<const eWorldCity*> routes;
+            for(const auto cid : b.personPlayerCitiesOnBoard()) {
+                for(const auto building : b.buildings(cid, eBuildingType::tradePost)) {
+                    const auto post = dynamic_cast<eTradePost*>(building);
+                    if(!post || post->employed() <= 0 || post->shutDown() ||
+                       !post->accessToRoad() || post->isOnFire() || !post->trades()) continue;
+                    eResourceType imports, exports;
+                    post->getOrders(imports, exports);
+                    bool stockedExport = false;
+                    for(const auto resource : eResourceTypeHelpers::extractResourceTypes(exports)) {
+                        const auto limit = post->maxCount().find(resource);
+                        if(limit == post->maxCount().end() || limit->second > 0)
+                            stockedExport = true;
+                    }
+                    if(stockedExport) routes.insert(&post->city());
+                }
+            }
+            fStatusCount = int(routes.size());
+        } else {
+            fStatusCount = b.tradingPartners();
+        }
         const bool isMet = met();
         if(!wasMet && isMet) {
             b.showTip(ppid, eLanguage::zeusText(194, 93));

@@ -1,0 +1,27 @@
+{
+  "revision": "original-synth-v1",
+  "source": "tools/generate_original_soundscape.py",
+  "source_sha256": "3232b56d33e5847b35cf795fe3260bd13fbf046812a49663d4bd3f6cc8a98a03",
+  "external_samples": [],
+  "notes": "New development composition and procedural ambience. Listening and final production mastering remain pending.",
+  "assets": [
+    {
+      "file": "settlement.wav",
+      "sha256": "6d0ecc760c9c46f827a233513b6efdcfdebc4630927e45fb803b4e4c3c19f156",
+      "seconds": 48,
+      "rate": 24000,
+      "peak": 0.19977416302987763,
+      "rms": 0.045484687903281515,
+      "channels": 1
+    },
+    {
+      "file": "countryside.wav",
+      "sha256": "7b121674a011c5c4cb0053fb5cb29ac63d8a3c84ded4adb07a8896fe3872f578",
+      "seconds": 48,
+      "rate": 24000,
+      "peak": 0.0629902035584582,
+      "rms": 0.009839115512247993,
+      "channels": 1
+    }
+  ]
+}

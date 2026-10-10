@@ -1,20 +1,22 @@
 {
   "asset": "animal_sheep_nude",
+  "variant_of": null,
   "source": "art/characters/animals/build_animal.py",
   "file": "animal_sheep_nude.glb",
-  "bytes": 4530228,
-  "vertices": 9970,
+  "bytes": 7597072,
+  "vertices": 9948,
   "surfaces": 2,
+  "source_surfaces": 4,
   "bounds_blender": [
     [
-      -0.08945590257644653,
+      -0.08945591002702713,
       -0.28175240755081177,
       -0.0017199489520862699
     ],
     [
       0.09024182707071304,
-      0.372349351644516,
-      0.4240688979625702
+      0.3452458083629608,
+      0.38574936985969543
     ]
   ],
   "walk_samples": 24,
@@ -22,13 +24,22 @@
   "stride_tiles": 0.64,
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
-  "idle_mode": "static_authored_held_pose",
-  "source_surfaces": 4,
   "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "fallen": 12,
+      "restanimal": 12
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 70,
-    "targets_after": 48,
+    "targets_before": 118,
+    "targets_after": 86,
     "uv_attributes_removed": 0
   }
 }

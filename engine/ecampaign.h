@@ -44,6 +44,10 @@ public:
 
     void initialize(const std::string& name);
 
+    // Editor-only adaptation: retain the parent terrain/world, replace campaign
+    // identity and episode content, and drop unused colony boards. Does not save.
+    void keepParentAsSingleEpisode(const std::string& name);
+
     int initialFunds(const ePlayerId pid) const;
     void setInitialFunds(const ePlayerId pid, const int f);
 
@@ -107,6 +111,7 @@ public:
     void copyEpisodeSettings(eEpisode* const from, eEpisode* const to);
 
     const std::string& titleText() const { return mTitle; }
+    const std::string& contentName() const { return mName; }
     const std::string& introductionText() const { return mIntroduction; }
     const std::string& completeText() const { return mComplete; }
 

@@ -1,15 +1,16 @@
 {
   "asset": "walker_astronomer",
+  "variant_of": null,
   "source": "eZeus/tools/godot_science_walkers.py",
   "file": "walker_astronomer.glb",
-  "bytes": 5166264,
-  "vertices": 15539,
+  "bytes": 5189736,
+  "vertices": 15608,
   "surfaces": 3,
   "source_surfaces": 16,
   "bounds_blender": [
     [
-      -0.17945705354213715,
-      -0.18249481916427612,
+      -0.19289176166057587,
+      -0.17033950984477997,
       0.0004999842494726181
     ],
     [

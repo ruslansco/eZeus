@@ -19,6 +19,7 @@ const ALT := KEY_MASK_ALT
 const MODIFIERS := KEY_MASK_CTRL | KEY_MASK_ALT
 const GROUPS := ["Camera", "Construction", "Game", "City views"]
 # Held actions are InputMap actions and take no modifier; "bare" ones take none either; the others may carry Ctrl/Cmd and Alt.
+const DOCK_ACTIONS := ["build_house", "build_road", "build_roadblock", "layers", "jobs"]
 const HELD := ["orbit_left", "orbit_right", "tilt_up", "tilt_down", "pan_forward", "pan_back", "pan_left", "pan_right"]
 const RESERVED := [KEY_ESCAPE, KEY_DELETE, KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_META, KEY_UNKNOWN, KEY_CAPSLOCK, KEY_NUMLOCK, KEY_SCROLLLOCK]
 
@@ -34,6 +35,11 @@ const FIXED := {
 	"pan_right": ["Camera", "Pan right", KEY_D, "held"],
 	"camera_home": ["Camera", "City overview", KEY_HOME, "bare"],
 	"turn_placement": ["Construction", "Turn the placement", KEY_T, "free"],
+	"build_house": ["Construction", "Housing", KEY_H, "free"],
+	"build_road": ["Construction", "Road", KEY_B, "free"],
+	"build_roadblock": ["Construction", "Road Block", KEY_G, "free"],
+	"layers": ["Game", "Overlays", KEY_L, "free"],
+	"jobs": ["Game", "Jobs", KEY_J, "free"],
 	"demolish": ["Construction", "Demolition tool", KEY_X, "free"],
 	"undo": ["Construction", "Undo last construction", KEY_Z | KEY_MASK_CTRL, "free"],
 	"pause": ["Game", "Pause or resume", KEY_SPACE, "free"],
@@ -107,14 +113,22 @@ static func _load() -> void:
 		var value: Variant = Settings.get_value(SECTION, entry.id, "")
 		if typeof(value) == TYPE_INT and problem(entry.id, int(value)).is_empty() and int(value) != int(entry.default):
 			found[entry.id] = int(value)
-	# A hand-edited file can give one key to two actions; nothing is guessed then, the defaults hold.
+	# Validate legacy bindings first. Adding dock defaults must not displace an
+	# existing custom key; a newly occupied shortcut stays unassigned until rebound.
 	var seen := {}
 	for entry in actions():
+		if entry.id in DOCK_ACTIONS: continue
 		var effective := int(found.get(entry.id, entry.default))
+		if effective == 0: continue
 		if seen.has(effective):
 			push_warning("key bindings: %s is bound twice; the defaults are used" % OS.get_keycode_string(effective & KEY_CODE_MASK))
 			return
 		seen[effective] = entry.id
+	for id in DOCK_ACTIONS:
+		var effective := int(found.get(id,default_code(id)))
+		if effective == 0: continue
+		if seen.has(effective): found[id] = 0
+		else: seen[effective] = id
 	custom = found
 
 static func code(id: String) -> int:
@@ -143,6 +157,7 @@ static func _store(id: String, value: int) -> void:
 # ---- keys as text and as events ---------------------------------------------------------------------------------------
 # "Q", "F5", "Cmd+Z" (Ctrl+Z off macOS), "Alt+Enter": the physical key's name as the Latin layout prints it.
 static func text(value: int) -> String:
+	if value == 0: return TranslationServer.translate("Unassigned")
 	var parts: Array[String] = []
 	if value & CMD:
 		parts.append("Cmd" if OS.get_name() == "macOS" else "Ctrl")
@@ -164,7 +179,7 @@ static func encode(event: InputEventKey) -> int:
 	return key
 
 static func matches(event: InputEvent, id: String) -> bool:
-	return event is InputEventKey and event.pressed and not event.echo and encode(event) == code(id)
+	return code(id) != 0 and event is InputEventKey and event.pressed and not event.echo and encode(event) == code(id)
 
 # The overlay whose key this is ("water", "problems", ...; "normal" for either of its keys), or "".
 static func overlay_for(event: InputEvent) -> String:
@@ -182,7 +197,7 @@ static func overlay_for(event: InputEvent) -> String:
 # or overview key takes no Ctrl/Cmd or Alt).
 static func problem(id: String, value: int) -> String:
 	var key := value & KEY_CODE_MASK
-	if key in RESERVED:
+	if key in RESERVED or (key == 0 and str(definition(id).get("kind","free")) == "held"):
 		return "reserved"
 	var kind := str(definition(id).get("kind", "free"))
 	if kind != "free" and value & MODIFIERS:
@@ -191,6 +206,7 @@ static func problem(id: String, value: int) -> String:
 
 # The action that has this key, or "".
 static func owner_of(value: int) -> String:
+	if value == 0: return ""
 	for entry in actions():
 		if code(entry.id) == value:
 			return entry.id

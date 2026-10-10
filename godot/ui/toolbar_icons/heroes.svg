@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+<defs>
+<linearGradient id="stone" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fff0cd"/><stop offset="1" stop-color="#b49d75"/></linearGradient>
+<linearGradient id="clay" x1="0" y1="0" x2=".5" y2="1"><stop stop-color="#e99467"/><stop offset="1" stop-color="#a84835"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2=".5" y2="1"><stop stop-color="#f6d68b"/><stop offset="1" stop-color="#ad7837"/></linearGradient>
+<linearGradient id="wood" x1="0" y1="0" x2=".5" y2="1"><stop stop-color="#be8550"/><stop offset="1" stop-color="#674230"/></linearGradient>
+<linearGradient id="blue" x1="0" y1="0" x2=".65" y2="1"><stop stop-color="#8cd5dd"/><stop offset="1" stop-color="#296c92"/></linearGradient>
+<linearGradient id="green" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#a3c979"/><stop offset="1" stop-color="#47764c"/></linearGradient>
+<linearGradient id="metal" x1="0" y1="0" x2=".6" y2="1"><stop stop-color="#d2e0de"/><stop offset="1" stop-color="#657c87"/></linearGradient>
+</defs>
+<ellipse cx="48" cy="86" rx="36" ry="5" fill="#081723" opacity=".3"/>
+<g stroke="#253d43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+<path d="M23 32c1-15 15-25 31-23 17 2 28 17 25 35L65 57 36 41Z" fill="url(#clay)"/>
+<path d="M31 32c1-17 18-24 33-16" fill="none" stroke="#f4bc7d" stroke-width="5"/>
+<path d="M27 43c0-21 35-24 42-3l-3 26-12 17-12-8-6-13-14 2Z" fill="url(#gold)"/>
+<path d="m26 45 31 6-6 8-22-4Z" fill="#4c5250"/>
+<path d="m55 52 11-8-1 24-11 14-6-5 3-13Z" fill="#9f7137"/>
+<path d="M17 58C9 68 15 83 29 88m45-34c14 16 7 27-6 35" fill="none" stroke="#91b672" stroke-width="4"/>
+<path d="m14 66-6-3 1 9 7 3Zm4 14-7-2 4 9 8 1Zm61-16 8-3-1 9-8 4Zm-6 16 8-1-4 8-9 2Z" fill="url(#green)"/>
+
+</g>
+</svg>

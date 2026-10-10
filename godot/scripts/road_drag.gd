@@ -10,7 +10,9 @@ extends RefCounted
 # plot shown as a footprint and a few as the model they will become; orchards and livestock drag the same way, a tree or an
 # animal on each tile that takes one. Columns, avenues and boulevards are dragged along a path like roads (`preview_path` /
 # `build_path`, the SDL view's own path rules; an avenue also lays the streets beside it). All rules live in the C++ core:
-# this only shows the plan and forwards the command.
+# this only shows the plan and forwards the command. The demolition tool drags a rectangle the same way (`preview_demolish_area` /
+# `demolish_area`): everything the SDL erase tool would remove is tinted, landmarks in amber; a press and release on one tile is
+# the ordinary single demolition, with its own confirmation.
 
 const BuildCatalog = preload("res://scripts/build_catalog.gd")
 const REFRESH_SECONDS := .25
@@ -23,6 +25,10 @@ const COLUMN_TOOLS := ["doric_column", "ionic_column", "corinthian_column"]
 # Livestock are walkers: their plots show as footprints only.
 const MODEL_LIMIT := {"wall": 400, "park": 120, "house": 24, "elite_house": 12, "vine": 160, "olive_tree": 160, "orange_tree": 160,
 	"doric_column": 200, "ionic_column": 200, "corinthian_column": 200}
+
+const DEMOLITION_COLOUR := Color(.95, .32, .17, .55)
+# A palace, temple or stocked agora: removed only when the player confirms.
+const LANDMARK_COLOUR := Color(.98, .78, .15, .7)
 
 var active := false
 var tool := "road"
@@ -66,6 +72,8 @@ func fill() -> bool:
 	return tool == "wall" and (wall_fill or Input.is_key_pressed(KEY_SHIFT))
 
 func preview_text(from: Vector2i, to: Vector2i) -> String:
+	if tool == "demolish":
+		return "preview_demolish_area %d %d %d %d" % [from.x, from.y, to.x, to.y]
 	if tool == "wall":
 		return "preview_wall %d %d %d %d %d" % [from.x, from.y, to.x, to.y, 1 if fill() else 0]
 	if tool in AREA_TOOLS:
@@ -81,6 +89,9 @@ func show(city) -> void:
 	if plan.is_empty() or plan.has("error"):
 		city.hint.text = city.reason_text(plan.get("error", "out_of_map"))
 		city.hud.set_placement_feedback(city.hint.text,false)
+		return
+	if tool == "demolish":
+		show_demolition(city)
 		return
 	var pieces := 0
 	var limit: int = MODEL_LIMIT.get(tool, 0)
@@ -112,6 +123,36 @@ func show(city) -> void:
 	city.hint.text = summary(city)
 	city.hud.set_placement_feedback(city.hint.text,int(plan.new)>0)
 
+# The rectangle's demolition plan: every building, landmark and forest tile it would remove, tinted. A one-tile building follows
+# the ground like a footprint marker; a larger one is a flat plate over its whole footprint, as the single-tile preview draws it.
+func show_demolition(city) -> void:
+	for cell in plan.tiles:
+		var marker := MeshInstance3D.new()
+		var width := int(cell[2])
+		var depth := int(cell[3])
+		if width == 1 and depth == 1:
+			marker.mesh = city.terrain_geometry.footprint_mesh(Vector2i(int(cell[0]), int(cell[1])), float(cell[4]) * .22)
+		else:
+			var plate := BoxMesh.new()
+			plate.size = Vector3(width - .08, .04, depth - .08)
+			marker.mesh = plate
+			marker.position = city.world_position(int(cell[0]) + (width - 1) * .5, int(cell[1]) + (depth - 1) * .5, cell[4]) + Vector3.UP * .06
+		marker.material_override = city.material(LANDMARK_COLOUR if int(cell[5]) == 2 else DEMOLITION_COLOUR, true)
+		marker.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		city.footprint_cells.add_child(marker)
+		markers.append(marker)
+	city.footprint_cells.visible = true
+	city.hint.text = demolition_summary(city)
+	city.hud.set_placement_feedback(city.hint.text, bool(plan.valid))
+
+func demolition_summary(city) -> String:
+	if not bool(plan.valid):
+		return city.reason_text(str(plan.reason))
+	var text: String = city.tr("Demolition: %d  •  Cost: %d") % [int(plan.count), int(plan.cost)]
+	if int(plan.protected) > 0:
+		text += "  •  " + city.tr("%d landmarks need confirmation") % int(plan.protected)
+	return text
+
 # The model a planned plot of an area drag will become, as the placement ghost draws a building.
 func area_piece(city, cell: Array) -> Node3D:
 	var asset: String = plan.asset
@@ -129,6 +170,7 @@ func area_piece(city, cell: Array) -> Node3D:
 	var centre: Vector3 = city.world_position(int(cell[0]) + (width - 1) * .5, int(cell[1]) + (depth - 1) * .5, cell[2])
 	var facing: int = city.StreetFacing.facing(city.tiles, asset, int(cell[0]), int(cell[1]), width, depth, city.orientation)
 	piece.transform = Transform3D(city.model_basis(asset, width, depth, facing), centre + Vector3.UP * .02)
+	piece.transform = city.StreetSetback.apply(city.tiles, {"asset": asset, "x": int(cell[0]), "y": int(cell[1]), "w": width, "h": depth}, piece.transform)
 	return piece
 
 # The model a planned wall tile will become: the piece for its connection mask, as the placement ghost draws a building.
@@ -198,6 +240,8 @@ func finish(city, cell: Vector2i) -> bool:
 	clear(city)
 	city.footprint_cells.visible = false
 	var end := cell if cell.x != 99999 else last
+	if tool == "demolish":
+		return finish_demolition(city, end)
 	var final: Dictionary = city.core.query(preview_text(start, end))
 	var filled := fill()
 	plan = {}
@@ -213,3 +257,18 @@ func finish(city, cell: Vector2i) -> bool:
 	if start == end:
 		return city.core.send("build road %d %d %d" % [start.x, start.y, city.orientation])
 	return city.core.send("build_road %d %d %d %d" % [start.x, start.y, end.x, end.y])
+
+# A click on one tile demolishes as it always did; a dragged rectangle removes what its plan listed. Landmarks in it ask first.
+func finish_demolition(city, end: Vector2i) -> bool:
+	plan = {}
+	if end == start:
+		return city.demolish_click(start)
+	var final: Dictionary = city.core.query(preview_text(start, end))
+	if final.has("error") or not final.get("valid", false):
+		city.hint.text = city.reason_text(str(final.get("reason", final.get("error", "nothing_to_demolish"))))
+		return false
+	var area := "%d %d %d %d" % [start.x, start.y, end.x, end.y]
+	if final.get("confirmation_required", false):
+		city.ask_area_demolition(area, final)
+		return true
+	return city.core.send("demolish_area %s 0" % area)

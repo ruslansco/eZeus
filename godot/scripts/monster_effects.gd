@@ -70,7 +70,7 @@ static func mouth_forward(asset: String) -> float:
 	return .94 if asset == "walker_hydra" else .2
 
 func head_origin(city, asset: String, near: Vector3, head: int, fallback: Vector3) -> Vector3:
-	if asset != "walker_hydra" or not city.has_method("model_contract"):
+	if not city.has_method("model_contract"):
 		return fallback
 	var probes: Dictionary = city.model_contract(asset).get("monster", {}).get("pose_probes", {})
 	if probes.is_empty():
@@ -91,8 +91,9 @@ func head_origin(city, asset: String, near: Vector3, head: int, fallback: Vector
 	var phase := fposmod(float(nearest.get("clip_time",0.0))*10.0, float(count)) if nearest.get("clip", "") == clip else 0.0
 	var a: Array = probes.get("%s_%02d" % [clip,int(phase)],probes.get("idle_00",{})).get("mouths", [])
 	var b: Array = probes.get("%s_%02d" % [clip,(int(phase)+1)%count],{}).get("mouths", a)
-	if a.size() != 3 or b.size() != 3:
+	if a.is_empty() or b.size() != a.size():
 		return fallback
+	head = posmod(head, a.size())
 	var local := Vector3(float(a[head][0]),float(a[head][1]),float(a[head][2])).lerp(Vector3(float(b[head][0]),float(b[head][1]),float(b[head][2])),phase-floorf(phase))
 	return nearest.node.global_transform * local
 

@@ -2,20 +2,20 @@
   "asset": "walker_orangetender",
   "source": "art/characters/people/build_person.py",
   "file": "walker_orangetender.glb",
-  "bytes": 5225072,
-  "vertices": 15675,
+  "bytes": 13796728,
+  "vertices": 15981,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 20,
   "bounds_blender": [
     [
-      -0.18870587646961212,
-      -0.18213969469070435,
+      -0.19314302504062653,
+      -0.17922267317771912,
       0.0004999544471502304
     ],
     [
-      0.19234322011470795,
-      0.18021810054779053,
-      0.8681924939155579
+      0.2077241688966751,
+      0.2152070254087448,
+      1.0351932048797607
     ]
   ],
   "walk_samples": 24,
@@ -25,6 +25,17 @@
   "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "pruneoranges": 24,
+      "pickoranges": 24,
+      "die": 8
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
   "character": {
     "revision": "natural_people_v1",
     "identities": [
@@ -51,8 +62,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2133918783,
           "skin": [
             0.53,
@@ -78,8 +89,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 276,
+    "targets_after": 193,
     "uv_attributes_removed": 0
   }
 }

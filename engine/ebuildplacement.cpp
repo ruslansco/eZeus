@@ -332,11 +332,11 @@ bool bridgeTiles(eTile* const t, const eTerrain terr, std::vector<eTile*>& tiles
             if(!tt) return false;
             const auto tt_tr = tt->topRight<eTile>();
             const auto tt_bl = tt->bottomLeft<eTile>();
-            if(!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
+            if(!tt_tr || !tt_bl || !tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
                 return false;
             }
             const auto tt_tl = tt->bottomRight<eTile>();
-            if(tt_tl->hasTerrain(terr)) return false;
+            if(!tt_tl || tt_tl->hasTerrain(terr)) return false;
         } else {
             auto tt = t;
             tiles.push_back(tt);
@@ -350,11 +350,11 @@ bool bridgeTiles(eTile* const t, const eTerrain terr, std::vector<eTile*>& tiles
             if(!tt) return false;
             const auto tt_tr = tt->topRight<eTile>();
             const auto tt_bl = tt->bottomLeft<eTile>();
-            if(!tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
+            if(!tt_tr || !tt_bl || !tt_tr->isShoreTile(terr) || !tt_bl->isShoreTile(terr)) {
                 return false;
             }
             const auto tt_tl = tt->topLeft<eTile>();
-            if(tt_tl->hasTerrain(terr)) return false;
+            if(!tt_tl || tt_tl->hasTerrain(terr)) return false;
         }
         return !tr->underBuilding() && !bl->underBuilding();
     } else if(tl->isShoreTile(terr) && br->isShoreTile(terr)) {
@@ -373,11 +373,11 @@ bool bridgeTiles(eTile* const t, const eTerrain terr, std::vector<eTile*>& tiles
             if(!tt) return false;
             const auto tt_tl = tt->topLeft<eTile>();
             const auto tt_br = tt->bottomRight<eTile>();
-            if(!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
+            if(!tt_tl || !tt_br || !tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
                 return false;
             }
             const auto tt_bl = tt->bottomLeft<eTile>();
-            if(tt_bl->hasTerrain(terr)) return false;
+            if(!tt_bl || tt_bl->hasTerrain(terr)) return false;
         } else {
             auto tt = t;
             tiles.push_back(tt);
@@ -391,11 +391,11 @@ bool bridgeTiles(eTile* const t, const eTerrain terr, std::vector<eTile*>& tiles
             if(!tt) return false;
             const auto tt_tl = tt->topLeft<eTile>();
             const auto tt_br = tt->bottomRight<eTile>();
-            if(!tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
+            if(!tt_tl || !tt_br || !tt_tl->isShoreTile(terr) || !tt_br->isShoreTile(terr)) {
                 return false;
             }
             const auto tt_tr = tt->topRight<eTile>();
-            if(tt_tr->hasTerrain(terr)) return false;
+            if(!tt_tr || tt_tr->hasTerrain(terr)) return false;
         }
         return !tl->underBuilding() && !br->underBuilding();
     }

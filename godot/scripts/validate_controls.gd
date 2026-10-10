@@ -16,7 +16,7 @@ var okay := true
 var checks := 0
 var scratch := ""
 
-const DEFAULTS := {"orbit_left": KEY_Q, "orbit_right": KEY_E, "tilt_up": KEY_R, "tilt_down": KEY_F, "pan_forward": KEY_W, "pan_back": KEY_S, "pan_left": KEY_A, "pan_right": KEY_D,
+const DEFAULTS := {"build_house":KEY_H,"build_road":KEY_B,"build_roadblock":KEY_G,"layers":KEY_L,"jobs":KEY_J,"orbit_left": KEY_Q, "orbit_right": KEY_E, "tilt_up": KEY_R, "tilt_down": KEY_F, "pan_forward": KEY_W, "pan_back": KEY_S, "pan_left": KEY_A, "pan_right": KEY_D,
 	"camera_home": KEY_HOME, "turn_placement": KEY_T, "demolish": KEY_X, "undo": KEY_Z | KEY_MASK_CTRL, "pause": KEY_SPACE, "quick_save": KEY_F5, "quick_load": KEY_F9,
 	"world_map": KEY_F2, "army": KEY_F4, "mythology": KEY_F6, "city": KEY_F7, "mute": KEY_M, "details": KEY_F3,
 	"overlay_normal": KEY_0, "overlay_water": KEY_1, "overlay_supplies": KEY_2, "overlay_hygiene": KEY_3, "overlay_hazards": KEY_4, "overlay_appeal": KEY_5,
@@ -116,14 +116,14 @@ func run() -> void:
 	# --------------------------------------------------------------------------------------------- the rules of a key
 	var path := fresh_settings("rules.cfg")
 	check(KeyBindings.uses_player_settings() and not KeyBindings.any_custom(), "a test that points the settings at a scratch file reads them: none changed yet")
-	var result := KeyBindings.assign("orbit_left", KEY_J)
-	check(result.ok and str(result.swapped) == "" and KeyBindings.code("orbit_left") == KEY_J and KeyBindings.label("orbit_left") == "J", "a free key is assigned: Orbit left is J")
+	var result := KeyBindings.assign("orbit_left", KEY_K)
+	check(result.ok and str(result.swapped) == "" and KeyBindings.code("orbit_left") == KEY_K and KeyBindings.label("orbit_left") == "K", "a free key is assigned: Orbit left is K")
 	var held := InputMap.action_get_events("orbit_left")
-	check(held.size() == 1 and int(held[0].physical_keycode) == KEY_J, "and the held action follows in the InputMap, no longer on Q")
-	check(int(stored(path, "keys", "orbit_left")) == KEY_J and stored(path, "keys", "orbit_right") == null, "it is remembered in the settings file (only what differs from the default)")
-	result = KeyBindings.assign("orbit_right", KEY_J)
-	check(result.ok and str(result.swapped) == "orbit_left" and KeyBindings.code("orbit_right") == KEY_J and KeyBindings.code("orbit_left") == KEY_E, "a key another control has is swapped: Orbit right takes J and Orbit left gets E")
-	check(KeyBindings.owner_of(KEY_J) == "orbit_right" and KeyBindings.owner_of(KEY_E) == "orbit_left" and KeyBindings.owner_of(KEY_Q) == "", "every key still has one owner (and Q none)")
+	check(held.size() == 1 and int(held[0].physical_keycode) == KEY_K, "and the held action follows in the InputMap, no longer on Q")
+	check(int(stored(path, "keys", "orbit_left")) == KEY_K and stored(path, "keys", "orbit_right") == null, "it is remembered in the settings file (only what differs from the default)")
+	result = KeyBindings.assign("orbit_right", KEY_K)
+	check(result.ok and str(result.swapped) == "orbit_left" and KeyBindings.code("orbit_right") == KEY_K and KeyBindings.code("orbit_left") == KEY_E, "a key another control has is swapped: Orbit right takes K and Orbit left gets E")
+	check(KeyBindings.owner_of(KEY_K) == "orbit_right" and KeyBindings.owner_of(KEY_E) == "orbit_left" and KeyBindings.owner_of(KEY_Q) == "", "every key still has one owner (and Q none)")
 	var before := KeyBindings.code("pause")
 	check(KeyBindings.assign("pause", KEY_ESCAPE).reason == "reserved" and KeyBindings.assign("pause", KEY_DELETE).reason == "reserved" and KeyBindings.assign("pause", KEY_SHIFT).reason == "reserved" and KeyBindings.code("pause") == before, "Escape, Delete and a modifier alone cannot be bound")
 	check(KeyBindings.assign("pan_left", KEY_K | KEY_MASK_CTRL).reason == "modifier" and KeyBindings.assign("overlay_water", KEY_K | KEY_MASK_ALT).reason == "modifier" and KeyBindings.assign("camera_home", KEY_K | KEY_MASK_CTRL).reason == "modifier", "a held, overlay or overview key takes no Ctrl, Cmd or Alt")
@@ -131,7 +131,7 @@ func run() -> void:
 	var undo_before := KeyBindings.code("undo")
 	result = KeyBindings.assign("undo", KEY_HOME)
 	check(not result.ok and result.reason == "swap_refused" and str(result.swapped) == "camera_home" and KeyBindings.code("undo") == undo_before and KeyBindings.code("camera_home") == KEY_HOME, "a swap that the other control cannot take (Ctrl+Z for the plain Home key) is refused and nothing changes")
-	check(KeyBindings.reset("orbit_right") and KeyBindings.code("orbit_right") == KEY_E and KeyBindings.code("orbit_left") == KEY_J, "putting a control back gives the key it takes back from whoever has it: Orbit right is E again and Orbit left J")
+	check(KeyBindings.reset("orbit_right") and KeyBindings.code("orbit_right") == KEY_E and KeyBindings.code("orbit_left") == KEY_K, "putting a control back gives the key it takes back from whoever has it: Orbit right is E again and Orbit left K")
 	KeyBindings.reset_all()
 	var clean := true
 	for id in DEFAULTS:
@@ -160,6 +160,11 @@ func run() -> void:
 	damaged.save(path)
 	KeyBindings.reload()
 	check(KeyBindings.code("pause") == KEY_SPACE and KeyBindings.code("pan_left") == KEY_A and KeyBindings.code("mute") == KEY_M and KeyBindings.code("army") == KEY_B and KeyBindings.owner_of(KEY_B) == "army", "reserved keys, a modifier on a held key, a word and an unknown control are ignored; the one good entry holds")
+	check(KeyBindings.code("build_road") == 0 and KeyBindings.label("build_road") == tr("Unassigned") and KeyBindings.code("build_house") == KEY_H, "a new dock default occupied by an older custom key stays unassigned without displacing the player's binding")
+	check(not KeyBindings.matches(key_event(0), "build_road") and KeyBindings.owner_of(0).is_empty() and not KeyBindings.problem("pan_left", 0).is_empty(), "an unassigned dock key cannot fire, own the empty key or disable a held camera control")
+	KeyBindings.assign("build_road", KEY_N)
+	KeyBindings.reload()
+	check(KeyBindings.code("build_road") == KEY_N and KeyBindings.code("army") == KEY_B, "a formerly occupied dock shortcut can be rebound and restored without changing the older custom action")
 	check(Overlays.MODES.has("water") and KeyBindings.overlay_for(key_event(KEY_1)) == "water", "overlays are unaffected by the file")
 
 	# --------------------------------------------------------------------------------------- the Controls dialog
@@ -268,6 +273,21 @@ func run() -> void:
 		Input.action_release("pan_forward")
 		moved.append(orbit.target.length())
 	check(moved[0] > .1 and is_equal_approx(moved[1] / moved[0], 2.0), "panning at 200%% is twice as fast (%.2f against %.2f)" % [moved[1], moved[0]])
+	# Zoomed out, the view's centre is held toward the middle of the map; at gameplay zoom the whole map can be reached.
+	orbit.bounds = Vector2(100, 80)
+	orbit.maximum_distance = 245.0
+	orbit.distance = 33.0
+	orbit.target = Vector3(500, 0, -500)
+	orbit.clamp_target()
+	check(is_equal_approx(orbit.target.x, 100.0) and is_equal_approx(orbit.target.z, -80.0), "at play zoom the centre can reach the border (%s)" % str(orbit.target))
+	orbit.distance = 245.0
+	orbit.target = Vector3(500, 0, -500)
+	orbit.clamp_target()
+	check(is_equal_approx(orbit.target.x, 30.0) and is_equal_approx(orbit.target.z, -24.0), "at the farthest zoom it is held to the middle 30%% of the map (%s)" % str(orbit.target))
+	orbit.distance = 145.0
+	orbit.target = Vector3(500, 0, 500)
+	orbit.clamp_target()
+	check(orbit.target.x > 30.0 and orbit.target.x < 100.0 and is_equal_approx(orbit.target.x / 100.0, orbit.reach()), "in between the limit eases in (%s)" % str(orbit.target))
 	orbit.queue_free()
 
 	# ------------------------------------------------------------------------------------------------------- the words
@@ -282,7 +302,7 @@ func run() -> void:
 	for line in ControlsDialog.FIXED:
 		texts.append(line[0])
 		texts.append(line[1])
-	texts.append_array(["Controls", "Game settings", "Controls…", "Game settings…", "Restore defaults", "Reset", "Press a key…", "Camera speed", "Fixed controls", "Autosave", "Off", "Every %d minutes", "Autosaves kept", "Voice language", "Same as the interface", "Fullscreen",
+	texts.append_array(["Unassigned", "Controls", "Game settings", "Controls…", "Game settings…", "Restore defaults", "Reset", "Press a key…", "Camera speed", "Fixed controls", "Autosave", "Off", "Every %d minutes", "Autosaves kept", "Voice language", "Same as the interface", "Fullscreen",
 		"Click a key to change it; Escape cancels.", "Press the new key for %s. Escape cancels.", "Nothing was changed.", "%s is now %s.", "%s is now %s. %s took %s.", "%s cannot be used for a control.", "%s takes a plain key, without Ctrl, Cmd or Alt.",
 		"%s is used for %s, which cannot take %s.", "%s is back to %s.", "All controls are back to their defaults.", "Autosaves count only while the game is running, and rotate through the slots.",
 		"Select a building to inspect  ·  %s / %s orbit  ·  %s / %s tilt", "%s / %s orbit · %s / %s tilt up / down · %s pan · Wheel zoom · Middle drag orbit / tilt · %s pauses · %s city overview · %s turns placement"])

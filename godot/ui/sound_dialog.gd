@@ -18,9 +18,14 @@ func _init() -> void:
 func _ready() -> void:
 	title = tr("Sound")
 	ok_button_text = tr("Done")
+	var scroll:=ScrollContainer.new()
+	scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.custom_minimum_size=Vector2(500,minf(400,maxf(160,get_tree().root.size.y-180)))
+	add_child(scroll)
 	var column := VBoxContainer.new()
+	column.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 10)
-	add_child(column)
+	scroll.add_child(column)
 	for row in ROWS:
 		var line := HBoxContainer.new()
 		line.add_theme_constant_override("separation", 14)
@@ -53,6 +58,12 @@ func _ready() -> void:
 	mute.button_pressed = GameAudio.muted()
 	mute.toggled.connect(func(pressed): GameAudio.set_muted(pressed))
 	column.add_child(mute)
+	var original:=CheckBox.new();original.text=tr("Original lyre score and countryside ambience")
+	original.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	original.button_pressed=GameAudio.original_soundscape
+	original.toggled.connect(GameAudio.set_original_soundscape);column.add_child(original)
+	var note:=Label.new();note.text=tr("Development soundscape. Battle music, effects and voices keep their current recordings.")
+	note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;note.theme_type_variation="Caption";column.add_child(note)
 	confirmed.connect(queue_free)
 	canceled.connect(queue_free)
 	close_requested.connect(queue_free)

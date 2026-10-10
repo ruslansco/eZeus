@@ -1,15 +1,16 @@
 {
   "asset": "walker_zeus",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_zeus.glb",
-  "bytes": 15667236,
-  "vertices": 16011,
+  "bytes": 15709008,
+  "vertices": 16035,
   "surfaces": 3,
   "source_surfaces": 18,
   "bounds_blender": [
     [
-      -0.5495598912239075,
-      -0.5735999345779419,
+      -0.5957717299461365,
+      -0.47409072518348694,
       -15.611648559570312
     ],
     [

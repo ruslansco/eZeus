@@ -1244,12 +1244,36 @@ bool eBoardCity::supportsBuilding(const eBuildingMode mode) const {
 bool eBoardCity::availableBuilding(const eBuildingType type,
                                    const int id) const {
     switch(type) {
+    case eBuildingType::gymnasium: case eBuildingType::podium:
+    case eBuildingType::dramaSchool: case eBuildingType::theater:
+    case eBuildingType::college: case eBuildingType::stadium:
+        if(mAtlantean) return false;
+        break;
+    case eBuildingType::bibliotheke: case eBuildingType::observatory:
+    case eBuildingType::university: case eBuildingType::laboratory:
+    case eBuildingType::inventorsWorkshop: case eBuildingType::museum:
+        if(!mAtlantean) return false;
+        break;
+    case eBuildingType::foodVendor: case eBuildingType::fleeceVendor:
+    case eBuildingType::oilVendor: case eBuildingType::wineVendor:
+    case eBuildingType::armsVendor:
+        if(!mAvailableBuildings.available(eBuildingType::commonAgora) &&
+           !mAvailableBuildings.available(eBuildingType::grandAgora)) return false;
+        break;
+    case eBuildingType::pier:
+        if(!mAvailableBuildings.available(eBuildingType::tradePost)) return false;
+        break;
     case eBuildingType::chariotVendor:
     case eBuildingType::chariotFactory: {
         if(!mAtlantean) return false;
+        if(type == eBuildingType::chariotVendor &&
+           !mAvailableBuildings.available(eBuildingType::commonAgora) &&
+           !mAvailableBuildings.available(eBuildingType::grandAgora)) return false;
     } break;
     case eBuildingType::horseTrainer: {
         if(mAtlantean) return false;
+        if(!mAvailableBuildings.available(eBuildingType::commonAgora) &&
+           !mAvailableBuildings.available(eBuildingType::grandAgora)) return false;
     } break;
     default:
         break;

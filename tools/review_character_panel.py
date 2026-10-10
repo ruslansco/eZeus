@@ -18,11 +18,12 @@ engine_log = REPO / ('godot/captures/character-' + suffix + '-engine.log')
 command = [str(GODOT), '--path', str(REPO / 'godot'),
            '--script', 'res://scripts/review_character_panel.gd',
            '--log-file', str(engine_log),
-           '--', '--lang=' + args.lang, '--silent']
+           '--', '--skip-start', '--lang=' + args.lang, '--silent']
 try:
     with tempfile.TemporaryDirectory(prefix='ezeus-character-review-') as directory:
         environment = os.environ.copy()
         environment['EZEUS_REVIEW_SETTINGS_PATH'] = str(Path(directory) / 'settings.cfg')
+        environment['EZEUS_REVIEW_SAVE_DIRECTORY'] = str(Path(directory) / 'saves')
         result = subprocess.run(command, cwd=REPO, timeout=180, env=environment)
 finally:
     changed = [str(path) for path in protected if before[path] != fingerprint(path)]

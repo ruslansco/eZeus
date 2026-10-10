@@ -1,19 +1,20 @@
 {
   "asset": "walker_scholar",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_scholar.glb",
-  "bytes": 5305096,
-  "vertices": 15992,
+  "bytes": 6851440,
+  "vertices": 16001,
   "surfaces": 3,
   "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.1775544434785843,
-      -0.18446612358093262,
+      -0.1924688220024109,
+      -0.1652245819568634,
       0.0004999544471502304
     ],
     [
-      0.19140882790088654,
+      0.2074848860502243,
       0.2549999952316284,
       0.8492646813392639
     ]
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.48,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 206961980,
           "skin": [
             0.61,
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 129,
+    "targets_after": 85,
     "uv_attributes_removed": 0
   }
 }

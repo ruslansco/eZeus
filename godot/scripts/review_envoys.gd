@@ -12,8 +12,9 @@ func check(value: bool, description: String) -> void:
 func frames(n := 8) -> void:
 	for i in n: await process_frame
 func capture(label: String) -> void:
+	DisplayServer.window_move_to_foreground()
 	await frames(12)
-	await RenderingServer.frame_post_draw
+	RenderingServer.force_draw(true, .016)
 	root.get_texture().get_image().save_png("res://captures/envoy-"+label+"-"+city.language+".png")
 func run() -> void:
 	city=load("res://main.tscn").instantiate();root.add_child(city)
@@ -46,8 +47,8 @@ func run() -> void:
 		for scale in [Vector2i(100,100),Vector2i(125,130)]:
 			root.get_node("UiAccess").apply(scale.x,scale.y);await frames(18)
 			var rect: Rect2=city.hud.events_box.get_global_rect()
-			check(rect.position.x < city.hud.size.x*.35,"card is left aligned "+str(window_size)+str(scale))
-			check(rect.position.y>=0 and rect.end.y<=city.hud.get_node("%TimeGroup").position.y,"card stays above time controls "+str(window_size)+str(scale))
+			check(rect.get_center().distance_to(city.hud.get_global_rect().get_center())<2,"card is centered "+str(window_size)+str(scale))
+			check(city.hud.get_global_rect().encloses(rect),"card stays within the viewport "+str(window_size)+str(scale))
 			var actions: Rect2=city.hud.get_node("%EventActionScroll").get_global_rect()
 			check(rect.encloses(actions) and actions.size.y>0,"actions remain in bounded card "+str(window_size)+str(scale))
 			await capture(str(window_size.x)+"-"+str(scale.x))
@@ -57,9 +58,10 @@ func run() -> void:
 	check(city.hud.get_node("%EventScroll").get_v_scroll_bar().max_value>city.hud.get_node("%EventScroll").size.y,"long correspondence scrolls separately from actions")
 	var choices: Array=city.hud.get_node("%EventActions").get_children()
 	city.core.commands.clear();choices[0].pressed.emit()
-	check(city.core.commands.size()==1 and city.core.commands[0]=="event %d %d" % [event.id,event.actions[0].choice],"button queues the exact native callback")
+	var choice: int = choices[0].get_meta("choice")
+	check(city.core.commands.size()==1 and city.core.commands[0]=="event %d %d" % [event.id,choice],"button queues the exact native callback")
 	city.core.commands.clear()
-	var answer: Dictionary=core.command("event %d %d" % [event.id,event.actions[0].choice])
+	var answer: Dictionary=core.command("event %d %d" % [event.id,choice])
 	check(not answer.has("error") and not answer.blocked,"explicit native action releases the request block")
 	print("ENVOY_REVIEW ","PASS" if okay else "FAIL"," checks=",checks," world_cities=",world.cities.size())
 	quit(0 if okay else 1)

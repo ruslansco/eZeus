@@ -64,7 +64,11 @@ std::string eSaveInfo::sAgo(const std::time_t t) {
 std::string eSaveInfo::sStamp(const std::time_t t) {
     char buf[32];
     std::tm tm{};
-    localtime_r(&t, &tm);
+#ifdef _WIN32
+    if(localtime_s(&tm, &t) != 0) return "";
+#else
+    if(!localtime_r(&t, &tm)) return "";
+#endif
     std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M", &tm);
     return buf;
 }

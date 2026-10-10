@@ -27,6 +27,21 @@ var records: Dictionary = {}
 var meshes: Dictionary = {}
 var materials: Dictionary = {}
 var rebuilds := 0
+var neighbor_radius := 1
+var detail_range := 1.0
+
+func set_detail_range(value: float) -> void:
+	detail_range = clampf(value, .5, 1.5)
+	for kind in ["grass", "shrub"]:
+		materials[kind].set_shader_parameter("fade_start", (42.0 if kind == "grass" else 65.0)*detail_range)
+		materials[kind].set_shader_parameter("fade_end", (62.0 if kind == "grass" else 95.0)*detail_range)
+	for section in sections.values():
+		for batch in section.get_children(): apply_detail_range(batch)
+
+func apply_detail_range(batch: MultiMeshInstance3D) -> void:
+	var kind: String = batch.get_meta("kind", "")
+	if kind in ["grass", "shrub"]:
+		batch.visibility_range_end = (62.0 if kind == "grass" else 95.0)*detail_range+SECTION
 
 func _init() -> void:
 	for kind in ROCK_LOOKS:
@@ -148,8 +163,8 @@ func update(source: Dictionary, map_origin: Vector2i, map_extent: Vector2i, surf
 			dirty[section_key(cell)] = true
 		else:
 			# Neighbor forest edges, clearance buffers and shared height corners change too.
-			for y in range(-1,2):
-				for x in range(-1,2):
+			for y in range(-neighbor_radius,neighbor_radius+1):
+				for x in range(-neighbor_radius,neighbor_radius+1):
 					var neighbor := cell+Vector2i(x,y)
 					if tiles.has(neighbor):
 						dirty[section_key(neighbor)] = true
@@ -204,6 +219,7 @@ func rebuild(key: Vector2i) -> void:
 			instances.visibility_range_end = (62.0 if kind == "grass" else 95.0)+SECTION
 			instances.visibility_range_end_margin = 4.0
 		node.add_child(instances)
+		apply_detail_range(instances)
 
 func summary() -> Dictionary:
 	var result := {"sections":sections.size(),"batches":0,"instances":0,"vertices_per_mesh":{},"counts":{}}

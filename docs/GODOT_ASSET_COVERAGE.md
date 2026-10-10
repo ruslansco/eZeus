@@ -1,5 +1,29 @@
 # Saved-city model coverage — 30 September 2026
 
+## Construction proportions and base contact — 7 October 2026
+
+Compatible opaque palette sanctuary/pyramid parts now reveal upward at full
+proportions from native `grow`, with batched per-instance cutoff values. Their
+original meshes/UVs/LODs/colours/metal remain. Unsupported PBR/VAT parts keep their
+prior path; foundation-only slabs stay native. Timber scaffolding follows the
+current height and is removed on completion. Small adaptive limestone skirts
+close exposed land gaps without moving native foundations or occupying roads,
+water or missing tiles. All details are presentation-only, with unchanged native
+progress, delivery/work and ordinary instant-placement timing. See
+`GODOT_CITY_CLARITY.md` and current validation; new construction worker/material
+pile art, full state coverage and painted materials remain pending.
+
+Common housing follow-up (6 October 2026): the seven active
+`common_house_<0-6>a` models now use the Godot-only housing adapter with new first
+two levels, neutral soil yards and monotonically increasing architectural height.
+Native 2×2 footprints, resident dimensions and level selection are retained.
+Both UVs, vertex palettes, reduced imported LODs and per-asset budgets are gated;
+only these seven geometry-baseline entries changed. Native sprite sources,
+unused b variants and elite models stay intact. Read
+[the housing art contract](GODOT_HOUSING_ART.md) and current validation evidence
+before background export. Full material baking, source rights evidence and
+minimum-Mac profiling remain pending.
+
 The dark footprint squares and moving gold dots were conversion placeholders.
 The embedded presentation now maps every initially visible object in the designated
 `CLAUDE-TESTING-ADVENTURE.ez` city to its own source geometry, or an explicitly

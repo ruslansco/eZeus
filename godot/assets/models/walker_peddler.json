@@ -1,21 +1,22 @@
 {
   "asset": "walker_peddler",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_peddler.glb",
-  "bytes": 5325660,
-  "vertices": 16027,
+  "bytes": 6517444,
+  "vertices": 16058,
   "surfaces": 3,
-  "source_surfaces": 25,
+  "source_surfaces": 40,
   "bounds_blender": [
     [
-      -0.19499999284744263,
-      -0.1879691630601883,
-      -0.0002015990176005289
+      -0.3029065430164337,
+      -0.1602245569229126,
+      -0.006553112529218197
     ],
     [
-      0.19499999284744263,
-      0.7300093173980713,
-      0.8682909607887268
+      0.30235230922698975,
+      1.173964500427246,
+      0.8792492151260376
     ]
   ],
   "walk_samples": 24,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 120820621,
           "skin": [
             0.58,
@@ -63,9 +64,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "8b0781c0ebfd749e356667d66d2e7cb6a5aa456e1f2685f1a0ab49e18ed5fa61",
         "clavi_srgb": [
+          0.18,
           0.3,
-          0.24,
-          0.48
+          0.56
         ]
       }
     ],
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 72,
+    "targets_before": 129,
+    "targets_after": 96,
     "uv_attributes_removed": 0
   }
 }

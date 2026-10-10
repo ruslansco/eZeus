@@ -1,0 +1,280 @@
+{
+  "id": "stonewatch_chapters",
+  "development_name": "Stonewatch Chapters",
+  "workspace_slug": "stonewatch",
+  "source_working_copy": "one-against-the-world",
+  "profile_namespace": "chapters",
+  "version": 1,
+  "source_record": "heavengames-adventure-514",
+  "rights_status": "needs_evidence",
+  "ships_in_release": false,
+  "target_minutes": [
+    45,
+    90
+  ],
+  "start_year": -1160,
+  "initial_funds": 36000,
+  "difficulty": 1,
+  "start_focus": [
+    125,
+    15
+  ],
+  "partner_index": 5,
+  "rival_index": 8,
+  "rival_name": "Red Banner League",
+  "review_script": "review_stonewatch.gd",
+  "playthrough_script": "playthrough_stonewatch.gd",
+  "markers": [
+    {
+      "tool": "land_invasion",
+      "id": 7,
+      "x": 150,
+      "y": 15
+    },
+    {
+      "tool": "monster_point",
+      "id": 99,
+      "x": 153,
+      "y": 24
+    }
+  ],
+  "trade": {
+    "buys": {
+      "8192": 96
+    },
+    "sells": {
+      "64": 72,
+      "1024": 32,
+      "2048": 32,
+      "4096": 48,
+      "32768": 64,
+      "65536": 32
+    }
+  },
+  "chapters": [
+    {
+      "id": "refuge",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "wheatFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 240
+        },
+        {
+          "type": 12,
+          "enum1": 8192,
+          "count": 24
+        },
+        {
+          "type": 11,
+          "count": 1,
+          "working_route": 1
+        }
+      ]
+    },
+    {
+      "id": "defense",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "wheatFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "palace",
+        "taxOffice",
+        "fleeceVendor",
+        "hospital",
+        "bibliotheke",
+        "park",
+        "flowerGarden",
+        "bench",
+        "wall",
+        "tower",
+        "gatehouse"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 600
+        },
+        {
+          "type": 3,
+          "enum1": 2,
+          "count": 24
+        },
+        {
+          "type": 9,
+          "count": 1,
+          "enum1": 2,
+          "enum2": 6
+        }
+      ],
+      "events": [
+        {
+          "type": 5,
+          "target": "rival",
+          "fields": {
+            "point_min": 7,
+            "point_max": 7,
+            "count_min": 12,
+            "count_max": 12,
+            "hardcoded": 0,
+            "years_min": 1,
+            "years_max": 1,
+            "months": 0,
+            "days": 0,
+            "warning": 6,
+            "repeat": 1,
+            "complete": 0,
+            "city_min": 8,
+            "city_max": 8
+          }
+        }
+      ]
+    },
+    {
+      "id": "myth",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "wheatFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "palace",
+        "taxOffice",
+        "fleeceVendor",
+        "hospital",
+        "bibliotheke",
+        "park",
+        "flowerGarden",
+        "bench",
+        "wall",
+        "tower",
+        "gatehouse",
+        "wineVendor",
+        "oilVendor",
+        "observatory",
+        "grandAgora",
+        "eliteHousing",
+        "armsVendor"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 600
+        },
+        {
+          "type": 5,
+          "enum1": 12,
+          "count": 1
+        },
+        {
+          "type": 1,
+          "count": 5000
+        },
+        {
+          "type": 9,
+          "count": 0,
+          "enum1": 2,
+          "enum2": 10
+        }
+      ],
+      "events": [
+        {
+          "type": 3,
+          "fields": {
+            "point_min": 99,
+            "point_max": 99,
+            "monster0": 12,
+            "monster1": -1,
+            "monster2": -1,
+            "aggressive": 0,
+            "years_min": 0,
+            "years_max": 0,
+            "months": 8,
+            "days": 0,
+            "warning": 3,
+            "repeat": 1,
+            "complete": 0
+          }
+        }
+      ]
+    }
+  ],
+  "text": {
+    "en": {
+      "parent_name": "Stonewatch",
+      "partner_name": "Lantern Reach",
+      "leader": "Watch Council",
+      "Adventure_Title": "Stonewatch",
+      "Adventure_Introduction": "A forest frontier needs more than walls. Feed a new refuge, support its defenders and prepare for a creature that an army cannot solve alone. Three chapters on one retained city: settlement, defense and a hero's trial.",
+      "Adventure_Complete": "The watch has become a home. Its soldiers are supported by a working town, its trade carries more than timber, and Theseus has ended the Minotaur's threat. Stonewatch's gates remain open to travelers, guarded by people who have something worth defending.",
+      "Parent_Episode_1_Title": "A Refuge in the Forest",
+      "Parent_Episode_1_Introduction": "The council has chosen a forest clearing between the waterways. Clear only the land you need and leave forest within reach of timber mills. There is little farmland and no local metal industry: a staffed pier and shore storehouse will matter as much as a granary.@PConnect houses, fountains and maintenance to the road. Lantern Reach uses sea trade: find a native-valid pier site and connect its shore storehouse to the town. Lantern Reach buys timber and sells wheat, fleece and the later supplies for our defenses. Enable timber exports with a positive stock limit, such as 32. Enable wheat imports and add a food stall to the common market. Farms on the distant meadow or fisheries can reduce dependence on imports, but no food-production quota is required here.@PEstablish 240 residents, produce 24 timber in a year and operate a staffed, road-connected export route. Keep workshops away from the houses you will later improve.",
+      "Parent_Episode_1_Complete": "The first refuge is supplied. Timber pays for food, workers maintain the streets, and the settlement has room to grow. The council can now ask people to defend it, because there is a town behind the watch.",
+      "Parent_Episode_2_Title": "The Watch Takes Its Post",
+      "Parent_Episode_2_Introduction": "Build a palace and supply common housing with food and imported fleece. In this Atlantean settlement, Hovel or better provides archers. The military objective counts these regular defenders; a palace is required for their companies. A bibliotheke sends science walkers that help housing reach Hovel; keep their routes short. Grow to 600 residents and support at least 24 archers.@PWalls, gates and towers are now available. Give towers employees and roads, and keep maintenance patrols on the fortified streets. Use a gatehouse where a road crosses the wall so carts and residents can pass. Place the companies' banners near the approach and call them out from the Army panel when needed. Send them home after the attack: prolonged military service limits immigration.@PThe Red Banner League will send 12 soldiers one year into this chapter. Its native invasion notice offers its own choices: fight, pay or surrender. No choice is made for you. The chapter lasts at least eighteen months so the city must live through the threat. Defense is only sustainable while food, clothing and timber trade keep working.",
+      "Parent_Episode_2_Complete": "The watch is supported and the city has endured its first military threat. Keep its gates, staffing and supply lines working. The last trial will test something stone and arrows cannot provide on their own.",
+      "Parent_Episode_3_Title": "Theseus at the Gate",
+      "Parent_Episode_3_Introduction": "Eight months from now, a Minotaur will appear near the eastern forest. Its arrival unlocks Theseus's hall. Ordinary troops cannot replace the hero in this objective; Theseus must reach and slay the creature.@PPrepare the supplies before it arrives: 32 marble and 16 wine in city storage. Keep warehouse space reserved for them and set positive import limits at Lantern Reach. Theseus's hall must be near the palace, in a very attractive setting, and enclosed by continuous walls and gatehouses. Leave space beside the palace for the four-by-four hall; gaps in the wall do not satisfy it. Repair walls damaged in the invasion before testing the enclosure. Gardens raise appeal, while noisy industry lowers it. Stop marble and wine imports once the hall has enough; stock limits at the pier apply to its bays, not to the whole city.@PWhen the hall becomes available, build it and inspect its five native requirements. Once all are met, press Summon. Theseus arrives and seeks the Minotaur through the city's normal paths; keep the gates accessible. Retain 600 residents and at least 5,000 treasury while the trial unfolds. The chapter remains open for at least ten months.",
+      "Parent_Episode_3_Complete": "Theseus has ended the Minotaur's threat. The reserve paid for help without emptying the town, and its households still support the watch. Stonewatch has earned a future beyond the next alarm."
+    },
+    "ru": {
+      "parent_name": "Каменный дозор",
+      "partner_name": "Фонарная гавань",
+      "leader": "Совет дозора",
+      "Adventure_Title": "Каменный дозор",
+      "Adventure_Introduction": "Лесному рубежу нужны не только стены. Обеспечьте новое поселение, поддержите защитников и подготовьтесь к существу, с которым войско не справится без героя. Три главы в одном городе: поселение, оборона и испытание героя.",
+      "Adventure_Complete": "Дозор стал домом. Работоспособный город поддерживает солдат, торговля приносит необходимые товары, а Тесей победил Минотавра. Ворота открыты для путников, и их охраняют люди, которым есть что защищать.",
+      "Parent_Episode_1_Title": "Убежище среди леса",
+      "Parent_Episode_1_Introduction": "Совет выбрал лесную поляну между водными путями. Расчищайте только нужное место и сохраняйте лес рядом с лесопилками. Пашни мало, местного металла нет: причал и прибрежный склад с работниками важны не меньше амбара.@PСоедините дорогами дома, фонтаны и службу обслуживания. Фонарная гавань торгует по морю: найдите допустимое место под причал и свяжите прибрежный склад с городом. Фонарная гавань покупает древесину и продаёт пшеницу, шерсть и будущие оборонные припасы. Включите экспорт древесины с положительным пределом запаса, например 32. Включите импорт пшеницы и добавьте продовольственный прилавок на рынок. Фермы на дальнем лугу и рыболовство могут снизить зависимость от импорта, но здесь нет обязательной цели выпуска еды.@PДостигните 240 жителей, произведите 24 древесины за год и откройте действующий экспортный путь с работниками и дорогой. Мастерские размещайте подальше от жилья.",
+      "Parent_Episode_1_Complete": "Убежище снабжается. Древесина оплачивает еду, работники обслуживают улицы, а поселение может расти. Теперь совет вправе просить людей защищать город.",
+      "Parent_Episode_2_Title": "Дозор занимает пост",
+      "Parent_Episode_2_Introduction": "Постройте дворец, снабдите обычные дома едой и импортной шерстью. В атлантическом поселении лачуги и более развитые дома дают лучников. Военная цель считает этих защитников; их отрядам нужен дворец. Библиотека отправляет учёных, помогающих жилью развиться до лачуг; делайте их маршруты короткими. Достигните 600 жителей и поддерживайте не менее 24 лучников.@PТеперь доступны стены, ворота и башни. Башням нужны работники и дороги, укреплённым улицам — обслуживание. На пересечении дороги со стеной ставьте ворота, чтобы жители и повозки могли проходить. Разместите знамёна у подхода и при необходимости выводите отряды через панель армии. После нападения отправьте их домой: долгая военная служба ограничивает переселение.@PЛига красного знамени отправит 12 солдат через год после начала главы. Обычное уведомление о вторжении предложит собственные варианты: сражаться, заплатить или сдаться. Выбор остаётся за вами. Глава продлится не менее восемнадцати месяцев, чтобы город пережил угрозу. Обороне нужны работающие запасы еды, одежды и торговля древесиной.",
+      "Parent_Episode_2_Complete": "Город поддерживает дозор и пережил первую военную угрозу. Сохраняйте ворота, работников и снабжение. Последнее испытание потребует того, чего одни стены и стрелы дать не могут.",
+      "Parent_Episode_3_Title": "Тесей у ворот",
+      "Parent_Episode_3_Introduction": "Через восемь месяцев у восточного леса появится Минотавр. Его прибытие откроет зал Тесея. Для этой цели войско не заменяет героя: Тесей должен добраться до чудовища и победить его.@PЗаранее накопите в городских складах 32 мрамора и 16 вина. Выделите под них складские места и задайте положительные пределы импорта в Фонарной гавани. Зал Тесея должен быть рядом с дворцом, в очень привлекательном месте и внутри непрерывного ограждения из стен и ворот. Оставьте возле дворца место под зал четыре на четыре; разрывы в стене не подходят. Перед проверкой ограждения восстановите стены, повреждённые вторжением. Сады повышают привлекательность, промышленность её снижает. Когда припасов хватит, отключите импорт мрамора и вина: пределы причала относятся к его ячейкам, а не ко всему городу.@PКогда зал станет доступен, постройте его и проверьте пять обычных требований в карточке. После их выполнения нажмите «Призвать». Тесей прибудет и пойдёт к Минотавру по обычным путям города: ворота должны быть доступны. Сохраните 600 жителей и не менее 5 000 в казне. Глава продлится не менее десяти месяцев.",
+      "Parent_Episode_3_Complete": "Тесей победил Минотавра. Запас оплатил помощь, не опустошив город, а жители по-прежнему поддерживают дозор. У Каменного дозора появилось будущее за пределами следующей тревоги."
+    }
+  },
+  "rival_leader": "Marshal Doreon"
+}

@@ -37,14 +37,15 @@ func run(city: Node3D) -> bool:
 			var row: Dictionary = panel.rows[resource]
 			okay = city.check(row.order.get_item_text(2) == city.tr("Get"), kind + " orders use presentation language") and okay
 			row.order.select(2)
+			row.order.item_selected.emit(2)
 			row.limit.value = 0
-			panel.mark_dirty(resource)
+			panel.settle(resource)
+			okay = city.check(row.dirty and panel.commit_at.has("s|%d" % resource), kind + " an edit is a draft that sends itself, with no Apply") and okay
 			var stock: int = goods.count
-			row.apply.pressed.emit()
-			await city.get_tree().create_timer(.3).timeout
+			await city.get_tree().create_timer(.5).timeout
 			city.refresh_inspection()
 			goods = panel.value.storage.resources[0]
-			okay = city.check(int(goods.order) == 2 and int(goods.limit) == 0 and int(goods.count) == stock, kind + " Apply reaches native orders without deleting stock") and okay
+			okay = city.check(int(goods.order) == 2 and int(goods.limit) == 0 and int(goods.count) == stock, kind + " the edit reaches native orders without deleting stock") and okay
 			# Refresh must preserve an unfinished edit, and typing must not rotate the camera.
 			row = panel.rows[resource]
 			row.limit.value = 4
@@ -53,22 +54,25 @@ func run(city: Node3D) -> bool:
 			var yaw: float = city.orbit.yaw
 			city.orbit.enabled = true
 			Input.action_press("orbit_right")
-			await city.get_tree().create_timer(.65).timeout
+			await city.get_tree().create_timer(.4).timeout
 			Input.action_release("orbit_right")
 			city.orbit.enabled = false
 			okay = city.check(is_equal_approx(city.orbit.yaw, yaw) and int(row.limit.value) == 4 and int(panel.value.storage.resources[0].limit) == 0, kind + " live refresh preserves drafts and camera stays still while editing") and okay
 			input.release_focus()
+			# Hold the draft back so the next steps do not race its settle time.
+			panel.commit_at["s|%d" % resource] = Time.get_ticks_msec() + 600000
 			panel.command_done("storage 0 0 999999 64 0 0", true)
 			okay = city.check(row.dirty, kind + " stale completion cannot erase the current draft") and okay
 			for queued in range(16):
 				city.core.commands.append("snapshot")
-			row.apply.pressed.emit()
-			okay = city.check(not panel.pending and row.dirty, kind + " full command queue leaves the draft editable") and okay
+			panel.settle(resource)
+			await city.get_tree().create_timer(.15).timeout
+			okay = city.check(not panel.pending and row.dirty and panel.commit_at.has("s|%d" % resource), kind + " full command queue leaves the draft and sends it again later") and okay
 			city.core.commands.clear()
-			row.apply.pressed.emit()
-			await city.get_tree().create_timer(.2).timeout
+			panel.settle(resource)
+			await city.get_tree().create_timer(.6).timeout
 			city.refresh_inspection()
-			okay = city.check(int(panel.value.storage.resources[0].limit) == 4, kind + " edited stock limit commits on Apply") and okay
+			okay = city.check(int(panel.value.storage.resources[0].limit) == 4, kind + " edited stock limit commits by itself") and okay
 		else:
 			okay = city.check(panel.stock_label.text.contains(city.tr("Input:")) and panel.industry_buttons.has(2048), "production input/output and industry controls are visible") and okay
 			var initial_shutdown: bool = panel.value.production.industries[0].shut_down

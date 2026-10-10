@@ -36,15 +36,14 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
                                        {1, -1},
                                        {1, -2},
                                        {1, -3}};
-    const double e = effectiveness();
-    const int usedFields = std::clamp((int)std::round(1 + e*4), 0, 5);
+    const int fields = usedFields();
     for(int i = 0; i < 5; i++) {
         eOverlay& o = os.emplace_back();
         const auto& xxyy = xy[i];
         o.fX = xxyy.first;
         o.fY = xxyy.second;
         o.fAlignTop = true;
-        const int texId = i >= usedFields ? 0 : std::clamp(mRipe, 0, 5);
+        const int texId = i >= fields ? 0 : std::clamp(mRipe, 0, 5);
         const auto type = resourceType();
         {
             const char* crop = type == eResourceType::onions ? "onions" :
@@ -69,6 +68,16 @@ std::vector<eOverlay> eFarmBase::getOverlays(const eTileSize size) const {
         }
     }
     return os;
+}
+
+double eFarmBase::harvestProgress() const {
+    const double phase = eNumbers::sFarmRipePeriod > 0 ?
+        std::clamp(mNextRipe/eNumbers::sFarmRipePeriod, 0.0, 1.0) : 0.0;
+    return std::clamp((mRipe + phase)/5.0, 0.0, 1.0);
+}
+
+int eFarmBase::usedFields() const {
+    return std::clamp(int(std::round(1 + effectiveness()*4)), 0, 5);
 }
 
 void eFarmBase::timeChanged(const int by) {

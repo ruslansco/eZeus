@@ -2,6 +2,7 @@
 """Local macOS development dependencies; never patches Homebrew's installed libraries."""
 from pathlib import Path
 import shutil
+import os
 import subprocess
 import tempfile
 
@@ -48,9 +49,28 @@ def prepare():
         run('install_name_tool','-id','@loader_path/'+target.name,target)
         redirect(target)
 
+def install_staged(source):
+    """Sign a separate inode before atomically replacing the extension path.
+
+    A live process retains its old mapped library. Do not truncate or re-sign
+    its code pages; new launches pick up the installed version.
+    """
+    with tempfile.NamedTemporaryFile(prefix='.ezeus-staged-',suffix='.dylib',dir=OUT,delete=False) as f:
+        staged = Path(f.name)
+    try:
+        shutil.copy2(source,staged)
+        run('install_name_tool','-id','@rpath/libezeus_godot.dylib',staged)
+        redirect(staged)
+        os.replace(staged,OUT/'libezeus_godot.dylib')
+        shutil.copy2(REPO/'presentation/godot/ezeus.gdextension',OUT/'ezeus.gdextension')
+    finally:
+        staged.unlink(missing_ok=True)
+
 if __name__ == '__main__':
     import sys
-    if '--finalize' in sys.argv:
+    if '--install-staged' in sys.argv:
+        install_staged(Path(sys.argv[sys.argv.index('--install-staged')+1]))
+    elif '--finalize' in sys.argv:
         redirect(OUT/'libezeus_godot.dylib')
     else:
         prepare()

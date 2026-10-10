@@ -26,6 +26,8 @@ struct eHouseCard {
     int fLevel = 0;
     int fLevels = 0;        // pips
     std::string fName;      // the level's name
+    std::string fTargetName; // the level whose needs are listed (the next one, or the current one if it slips)
+    int fTargetLevel = -1;
     int fPeople = 0;
     std::string fResidents; // "12 residents"
     int fTone = 0;          // 0 next level, 1 will decline, 2 improving or the finest

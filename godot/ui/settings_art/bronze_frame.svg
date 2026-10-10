@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+<defs>
+ <linearGradient id="blue" x2="0" y2="1"><stop stop-color="#19313e"/><stop offset="1" stop-color="#0c1b25"/></linearGradient>
+ <linearGradient id="bronze" x2="0" y2="1"><stop stop-color="#ead29b"/><stop offset=".28" stop-color="#b49051"/><stop offset=".6" stop-color="#6f502b"/><stop offset="1" stop-color="#d3b373"/></linearGradient>
+</defs>
+<rect x="1" y="1" width="638" height="358" rx="7" fill="#030b10"/>
+<rect x="5" y="5" width="630" height="350" rx="4" fill="url(#blue)" stroke="url(#bronze)" stroke-width="3"/>
+<path d="M18 58H622M18 14H622M18 346H622M14 18V342M626 18V342" fill="none" stroke="#a08551" stroke-opacity=".65"/>
+<path d="M28 31h18v14H34V37h6 M58 31h18v14H64V37h6 M566 31h-18v14h12V37h-6 M536 31h-18v14h12V37h-6" fill="none" stroke="url(#bronze)" stroke-width="2"/>
+<path d="M14 24V14H24M616 14h10v10M626 336v10H616M24 346H14V336" fill="none" stroke="#ebd29b" stroke-width="2"/>
+<path d="M26 58l4-4 4 4-4 4zM606 58l4-4 4 4-4 4zM26 342l4-4 4 4-4 4zM606 342l4-4 4 4-4 4z" fill="url(#bronze)"/>
+</svg>

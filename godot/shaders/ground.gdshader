@@ -6,6 +6,7 @@ render_mode cull_disabled;
 #include "res://shaders/map_outside.gdshaderinc"
 
 uniform sampler2D road_data : filter_linear, repeat_disable;
+#include "res://shaders/road_contour.gdshaderinc"
 uniform sampler2D ground_normal : hint_normal, filter_linear_mipmap, repeat_enable;
 uniform sampler2D mineral_data : filter_linear, repeat_disable;
 uniform sampler2D mineral_pattern : filter_linear, repeat_disable;
@@ -29,6 +30,10 @@ void fragment() {
 	float grain = texture(surface_noise, world_xz / 1.8).r;
 	float shore = coast_distance(world_xz);
 	vec3 ground = land_colour(world_xz, terrain.g);
+	// Fertile land (terrain.b): a golden hay meadow, with a ragged edge instead of the tile grid.
+	float fertile_edge = (texture(surface_noise, world_xz / 2.3 + vec2(6.4, 2.2)).r - 0.5) * 0.55
+		+ (texture(surface_noise, world_xz / 0.7 + vec2(3.8, 5.6)).r - 0.5) * 0.15;
+	ground = mix(ground, meadow_colour(world_xz), smoothstep(0.38, 0.62, terrain.b + fertile_edge));
 	vec3 sand = sand_colour(world_xz);
 	// Banks of uneven width with a ragged grass edge, instead of one even sand band.
 	float reach = 0.7 + 1.5 * texture(surface_noise, world_xz / 13.0 + vec2(4.1, 0.7)).r;
@@ -42,7 +47,7 @@ void fragment() {
 	float strata = sin(world_height*23.0 + patches*2.0) * 0.025;
 	stone += vec3(strata);
 	float steepness = 1.0-clamp(dot(normalize(NORMAL),normalize(mat3(VIEW_MATRIX)*vec3(0.0,1.0,0.0))),0.0,1.0);
-	ground = mix(ground, stone, max(terrain.b,UV2.y*smoothstep(0.02,0.22,steepness)*0.95*(1.0-hillside_finish)));
+	ground = mix(ground, stone, max(0.0,UV2.y*smoothstep(0.02,0.22,steepness)*0.95*(1.0-hillside_finish)));
 	vec3 world_point = vec3(world_xz.x, world_height, world_xz.y);
 	vec3 world_normal = normalize(mat3(INV_VIEW_MATRIX) * NORMAL);
 	// Only native blocked slopes and side faces expose rock; walkable ramps,
@@ -113,7 +118,7 @@ void fragment() {
 	// The road mask's 0.5 level is the tile edge: a straight road paves its whole tile,
 	// outer corners round off. inward = distance inside that edge, in tiles.
 	vec4 street = texture(road_data, map_uv(world_xz));
-	float road_mask = street.r;
+	float road_mask = road_contour(map_uv(world_xz), street.r);
 	float edge_width = fwidth(road_mask) * 0.75 + 0.004;
 	float road = smoothstep(0.5 - edge_width, 0.5 + edge_width, road_mask);
 	float inward = road_mask - 0.5;
@@ -145,16 +150,19 @@ void fragment() {
 	paving = mix(paving, vec3(0.62, 0.58, 0.50), kerb * (1.0 - dressed));
 	paving *= 1.0 - gutter * 0.18 * (1.0 - dressed);
 	paving = mix(paving, vec3(0.30, 0.28, 0.25), band * dressed);
-	// Medians (avenue and boulevard tiles): a planted bed inside a pale stone edging;
-	// a boulevard's bed is lusher and full of flowers.
-	float bed = smoothstep(0.62, 0.7, street.b);
-	float edging = smoothstep(0.52, 0.58, street.b) * (1.0 - bed);
+	// The native avenue median is ALSO a road. Pave it instead of drawing grass
+	// through the native walker track; trees/statues occupy separate edge pockets.
 	float boulevard = smoothstep(0.3, 0.7, street.a);
-	float flowers = smoothstep(0.76, 0.8, texture(surface_noise, world_xz / 0.35 + vec2(2.7, 5.1)).r) * mix(0.25, 1.0, boulevard);
-	vec3 planting = mix(mix(vec3(0.14, 0.18, 0.08), vec3(0.20, 0.23, 0.11), grain), mix(vec3(0.08, 0.18, 0.045), vec3(0.13, 0.24, 0.06), grain), boulevard);
-	planting = mix(planting, mix(vec3(0.75, 0.62, 0.20), vec3(0.62, 0.16, 0.12), slab_tone), flowers * 0.8);
-	paving = mix(paving, vec3(0.64, 0.61, 0.55), edging);
-	paving = mix(paving, planting, bed);
+	float promenade = smoothstep(0.3, 0.7, street.b);
+	paving = mix(paving, dressed_paving * mix(1.03,1.08,boulevard), promenade);
+	// Outline the central promenade in contrasting stone without planting over it.
+	float promenade_band = smoothstep(0.36,0.39,street.b) * (1.0-smoothstep(0.45,0.48,street.b));
+	paving = mix(paving,vec3(0.26,0.34,0.35),promenade_band*.7);
+	// Blue-grey limestone inlay with fine bronze edging along the dressed kerb.
+	float inlay = smoothstep(0.07,0.09,inward) * (1.0-smoothstep(0.105,0.125,inward)) * dressed;
+	paving = mix(paving, vec3(0.24,0.33,0.34), inlay*.72);
+	float gilt = smoothstep(0.065,0.073,inward) * (1.0-smoothstep(0.076,0.084,inward)) * dressed;
+	paving = mix(paving, vec3(0.48,0.40,0.24), gilt*.65);
 	// Pavement: a strip of small setts just outside the carriageway, where buildings step back.
 	float sidewalk = smoothstep(0.38 - edge_width, 0.38 + edge_width, road_mask) * (1.0 - road);
 	vec2 sett = fract(world_xz * 7.0);

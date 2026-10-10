@@ -1,15 +1,16 @@
 {
   "asset": "walker_hera",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hera.glb",
-  "bytes": 9908752,
-  "vertices": 15501,
+  "bytes": 9926064,
+  "vertices": 15518,
   "surfaces": 3,
   "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.5495027303695679,
-      -0.5833081603050232,
+      -0.5601091384887695,
+      -0.5340725183486938,
       0.0
     ],
     [

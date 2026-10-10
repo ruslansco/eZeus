@@ -14,6 +14,7 @@ var contracts: Dictionary = {}
 var textures: Dictionary = {}
 var variants: Dictionary = {}
 var variant_materials: Array = []
+var finish_materials: Dictionary = {}
 var reads: Dictionary = {}
 
 # Set EZEUS_NO_BAKED_POSES=1 to ignore baked poses and use the source models' blend shapes.
@@ -99,13 +100,20 @@ func variant_material(existing: ShaderMaterial, texture: ImageTexture) -> Shader
 
 func finish_material(part: MeshInstance3D, texture: ImageTexture) -> ShaderMaterial:
 	var source = part.mesh.surface_get_material(0)
+	var finish := Vector3(.85, 0.0, .5)
+	if source is BaseMaterial3D:
+		finish = Vector3(source.roughness, source.metallic, source.metallic_specular)
+	# Pose/layout are instance uniforms, so identical immutable finishes can be
+	# shared by newly spawned walkers without tying their animation together.
+	if not finish_materials.has(texture): finish_materials[texture] = {}
+	if finish_materials[texture].has(finish): return finish_materials[texture][finish]
 	var material := ShaderMaterial.new()
 	material.shader = finish_shader
 	material.set_shader_parameter("vat_poses", texture)
-	if source is BaseMaterial3D:
-		material.set_shader_parameter("roughness_value", source.roughness)
-		material.set_shader_parameter("metallic_value", source.metallic)
-		material.set_shader_parameter("specular_value", source.metallic_specular)
+	material.set_shader_parameter("roughness_value", finish.x)
+	material.set_shader_parameter("metallic_value", finish.y)
+	material.set_shader_parameter("specular_value", finish.z)
+	finish_materials[texture][finish] = material
 	return material
 
 # Prepares an instantiated runtime model and returns its animated parts as

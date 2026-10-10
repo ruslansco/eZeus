@@ -1,19 +1,20 @@
 {
   "asset": "walker_archer",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_archer.glb",
-  "bytes": 8617332,
-  "vertices": 15889,
+  "bytes": 8633480,
+  "vertices": 15917,
   "surfaces": 3,
   "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.2239569127559662,
-      -0.1851343810558319,
+      -0.17923447489738464,
       0.0004999842494726181
     ],
     [
-      0.19244550168514252,
+      0.20848581194877625,
       0.6568071842193604,
       0.906026303768158
     ]

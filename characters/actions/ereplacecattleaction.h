@@ -13,6 +13,7 @@ public:
                          eCharacter* const cc = nullptr);
 
     bool decide() override;
+    bool leadingCattle() const { return bool(mCattle); }
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;

@@ -13,6 +13,8 @@ var bounds := Vector2(18, 18)
 var maximum_distance := 65.0
 var dragging := false
 var enabled := true
+var modal_input_blocked := false
+var toolbar_input_blocked := false
 # Height of the land under a world x/z position, supplied by the city (a flat world at y = 0 until set).
 # The orbit centre follows it, and zoom is anchored on the terrain surface rather than on y = 0.
 var ground_height := Callable()
@@ -23,6 +25,16 @@ const MAP_ZOOM_SCALE := 1.05
 # Only player input is held to it (wheel, pinch, Home, a new map); reviewers and validators may still set
 # `distance` directly for close-ups.
 const MINIMUM_DISTANCE := 10.0
+# Zoomed out, the view's centre is held toward the middle of the map so the map keeps filling the screen instead of leaving
+# a view of empty land or sea past its border (this costs nothing in speed: the land outside is cheap, the city is what is
+# drawn). Up to PULL_START the whole map can be reached; at the farthest zoom the centre may only wander the middle
+# (1 - EDGE_PULL) of the way out.
+const PULL_START := 45.0
+const EDGE_PULL := .7
+const ZOOM_EASE := 18.0
+var wheel_distance := -1.0
+var wheel_screen := Vector2.ZERO
+var wheel_applied_distance := -1.0
 
 func configure_map(extent: Vector2i) -> void:
 	bounds = Vector2(extent)*.5
@@ -30,6 +42,7 @@ func configure_map(extent: Vector2i) -> void:
 	distance = clampf(distance,MINIMUM_DISTANCE,maximum_distance)
 
 func overview(extent: Vector2i) -> void:
+	cancel_wheel_zoom()
 	target = Vector3.ZERO
 	distance = clampf(maxf(extent.x,extent.y)*.95,MINIMUM_DISTANCE,maximum_distance)
 	snap_to_ground()
@@ -49,6 +62,7 @@ func refresh() -> void:
 	camera.look_at(target, Vector3.UP)
 
 func step_orbit(axis: float, dt: float) -> void:
+	if axis == 0.0: return
 	yaw = fposmod(yaw + axis * 65.0 * dt * PlaySettings.turn_scale(), 360.0)
 	refresh()
 
@@ -57,6 +71,7 @@ func adjust_pitch(degrees: float) -> void:
 	refresh()
 
 func step_tilt(axis: float, dt: float) -> void:
+	if axis == 0.0: return
 	adjust_pitch(axis * 35.0 * dt * PlaySettings.turn_scale())
 
 func pan_vector(input: Vector2) -> Vector3:
@@ -108,6 +123,40 @@ func snap_to_ground() -> void:
 	refresh()
 
 func zoom_at(screen: Vector2, factor: float) -> void:
+	cancel_wheel_zoom()
+	apply_zoom(screen, factor)
+
+# Wheel notches accumulate toward one destination instead of jumping the camera
+# once per event. Pinch/direct callers retain their precise immediate zoom.
+func request_wheel_zoom(screen: Vector2, factor: float) -> void:
+	var destination := (wheel_distance if wheel_distance > 0.0 else distance) * factor
+	if enabled and factor > 1.0 and destination > maximum_distance and world_zoom_requested.has_connections():
+		world_zoom_requested.emit()
+		if not enabled:
+			cancel_wheel_zoom()
+			return
+	wheel_distance = clampf(destination, MINIMUM_DISTANCE, maximum_distance)
+	wheel_screen = screen
+	wheel_applied_distance = distance
+
+func cancel_wheel_zoom() -> void:
+	wheel_distance = -1.0
+	wheel_applied_distance = -1.0
+
+func advance_wheel_zoom(dt: float) -> void:
+	if wheel_distance < 0.0: return
+	# A Go to/Home/reviewer camera assignment takes precedence over pending input.
+	if distance != wheel_applied_distance:
+		cancel_wheel_zoom()
+		return
+	var next := lerpf(distance, wheel_distance, 1.0 - exp(-ZOOM_EASE * dt))
+	if absf(next - wheel_distance) < .001:
+		next = wheel_distance
+	apply_zoom(wheel_screen, next / distance)
+	wheel_applied_distance = distance
+	if distance == wheel_distance: cancel_wheel_zoom()
+
+func apply_zoom(screen: Vector2, factor: float) -> void:
 	# Only an outward player zoom crossing the city limit opens the atlas.
 	# Home/configure and isolated camera users retain the bounded overview.
 	if enabled and factor > 1.0 and distance * factor > maximum_distance and world_zoom_requested.has_connections():
@@ -116,6 +165,8 @@ func zoom_at(screen: Vector2, factor: float) -> void:
 			return
 	var before = terrain_point(screen)
 	distance = clampf(distance * factor, MINIMUM_DISTANCE, maximum_distance)
+	if factor > 1.0:
+		clamp_target()
 	snap_to_ground()
 	if before != null:
 		# Slide the orbit centre over the ground until the same surface point is under the cursor.
@@ -133,18 +184,29 @@ func zoom_at(screen: Vector2, factor: float) -> void:
 			snap_to_ground()
 	refresh()
 
+# How much of the map's half-size the view's centre may reach at the current zoom (1 = to the border).
+func reach() -> float:
+	var span := maxf(maximum_distance - PULL_START, 1.0)
+	return 1.0 - EDGE_PULL * clampf((distance - PULL_START) / span, 0.0, 1.0)
+
 func clamp_target() -> void:
-	target.x = clampf(target.x, -bounds.x, bounds.x)
-	target.z = clampf(target.z, -bounds.y, bounds.y)
+	var allowed := bounds * reach()
+	target.x = clampf(target.x, -allowed.x, allowed.x)
+	target.z = clampf(target.z, -allowed.y, allowed.y)
 
 func _process(dt: float) -> void:
-	if not enabled:
+	if not enabled or modal_input_blocked or toolbar_input_blocked:
+		cancel_wheel_zoom()
 		return
 	var access:=get_tree().root.get_node_or_null("UiAccess")
-	if access!=null and access.dialog_open:return
+	if access!=null and access.dialog_open:
+		cancel_wheel_zoom()
+		return
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus is LineEdit or focus is TextEdit:
+		cancel_wheel_zoom()
 		return
+	advance_wheel_zoom(dt)
 	step_orbit(Input.get_axis("orbit_left", "orbit_right"), dt)
 	step_tilt(Input.get_axis("tilt_down", "tilt_up"), dt)
 	var move := Vector2(Input.get_axis("pan_left", "pan_right"), Input.get_axis("pan_back", "pan_forward"))
@@ -159,7 +221,7 @@ func _process(dt: float) -> void:
 		refresh()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not enabled:
+	if not enabled or modal_input_blocked or toolbar_input_blocked:
 		return
 	var access:=get_tree().root.get_node_or_null("UiAccess")
 	if access!=null and access.dialog_open:return
@@ -173,9 +235,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_MIDDLE:
 			dragging = event.pressed
 		if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			zoom_at(event.position, pow(.9, PlaySettings.zoom_scale()))
+			request_wheel_zoom(event.position, pow(.9, PlaySettings.zoom_scale()))
 		if event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			zoom_at(event.position, pow(1.1, PlaySettings.zoom_scale()))
+			request_wheel_zoom(event.position, pow(1.1, PlaySettings.zoom_scale()))
 	if event is InputEventMouseMotion and dragging:
 		yaw = fposmod(yaw - event.relative.x * .25 * PlaySettings.turn_scale(), 360.0)
 		adjust_pitch(event.relative.y * .2 * PlaySettings.turn_scale())

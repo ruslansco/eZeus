@@ -4,6 +4,9 @@ const Log = preload("res://scripts/message_log.gd")
 const URGENT := ["fire", "collapse", "godInvasion", "godMonsterUnleash", "monsterInCity", "monsterInvasion", "invasion", "invasion1", "monsterInvasion1"]
 const GROUPABLE := ["shortageWarning", "riskWarning", "employees"]
 
+static func is_warning(entry: Dictionary) -> bool:
+	return str(entry.get("kind","")) in URGENT + ["shortageWarning","riskWarning","earthquake","earthquakeGod","tidalWave","tidalWaveGod","lavaFlow","lavaFlowGod","plague","sinkLand","sinkLandGod","landSlide","areaCutOff","playerGodAttack","playerInvasion","invasionInitial","invasion24","invasion12","invasion6","monsterInvasionInitial","monsterInvasion24","monsterInvasion12","monsterInvasion6"]
+
 static func delivery(event: Dictionary) -> String:
 	if not Log.is_informational(event): return "decision"
 	var kind: String = str(event.get("kind", ""))

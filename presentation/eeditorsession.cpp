@@ -7,12 +7,14 @@
 #include <iomanip>
 #include <set>
 #include <vector>
+#include <filesystem>
 
 #include "engine/ecampaign.h"
 #include "engine/egameboard.h"
 #include "engine/eterrainedit.h"
 #include "engine/eworldboard.h"
 #include "elanguage.h"
+#include "egamedir.h"
 #include "evectorhelpers.h"
 #include "buildings/ebuilding.h"
 #include "buildings/esmallhouse.h"
@@ -196,7 +198,26 @@ const std::vector<eBuildingType>& optionalBuildings() {
         eBuildingType::foundry, eBuildingType::timberMill, eBuildingType::masonryShop, eBuildingType::refinery,
         eBuildingType::blackMarbleWorkshop, eBuildingType::winery, eBuildingType::olivePress, eBuildingType::sculptureStudio,
         eBuildingType::armory, eBuildingType::horseRanch, eBuildingType::chariotFactory, eBuildingType::triremeWharf,
-        eBuildingType::hippodromePiece};
+        eBuildingType::hippodromePiece,
+        eBuildingType::commonHouse, eBuildingType::road, eBuildingType::fountain,
+        eBuildingType::hospital, eBuildingType::maintenanceOffice, eBuildingType::watchPost,
+        eBuildingType::taxOffice, eBuildingType::palace, eBuildingType::warehouse, eBuildingType::granary,
+        eBuildingType::tradePost, eBuildingType::pier, eBuildingType::commonAgora, eBuildingType::grandAgora,
+        eBuildingType::foodVendor, eBuildingType::fleeceVendor, eBuildingType::oilVendor,
+        eBuildingType::wineVendor, eBuildingType::armsVendor, eBuildingType::horseTrainer,
+        eBuildingType::chariotVendor, eBuildingType::gymnasium, eBuildingType::podium,
+        eBuildingType::dramaSchool, eBuildingType::theater, eBuildingType::college, eBuildingType::stadium,
+        eBuildingType::bibliotheke, eBuildingType::observatory, eBuildingType::university,
+        eBuildingType::laboratory, eBuildingType::inventorsWorkshop, eBuildingType::museum,
+        eBuildingType::artisansGuild, eBuildingType::wall, eBuildingType::tower, eBuildingType::gatehouse,
+        eBuildingType::bridge, eBuildingType::park, eBuildingType::bench, eBuildingType::gazebo,
+        eBuildingType::flowerGarden, eBuildingType::hedgeMaze, eBuildingType::fishPond,
+        eBuildingType::tallObelisk, eBuildingType::shortObelisk, eBuildingType::sundial,
+        eBuildingType::topiary, eBuildingType::spring, eBuildingType::stoneCircle,
+        eBuildingType::waterPark, eBuildingType::dolphinSculpture, eBuildingType::orrery,
+        eBuildingType::shellGarden, eBuildingType::baths, eBuildingType::birdBath,
+        eBuildingType::avenue, eBuildingType::boulevard, eBuildingType::doricColumn,
+        eBuildingType::ionicColumn, eBuildingType::corinthianColumn};
     return list;
 }
 
@@ -209,7 +230,10 @@ std::vector<eField> goalFields(const eEpisodeGoal& g, eWorldBoard& world) {
     case eEpisodeGoalType::treasury:
     case eEpisodeGoalType::hippodrome:
     case eEpisodeGoalType::yearlyProfit: count(99999); break;
-    case eEpisodeGoalType::tradingPartners: count(99); break;
+    case eEpisodeGoalType::tradingPartners:
+        count(99);
+        f.push_back(boolField("working_route", eLanguage::text("working_trade_routes_option"), g.fEnumInt2 == 1));
+        break;
     case eEpisodeGoalType::sanctuary: f.push_back(choiceField("enum1", eLanguage::zeusText(44, 215), g.fEnumInt1, godOptions())); break;
     case eEpisodeGoalType::support: {
         std::vector<std::pair<int, std::string>> kinds;
@@ -400,6 +424,7 @@ bool setGoalField(eEpisodeGoal& g, const std::string& id, const int v) {
     else if(id == "enum1") g.fEnumInt1 = v;
     else if(id == "enum2") g.fEnumInt2 = v;
     else if(id == "housing") { g.fEnumInt1 = v > 6 ? 1 : 0; g.fEnumInt2 = v > 6 ? v - 7 : v; }
+    else if(id == "working_route" && g.fType == eEpisodeGoalType::tradingPartners && (v == 0 || v == 1)) g.fEnumInt2 = v;
     else return false;
     return true;
 }
@@ -546,7 +571,8 @@ std::string eEditorSession::world() {
         if(!first) o << ','; first = false;
         o << "{\"index\":" << index++ << ",\"id\":" << int(c->cityId()) << ",\"name\":" << q(c->name()) << ",\"label\":" << q(c->nameWithId())
           << ",\"type\":" << q(eWorldCity::sTypeName(c->type())) << ",\"x\":" << c->x() << ",\"y\":" << c->y() << ",\"visible\":" << (c->visible() ? "true" : "false")
-          << ",\"active\":" << (c->state() == eCityState::active ? "true" : "false") << ",\"on_board\":" << (c->isOnBoard() ? "true" : "false") << '}';
+          << ",\"active\":" << (c->state() == eCityState::active ? "true" : "false") << ",\"on_board\":" << (c->isOnBoard() ? "true" : "false")
+          << ",\"player\":" << int(world.cityIdToPlayerId(c->cityId())) << ",\"team\":" << int(world.cityIdToTeamId(c->cityId())) << '}';
     }
     o << "],\"labels\":{\"add\":" << q(eLanguage::text("add_city")) << ",\"settings\":" << q(eLanguage::text("settings")) << ",\"buys\":" << q(eLanguage::zeusText(47, 1))
       << ",\"sells\":" << q(eLanguage::zeusText(47, 2)) << "}}";
@@ -625,6 +651,20 @@ std::string eEditorSession::command(const std::string& action, std::istringstrea
         return nullptr;
     };
     if(action == "editor") return overview();
+    if(action == "editor_single_parent") {
+        // Explicit editor operation; never replaces an existing adventure.
+        std::string name; std::getline(in, name);
+        const auto start = name.find_first_not_of(' ');
+        name = start == std::string::npos ? std::string() : name.substr(start);
+        if(name.empty() || name.size() > 48 || name.find_first_of("/\\:*?\"<>|") != std::string::npos ||
+           name.front() == '.' || name.front() == ' ' || name.back() == ' ')
+            return error("invalid_name");
+        if(std::filesystem::exists(std::filesystem::path(eGameDir::adventuresDir()) / name))
+            return error("name_taken");
+        c.keepParentAsSingleEpisode(name);
+        mChanged = true;
+        return overview();
+    }
     if(action == "editor_episode") {
         std::string kind; int index; if(!episodeOf(kind, index)) return error("unknown_episode");
         return episode(kind == "c", index);
@@ -632,6 +672,14 @@ std::string eEditorSession::command(const std::string& action, std::istringstrea
     if(action == "editor_date") {
         int d, m, y; if(!(in >> d >> m >> y) || d < 1 || d > 31 || m < 0 || m > 11) return error("invalid_date");
         c.setDate(eDate(d, static_cast<eMonth>(m), y)); mChanged = true; return overview();
+    }
+    if(action == "editor_difficulty") {
+        int value;
+        if(!(in >> value) || value < 0 || value > int(eDifficulty::olympian))
+            return error("invalid_difficulty");
+        c.setDifficulty(static_cast<eDifficulty>(value));
+        mChanged = true;
+        return overview();
     }
     if(action == "editor_funds") {
         int pid, value; if(!(in >> pid >> value) || value < 0 || value > 99999) return error("invalid_funds");
@@ -799,6 +847,19 @@ std::string eEditorSession::command(const std::string& action, std::istringstrea
         w.addCity(city); w.moveCityToPlayer(cid, pid);
         city->move(x, y);
         mChanged = true; return world();
+    }
+    if(action == "editor_city_team") {
+        // Explicit content authoring: assign one off-board city an independent
+        // player/team. Foreign diplomacy alone is not a combat-team assignment.
+        int index,team;if(!(in>>index>>team) || team<0 || team>int(eTeamId::team9))return error("invalid_team");
+        auto& world=c.worldBoard();const auto& cities=world.cities();
+        if(index<0 || index>=int(cities.size()))return error("unknown_city");
+        const auto city=cities[index];
+        if(city->type()!=eCityType::foreignCity || city->isOnBoard())return error("foreign_city_required");
+        const auto player=world.firstFreePlayerId();
+        world.moveCityToPlayer(city->cityId(),player);world.setPlayerTeam(player,static_cast<eTeamId>(team));
+        city->setCapitalOf(player);mChanged=true;
+        return "{\"kind\":\"editor_city_team\",\"index\":"+std::to_string(index)+",\"player\":"+std::to_string(int(player))+",\"team\":"+std::to_string(team)+"}";
     }
     if(action == "editor_city" || action == "editor_city_move" || action == "editor_city_set" || action == "editor_city_name" || action == "editor_city_leader" || action == "editor_city_trade") {
         int index; if(!(in >> index)) return error("unknown_city");

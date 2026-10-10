@@ -10,14 +10,13 @@ signal build_hall_requested(tool_name: String)
 signal show_hall_requested(cell: Vector2i)
 signal opened
 
-var button := Button.new()
+var button := preload("res://ui/notification_button.gd").new()
 var count := 0
 var monsters: Array = []
 var list := VBoxContainer.new()
 var heading := Label.new()
 var close_button := Button.new()
 var scroll := ScrollContainer.new()
-var pulse: Tween
 
 func _init() -> void:
 	name = "MonsterCard"
@@ -26,14 +25,10 @@ func _init() -> void:
 	anchor_left = 1
 	anchor_right = 1
 	button.name = "MonsterAlert"
-	button.theme_type_variation = "RailButton"
-	button.focus_mode = Control.FOCUS_NONE
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.add_theme_color_override("font_color", Color(1.0, .55, .45))
-	button.add_theme_color_override("font_hover_color", Color(1.0, .66, .58))
-	button.add_theme_color_override("icon_normal_color", Color(1.0, .55, .45))
-	button.add_theme_color_override("icon_hover_color", Color(1.0, .66, .58))
+	button.accent = Color(1.0,.55,.45)
 	button.visible = false
+	button.toggle_mode = true
 	button.pressed.connect(func(): set_open(not visible))
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 10)
@@ -44,7 +39,7 @@ func _init() -> void:
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(heading)
 	close_button.theme_type_variation = "Quiet"
-	close_button.focus_mode = Control.FOCUS_NONE
+	close_button.focus_mode = Control.FOCUS_ALL
 	close_button.custom_minimum_size = Vector2(30, 30)
 	close_button.pressed.connect(func(): set_open(false))
 	header.add_child(close_button)
@@ -69,21 +64,18 @@ func set_count(value: int) -> void:
 	var arrived := value > count
 	count = value
 	button.visible = count > 0
-	button.text = str(count) if count > 0 else ""
+	button.set_badge(str(count) if count > 0 else "")
 	if count == 0:
 		set_open(false)
 	elif arrived:
-		if pulse != null: pulse.kill()
-		button.modulate = Color(1, 1, 1)
-		pulse = button.create_tween().set_loops(3)
-		pulse.tween_property(button, "modulate", Color(1.6, .7, .6), .35)
-		pulse.tween_property(button, "modulate", Color(1, 1, 1), .35)
+		button.highlight()
 	retranslate()
 
 func set_open(open: bool) -> void:
 	if open == visible:
 		return
 	visible = open and count > 0
+	button.set_pressed_no_signal(visible)
 	if visible:
 		opened.emit()
 
@@ -171,6 +163,7 @@ func retranslate() -> void:
 	heading.text = tr("Monsters in the city")
 	close_button.tooltip_text = tr("Close")
 	button.tooltip_text = (tr("A monster stalks the city: %s") % str(monsters[0].name)) if count == 1 and not monsters.is_empty() else tr("%d monsters stalk the city") % count
+	button.help_detail = tr("Review the threat and the hero who can defeat it.")
 	var entries := monsters
 	monsters = []
 	set_monsters(entries)

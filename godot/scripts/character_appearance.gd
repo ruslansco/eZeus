@@ -3,9 +3,22 @@ extends RefCounted
 const FINISH := preload("res://shaders/character.gdshader")
 const HadesFire := preload("res://scripts/hades_hem_fire.gd")
 const HYDRA_FINISH := preload("res://shaders/hydra.gdshader")
+const MONSTER_FINISH := preload("res://shaders/monster_reference.gdshader")
 var materials: Dictionary = {}
 
 func apply(node: Node, asset: String, contract: Dictionary) -> void:
+	if contract.get("monster", {}).get("revision", "") == "monster_reference_v1":
+		if not materials.has(asset):
+			var finish := ShaderMaterial.new()
+			finish.shader = MONSTER_FINISH
+			var family := 0.0
+			if asset in ["walker_cerberus","walker_calydonianboar","walker_sphinx","walker_chimera"]: family=1.0
+			elif asset in ["walker_dragon","walker_echidna","walker_scylla"]: family=2.0
+			elif asset=="walker_kraken": family=3.0
+			finish.set_shader_parameter("surface_family", family)
+			materials[asset] = finish
+		apply_material(node, materials[asset])
+		return
 	if asset == "walker_hydra" and contract.get("monster", {}).get("revision", "") == "hydra_reference_v1":
 		if not materials.has(asset):
 			var finish := ShaderMaterial.new()

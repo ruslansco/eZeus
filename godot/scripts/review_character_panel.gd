@@ -9,6 +9,7 @@ var audio: Node
 
 func _initialize() -> void:
 	Engine.set_meta("ezeus_settings_path", OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH"))
+	Engine.set_meta("ezeus_save_directory", OS.get_environment("EZEUS_REVIEW_SAVE_DIRECTORY"))
 	call_deferred("run")
 
 func check(value: bool, description: String) -> void:
@@ -45,6 +46,7 @@ func capture(name: String) -> void:
 # Puts the camera over a walker and returns the screen point of its middle.
 func aim(id: int) -> Vector2:
 	city.focus_walker(id)
+	city.orbit.snap_to_ground()
 	await frames(4)
 	var node: Node3D = city.walkers[id].node
 	city.walker_streets.hovered = -1
@@ -60,6 +62,12 @@ func run() -> void:
 	while city.state.is_empty() or city.frame_count < 80:
 		await process_frame
 	city.core.query("pause 1"); city.core.set_process(false); city.orbit.enabled = false
+	# Ordinary native ticks create the saved city's peddler. This disposable
+	# fixture never writes a save or changes the peddler/Agora simulation rules.
+	city.core.simulation.command("speed 0"); city.core.simulation.command("pause 0")
+	for tick in 200: city.core.simulation.advance(.05)
+	city.core.simulation.command("pause 1")
+	city.receive_state(city.core.simulation.snapshot(true))
 	city.close_inspection(); city.set_tool("select"); city.hud.close_build_tray(); city.hud.set_messages_open(false); city.hud.set_goals_expanded(false)
 	DisplayServer.window_set_size(Vector2i(1600, 1000))
 	# Automation is silent: the voice logic runs with the master bus muted.
@@ -170,6 +178,48 @@ func run() -> void:
 		await frames()
 		check(not is_instance_valid(city.character_panel), "Go to closes the window over the walker")
 		break
+	# Live peddler supplies / transport loads come from the native inspection,
+	# independent of the line and voice. No fabricated native stock or save edits.
+	var peddler := -1
+	var cart := -1
+	for id in city.walkers:
+		var stock: Dictionary = city.core.query("character_inventory %d" % id)
+		var cargo: Variant = stock.get("inventory")
+		if not cargo is Dictionary: continue
+		if cargo.kind == "agora" and peddler < 0: peddler = id
+		if cargo.kind == "cargo" and cargo.get("unit", "") == "loads" and not cargo.items.is_empty() and cart < 0: cart = id
+	check(peddler >= 0 and cart >= 0, "real peddler and loaded cart are present for inventory review")
+	for id in [peddler, cart]:
+		if id < 0: continue
+		var pointer := await aim(id)
+		await press(pointer, MOUSE_BUTTON_RIGHT)
+		panel = city.character_panel
+		check(is_instance_valid(panel) and panel.inventory.visible, "right-click inventory is visible for walker %d" % id)
+		if not is_instance_valid(panel) or not panel.info.get("inventory") is Dictionary: continue
+		var native: Dictionary = panel.info.inventory.duplicate(true)
+		if native.get("items", []).is_empty(): continue
+		var item: Dictionary = native.items[0]
+		var tile: Dictionary = panel.inventory.rows[int(item.resource)]
+		var count: String = tile.count.text
+		var words: String = panel.speech.text
+		var texture: Texture2D = panel.still.texture
+		var altered := native.duplicate(true)
+		altered.items[0].count = int(item.count) + 1
+		panel.inventory.show_inventory(altered)
+		await create_timer(1.2).timeout
+		check(tile.count.text == count and panel.speech.text == words and panel.still.texture == texture and panel.inventory.rows[int(item.resource)].tile == tile.tile,
+			"native stock refresh preserves speech, portrait and existing supply cards")
+		check(city.core.simulation.snapshot(false).paused and city.core.commands_held, "inventory refresh keeps native decision pause and command hold")
+		panel.typed = panel.typing
+		await capture("peddler" if id == peddler else "cargo")
+		if id == peddler:
+			DisplayServer.window_set_size(Vector2i(1280,720)); root.get_node("UiAccess").apply(125,130)
+			await frames()
+			check(Rect2(Vector2.ZERO,city.hud.size).encloses(panel.card.get_global_rect()) and panel.content_scroll.get_global_rect().size.y > 60 and panel.card.get_global_rect().encloses(panel.close_button.get_global_rect()),
+				"peddler stock scrolls inside the card with reachable footer at 125% / 130%")
+			await capture("peddler-large")
+			root.get_node("UiAccess").apply(100,100); DisplayServer.window_set_size(Vector2i(1600,1000)); await frames()
+		panel.close_button.pressed.emit(); await frames()
 	var curator_reviewed := false
 	# The one-character realism benchmark must load only in this panel, with a private finish.
 	for id in city.walkers:
@@ -185,7 +235,7 @@ func run() -> void:
 		check(panel.viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED and not panel.holder.visible, "no 3D rendering while a portrait image is shown")
 		var cached: ShaderMaterial = city.character_appearance.materials.get("walker_curator")
 		check(cached == null or not cached.get_shader_parameter("elder_portrait"), "city material retains its ordinary finish")
-		panel.set_figure("walker_astronomer")
+		panel.set_figure("walker_homeless")
 		check(not panel.still.visible and panel.figure != null and panel.viewport.render_target_update_mode == SubViewport.UPDATE_ALWAYS, "a role without an image returns to the live 3D figure")
 		panel.set_figure("walker_curator")
 		panel.typed = panel.typing; panel.speech.visible_ratio = 1.0

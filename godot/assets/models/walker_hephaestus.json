@@ -1,14 +1,15 @@
 {
   "asset": "walker_hephaestus",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hephaestus.glb",
-  "bytes": 9374628,
-  "vertices": 15947,
+  "bytes": 9411004,
+  "vertices": 15994,
   "surfaces": 3,
   "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.5710857510566711,
+      -0.5959624648094177,
       -0.7280309200286865,
       0.0
     ],

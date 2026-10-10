@@ -1,20 +1,22 @@
 {
   "asset": "common_house_4a",
-  "source": "art/common_house_4a/build_sprites.py",
+  "variant_of": null,
+  "source": "eZeus/tools/godot_housing.py",
   "file": "common_house_4a.glb",
-  "bytes": 18817908,
-  "vertices": 92773,
+  "bytes": 6028384,
+  "vertices": 24249,
   "surfaces": 3,
+  "source_surfaces": 50,
   "bounds_blender": [
     [
-      -1.0182000398635864,
+      -1.018735647201538,
       -1.0205519199371338,
-      -0.05999999865889549
+      -0.0781463235616684
     ],
     [
-      1.0166295766830444,
-      1.0166295766830444,
-      1.3700000047683716
+      1.0163811445236206,
+      1.016798496246338,
+      1.8388457298278809
     ]
   ],
   "walk_samples": 0,
@@ -22,12 +24,39 @@
   "stride_tiles": null,
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
-  "source_surfaces": 50,
   "draw_batching": "vertex_palette_compatible_PBR",
-  "memory_optimization": {
-    "version": 1,
-    "targets_before": 0,
-    "targets_after": 0,
-    "uv_attributes_removed": 0
+  "idle_mode": null,
+  "housing": {
+    "revision": 1,
+    "source": "eZeus/tools/godot_housing.py",
+    "native_footprint": [
+      2,
+      2
+    ],
+    "architecture_heights": [
+      0.96,
+      1.16,
+      1.36,
+      1.58,
+      1.84,
+      2.18,
+      2.56
+    ],
+    "vertex_budget": 24000,
+    "design": "Original starter wattle-and-daub cottage, improved mud-brick dwelling, then retained Greek courtyard and upper-storey architecture; muted soil, limestone and reed materials",
+    "rights_status": "needs_evidence",
+    "resident_heights_before": [
+      0.8630382027477026
+    ],
+    "resident_heights_after": [
+      0.8630382996052504
+    ],
+    "measured_architecture_height": 1.8400001525878906,
+    "level": 4,
+    "architecture_height": 1.84,
+    "resident_dimensions": "preserved; floor anchor follows authored architecture",
+    "native_sources": "art/common_house/levels.py retained for levels 2-6; original starter designs for 0-1",
+    "seed": "local source seed only; no native RNG",
+    "allocation_target": 24000
   }
 }

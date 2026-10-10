@@ -1,0 +1,245 @@
+{
+  "id": "sunlit_terraces_chapters",
+  "development_name": "Sunlit Terraces Chapters",
+  "workspace_slug": "sunlit-terraces",
+  "source_working_copy": "everybody-loves-oranges",
+  "profile_namespace": "chapters",
+  "version": 1,
+  "source_record": "heavengames-adventure-828",
+  "rights_status": "needs_evidence",
+  "ships_in_release": false,
+  "target_minutes": [
+    45,
+    90
+  ],
+  "start_year": -1120,
+  "initial_funds": 36000,
+  "difficulty": 1,
+  "start_focus": [
+    100,
+    -5
+  ],
+  "partner_index": 5,
+  "review_script": "review_sunlit_terraces.gd",
+  "playthrough_script": "playthrough_sunlit_terraces.gd",
+  "trade": {
+    "buys": {
+      "128": 96,
+      "8192": 64,
+      "2048": 32,
+      "1024": 32
+    },
+    "sells": {
+      "64": 128,
+      "4096": 48
+    }
+  },
+  "chapters": [
+    {
+      "id": "first_orange_harvest",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "bridge",
+        "orangeTree",
+        "orangeTendersLodge",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 240
+        },
+        {
+          "type": 12,
+          "enum1": 128,
+          "count": 16
+        },
+        {
+          "type": 11,
+          "count": 1,
+          "working_route": 1
+        }
+      ]
+    },
+    {
+      "id": "oil_and_households",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "bridge",
+        "orangeTree",
+        "orangeTendersLodge",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "hospital",
+        "fleeceVendor",
+        "park",
+        "bench",
+        "flowerGarden",
+        "growersLodge",
+        "oliveTree",
+        "olivePress",
+        "oilVendor",
+        "gymnasium",
+        "college",
+        "podium"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 480
+        },
+        {
+          "type": 7,
+          "housing": 3,
+          "count": 64
+        },
+        {
+          "type": 12,
+          "enum1": 2048,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "id": "terrace_covenant",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "bridge",
+        "orangeTree",
+        "orangeTendersLodge",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "hospital",
+        "fleeceVendor",
+        "park",
+        "bench",
+        "flowerGarden",
+        "growersLodge",
+        "oliveTree",
+        "olivePress",
+        "oilVendor",
+        "vine",
+        "winery",
+        "wineVendor",
+        "palace",
+        "taxOffice",
+        "grandAgora",
+        "eliteHousing",
+        "wall",
+        "tower",
+        "gatehouse",
+        "gymnasium",
+        "college",
+        "podium",
+        "dramaSchool",
+        "theater",
+        "stadium"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 700
+        },
+        {
+          "type": 12,
+          "enum1": 1024,
+          "count": 8
+        },
+        {
+          "type": 8,
+          "enum1": 1024,
+          "count": 16
+        },
+        {
+          "type": 1,
+          "count": 5000
+        },
+        {
+          "type": 9,
+          "count": 0,
+          "enum1": 2,
+          "enum2": 6
+        }
+      ]
+    }
+  ],
+  "text": {
+    "en": {
+      "parent_name": "Sunlit Terraces",
+      "partner_name": "Amber Crossing",
+      "leader": "Terrace Council",
+      "Adventure_Title": "Sunlit Terraces",
+      "Adventure_Introduction": "@PAbove a dry valley, narrow green terraces can support a different kind of wealth. Establish a town below the hills, tend orange orchards, press olive oil and prepare a shared wine reserve. Three chapters; one growing city.",
+      "Adventure_Complete": "@PThe terraces belong to a living town. Fruit pays for the grain and clothing the valley needs; olive presses and wine cellars give the harvest a second life. The reserve is held for the next difficult season, and the council has fulfilled its promise to the growers.",
+      "Parent_Episode_1_Title": "The First Orange Harvest",
+      "Parent_Episode_1_Introduction": "@PThe broad dry ground below the northern hills offers room for homes; the fertile land is on narrow terraces higher up. Build fountains, markets, storage and maintenance in the valley. Keep the scarce meadow for crops. Plant orange trees on fertile ground and put orange tenders lodges on nearby flat ground. A tree needs tending and time to mature; planting alone does not produce fruit.@PJoin the orchard district to the town with roads through the natural hillside passages. Put maintenance and storage beside the lodges so harvest carts have a destination. A granary stores oranges for food and trading-post collection; ordinary warehouses cannot hold oranges. Keep orchard granaries from filling with imported grain. Each district needs actual employees and road access.@POpen Amber Crossing from Trade. It buys oranges and timber and supplies wheat and fleece. Use its land trading post, enable wheat imports and timber exports with positive stock limits, and reserve storage bays for each. Imported grain can feed the town while trees mature; timber helps pay the bill. Enable orange exports after your first harvest. Reach 240 residents, harvest 16 oranges in a year and operate one export route.",
+      "Parent_Episode_1_Complete": "@PThe first fruit has reached the valley, and the first merchants have paid for it. The harvest now supports people beyond the orchard. The council asks us to turn that foothold into comfortable homes and a second dependable crop.",
+      "Parent_Episode_2_Title": "Oil for the Household",
+      "Parent_Episode_2_Introduction": "@POlive trees, growers lodges and olive presses are now available. Orange tenders handle oranges; ordinary growers handle olives and, later, grapes. Give the new orchards their own nearby growers and connected storage. The press consumes olives delivered from storage and produces olive oil; a tree by itself cannot satisfy the oil objective.@PLeave enough fertile land for the final vineyards. Put presses and warehouses on dry flat ground and give the remote district maintenance. Reserve warehouse bays for olives and oil instead of allowing imported fleece to occupy every bay. Amber Crossing buys oil too, but keep some for the town before selling the surplus.@PImport fleece and add a fleece stall. Food, fountains, gymnasium athletes and podium philosophy and gardens help houses reach Homestead or better. Place noisy industry away from homes to protect appeal. Reach 480 residents, house 64 people in Homesteads or better and press 8 oil in a year.",
+      "Parent_Episode_2_Complete": "@PThe grove has become a working chain: growers, carriers, presses and market stalls. Families can now build a future in the valley. One final agreement remains: make wine without sacrificing food, and put part of the harvest beyond the reach of the next trader.",
+      "Parent_Episode_3_Title": "The Shared Cellar",
+      "Parent_Episode_3_Introduction": "@PPlant vines on the fertile land you kept free and add growers lodges where needed. A winery consumes harvested grapes and produces wine. Give grapes and wine separate warehouse space, with a connected road and nearby maintenance. New vines need tending and time before they can supply a cellar.@PReach 700 residents, make 8 wine in a year and retain 5,000 in the treasury. A palace and tax collectors are now available. Keep grain imports and food distribution running as workers move into the new chain. Wine exports can help, but filling the public reserve comes first.@PUse the objectives Set aside button to commit 16 wine. Reserved wine leaves city stock and remains credited to the goal. Stop wine exports until the reserve is ready, then sell surplus if you wish. The chapter lasts at least six months, and every production goal requires a real local harvest or workshop output.",
+      "Parent_Episode_3_Complete": "@PThe shared cellar is full, the treasury remains solvent and the town has grown without consuming its future harvests. The terraces now support homes, work and a reserve for those who will arrive after us."
+    },
+    "ru": {
+      "parent_name": "Солнечные террасы",
+      "partner_name": "Янтарная переправа",
+      "leader": "Совет террас",
+      "Adventure_Title": "Солнечные террасы",
+      "Adventure_Introduction": "@PНад сухой долиной узкие зелёные террасы обещают новый достаток. Постройте город у подножия холмов, вырастите апельсины, наладьте выпуск масла и наполните общий винный погреб. Три главы; один растущий город.",
+      "Adventure_Complete": "@PТеррасы служат живому городу. Плоды оплачивают привозное зерно и одежду, прессы и винодельни дают урожаю новую жизнь. Общий запас сохранён для трудного сезона, а совет выполнил обещание садоводам.",
+      "Parent_Episode_1_Title": "Первый урожай апельсинов",
+      "Parent_Episode_1_Introduction": "@PНа просторной сухой равнине под северными холмами хватит места для домов; плодородная земля находится выше, на узких террасах. Постройте в долине фонтаны, рынки, хранилища и службы обслуживания. Берегите редкие луга для сельского хозяйства. Апельсиновые деревья сажайте на плодородной земле, а домики садоводов — на ровных участках рядом. Деревьям нужны уход и время: сама посадка ещё не даёт плодов.@PСоедините сады с городом дорогами через естественные проходы в холмах. Рядом с домиками нужны обслуживание и хранилища для тележек с урожаем. Амбар хранит апельсины для еды и торговли; обычный склад их не принимает. Не заполняйте садовый амбар привозным зерном. Каждому району нужны работники и дорожное сообщение.@PОткройте Янтарную переправу в разделе торговли. Она покупает апельсины и древесину, продаёт пшеницу и шерсть. Постройте сухопутное торговое здание, включите импорт зерна и экспорт древесины с положительными пределами запаса. Выделите каждому товару складские секции. Привозное зерно прокормит город, пока растут деревья; древесина поможет оплатить поставки. После первого урожая включите экспорт апельсинов. Достигните 240 жителей, соберите 16 апельсинов за год и откройте один действующий экспортный путь.",
+      "Parent_Episode_1_Complete": "@PПервые плоды прибыли в долину, а купцы заплатили за урожай. Сады теперь поддерживают и тех, кто живёт за их пределами. Совет просит создать удобные дома и освоить вторую надёжную культуру.",
+      "Parent_Episode_2_Title": "Масло для дома",
+      "Parent_Episode_2_Introduction": "@PОткрыты оливковые деревья, домики земледельцев и маслобойни. За апельсинами ухаживают садоводы; за оливками и будущими виноградниками — земледельцы. Новым рощам нужны работники поблизости и соединённые дорогой хранилища. Маслобойня расходует доставленные оливки и выпускает масло: одни деревья не выполнят производственную цель.@PОставьте часть плодородной земли для виноградников последней главы. Мастерские и склады размещайте на сухих ровных участках, обеспечив удалённый район обслуживанием. Выделите секции под оливки и масло, чтобы импортная шерсть не заняла весь склад. Янтарная переправа покупает масло, но сначала оставьте часть городу.@PВключите импорт шерсти и добавьте шерстяной прилавок. Еда, вода, атлеты гимназии, философы с подиума и сады помогут жилью вырасти до усадьбы или выше. Шумные мастерские держите дальше от домов, сохраняя привлекательность. Достигните 480 жителей, поселите 64 человека в усадьбах или лучшем жилье и произведите 8 масла за год.",
+      "Parent_Episode_2_Complete": "@PРоща стала рабочей цепочкой: земледельцы, носильщики, прессы и рынки. Семьи могут связать с долиной своё будущее. Осталось сделать вино, не жертвуя продовольствием, и сохранить часть урожая для всех.",
+      "Parent_Episode_3_Title": "Общий погреб",
+      "Parent_Episode_3_Introduction": "@PПосадите лозы на сохранённой плодородной земле и добавьте домики земледельцев. Винодельня перерабатывает собранный виноград в вино. Выделите отдельные складские места для винограда и вина, соедините район дорогой и обеспечьте обслуживание. Молодым лозам нужны уход и время до первого урожая.@PДостигните 700 жителей, произведите 8 вина за год и сохраните 5 000 в казне. Теперь доступны дворец и сборщики налогов. Поддерживайте импорт зерна и снабжение рынков, пока работники переходят в новую отрасль. Экспорт вина приносит доход, но общественный запас важнее.@PКнопкой в целях отложите 16 вина. Оно покинет городской запас и останется зачтённым в резерв. Остановите экспорт вина до его накопления, затем продавайте излишки по желанию. Глава продлится не менее шести месяцев. Производственные цели требуют настоящего местного урожая и выпуска мастерских.",
+      "Parent_Episode_3_Complete": "@PОбщий погреб наполнен, казна сохранила достаток, а город вырос, не пожертвовав будущими урожаями. Террасы обеспечивают жильё, работу и запас для тех, кто придёт после нас."
+    }
+  }
+}

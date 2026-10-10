@@ -1,5 +1,1129 @@
 # eZeus / Godot 3D development instructions
 
+## Menu frame hierarchy and one briefing route — 10 October 2026
+
+Keep the user's approved ornate walnut/bronze/ivory frame on full menu pages:
+landing, adventures, load, profiles, Settings hub, Extras and story. Detailed
+settings forms and compact confirmations use the quieter bronze/slate frame.
+The common palette, serif headings, predictable Back/Escape and padded text give
+these roles one coherent theme; never put dense form labels on carved borders.
+`settings_shell.install_frame` shares the compact native-window art; `menu_skin`
+keeps decorative large menu choices, clear `MenuPageChoice` secondary navigation
+and `MenuPagePrimary` compact footer actions. City Theme and all native callbacks
+remain unchanged.
+
+The duplicate Read chapter briefing button/hidden preview-story controls have
+been removed. Catalog chapter previews still show native titles and objectives;
+Start opens the normal complete story, difficulty and goals before Begin. Do not
+turn a chapter preview into a chapter-skipping command. Full prose remains paged
+on parchment only on the story screen. The older `menu_text_reader.gd` is retained
+historical source and is not linked from normal navigation. Run sequential owned
+EN/RU menu/adventure reviews and the scoped native campaign-library `--menu-only`
+review; current validation distinguishes these from broader city checks.
+
+## Tidebound Covenant fifth campaign — 10 October 2026
+
+Read `docs/TIDEBOUND_COVENANT.md` and its provenance. Recipe
+`tidebound_covenant_chapters.json` v1 adapts Nightwolf / David Masters's Tributaries
+3 parent terrain/world into three new EN/RU local-food, fleece/science/housing and
+timber-supply chapters. Keep the source map's native heights, roads and wildlife.
+The stone terrain is ordinary rock; do not invent mineral deposits. The city is
+Atlantean, with native science services. No imports, exports, trade buildings or
+automatic tribute are authored. Two explicit Set aside goals provision a future
+outpost; no playable colony handoff is added.
+
+Preserve separate pasture, distinct grazing sites, real road connections and
+dedicated timber bays in the ordinary review layout. Native animal placement can
+stack sheep on one tile; decoration can replace livestock reservations. Ordinary
+gameplay passes three chapters with 496 commands/2,410 service calls and both
+reserves. Campaign EN/RU reviews pass 52 each; five-campaign menu/save reviews
+pass 137 each; retained editor 64/embedded 101 pass. The installer owns five
+verified private exports. Protect every earlier campaign/player profile and run
+visible reviews sequentially with disposable preferences. Art capture uses a
+hash-checked owned checkpoint copy, never a live player city.
+
+Keep original archives/text/hashes, live game/Blender, C++ rules/RNG/20Hz/save
+layout, art/UV/VAT/LODs and audio intact. This remains
+needs_evidence/ships_in_release=false. Human pacing, user acceptance, platform
+testing and retained-content commercial permission/replacement remain open;
+frozen Windows kits exclude this campaign.
+
+## Stable category slots and dock label — 10 October 2026
+
+The HUD now retains all sixteen canonical category positions across maps and
+chapters. `BuildCatalog.groups()` and cards still contain only native available
+entries. Empty slots are disabled, use cached grayscale original SVGs and explain
+unavailability in EN/RU hover help; catalog refresh enables them in place. Guard
+`open_category`, close stale trays and skip disabled settlement-guide targets and
+actions. Preserve unchanged-catalog control identity and native placement rules.
+
+The center dock Label reserves translated font-measured width, cached on catalog,
+language and text-size changes and capped by remaining main-row space. Do not
+depend on an ellipsized Label's minimum size or let a sparse chapter collapse it.
+Run sequential disposable `tools/review_toolbar.py --context --lang en` / `ru`
+and retained toolbar reviews; sparse/empty/re-enabled catalogs are presentation
+fixtures only. Keep clock/map columns, shortcuts, shared Theme and saved state.
+
+## Portal follows the scenic doorway — 10 October 2026
+
+The cinematic menu uses `aegean_portal_distance.png`, a lossless linear-data
+distance mask derived from the original artwork's connected dark opening by
+`tools/calibrate_menu_portal.py`. Preserve both packed distance channels and
+disable 3D compression/mipmaps. Source-image bounds are `(1194,204,268,468)`;
+keep the portal and plate on their shared cover/crop/drift transform. The mask
+fits the perspective arch, projecting jamb stones and angled sill. The shader's
+default analytic arch remains for older procedural scenes. Source artwork and
+the historical Blender reference remain unchanged. Read current interface and
+validation evidence; run owned sequential EN/RU main-menu reviews with scratch
+profiles, preserving the live game and player files. Use `--tag portal-alignment`
+for dedicated capture/log filenames when other chats are also reviewing menus.
+
+## Greek settings submenus — 10 October 2026
+
+`ui/settings_shell.gd` decorates the six existing start-menu settings dialogs
+with a private Theme copy: original bronze/meander SVG frame, slate surfaces,
+ivory text, aligned choices and readable small controls. It is installed only by
+`menu_navigation.gd`; shared city Theme and dialog implementations stay intact.
+The Settings hub/frame hides behind an input-blocking scenic shade until all
+nested settings windows close, then restores the original category focus.
+
+Preserve native drafts, Apply/Cancel, preview/revert deadlines, key capture,
+sound/game persistence and Game's nested settings return. Use AcceptDialog's
+`buttons_min_width` / `buttons_min_height` Theme constants for footer padding:
+native layout overwrites individual footer custom minimums. Recompute from full
+translated labels after Theme or confirmation-state changes. Keep small buttons
+plain and inset from decorations; parchment remains story-only. The long key list
+retains its bounded scroll area. Run sequential disposable EN/RU main-menu reviews;
+current validation records coverage and captures.
+
+## Sunlit Terraces fourth campaign — 10 October 2026
+
+Read `docs/SUNLIT_TERRACES.md` and its provenance. Recipe
+`sunlit_terraces_chapters.json` v1 adapts Genis's Everybody loves oranges parent
+map/world into three new EN/RU orange, oil/housing and wine-reserve chapters.
+Normal New game and the separate Play launcher retain native permissions,
+same-city carry and campaign save slots. This source city is Greek: keep native
+gymnasium/college/podium culture, not Atlantean science substitutions.
+
+Raised fertile terraces and old disconnected road fragments remain. Connect
+orchards to the town explicitly. Oranges require granaries/trading posts, not
+ordinary warehouses; reserve orchard granaries against imported grain. Maintain
+separate oil/wine bays and explicit native Set aside. No colony handoff is added.
+Ordinary gameplay passes all chapters with 777 commands/4,100 calls, actual orange
+sales/grain imports, oil/wine output and the committed reserve. Authoring 9,
+visible EN/RU 52 each and retained editor 64/embedded 101 pass. Expanded four-campaign
+menu/save reviews are recorded in validation. Capture art only from owned copied
+checkpoints, using their read directory and preserving native path guards.
+
+Preserve original archives/text/hashes, earlier campaigns/player files, live
+game/Blender, art/UV/VAT/LODs and C++ rules/RNG/20Hz/save layout. Run visible reviews
+sequentially with scratch profiles. This remains needs_evidence/ships_in_release=false;
+human pacing, platform testing and commercial map/content clearance remain open.
+Frozen Windows ZIPs exclude this campaign.
+
+## Frame-safe menu reading and parchment — 10 October 2026
+
+Parchment is now limited to story briefings and the optional full chapter reader.
+The adventure-selection preview uses a dark slate `AdventurePaper` surface with
+bronze trim, ivory `AdventurePreviewText`/goal lettering and gold headings.
+Keep `AdventureBodyText` dark for story page counters; do not recolor it globally
+or reapply parchment to the preview. Native chapter/objective behavior is retained.
+
+The start-menu briefing now keeps campaign/chapter headings and the complete
+footer inside the walnut reading area, below the crest and above the carved
+lower rail. `menu_navigation.gd` owns this instance's layout through
+`episode_card.menu_layout`; ordinary city episode cards retain their layout.
+A plain bounded Control around story text prevents long prose from expanding
+the frame. Measure full prose into pages after layout settles; never truncate
+native text to force a fit.
+
+Objectives now appear together in one container, with no objective paging
+buttons or scrolling. Keep every native row and quantity. Short windows and
+larger objective lists use a grid; larger lists get a wider objective column. Catalog
+chapter selection remains a native preview, not a chapter-skipping command.
+The original generated parchment and exact prompt/hash are in
+`assets/menu/aged_parchment_v1.provenance.json`. Preserve dark ink, padded clean
+paper interiors and sepia `ParchmentPageButton` states. Story pages still have
+Previous/Next controls. Run owned sequential EN/RU adventure, campaign-library
+and main-menu reviews with disposable profiles; read current validation scope.
+
+## Compact settings-button text — 9 October 2026
+
+`ui/menu_skin.gd` now limits ornamental button textures/serif type to explicit
+large menu variations. Generic `Button` retains the shared clean surface, padding
+and sans lettering, with a menu-local 17-pixel baseline scaled only by text size.
+Do not apply the large ornamental texture to generic Button again: it crowds
+key caps, capture prompts and dialog footer labels. Shared city Theme and native
+binding/settings behavior remain unchanged. Sequential EN/RU main-menu reviews
+cover full key/footer text and enlarged labels; read current validation evidence.
+
+## Subtle menu focus and global cursors — 9 October 2026
+
+Menu keyboard focus now follows the original enamel/bronze button texture with
+gentle brightening; preserve focus feedback without restoring a rectangular gold
+outline. `scripts/game_cursor.gd` is the `GameCursor` autoload, after `UiAccess`.
+It installs 13 original bronze/blue/ivory textures for all 17 Godot cursor roles
+across menus, settings, loading and city scenes. Existing Control roles remain
+authoritative. Preserve hardware cursors, tip hotspots, transparent padding and
+interface-only sizing (48/53/60 pixels at 100/110/125%); text size alone must not
+rebuild pointers. Cache each size; no frame loop, input interception or mouse-mode
+changes. Headless prepares resources but skips hardware registration.
+
+Retain the generated atlas/prompt/provenance in `assets/cursors/`; regenerate
+only derivatives with `scripts/bake_game_cursors.gd`. Five original SVG symbols
+supply resize/help roles. Run owned sequential `tools/review_main_menu.py --lang
+en` / `ru` (58 each) and `tools/review_game_cursor.py` (44). The latter captures
+runtime-size art on light/dark surfaces; viewport captures omit OS cursor pixels.
+Keep protected saves/preferences, C++ rules/ticks/RNG and the live game/Blender.
+
+## Ornate Greek menu and fixed navigation — 9 October 2026
+
+Current menu direction supersedes the earlier projected 3D housings below.
+`ui/menu_navigation.gd` installs original generated walnut/bronze/ivory frames
+and blue enamel buttons through a menu-owned copy of the scaled shared Theme.
+These frame assets have painted depth, not separate 3D meshes. The realistic
+cinematic background and registered original portal remain. Generation prompts,
+measured dimensions and hashes are in `assets/menu/greek_menu_v3.provenance.json`.
+
+Continue (when available), New game, Load game, Settings, Extras and Quit fit the
+tall main panel without scrolling. Preserve the `MainScroll` unique reference:
+it is now a MarginContainer. Settings groups Display, Graphics, Sound, Interface,
+Controls and Game, retaining native preview/Apply/Cancel behavior. Extras holds
+the editor and Profiles; Back/Escape returns to the appropriate parent page.
+`menu_list_pager.gd` pages/searches catalogs while preserving authoritative native
+indexes and exact save paths. Never interpret a visible row as a catalog index.
+`menu_text_reader.gd` pages full chapter prose. First-episode story pagination is scoped to the start menu; objectives now
+appear together as described above. City episode cards remain unchanged.
+Keep all objectives/prose reachable, translated text/focus and reduced motion,
+native callbacks, leader/save scopes, C++ rules/RNG/timing and authored scenes.
+Run visible EN/RU menu and adventure reviews sequentially with disposable profiles;
+read current interface/validation evidence before altering navigation.
+
+## Earlier realistic cinematic main-menu background — 9 October 2026
+
+The user's realism correction supersedes the procedural Olympian scenery below.
+Normal `login_scene_3d.tscn` uses `scripts/cinematic_menu_world.gd`: generated
+1672×941 photographic Greek artwork with people, a coastal city and geologically
+detailed mountains; the original live portal shader is registered to its doorway.
+Keep artwork and portal on the same cover/crop/drift transform, calibrated in
+original image pixels. The backdrop uses two quads; the current ornate menu stage
+above replaces the earlier 3D housings. Reduced motion freezes drift/portal; native menu,
+settings and saves remain intact. Preserve the older source/bake and provenance.
+
+`assets/menu/aegean_cinematic_v2.provenance.json` records the built-in generation,
+exact saved prompt and hash. A separate packed Blender reference is
+`art/menu/cinematic/aegean-cinematic-v2.blend` in the parent workspace; recreate
+with `tools/build_cinematic_menu_reference.py` in background Blender. The backdrop
+is raster artwork, not individual editable city/person/mountain meshes. Preserve
+the live Blender document/connection. Read current interface/validation docs and
+run owned sequential EN/RU menu reviews with disposable profiles (34 each).
+
+
+## Earlier Olympian main menu (superseded) — 9 October 2026
+
+Normal start scenery is `godot/scripts/olympian_menu_world.gd`, with the prior
+portal retained through the original composer. `olympian_menu_surface.gd` creates
+camera-projected 3D page housings/button slabs under the accessible Control layer.
+Keep native callbacks, all unique controls, save/leader scopes, clipping, keyboard
+focus and independent UI/text sizing. Shared settings dialogs stay intact.
+Reduced motion freezes the camera/sea/portal. Source/retained model hashes guard
+`assets/menu/olympian_sanctuary.scn`; regenerate only this derivative with
+`bake_olympian_menu.gd`, using a writable explicit log file. Preserve original
+portal and model assets, UVs, imported LODs and both provenance catalogs.
+Read current interface/validation docs; use sequential disposable EN/RU
+`tools/review_main_menu.py` (34 each), or `--art-only` for scene captures.
+User art acceptance, minimum-machine profiling and retained-input release
+rights remain pending.
+
+
+## Healers and plague treatment — 9 October 2026
+
+`eHealer::provideToBuilding()` now retains normal hygiene provision and treats
+infected common houses through `eGameBoard::healHouse()`, including full-hygiene
+houses. Preserve native adjacent-tile reach, finite service supply, outbreak
+membership/final-outbreak cleanup, unrelated houses, infection/natural recovery
+settings and save layout. Do not fake recovery by hiding Godot aura nodes.
+Run `tools/test_plague_healer.py`, disposable sequential EN/RU
+`tools/review_plague_healing.py`, embedded and hazard gates. The patrol review
+injects only infection and uses a scratch save plus the fixture's known native
+Postpone callback. Protect the live game/Blender and install signed fresh inodes.
+
+## Stonewatch defense/hero campaign — 9 October 2026
+
+Read `docs/STONEWATCH.md` and its provenance. Recipe stonewatch_chapters.json v1
+adapts the reviewed orius One Against the World parent terrain/world into three
+new EN/RU settlement, invasion-defense and Theseus/Minotaur chapters. Normal New
+game and the separate Play Stonewatch launcher use native permission/carry/save
+flows. Preserve raw sources, First Light/Bronze/player files, live game/Blender,
+art/UV/VAT/LODs, native combat/RNG/20Hz/save layout and required callbacks.
+
+Land invasion IDs1–7 are land; higher IDs are sea. Explicitly check the exported
+attacker city fields. Editor-only editor_city_team assigns an off-board foreign
+city an independent player/team through existing serialized mappings; reject
+invalid teams/missing/player/on-board cities and all ordinary play calls. Read-only
+editor_world player/team fields provide audit evidence. Never auto-answer an
+ordinary player's invasion decision; the owned playthrough explicitly chooses Fight.
+
+Theseus's hall unlocks on monster arrival and retains native palace/appeal/walls/
+32-marble/16-wine requirements. Native import bay limits are not city-wide stock
+limits; use connected pier-side warehouses, explicit orders and deliberate import
+stopping after stocking. Ruined walls need ordinary demolition before rebuilding.
+Called companies limit immigration; stand down after battle. Profile integrity
+checks protect actual content/saves/settings while allowing active launcher logs
+to append. Installer refreshes private verified exports/index explicitly.
+
+Authoring10, visible EN/RU49 each, retained editor64/embedded101 and final ordinary
+three-chapter battle/hero completion pass (824 commands/2,150 calls, 648 residents,
+16,441 treasury). Shared EN/RU library86 each pass.
+Run visible reviews sequentially with scratch roots; sign/install on new inodes.
+All adaptations remain needs_evidence/ships_in_release=false. Human pacing/visual,
+actual Windows/clean-platform/minimum and commercial clearance remain open; frozen
+Windows ZIPs exclude Stonewatch.
+
+
+## Wheat growth and harvest readiness — 9 October 2026
+
+Read `docs/GODOT_FARM_CROPS.md`. `eFarmBase::harvestProgress()` observes saved
+`mRipe`/`mNextRipe`; `usedFields()` shares the original native overlay rule.
+Preserve harvest timing/output, staffing, shutdown, save layout and RNG. Separate
+snapshot `farm_crops` records must not dirty the cached architecture list.
+`farm_crops.gd` overlays original procedural wheat on the villa's five field
+tiles using the same foundation/facing/setback transform. Keep spatial batches,
+per-instance-only growth updates, both UV anchor sets, reduced LODs and shared
+gameplay-clock sway. Do not overwrite farm GLB/source art or other crop models.
+The EN/RU inspector shows the native readiness percentage separately from output.
+Run `validate_farm_crops.gd` and sequential disposable `tools/review_farm_crops.py`;
+use only the designated city/scratch saves and safely signed staged binaries.
+
+## Normal campaign menu and save scopes — 9 October 2026
+
+Read `docs/GODOT_CAMPAIGN_LIBRARY.md`. Normal New game features First Light/Bronze
+River/Stonewatch via verified private native installs and an explicit development index;
+prior prototype is hidden from New game but remains load-compatible. Source
+exports/profiles stay intact. Installer refuses local destination edits, stages
+copies before archiving owned installs, and publishes its index atomically.
+Refresh it explicitly after authoring. Keep installed private content ignored and
+needs_evidence/ships_in_release=false; thumbnails retain input/file provenance.
+
+SaveFiles separates new saves/retry autosaves by native campaign identity under
+each leader's .campaigns directory; lists merge owned scopes/flat files and prior
+launcher profiles without migration. Only the actual immutable probe's loaded
+episode identity selects the write scope after success. External/symlinked leader
+deletion is disabled; explicit owned deletion must handle hidden nested folders.
+Saved view takes precedence; new Begin applies the indexed authored focus.
+
+Native save_info is a capped informational prefix (1 MiB / 4 KiB identities), not
+load validation; checksum-aware hints refresh same-second protected replacements.
+Full check/probe/recovery and pause/queue restoration remain. Parent chapter
+previews are native template observations; never enable test commands in ordinary
+menus or jump chapters from the preview selector. Unowned reader cleanup must not
+clear active sound/music sinks. Preserve payload/trailer versions, RNG/rules/ticks,
+decisions, models/UVs/LODs, live game/Blender and source/profile hashes.
+
+Visible EN/RU campaign checks pass 61 each; preview regressions 256/58, editor64/
+embedded101, save transactions19/recovery36 each pass. Run visible reviews
+sequentially with scratch roots. Sign/install Mac binaries on fresh inodes. Windows
+core statically compiles; frozen Windows ZIPs do not include this integration.
+Actual platform/minimum machines, newcomers and release rights remain pending.
+
+## Bronze River campaign and bridge edge safety — 9 October 2026
+
+Read `docs/BRONZE_RIVER.md`. Recipe bronze_river_chapters.json v1 adapts the reviewed
+Armory parent terrain into three new EN/RU chapters, with native phased permissions,
+one land partner and copper/bronze/armor/import/reserve/profit progression. Use its
+separate Play launcher/profile and generic --plan wrapper; preserve First Light
+manifests/profiles, original archives/notes/hashes, live game/Blender and art/UV/LODs.
+No colony handoffs. Final Poseidon trade closure begins month 3 for 60 days; waiting
+goal remains relative six months/two days. Reserve is an explicit Set aside action.
+
+Bridge placement's four directional end checks must reject null neighbor/shore
+tiles before dereferencing. All 2,925 water previews and 120 valid sites pass; valid
+costs/geometry/rules are retained. Sign/install both Mac targets on fresh inodes.
+Latest ordinary-command run wins all chapters with actual armor sales/fleece imports,
+reserve and recovery; 567 commands, 2,660 calls, ~27.5 slowest-speed unpaused minutes
+are simulation evidence, not human pacing. Authoring 9, visible EN/RU 53 each,
+retained First Light/editor 64/embedded 101 and fresh bootstrap pass. Windows core
+compiles statically; existing Windows ZIP is frozen and excludes Bronze River.
+No commercial permissions are established; needs_evidence/ships_in_release=false
+remain. Human/Windows/minimum-platform acceptance and packaging remain open.
+
+## Three First Light chapters — 9 October 2026
+
+Read `docs/FIRST_LIGHT_CHAPTERS.md`. Active recipe is first_light_harbor_chapters.json
+v4, native identity First Light Harbor Chapters; old recipe/manifest/profile remain
+through the Previous launcher. Each parent chapter has explicit permissions and
+its own EN/RU goals/prose; same city/economy carry. Preserve ordinary permission
+records, native RNG/rules/timing/art and originals. The final native trade closure
+begins at month 3 for 90 days; its waiting goal is relative six months/two days.
+Date met() is boolean for survive/deadline (BC years are not quantities); previews
+initialize copied goals. Opt-in export routes need a positive/default stock limit,
+native staff/road/trade permission and no fire/shutdown.
+
+Normal-command playthrough wins three chapters; no injected stock/money/people/
+victory. Final-year exports 1,650/net profit 1,046. Preserve its proof/scope: ~27.5
+slowest-speed unpaused simulation minutes, not a human playtime certificate. EN/RU
+visible 38 each, unlocks 37 each, editor 64/embedded 101 pass. Updated private Windows
+Chapters kit includes current core/campaign and source/notices; actual Dell remains
+pending. Do not package research archives or player/prototype saves. Rights remain
+needs_evidence/ships_in_release=false; protect live game/Blender and sign new inodes.
+
+## Episode building gates — 9 October 2026
+
+Read `docs/GODOT_CAMPAIGN_BUILDINGS.md`. Ordinary episode permissions are stored
+in existing fPyramids keyed records with empty levels; do not assume every key is
+a wonder or change the binary layout. Absent overrides preserve legacy behavior.
+Replace ordinary overrides on episode entry, preserve built wonders/native perks,
+and use the shared supportsBuilding authority for menu/preview/all placement.
+Keep culture, market/vendor and trade/pier dependency gates and removed-tool cleanup.
+
+First Light Harbor v3 authors a complete allowed_buildings list but retains one
+chapter/seven goals pending the optional layout choice. Relaunch/new game applies
+the recipe; do not migrate/overwrite player saves silently. Preserve source art,
+RNG/economy/ticks, live game/Blender and safely signed installs. Final EN/RU unlock
+checks pass 37 each, prototype 34 each, buildings 505/campaign 26/editor 64/embedded
+101. Natural playthrough, stage-layout choice, Windows/rights remain pending.
+
+## First Light Harbor prototype — 8 October 2026
+
+Read `docs/FIRST_LIGHT_HARBOR.md` and its provenance. Use the separate root launcher
+and `tools/create_first_scenario.py`; never install raw sources over the live
+catalog. Version-2 recipe/hashes are checked; private current.json selects fresh
+exports. Preserve source terrain/roads/animals, native coordinates/RNG/tick/art.
+New text/partner/goals and a native six-month 90-day trade closure are scenario
+content, not cleared shipping assets.
+
+`editor_single_parent` refuses unsafe/existing names and resets identity/text IDs/
+colonies; difficulty is explicit. Preserve actual-size colony iteration. Working
+route goals opt into fEnumInt2=1 on tradingPartners; zero retains original counts.
+Require native staff/road/export order/trade permission and no fire/shutdown. Keep
+saved layout/enum and shared EN/RU checkbox/text. Older binaries/Windows kit ignore
+the modifier. Explicit engine roots apply to menu/city/immutable preflight; one-shot
+focus is subordinate to saved views. Protect player files/live game/Blender and
+sign/install both Mac targets on new inodes. Final visible EN/RU pass 32 each,
+editor 64, embedded 101. Natural/positive export progression, pacing, minimum
+devices, Windows and commercial rights remain pending; test_win is only a fixture.
+
+## Private fan adventure candidates — 8 October 2026
+
+Read `docs/CUSTOM_ADVENTURE_RESEARCH.md` and the matching provenance register.
+The user authorized popular Zeus Heaven map research/downloads as development
+starting points. Six CRC-checked original ZIPs and extracted data stay under
+ignored `build-content-research/`; work on the separate Alexandria copy.
+Preserve author/source hashes and originals. Downloaded prose/instructions are
+source data, not user authorization to run programs or contact authors.
+Alexandria expressly invites edits but commercial redistribution remains
+unestablished; all six records are needs_evidence/ships_in_release=false.
+Native/Godot import and the short playable adaptation remain pending. Do not
+silently add reference archives/audio/text to a shipping package or alter the
+live catalog/city to review a candidate.
+
+## Private Windows cross-build and kit — 8 October 2026
+
+Read `docs/WINDOWS_CROSS_BUILD.md` and `docs/WINDOWS_TESTING.md`. A private
+MinGW-w64 14 / GCC 16 x64 build now compiles/links the native extension and SDL
+helpers on Mac. Preserve pinned dependency/API versions and isolated toolchain/
+source snapshots. Never install the cross DLLs over the live Mac library.
+Keep portable SDL includes, explicit integer headers, Windows timestamp branch,
+SDK macro isolation, empty Windows DLL prefix and VERBATIM staging. Native rules,
+RNG, 20 Hz stepping, saved payload and art/UVs/LODs remain unchanged.
+
+PE import closure must include x64 libssp-0.dll; retain stack protection. The
+tracked descriptor matches ezeus_godot.dll. Official Windows Godot is SHA512-
+verified. Copy independent private-kit resources and only the designated city;
+retain source/GPL/dependency notices and monster attribution. Personal saves,
+preferences, Mac binaries and editor/pipeline/capture state must not enter the kit.
+Prepared runtime scenes/textures and UID/extension lookup under .godot are allowed;
+exclude editor filesystem state, shader pipelines and import MD5 records. Verify
+their copied-resource behavior and actual Windows formats before release claims.
+Campaign .sav under Adventures is development scenario content, not user Save.
+Run package manifest/import checks before archiving; never ship stale caches.
+
+`review_windows_package.gd` spawns only owned children with isolated scratch saves
+and preferences, checks protected hashes and records actual driver/size/RAM. It
+never answers native decisions; stopped max-speed/soak phases remain limited.
+Mac execution validates orchestration/assets only, not Windows. The Dell still
+must launch, run tests and return Dell-test-results.zip before any Windows or
+minimum-spec acceptance. The package is private development content; no public
+shipping or Steam upload is authorized.
+
+## Modern desktop performance and platform preparation — 8 October 2026
+
+The user chose a modern hardware floor, not reduced graphics for an old 1 GB
+card. Read `docs/GODOT_RELEASE_PERFORMANCE.md` and `docs/WINDOWS_TESTING.md`.
+Keep Balanced/High full resolution, MSAA and shadows; Balanced matches prior
+appearance. Two cascades, source models/UVs/LODs, native map/crowd/rules/RNG,
+20 Hz stepping and decisions remain. Graphics previews apply without world
+rebuild; only Apply stores the graphics section. Cancel/Escape/removal restores.
+Preserve display preview, independent UI sizes and nested menu holds.
+
+Mac uses Metal; Windows uses Direct3D 12 with Vulkan fallback. Automatic legacy
+OpenGL fallback is disabled. Low/Compatibility work was removed on user steering.
+Hardware/OS targets are provisional until actual minimum-machine launches and
+matched frame-pacing runs. Windows build scripts are prepared, not MSVC-verified.
+The installed Mac dylibs encode macOS 26 and still reference Homebrew helpers;
+do not advertise macOS 14 from current binaries or fake a lower binary version.
+
+Use sequential owned EN/RU `tools/review_graphics.py`, Escape-menu checks and
+`tools/review_release_performance.py` with scratch settings/saves. Record actual
+resolution/driver, p95/p99/hitches, RAM/VRAM and phase block limits. A window manager
+may fit the requested size; only an exact-size run qualifies that resolution.
+Never answer decisions automatically or claim a stopped soak is a long run.
+Keep source/preferences fingerprints and guard full scene save/load transitions.
+`tools/audit_platform_runtime.py` checks metadata only, not hardware acceptance.
+Build/sign/install Mac on a new inode; preserve the running game and Blender.
+The tracked `presentation/godot/ezeus.gdextension` feeds both platform helpers.
+
+## Save reliability — 8 October 2026
+
+Read `docs/GODOT_SAVE_RELIABILITY.md` and current validation. Keep native `.ez`
+payload/version compatible; the versioned checked trailer owns persistent facing,
+speed and native-coordinate camera view. Facing keys are board/city/type/seed/rect,
+not raw pointers/session IDs. Parent boards share -1; colony indices remain scoped.
+Preserve native pause-on-load and refusal to save required pending decisions.
+
+Writer stages are unique and verified/synced before replacement. Keep two checked
+previous generations, separate legacy copy and damaged evidence; refuse concurrent
+writers and retain complete interrupted stages for recovery. Do not rotate an
+unchecked legacy/damaged file over a verified backup. Bounded file readers track
+remaining bytes in memory, not by seeking per primitive. Valid empty inactive
+boards remain supported. No native rule/RNG/economy/serialization layout changes.
+
+Load preflight uses an owned headless probe over a private immutable copy, never
+the active core. Only that proven copy is handed to the next scene and cleaned.
+Failed/cancelled loads keep the live city and restore exact pause/command holds.
+Recovery is explicit; originals remain intact; never restore the old silent
+test-city fallback. Header checks alone do not prove footerless legacy content.
+Headless GLB warming is synchronous for dummy-renderer RID safety; Metal still
+uses joined threaded loading. Keep save-name UTF-8 limits and EN/RU messages.
+
+Run `tools/test_save_store.py`, sequential owned
+`tools/review_save_reliability.py --lang en` / `ru`, loading/menu reviews, retained
+saves/load/embedded/camera/translations and a designated-derived native round trip.
+Every validator must register scratch save/preferences, assert loaded snapshots
+and distinguish primary files from backup artifacts. Never use actual player
+save folders for temporary test output. Build/sign/install the extension on a
+new inode through staging, preserving the user's running library mapping.
+
+## Independent product decision — 7 October 2026
+
+The user confirmed an independently branded city-builder for the intended Steam
+release. Read `docs/RELEASE_IDENTITY.md` and `docs/PRODUCTION_ROADMAP.md`. Final
+name/price/date/platform promises remain unapproved. The user plans campaigns
+based on modifications to current maps/text/objectives and reports custom music
+implemented, with effects to follow. Preserve originals and work on copies;
+record adaptations/source inputs rather than silently marking them independent
+or cleared. New/generated/revised content needs file-level provenance and any
+necessary retained-content permission. Keep development compatibility resources
+separate from the shipping allowlist/content provider. Retain GPL/authorship and
+save identifiers; Steamworks SDK integration remains a separate unresolved review.
+This decision does not authorize deleting original files or publishing a build.
+
+## Construction reveal and foundation supports — 7 October 2026
+
+Preserve the second-pass contracts in `docs/GODOT_CITY_CLARITY.md`. Compatible
+opaque vertex-palette sanctuary/pyramid meshes use full proportions with native
+`grow` mapped to a world-height cutoff in MultiMesh custom blue/alpha. Red/green
+remain work flag/phase. Check complete template compatibility before computing
+the cached transform; retain unsupported textured/VAT and foundation-only paths.
+Timber scaffolding stays inside unfinished lots, follows actual height and leaves
+on completion. Native costs/material deliveries, work/progress/timing stay intact.
+
+Base hull/support caches follow placement, growth and surface revision. Skirts
+sample existing land only, inside lot/setback; skip roads, water, holes, starter
+earth lots, gates/water structures and drops above 0.88 tile. Keep native level
+foundation heights and dirty 32-tile grouping. No new physics/navigation or GLB
+rewrites. Construction advice uses native halted/road/needed/employee fields.
+Warning IDs and native tiles must lie in the current rendered footprint, allowing
+registered far-corner pyramid pieces without accepting stale/replaced objects.
+
+New empty-game Begin may offer the non-modal guide after loading. Finish remembers
+only a presentation preference; ?/menu retain manual access. Native smoke tests
+clear/build only in a disposable designated copy, never another personal save.
+Replay tests must register the scratch save directory and assert loaded snapshots;
+compare same-session save bytes and seeded gameplay digests, not equality of
+binary save hashes after separate loads. Retain sequential owned EN/RU clarity,
+placement, native elevation, camera, refresh, activity and translation checks.
+
+## City clarity and shared finish — 7 October 2026
+
+Read `docs/GODOT_CITY_CLARITY.md` and current validation. `city_attention` visits
+the current city's all-building list (static roads are absent from the timed
+list) without changing inspector tokens, events, RNG, native rules or time.
+Only emitted current-player targets become warnings. Check ID/footprint before
+Go to; retain editor drafts. Preserve exact native stop reasons, current-level
+housing decline versus optional upgrades and stock-pickup hints. Help polls only
+while visible, at most every five seconds with pointer reading holds; preserve
+non-modal pause/queue restoration, filters and the six explicit guide steps.
+The help card (8 October) has Issues | Guide tabs, a collapsible one-line tracker,
+and a stepper whose current step shows live native counts, Build/view actions and
+a pulsing outline on the dock button that builds it. Steps never auto-advance.
+Issues uses counted filter pills and severity cards whose overlay button carries
+`attention_item` (find it recursively). Styles are `Guide*`/`Issue*` Theme
+variations (regenerate with `build_ui_theme.gd -- --guide-only`).
+
+The cached architecture finish applies only to eligible opaque, untextured,
+non-metal vertex-palette static surfaces. Preserve both UVs/LODs, source GLBs,
+textured/VAT/emissive materials and citizen/monster adapters. Work interpolation
+is bounded between existing periodic poses and retains native flags/clock.
+Human slope support is capped root clearance, not IK; cache position/heading and
+surface revision and skip level ground, boats, gods, perches and combat. Native
+monument percentage/growth remain; do not invent ordinary construction timing.
+The original synthesized soundscape is opt-in; preserve source/output provenance
+and existing battle/voice/effect routing. Full art/audio acceptance remains open.
+
+Build the extension to staging and atomically install a newly signed inode;
+never truncate or re-sign the live game's mapped library. Run sequential owned
+EN/RU `tools/review_city_clarity.py`, status UI and Escape-menu reviews with
+disposable settings/saves, plus embedded, activity, camera and audio gates.
+
+## Building refresh performance, second pass — 7 October 2026
+
+Keep inspection records current on every changed native building list. An exact
+ordered rendering key may omit quantity/staff totals, but includes native IDs,
+assets, geometry/facing/growth, work flags/phases, occupied bay indices/goods,
+placement revision, map coordinates and overlay visibility. Explicit road,
+terrain and overlay rebuilds must bypass the unchanged-render filter.
+
+Minimap building footprints/categories repaint only when their ordered rows
+change; tile deltas retain occupied building colours until removal reveals the
+latest terrain. Agora paving persists by ID and must be removed on replacement
+as well as demolition. Reuse each fixed-template MultiMesh group on count/position
+changes; resizing invalidates cached custom data and restores every work flag.
+Unchanged activity data skips GPU writes. Default animal VAT finishes may share
+only identical pose textures and finish values; pose/layout stay per instance.
+Preserve worker clocks, UVs, materials, LODs, native rules/RNG/saves and loading
+thread joins. Run `validate_refresh_performance.gd`, camera cache, native storage
+and building activity gates, owned placement review and sequential camera review.
+The latter has a frozen pre-filter refresh baseline in `tools/profile_baselines/`
+used only in its disposable subclass; never install the benchmark in gameplay.
+See validation for paired CPU evidence and remaining frame/loading limits.
+
+## First camera performance pass — 7 October 2026
+
+Preserve the road-kind index driven by native tile deltas, per-citizen ground/lane
+cache invalidation, unchanged building placement cache and camera footprint key.
+Road/elevation, native growth/facing/footprints and projection/viewport changes
+must refresh before drawing. Native positions, gait clocks/planar stride, god
+float and exact VAT/fallback/skeletal blending remain authoritative as before.
+Normal and combat VAT writers share pose cache state; held aliases may skip writes.
+Keep `buildings_changed` gating and incremental batches. Hidden minimap camera
+work may be skipped, but native sound `view_box` observations must stay live.
+
+Wheel notches ease toward an accumulated bounded destination with terrain cursor
+anchoring. Pinch and explicit `zoom_at` calls remain immediate; Home/Go to and
+modal/text/toolbar holds cancel pending motion. Outward atlas crossing retains
+the existing callback. Detailed physician spares are prepared only while nearby
+detail is used; preserve the role mapping, nearest-24 cap, hysteresis and phase.
+Run `validate_camera_performance.gd`, controls, streets, locomotion, citizen,
+owned placement review and `tools/review_camera_performance.py` with disposable
+preferences/saves. Performance evidence is scoped CPU work; read current
+validation before claiming full-game or minimum-Mac performance.
+
+## Character panel and native stock — 7 October 2026
+
+Read `docs/GODOT_CHARACTER_INVENTORY.md` and current validation before changing
+the centered character card. Peddler supplies are the linked Agora's native
+vendor stock/capacities, not an independent cart store. Transporters use actual
+resource/count loads; growers use collected fruit counts. Keep resource bits,
+native `x()/y()` command coordinates, missing-vendor/empty-load distinctions and
+the existing illustrated goods icons. Never infer cargo from portraits or invent
+simulation inventory. `character_inventory` is a read-only query, independent
+of spoken-line selection and RNG, polled once per second only for an open
+inventory-bearing character.
+
+Preserve stable cards, native text/voice, disabled portrait viewports, model
+fallback, same-tile selection, focus and exact previous pause/command hold on
+every close path. Shared Theme/CSV and independent text/UI scales stay in use;
+scroll details above the persistent footer. Native rules/routes/saves/model art
+remain intact. Run `validate_character_inventory.gd`, sequential owned EN/RU
+`tools/review_character_panel.py`, embedded and translation gates with scratch
+preferences/saves. The review's 200 ordinary native ticks spawn the saved city's
+peddler; no test-only peddler or simulation inventory is installed.
+
+## Slim instant notices — 7 October 2026
+
+Instant open notices omit the title/icon row and Close button. Preserve their
+full wrapped body, thin timer bar, shared Theme, width/scroll fitting and all
+attention holds. The card handles click-release/keyboard pinning and right-click
+release dismissal via the original informational callback. Keep titled journal
+disclosures and required-decision controls intact. This supersedes older instant
+title/Close instructions. Use `validate_notification_layout.gd` and sequential
+scratch-only `tools/review_chrome.py --notifications-only --lang en` / `ru`;
+the focused mode avoids unrelated chrome fixtures. No native rebuild is needed.
+
+## Anatomical monster rebuild — 7 October 2026
+
+The sixteen non-Hydra monster identities now use `tools/godot_monster_anatomy.py`
+through `godot_monster_reference.py`. The user's Monsters folder is mapped to the
+retained concept sheets; v3 neutral sources are
+`art/monsters/<species>/<species>-reference-v3.blend` in the parent workspace.
+The earlier rounded v1 sculptures/staged v2 details are superseded. Read the
+current monster art contract, validation and reference catalog before exporting.
+Use isolated background Blender only, preserving the live port-9876 document,
+shared animal/human libraries, Hydra, native rules/RNG/recipes/saves, both UVs,
+CityPalette, 114 poses, mouth/contact probes, cached finishes, fresh VAT and
+reduced LODs. Stable runtime revision remains `monster_reference_v1`; the anatomy
+has separate `design_revision: monster_anatomy_v3`.
+
+Sources include CC0 human/wolf/crocodile anatomy and a CC-BY cave-lion face.
+Preserve `art/monsters/anatomy-v3/ATTRIBUTION.md`, library records/source hashes,
+and backups. Do not execute vendor scripts. Cap source points at 16,500,
+imported vertices/triangles at 34,000 and surfaces at three. Change only the
+sixteen deliberate geometry entries. Source/export/runtime/native effect checks
+and matching multi-view Metal captures are required after geometry changes.
+Painted PBR textures, user visual acceptance, slope IK, flight refinement,
+minimum-Mac profiling and overall release-rights evidence remain pending.
+
+## Common housing models — 6 October 2026
+
+The active `common_house_<0-6>a` family uses `tools/godot_housing.py`; read
+`docs/GODOT_HOUSING_ART.md` and the latest validation before re-exporting. Original
+starter wattle/daub and mud-brick cottages replace the white conical hut/short
+box, neutral irregular yards replace the golden lots, and architecture heights
+rise through 0.96/1.16/1.36/1.58/1.84/2.18/2.56 tiles. Preserve resident anatomy
+with inverse local height scaling; the first two entrances are model +Y for
+the existing road-facing adapter. Native rules, footprints, needs, occupancy,
+evolution and saves stay authoritative.
+
+Use disposable background Blender only. Preserve native house recipes/Blender
+scenes, both UVs, CityPalette, bounded PBR groups, source vertex allocations and
+imported reduced LODs. Update only the seven intended house baseline entries
+through `validate_housing_art.gd --write-baseline`; never rewrite other geometry.
+Use `validate_housing.gd` and the owned scratch-only `tools/review_housing_art.py`.
+Elite houses/unused b variants retain their art. Full material baking, user visual
+acceptance, source rights evidence and minimum-Mac profiling remain pending.
+
+## Ruined-building inspection and clearing — 6 October 2026
+
+Godot ruins show the native former building name and expose a guarded, costed
+Demolish action. Preserve `eRuins::Site` as transient presentation identity only:
+native rubble objects, serialization, collapse RNG and per-tile erase cost stay
+unchanged. New collapse footprints are exact; legacy saves recover bounded
+creation-order runs using native dimensions, with conservative unknown/fragmented
+fallbacks. Never merge all touching same-type ruins with an unbounded flood fill.
+Hover, held/area preview and rectangle contact operate on one complete site;
+clear only its current matching rubble and block a site if any member burns.
+Inspector and tool member-set guards are independent. Keep EN/RU CSV/Theme and
+scratch-only tests; use `validate_ruins.gd`, `tools/review_ruins.py`, and the
+current interface/validation documents before changing this contract.
+
+## Paved avenues, boulevards and walker clearance — 6 October 2026
+
+Native avenue/boulevard medians are walkable roads. Keep the entire two/three
+tile corridor paved; the old grass median and centered trees are superseded.
+`street_layout.gd` supplies read-only topology for `terrain_avenues.gd` and
+`walker_streets.gd`. Cached original marble statues, benches and planters, plus
+olive/cypress trees, occupy narrow outside edge pockets. Ends, bends, crossings
+and building entrances stay clear. Preserve spatial MultiMesh batching, reduced
+mesh LODs and the avenue detail layer's two-cell dirty-neighbor radius; ordinary
+detail layers retain radius one. No native placement, collision, route, RNG,
+timing, footprint, cost or save change is needed.
+
+Wide-road render lanes retain their separate `lane_raw` easing state, merge
+smoothly at diagonal corners and stay inside the undecorated walking corridor.
+Human heading follows displayed travel there; gait phase still follows native
+horizontal travel. Single-tile roads and perched-guard behavior remain unchanged.
+Dedicated cached street thumbnails show the full two/three-tile width; keep the
+native one-cell drag anchor in the catalog. Run `validate_streets.gd` and the
+owned disposable `tools/review_avenues.py`; see validation for scope and limits.
+
+Wall choices no longer show `%WallFill` (6 October 2026). Keep it hidden during
+selected/hovered context refresh; Shift-drag retains the native filled-rectangle
+modifier. This supersedes earlier instructions to show the fill checkbox.
+
+## Right-side notification hub — 6 October 2026
+
+The fixed upper-right `%EventRail` now contains an illustrated Journal and an
+Objectives scroll, followed by an amber `%DecisionReview` only while a native
+reply is pending. This supersedes the permanent bottom-right objective summary
+and the folded correspondence reminder panel. Objectives opens its existing
+native cards on demand, with a progress line and unseen-completion badge on the
+icon; open-play hides it. Opening goals never moves the construction dock.
+Keep the fixed rail independent of the Resources drawer, measured disclosures to
+its left, native set-aside commands and inspector drafts/tokens.
+
+`notification_button.gd` extends the mouse-up-safe ToolbarButton, drawing a
+separate count/progress overlay without input Controls. Original shaded SVGs in
+`toolbar_icons/notice_*.svg` share the existing illustration system. Use shared
+NotificationRail/Button/ScrollBar Theme variations; highlights are finite and
+respect Reduce interface motion. Journal filters change only the view (All
+reports / Warnings / Decisions); retain complete history and stable reading rows.
+Routine reports remain quiet, urgent reports keep the one-alert queue, and new
+required choices still open their centered native correspondence modal.
+
+Hazard/monster controls occupy the bounded `%AlertScroll` / `%AlertList` below
+the utility icons. Retain native kind grouping/order, occurrence/site dedup,
+persistent fire/plague, location and dismissal callbacks. Integer scroll height
+avoids a fractional last-row clip at enlarged UI sizes. Hover, keyboard focus,
+hidden/clipped controls and blocking dialogs hold hazard attention timers.
+Folding a decision never answers it or releases the native block. Review with
+sequential disposable chrome/decision helpers and the headless notification/
+hazard gates; see current validation for verified counts and limits.
+
+## Olympian marble defences and roof guards — 6 October 2026
+
+Godot now exports all sixteen wall masks, tower and gatehouse through
+`tools/godot_defences.py`; preserve the parent native sprite recipes/atlases and
+live Blender scenes. Read `docs/GODOT_DEFENCE_ART.md` and current validation before
+re-export. `godot/data/defence_art.json` shares model/runtime heights: wall walk
+2.0, tower platform 3.05. The native `lift` observations stay 0.8/2.57 and identify
+perched guards; do not change C++ rules/coordinates/RNG to match art.
+
+`defence_perch.gd` refreshes its footprint index only with the existing building
+change path, bounds render-only guard positions inside platforms/connected walks,
+and uses the building's foundation height. Street lanes are immediately zero for
+perched guards; ground archers retain their ordinary path. Preserve native patrol,
+combat, selection, construction, costs, facing and save behavior. The portal keeps
+its one-tile road free. Preserve authored UVs, palette finishes and reduced LODs;
+update only intended geometry baseline entries (sixteen wall entries for the height follow-up). Focused art checks,
+native walls and isolated Metal/moving-guard review pass; user art acceptance,
+full material baking, height transitions and minimum-Mac profiling remain pending.
+
+## Compact upper-left overview and stable notices — 6 October 2026
+
+This supersedes the centered 86%-width overview. `%ResourceRibbon` starts at
+16 logical pixels from the left, measures city name plus the native stats, and
+uses only their width, capped by the viewport. Stocks open directly beneath it.
+Keep measured text widths, responsive stats wrapping, actual header-height bounds,
+opaque readings/icons, native cached observations and existing callbacks. The
+shared Theme registers ResourceRibbon as a PanelContainer variation, with a 90%
+charcoal background and compact padding; do not fade the whole Control subtree.
+Time remains below the map and Jobs remains after Layers.
+
+Notice cards explicitly fill their parent VBox. Never call `reset_size()` from
+`notification_chip.gd` body fitting or pin/unpin: autowrapped labels and ellipsized
+headings have a tiny minimum width, so that reset discards the parent's assigned
+width and collapses the report. Update the bounded body minimum height only when
+it changes; let containers arrange the card. NoticeBody is a shared 15-pixel
+Caption variation, scaled by UiAccess rather than a font override. Preserve full
+wording, scroll/row identity, reading/hover/hidden/clipped timer holds, single-alert
+queue, informational acknowledgements and native required-decision ownership.
+Run `validate_notification_layout.gd` and sequential disposable chrome reviews;
+see validation evidence for reproduction, counts and tested scope.
+
+## Clock below the map and main-row hotkeys — 6 October 2026
+
+This supersedes the preceding map-button/header placement. `%TimeBar` is a root
+HUD panel below the circular minimap: Play/Pause and speeds 1–4 on its first row,
+with the native date/month gauge below. Measure its minimum size and reserve the
+map/clock column when fitting the dock. `%MapToggle` is visible only when the
+actual map is hidden, above the clock; the open circle retains `%MapClose`.
+Keep default/explicit version-2 preferences and temporary folds unchanged.
+`%Jobs` now follows Layers in the bottom main row, preserving its industry-view
+callback and all native employment figures in hover help. The construction/
+hover context is centered and uses the tooltip's first line to avoid growing
+the row with Jobs' multiline figures.
+
+Only the bottom main buttons add shortcut titles: Housing H, Road B, Road Block
+G, Layers L, Jobs J, plus existing X/Delete demolition and Cmd/Ctrl+Z Undo.
+Use `KeyBindings`, the Controls dialog and original button callbacks/native
+availability. Categories retain plain hover names. New shortcuts respect typing,
+dialogs and required decisions. Legacy custom bindings take precedence over new
+defaults: a collision leaves the new dock action translated as Unassigned (code
+0), without rewriting preferences; it can be rebound normally. Never allow an
+empty key to fire or replace a held camera key. Controls changes refresh hover
+help without querying the native simulation. Time keyboard focus still holds
+camera input, and mouse/Escape releases it. Review sequentially with disposable
+toolbar/chrome helpers; current counts and limits are in the validation document.
+
+## Dock shortcut arrangement — 6 October 2026
+
+The upper-left City views strip is removed. Its four original supply/water/
+hygiene/hazard buttons live inside the bottom Layers disclosure, alongside all
+25 native overlay choices. The duplicate Inspect and Build buttons stay hidden;
+normal inspection, Escape and the complete categorized native catalog remain.
+Left utilities are Undo → Housing → Road → Road Block → Demolish. Direct building
+shortcuts follow native catalog availability. `toolbar_icons/roadblock.svg` is
+an original shaded barrier illustration; no Blender/export change is needed.
+
+`%MapToggle` is a root HUD button beside the circular minimap, with a reachable
+bottom-left button while folded. It is outside the construction dock. Preserve
+version-2 visibility preferences, the open default, temporary tray/journal/
+decision folds, circle corner pass-through and native transforms. Layers fits
+above the dock using measured header/chrome heights and a scrolling list;
+opening click never selects a view. Escape/right click/Close return input;
+outside terrain dismissal consumes its click before construction. Closing an
+already closed Layers panel must not steal another control's keyboard focus.
+Required decisions retain their original native pause/callback ownership.
+Review sequentially with disposable `tools/review_toolbar.py --lang en` / `ru`
+and the chrome gate; see interface/validation documents for the tested scope.
+
+## All monster reference sculptures — 6 October 2026
+
+All sixteen remaining monsters use `tools/godot_monster_reference.py`, with
+individual concept sheets and editable neutral `.blend` scenes under parent
+`art/monsters/<species>/`. Only background Blender is authorized. Hydra's sources,
+runtime and baseline remain intact. Read `docs/GODOT_MONSTER_ART.md` and the latest
+validation before re-exporting. Preserve both UVs, palette, 114 pose aliases,
+per-mouth/contact probes, native rules/RNG/saves, cached finishes, VAT freshness
+and reduced LODs. Cap each new sculpture at 16,500 authored points, 34,000 imported
+vertices/triangles and three surfaces; update only its deliberate baseline entry.
+The eight humanoid monsters bypass the citizen adapter; the human validator now
+expects 104 adapted assets. The source catalog distinguishes verified Hercules
+screen studies, film anatomy motifs and original mythology/game designs.
+User art acceptance, painted materials, slope foot IK, harpy flight refinement,
+minimum-Mac profiling and release-rights evidence remain pending.
+
+## Complete construction-card previews — 6 October 2026
+
+Thumbnail requests carry the catalog item and cache by building/tool identity,
+not its component asset. Trade partners share the same base design. The Common
+and Grand Agora use distinct previews of their three/six empty paved vendor plots
+and street; they have no standalone GLB and do not include vendors. Composite
+palace/ranch/sanctuary/pyramid/shrine/god-monument pictures assemble the native
+read-only placement `pieces` on a flat display, using existing models and fitting.
+Pyramid sprite-face axes receive a preview-only reflection/quarter-turn to join
+correctly, baking copied geometry/winding rather than using negative node scale;
+retain colors, both UV arrays and shared finishes without mutating imports.
+Never place/grant a building to make a picture, scan for a valid site, or add
+simulation polling. Keep one on-demand 160×100 viewport, idle disabled, freeing
+temporary nodes and bounding complete silhouettes. Terrain tools keep the colored
+road illustration. `tools/review_toolbar.py --previews --lang en` / `--lang ru`
+audits all catalog geometry and rendered/card/context/callback behavior with
+disposable profiles. Read interface/validation evidence for scope.
+
+## Illustrated header coin and citizens — 5 October 2026
+
+`%TreasuryIcon` and `%CitizensIcon` now use original static `toolbar_icons/treasury.svg`
+and `population.svg` in matching 24×24 logical-pixel, aspect-preserving cells.
+They extend the existing colored SVG icon system. The HUD no longer instantiates
+`SilverCoin` or runs its treasury-gain flip; its old source remains archived.
+Preserve native treasury/population/ledger/mood data, tooltip parents, white tint
+and pointer pass-through. This supersedes the older live-coin requirement.
+
+## Matching HUD panels and open map — 5 October 2026
+
+City surfaces now share the construction dock's charcoal fill, restrained bronze
+edge and shallow corners through the shared Theme generator. Preserve parchment
+story/letter surfaces and meaningful chosen/completed/danger colors. The centered
+overview measures its native readings, aims for 86% width (1560 logical-pixel
+cap) and grows/wraps for large text/counts. Reduced padding and header typography
+keep the default bar compact. Resource disclosure follows the same centered width;
+actual header height still governs lower panels and native input remains intact.
+
+The corner `%MapPeek` shortcut stays hidden. `%MapToggle` in the dock and `%MapClose`
+remain the map controls. The map now starts open, superseding the old folded
+default. Unversioned old visibility preferences adopt the open default without
+a launch-time write; explicit choices save `minimap_visibility_version=2` with
+`minimap_visible` and are remembered thereafter. Temporary folds for trays,
+journal/expanded decisions do not change that preference or native pause ownership.
+Keep the circle mask, pass-through corners and native coordinate transforms.
+
+## Top-bar titles removed — 5 October 2026
+
+At the user's request, Date/Speed/Current city/Housing/Treasury/Monthly balance/
+Population captions are hidden in the authored HUD; their unique nodes remain
+for compatibility. Do not restore them during translation/scaling. Values and
+icons are vertically centered. Time controls are ordered Play/Pause → speeds
+1–4 → date, with existing native readings, hover explanations,
+responsive wrapping and mouse-up focus release retained. This supersedes the
+visible-caption requirement in the earlier overview section below.
+
+## Toolbar mouse activation fix — 5 October 2026
+
+The shared `toolbar_button.gd` releases mouse focus only after mouse-up. Releasing
+on mouse-down cancels Godot's armed Button before a normal later release, making
+both redesigned bars unresponsive. Keep keyboard focus for navigation and native
+release activation for MenuButtons. Review mouse helpers must wait frames between
+down/up; same-frame injection concealed this failure. `validate_toolbar_input.gd`
+checks ordinary untagged pointer input and cancellation/focus behavior without a
+native city. See validation for the reproduction and corrected visible reviews.
+
+## City overview and panel polish — 5 October 2026
+
+The top ribbon now has Date/Speed/Current city/Housing/Treasury/Monthly balance/
+Population captions, numbered native speeds, explicit free housing and named
+Resources disclosure. Keep the native month/occupancy gauges, static silver coin,
+native mood and existing ledger calculation. Shared `Header*` Theme variations
+respect independent text size; `hud.gd` measures gauge labels and reparents the
+whole stats group into a second row when necessary. Actual header height governs
+the resource rows, notices and side-panel bounds. Do not regenerate the authored
+HUD or save a scaled Theme.
+
+`hover_help.gd` shares bounded, pointer-ignoring help between dock buttons, header
+controls and Army company rows. Header keyboard focus holds camera input; Home
+honors both header/dock ownership. Escape/right-click folding Resources and actual
+Jobs/stock/view selections release that focus without a pause/save command.
+
+Army uses `fit_host` against the actual header/dock clearance, a fixed title/Close
+and scrolling content. Preserve native company IDs/order predicates/callbacks,
+stable rows and nonmodal behavior; long rows keep full hover text and disabled
+orders explain their native restrictions. Inspector headings show native footprint/
+staffing, stored-good names wrap with full tooltips, inspector/journal scrolls
+follow focus, and objective numbers use locale-appropriate grouping. Preserve
+inspector drafts/tokens and native goal completion. Run sequential disposable
+`tools/review_chrome.py --lang en` / `--lang ru`; `--army-native` adds existing
+native Army regression commands only in unsaved scratch memory. The headless
+`validate_army_layout.gd` covers long-name/empty/abroad/aid fixtures. See the
+interface/validation documents for verified scope and protected-save evidence.
+
+## Illustrated construction toolbar — 5 October 2026
+
+The bottom dock now has a colored category row and a separate utility/context
+row, following the user's Anno toolbar layout reference. Original static SVGs
+in `godot/ui/toolbar_icons/` replace the category/tool gold glyphs; preserve their
+white icon tint and use gold for the selected marker. Every visible control has
+an immediate translated name and bounded explanatory tooltip. Keep the authored
+HUD, shared `Toolbar*` Theme variations and CSV translations; do not regenerate
+the HUD with its historical builder or save a scaled Theme.
+
+Native category eligibility, model cards/costs, tools, map preference, Undo and
+overlay callbacks remain authoritative. Identical catalog refreshes preserve
+controls, scroll and focus. The duplicate direct housing shortcut and BuildSearch
+remain hidden. Category scrolling follows keyboard focus; mouse selections,
+tray closing and actual Build/overlay choices release toolbar focus. Open toolbar
+popups/focus hold camera input and clear a previous drag. Both MenuButtons open
+on release without switching on hover, preventing accidental opening-click picks.
+Run sequential disposable `tools/review_toolbar.py --lang en` / `--lang ru`;
+read interface/validation contracts for scope and protected-save evidence.
+
+## Centered required decisions — 7 October 2026
+
+Expanded `%EventsBox` is a centered correspondence modal above the HUD, with a
+dim `%DecisionShade`, native sender/static framed portrait, dark reading panel and fixed
+choice footer. `%EventActions` is now a GridContainer; preserve exact native IDs,
+labels and callbacks when ordering/styling Refuse/Postpone/affirmative actions.
+Invasion callback meanings differ (0 Surrender / 1 Bribe / 2 Defend); multiple
+receiving cities are equal choices and -2 retains the existing enlistment flow.
+The native required-decision block owns the stopped clock. Right-click on an
+expanded card or its folded `%DecisionReview` icon invokes the offered native
+Postpone callback (choice 1), sharing the button's guarded reply path. Exclude
+invasions: their choice 1 is Bribe. Without Postpone, right-click only folds.
+Fold/title-toggle/Escape/settings return/canceled enlistment never answer or
+resume it. Postpone releases its own native block without changing manual pause
+or other pending decisions. Debounce queued replies, preserve retry on queue
+full/error, and never add a forced resume. Expanded
+cards intercept city clicks/camera input and trap Tab without focusing a reply;
+Escape folds the foreground card before a journal behind it. Keep UiAccess's
+separate dialog/pause owners intact. Edit the authored HUD, not its old generator,
+and regenerate only shared Theme styles (`build_ui_theme.gd -- --decisions-only`). Sequential disposable
+`tools/review_decision_panel.py --lang en` / `--lang ru` checks and native request
+evidence are in the interface/validation documents.
+
+## City notices in full at the top centre — 5 October 2026
+
+Toasts (`hud.show_toast`) are `NotificationChip`s with `open = true`: title and full text shown at once (15 px body, up to
+132 px then scrolling; a click pins it with 260 px and stops the countdown). The stack sits at the top centre under the
+top bar, below the tool hint / invasion notice and a decision reminder, and narrows left of an open inspector or journal.
+Reading time is 9 s + 1 s per 25 letters (max 24 s), paused on hover. One notice at a time; the rest queue as before.
+Journal rows (`history_row`) stay collapsed. `review_map_notifications.py --checks` keeps 8 failures unrelated to this
+(tool-card cost x6, distribution shortcut, decision button order).
+
+## Top bar (time, housing, money, popularity) — 5 October 2026
+
+The bottom-left time panel moved into the top ribbon (`hud.tscn` OverviewRow: `%TimeBar` with `%Pause`, the date over
+`%MonthProgress` (the month's days, real month lengths) and `%Speed`, four chevron buttons for native speeds 0..3 built in
+`hud.gd` `build_top_bar()`; `hud.speed_button` and its popup are gone). The stats now read: `%Housing` gauge (native
+`ePopulationData` people / people + vacancies, label "free / total", deep gold, terracotta when nothing is free; no green: lapis and gold only), `%Money` well with a 3D
+silver drachma (`ui/silver_coin.gd`: owl/helmet relief from SVG height maps, rendered once and only while it flips on a
+treasury gain), the treasury and the monthly balance `%Income` (running income less running costs over the last twelve
+months, construction excluded: `hud.gd` `monthly_balance`), then population with `ui/mood_face.gd` (native popularity,
+eCityData thresholds). The core adds `housing`, `popularity` and `finances` (this/last year ledgers) to `city_header`.
+The minimap and City map pill take the bottom-left corner; the dock reserves that column. Popularity words use
+"Popularity is …" keys so generic words such as "OK" keep their translations.
+
+## Campaign-panel presentation — 5 October 2026
+
+The authored `episode_card.tscn` now has separate chapter/episode metadata,
+parchment story, native objective cards and a fixed action/difficulty footer.
+Keep its unique controls/signals and both hosts, `fit_host` bounds, independent
+story/goal scrolling, keyboard difficulty controls and shared Theme/CSV. Native
+`met` flags alone determine achieved cards/counts. The overlay's campaign/retry/
+menu commands and voice/session handoff remain unchanged. Do not rerun historical
+card/overlay/start generators over these authored scenes. Use
+`validate_campaign_ui.gd` and sequential disposable-profile
+`tools/review_episode_panel.py --lang en` / `--lang ru`; read interface/validation
+contracts for the test-win and all-achieved visual fixture scopes.
+
+## Camera reach when zoomed out — 5 October 2026
+
+The orbit centre was already clamped to the map, but at far zoom and low tilt the view showed mostly land or sea past the
+border. `orbit_camera.gd` now holds the centre toward the middle as the zoom grows (`reach()`, `PULL_START` 45,
+`EDGE_PULL` .7: the whole map up to distance 45, the middle 30% at the farthest zoom). It is not a performance measure:
+`--view-review <tag>` (`review_view_bounds.gd`) shows the land outside the border is cheap (a far-outside view draws 1.48 M
+primitives against 1.54 M in play and 2.27 M for the whole-city overview), so keep `visibility_range_end` and the
+800-tree cap in `surroundings.gd`. Preserve `world_zoom_requested` (atlas) and `jump_to_cell` / `focus_walker` clamping.
+
+## Earlier main-menu shell (layout superseded above) — 5 October 2026
+
+The authored main page has a content-sized left shell, original SVG emblem/icons,
+separate latest-save card, primary New game action and named keyboard-accessible
+Settings. Empty profiles hide Continue and focus New game. Preserve unique scene
+references, `SaveFiles`/leader paths, full save-name tooltips, current-language
+display, native action callbacks and shared Theme/CSV. MainScroll follows focus
+at enlarged UI/text sizes; never save a scaled Theme or regenerate the authored
+page. Use sequential disposable-profile `tools/review_main_menu.py --lang en` /
+`--lang ru`; read interface/validation contracts for evidence and scope.
+
+## Field-worker activity — 5 October 2026
+
+Hunters now play spear attacks and display their native prey load on the return
+trip. Sheep handlers shear with hand-anchored tools and carry fleece; goat
+handlers milk and carry a jug. Growers prune/pick vines and olives, and native
+orange tenders use their own tree-working model and clips. Corral workers guide
+cattle with a crook; the building's existing processing cycle follows actual
+native processing. Boar/deer attack and collapse poses are connected. Work,
+carry/leading phase, pause and transitions follow native observations/time;
+empty hunting/livestock returns display no invented goods. Native rules, coordinates and saves
+stay intact. See [field-work contracts](docs/GODOT_FIELD_WORK.md) and the validation evidence for
+export sources, geometry budgets, review fixtures and remaining limits.
+
+## Roofs lost when zoomed out (LOD guard) — 5 October 2026
+
+At ordinary zoom-out Godot's automatic mesh LODs deleted roofs (maintenance office, hospital/infirmary and, by audit,
+153 surfaces of 192 building/scenery models): the quadric simplifier treats dense shingle detail as cheap, so the first
+LOD (switching error ~0.2 tile) had no roof. `scripts/lod_guard.gd` is an import script (set by `tools/apply_lod_guard.py`
+in every non-character model's .import) that measures each surface's LODs with `scripts/lod_coverage.gd` (cells touched
+on a grid as coarse as the LOD's own error) and, where a near LOD keeps under 60%, replaces the ladder with vertex-
+clustering LODs (representative vertices only, so colours, UVs and morph targets stay valid), dropping any level that
+itself fails, or keeping only Godot's sound levels. Preserve it: after changing the script or re-exporting a model run
+`tools/reimport_models.sh <names...>` (Godot needs the stamp removed and the GLB touched) and gate with
+`scripts/audit_lod_coverage.gd` (286 models, 0 lossy surfaces, ~10 min, non-zero exit on failure) plus
+`validate_geometry.gd`. Characters are not guarded. `scripts/review_lod_roofs.gd` captures a model at several distances.
+
+## Area demolition — 4 October 2026
+
+The demolition tool drags a rectangle, as the SDL erase tool does: press, hold, release. A press and release on one
+tile is still the single-tile demolition (`demolish`, its landmark dialog and stale-object token), so keep that path.
+The core answers `preview_demolish_area x1 y1 x2 y2` (every building with a tile in the rectangle once, forest tiles,
+cost, landmarks listed as protected, a token for that exact set) and `demolish_area x1 y1 x2 y2 confirmed [token]`
+(`demolitionPlan` in `presentation/esimulationservice.cpp`; same ownership, fire and funds rules, never undoable).
+Landmarks (palace, temples, stocked agoras) go only with `confirmed 1` and the matching token; `confirmed 0` spares them.
+`scripts/road_drag.gd` draws the plan (amber for landmarks) and `main.gd` (`demolish_click`, `ask_area_demolition`)
+owns the dialog, which offers Demolish / Spare landmarks / Keep. Taking an agora away uncovers its street, as natively.
+Tests that inject a demolition click must send the release too (a press alone starts a drag). Gates:
+`validate_area_demolition.gd` (26, headless) and the drag checks in `validate_main.gd`.
+
+## Cart range and cart loads — 4 October 2026
+
+Every cart that finds goods by road (producer give, processing/vendor/trireme-wharf take) searches up to 200
+road steps (`numbers.txt`, `eNumbers`; avenues count 10); the old 60 left producers 82-92 steps from storage
+stalled. A cart saves its own range, so the owning building re-applies the setting every tick
+(`eresourcebuildingbase.cpp`, `evendor.cpp`, `eprocessingbuilding.cpp`, `etriremewharf.cpp`); keep that when
+adding cart owners. Walker records of `cartTransporter` carry `cargo` (the good's model name from
+`goodModelName` in `esimulationservice.cpp`, shared with the storage bays) and `cargo_count` only while loaded;
+`scripts/cart_cargo.gd` fits the existing `good_<name>.glb` models into the bed of `transporter.glb` and scales
+them by loads. An ox cart's marble, black marble, timber and sculptures ride the separate `trailer` walker: the core sends
+`cargo` on the trailer (from the cart it follows) and `cart_cargo.gd` has a bed for each model (`BEDS`). Horse and chariot
+vendor carts have no model and show an empty bed; silver is never carried.
+
+## Adventure cards — 4 October 2026
+
+The authored start-menu adventure page has a scrolling left library and illustrated
+right card with exact native opening goals, main episode and colony-scenario counts and
+an explicit sandbox badge for adventures with no goals in any episode. Keep the
+shared Theme/CSV, native bitmap mapping, bounded artwork cache, responsive scroll
+areas, ItemList keyboard selection and existing Start/briefing/difficulty/Begin/
+editor flow. `adventure_preview` reads templates without starting/entering/saving a
+city, releases its campaign and refuses calls while the core is owned. Cache by
+language/kind/ref and cancel stale selections; the parent world district supplies
+Atlantean wording before a city is active. Never infer sandbox from the title or
+invent objectives. Read `docs/GODOT_INTERFACE.md`; use `validate_adventure_cards.gd`,
+`tools/adventure_art_metadata.py --check` and sequential scratch-profile
+`tools/review_adventure_cards.py --lang en` / `--lang ru`. Preserve installed art
+and its existing provenance; the Anno reference is a layout reference only.
+
+
 ## World-map refinement — 4 October 2026
 
 The atlas clips submerged relief at the coast and uses a 192×96 sea sphere;
@@ -91,6 +1215,62 @@ and food items on top of their yards/drums matching native simulation inventorie
 goods models and 8 granary food models exported with vertex-palette PBR materials; MultiMesh
 spatial batching; `EZeusSimulation` detects inventory changes and emits updates only when
 bay quantities change. Automated test suite `validate_storage_goods.gd` passes 204/204 checks.
+
+**Building panel (4 October):** the inspector keeps its right-hand dock (the city stays visible) and widens to
+500 px for pages with tables (stores, trade posts, agoras and stalls, houses). Status is a tinted card, the readings are
+chips in one row. Stores (`building_inspector.gd`) are a Stock / Orders / Limit table with goods icons and an "All goods"
+row that sets the order or limit of every good; **there is no Apply button any more**: an order is sent at once, a typed
+limit after 700 ms or on Enter/focus loss, drafts go one at a time, stay dirty (and keep the player's value through live
+refreshes, size changes and stale tokens) until the core answers, a full command queue keeps the draft and retries after
+1 s, a core refusal restores the building's own values. Trade posts work the same way. Agora and stall pages show the six
+stall boxes (`inspect.agora`: stock/capacity, No vendor / No goods / Distributing); a house shows the house card
+(`inspect.house`, shared `writeHouseCardFields` with the `house_card` query). New strings are in `data/ui_strings.csv`.
+The road chip shows only for a building cut off from the roads. A house page is headed by the level it is
+reaching (`house.target_name`, from `eHouseCard::fTargetName`), lists what is still needed first, each with how to supply
+it (`inspection_summary.gd` `hint_for`), and folds the met needs below ("Already met").
+`review_building_panel.gd` (18 checks, captures `building-panel-*`) and the updated `validate_inspector_ui.gd`,
+`validate_trade_ui.gd`, `validate_status_ui.gd` cover it.
+
+**Building auras (5 October):** `scripts/building_auras.gd` (+ `shaders/building_aura_column.gdshader`,
+`building_aura_ground.gdshader`) draws the SDL view's per-building states: the plague over a sick house (green miasma with
+flies over a pulsing stain on the ground), a blessing (golden beam, sparkles, ring) and a curse (purple wisps, red sparks).
+The snapshot's `auras` (`[x, y, w, h, altitude, kind]`, 0 plague / 1 blessed / 2 cursed, sent whole on change like `fires`)
+drives it; the sickness and its spread stay the engine's. `test_aura <x> <y> plague|blessed|cursed|clear` (validators only)
+and `review_auras.gd` (6 checks, captures `auras-*`; `AURA_DISTANCE=34` takes them at play zoom, the marks go through the live
+command queue and delta snapshots). Each marked building also has a zoom-stable badge (`building_aura_badge.gdshader`: green
+ringed cross, golden star, purple slashed X; disc with a dark edge and a light outline) because the ground ring and beam
+alone were too faint at play zoom. Disaster effects and the fire sound are below.
+
+**Disaster effects and on-screen sounds (5 October):** `scripts/disaster_effects.gd` (+ `shaders/disaster_flat`, `_billboard`,
+`_projectile`) draws what the engine's tile-by-tile fronts do, from the terrain changes in the delta snapshots (`main.gd` tile loop
+`note`, then `flush`; `note_alert` opens the landslide window): surf and spray sweeping over land a tidal wave takes (and back),
+lava blobs thrown in arcs that land in a glow and smoke, dust with falling stones over earthquake cracks, dust and tumbling
+stones for a landslide (only while the engine's `landSlide` alert is recent: pyramids also change altitudes). Bounded ring-buffer
+MultiMeshes, no simulation effect. The fire crackle and every other sound the native game plays only for tiles on screen
+(`eGameBoard::ifVisible`: gods, monsters, archers, builders, collectors, towers) were silent in Godot because the service set no
+visibility checker; it now follows the camera box that `main.gd` sends (`view_box x0 y0 x1 y1`, only when it changes, margin 3 tiles;
+nothing is "on screen" until the first box). Validators-only `test_disaster earthquake|tidal|lava|landslide <x> <y>` marks the zone and
+starts the engine's own front; `review_disasters.gd` (6 checks, captures `disaster-*`; it answers the city's pending decisions because a
+decision blocks the simulation). Thrown arrows, spears and rocks: `scripts/thrown_shots.gd`. The engine announces each at launch from the `eMissile` constructor
+(`observeMissile(this, 0)`, arrow/spear/rock only) into a bounded queue that every snapshot drains as `shots` (kind, native launch time,
+speed, path points); Godot flies it along that arc in native time (path length x 40 / speed ms, so pause and game speed hold), leaves an
+arrow or spear stuck for 280 ms and puffs dust where a rock lands. `test_shot arrow|spear|rock x0 y0 x1 y1` (validators only) makes the
+engine's own missiles. Burning buildings are charred: `building_fires.gd` lays a soot shell (`shaders/building_char.gdshader`, the building's
+own meshes via `building_placements`, which `main.gd` records at placement) that darkens over 28 s and goes with the fire; rubble is left as it
+is. `review_missiles_soot.gd` passes 7 checks (captures `missiles-*`).
+
+**Hazard alert icons (4 October):** the right-hand rail under the journal shows one button per hazard kind
+(`ui/hazard_rail.gd`: fire, collapse, earthquake, flood, lava, plague, invasion, a god's attack or visit, a hero's
+arrival, the army's return; the SDL `eEventWidget` list). The core's snapshot `alerts` (id, kind, tile; raised in
+`eSimulationService::raiseAlert` before any wording, so silent events still alert) feeds it; each id is shown once,
+same kind and place is one alert, a count shows past one, click goes to the newest site, right click puts the button
+away, 12 s lapse (held while hovered). Monsters keep `monster_card.gd`. `validate_hazard_alerts.gd` passes 34 checks;
+`review_hazard_alerts.gd` captures the rail. Beyond the SDL alert list the rail also covers god-made lava, sinking land and
+landslides (`land`), a road cut that collapses buildings (`areaCutOff`), the invasion and monster approach warnings
+(24/12/6/1 months) and the engine's risk warnings. Fire and plague are persistent: their buttons stay while buildings burn
+(`fires`, ruins excluded) or houses are sick (snapshot `plague.houses/at`) and come back only after the hazard has ended if
+put away (`set_persistent`). A monster already in the city keeps its own button and card. Validator now 83 checks.
+Preserve the quiet journal/toast policy; alerts are additive.
 
 **Monster combat effects (4 October):** `monster_effects.gd` draws Hydra venom and
 the shared native projectile/impact pipeline for all 17 monsters. The optional
@@ -589,11 +1769,12 @@ corner of the whole footprint, the ten tiles are checked one by one (`gateReason
 existing plain street that belongs to no agora, gatehouse or hippodrome), the gatehouse takes them and lays road under the passage, and it is
 charged once. Demolishing any passage tile targets the whole gatehouse and, as natively, empties all ten tiles. The snapshot gives a gatehouse
 its facing from its footprint. Archers (type `archer`, asset `walker_archer`, the people kit's archer identity) patrol the tops of wall and tower
-tiles: the walker record carries `lift` (0.8 on a wall, 2.57 on a tower, in tiles) and `main.gd` adds it to the walker's height offset.
+tiles: the walker record carries the retained native `lift` (0.8 on a wall, 2.57 on a tower, in tiles). Since 6 October,
+`defence_perch.gd` supplies the Godot roof height and safe render position; see the marble-defence contract above.
 Native defect fixed in shared code: `eGatehouse::erase` left its passage roads registered but off the map (they came back on the next save);
 it now erases them. A saved and reloaded city is not identical to the live one when an employer (tower, tax office, watchpost) was built
 since the open: several other employers (vendors, storehouses) show one more worker after the reload, the cause is not yet found, so
-`validate_saves.gd` leaves towers out of its strict digest comparison and `validate_walls.gd` saves and reloads one by building list. The gatehouse model is composed in `tools/godot_gatehouse.py` from the tower script's `--gate` towers.
+`validate_saves.gd` leaves towers out of its strict digest comparison and `validate_walls.gd` saves and reloads one by building list. The old gatehouse composer is retained as a legacy source; current Godot defences use `tools/godot_defences.py`.
 Campaign flow: the service keeps the campaign across episodes (`detach()` lets go of a city, `close()` of everything). A won
 episode (the board's own goal check, `mVictory`) stops the game; `finish_episode` books it (`eCampaign::episodeFinished`: treasury,
 date, goods set aside) and answers with what is next: the end of the adventure, the next parent episode, or the colonies on offer

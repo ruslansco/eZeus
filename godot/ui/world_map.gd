@@ -243,6 +243,8 @@ func show_city() -> void:
 		regard_name.text = ""
 		regard.visible = false
 		tribute.text = ""
+		if envoy_portrait != null:
+			envoy_portrait.set_city({})
 		for button in [request_button, fulfil_button, gift_button, raid_button, conquer_button, aid_button]:
 			button.disabled = true
 		return
@@ -255,7 +257,7 @@ func show_city() -> void:
 		# Keep this portrait circular instead of stretching it across the header.
 		envoy_portrait.custom_minimum_size=Vector2(136,136)
 		envoy_portrait.size_flags_horizontal=Control.SIZE_SHRINK_CENTER
-	envoy_portrait.set_sender(int(city.index))
+	envoy_portrait.set_city(city)
 	leader.text = tr("Leader: %s") % city.leader if String(city.leader) != "" and String(city.type) == "foreign" else ""
 	var named := String(city.attitude_name) != ""
 	regard_name.text = String(city.attitude_name)

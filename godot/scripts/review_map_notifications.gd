@@ -134,24 +134,17 @@ func validate() -> void:
 	var native_before: Dictionary = city.core.simulation.snapshot(true)
 	var queued_before: int=city.core.commands.size()
 	await click(hud.pause_button)
-	check(city.core.commands.size()==queued_before+1 and city.core.commands[-1]=="pause 0","bottom time pause uses the original native command")
+	check(city.core.commands.size()==queued_before+1 and city.core.commands[-1]=="pause 0","the top bar pause uses the original native command")
 	city.core.commands.pop_back()
-	var original_speed: int=hud.speed_button.selected
-	await click(hud.speed_button)
-	var speed_popup: PopupMenu=hud.speed_button.get_popup()
-	var speed_opened:=speed_popup.visible
-	var clear_popup_hover:=InputEventMouseMotion.new();clear_popup_hover.position=Vector2(hud.size.x*.5,hud.size.y*.5);root.push_input(clear_popup_hover,true);await frames()
-	speed_popup.set_focused_item(3)
-	var speed_key:=InputEventKey.new();speed_key.keycode=KEY_ENTER;speed_key.physical_keycode=KEY_ENTER;speed_key.pressed=true
-	root.push_input(speed_key,true);await frames()
-	if not (speed_opened and city.core.commands.size()==queued_before+1):
-		print("SPEED_INPUT opened=",speed_opened," focused=",speed_popup.get_focused_item()," selected=",hud.speed_button.selected," queue=",city.core.commands)
-	check(speed_opened and city.core.commands.size()==queued_before+1 and city.core.commands[-1]=="speed 3","bottom time dropdown forwards the selected native speed through real input")
+	var original_speed: int=int(city.state.speed)
+	await click(hud.speed_buttons[3])
+	check(city.core.commands.size()==queued_before+1 and city.core.commands[-1]=="speed 3","the top bar's fourth chevron forwards the native top speed through real input")
 	if city.core.commands.size()>queued_before:city.core.commands.pop_back()
-	speed_popup.hide();hud.set_speed(original_speed)
-	check(not hud.get_node("%MinimapPanel").visible and hud.get_node("%MapPeek").visible and not hud.get_node("%MapToggle").button_pressed, "first-run map is folded with two discoverable controls")
-	await click(hud.get_node("%MapPeek"))
-	check(hud.get_node("%MinimapPanel").visible, "corner pill opens the live map through real input")
+	hud.set_speed(original_speed)
+	hud.set_minimap_open(true)
+	check(hud.get_node("%MinimapPanel").visible and not hud.get_node("%MapPeek").visible and hud.get_node("%MapToggle").button_pressed, "map is open without the removed corner shortcut")
+	await click(hud.get_node("%MapToggle")); await click(hud.get_node("%MapToggle"))
+	check(hud.get_node("%MinimapPanel").visible, "toolbar folds and reopens the live map through real input")
 	var sample := Vector2(city.origin) + Vector2(city.extent) * .5
 	var click_event := InputEventMouseButton.new();click_event.button_index=MOUSE_BUTTON_LEFT;click_event.pressed=true;click_event.position=hud.minimap.cell_to_point(sample)
 	hud.minimap._gui_input(click_event)
@@ -166,7 +159,7 @@ func validate() -> void:
 	overview_key.pressed = false; root.push_input(overview_key, true); await frames()
 	check(is_equal_approx(city.orbit.distance,minf(maxf(city.extent.x,city.extent.y)*.95,city.orbit.maximum_distance)),"Home retains the bounded overview without a compass button")
 	await click(hud.get_node("%MapClose"))
-	check(not hud.get_node("%MinimapPanel").visible and hud.get_node("%MapPeek").visible,"map close folds it without losing the entry point")
+	check(not hud.get_node("%MinimapPanel").visible and not hud.get_node("%MapPeek").visible,"map close folds it while the toolbar retains the entry point")
 	var scratch:="res://captures/map-pref-%d.cfg"%OS.get_process_id()
 	var old_settings_path: Variant=Engine.get_meta("ezeus_settings_path",null)
 	Engine.set_meta("ezeus_settings_path",scratch)
@@ -182,8 +175,8 @@ func validate() -> void:
 	var chip: Control=hud.toasts.get_child(0)
 	var dismissed: Array=[];var listener:=func(id):dismissed.append(id)
 	hud.message_dismissed.connect(listener)
-	check(hud.toasts.get_child_count()==1 and hud.alert_queue.size()==2 and not chip.expanded and chip.size.y<65,"urgent news uses one compact alert and queues the rest")
-	await click(chip.heading)
+	check(hud.toasts.get_child_count()==1 and hud.alert_queue.size()==2 and not chip.expanded and chip.open and chip.body_scroll.visible and chip.size.y<=chip.OPEN_HEIGHT+90,"urgent news shows one notice with its text in full and queues the rest")
+	await click(chip)
 	check(chip.expanded and chip.body_scroll.visible and dismissed.is_empty(),"reading expands the full message without dismissing or answering it")
 	var remaining: float=chip.remaining
 	chip._process(3)
@@ -230,11 +223,11 @@ func validate() -> void:
 			var stats_fit:=true
 			for name in ["Money","Citizens","Jobs"]:
 				stats_fit=stats_fit and strip.grow(1).encloses(hud.get_node("%"+name).get_global_rect())
-			var time: Rect2=hud.get_node("%TimeGroup").get_global_rect()
-			var time_fit: bool=screen.encloses(time)
-			for name in ["Pause","Speed","Date"]: time_fit=time_fit and time.grow(1).encloses(hud.get_node("%"+name).get_global_rect())
-			check(stats_fit and time_fit and screen.encloses(strip) and strip.size.y<=hud.size.y*.45 and not time.intersects(hud.get_node("%BottomBar").get_global_rect()) and not hud.get_node("%StatsGroup").get_global_rect().intersects(hud.get_node("%WelfareGroup").get_global_rect()),"%s %s native header, bottom time and utility controls fit without overlap"%[window_size,sizes])
-			check(screen.encloses(hud.get_node("%MinimapPanel").get_global_rect()) and hud.get_node("%MinimapPanel").get_global_rect().end.y<hud.get_node("%BottomBar").position.y,"%s %s map clears toolbar"%[window_size,sizes])
+			var time: Rect2=hud.get_node("%TimeBar").get_global_rect()
+			var time_fit: bool=strip.grow(1).encloses(time)
+			for name in ["Pause","Speed","Date","Housing"]: time_fit=time_fit and strip.grow(1).encloses(hud.get_node("%"+name).get_global_rect())
+			check(stats_fit and time_fit and screen.encloses(strip) and strip.size.y<=hud.size.y*.45 and not time.intersects(hud.get_node("%StatsGroup").get_global_rect()) and not hud.get_node("%StatsGroup").get_global_rect().intersects(hud.get_node("%WelfareGroup").get_global_rect()),"%s %s native header with its time bar and utility controls fit without overlap"%[window_size,sizes])
+			check(screen.encloses(hud.get_node("%MinimapPanel").get_global_rect()) and not hud.get_node("%MinimapPanel").get_global_rect().intersects(hud.get_node("%BottomBar").get_global_rect()),"%s %s map clears toolbar"%[window_size,sizes])
 			check(not hud.inspector.get_global_rect().intersects(hud.get_node("%MinimapPanel").get_global_rect()) and not hud.inspector.get_global_rect().intersects(hud.get_node("%ToastScroll").get_global_rect()),"%s %s map and news clear the open inspector"%[window_size,sizes])
 			check(screen.encloses(hud.get_node("%ToastScroll").get_global_rect()) and hud.get_node("%ToastScroll").size.y<=toasts_height(hud)+1,"%s %s notification hit area follows visible contents"%[window_size,sizes])
 			hud.set_messages_open(true);hud.open_category("Industry");await frames()
@@ -318,7 +311,7 @@ func aegean_checks() -> void:
 	city.core.query("event %d -1" % int(native_event.id))
 	# Empty margins pass through; all supported categories and the full menu remain available.
 	check(hud.get_node("%StatusBar").mouse_filter==Control.MOUSE_FILTER_IGNORE and hud.get_node("%BottomBar").size.x < hud.size.x,"floating shell passes input through header gaps and bounds the dock")
-	check(hud.category_buttons.size()==hud.build_groups.size(),"every native construction category remains accessible")
+	check(hud.category_buttons.values().filter(func(button):return not button.disabled).size()==hud.build_groups.size() and hud.build_groups.all(func(group):return hud.category_buttons.has(group.title) and not hud.category_buttons[group.title].disabled),"every native construction category remains accessible")
 	var thumbnails: Node=hud.thumbnails
 	while thumbnails.busy or not thumbnails.pending.is_empty(): await frames()
 	check(thumbnails.viewport==null or thumbnails.viewport.render_target_update_mode==SubViewport.UPDATE_DISABLED,"thumbnail rendering remains demand-driven after catalog browsing")
@@ -334,7 +327,7 @@ func aegean_checks() -> void:
 	var resource: int=editor.value.storage.resources[0].resource
 	var token: int=editor.value.target_token
 	var draft: int=0 if int(editor.rows[resource].limit.value)>0 else 4
-	editor.rows[resource].limit.value=draft;editor.mark_dirty(resource)
+	editor.rows[resource].limit.value=draft;editor.edit_storage(resource,600000)
 	hud.set_messages_open(true);city.refresh_inspection();await frames()
 	check(not hud.inspector.visible and editor.rows[resource].dirty,"journal hides the inspector presentation while retaining its unfinished edit")
 	var escape:=InputEventKey.new();escape.physical_keycode=KEY_ESCAPE;escape.pressed=true;root.push_input(escape,true);await frames()
@@ -382,16 +375,15 @@ func nova_checks() -> void:
 		roundtrips=roundtrips and map.point_to_cell(point).distance_to(Vector2(cell))<.0001
 	check(cropped and roundtrips,"chart fills and clips to the circle; all 25,992 native cells retain picking round trips within 0.0001 tile")
 	check(not map._has_point(Vector2(1,1)) and map._has_point(map.size*.5) and hud.get_node("%MinimapPanel").mouse_filter==Control.MOUSE_FILTER_IGNORE,"circular map corners pass input through to the city")
-	check(hud.get_node("%MinimapPanel").position.x<24 and hud.get_node("%MinimapPanel").get_global_rect().end.y<hud.get_node("%TimeGroup").position.y and hud.messages_button.get_parent().name=="RailColumn","map and journal occupy the left rail above bottom time controls")
+	check(hud.get_node("%MinimapPanel").position.x<24 and hud.get_node("%MinimapPanel").get_global_rect().end.x<hud.get_node("%BottomBar").position.x and hud.messages_button.get_parent().name=="RailColumn","map takes the bottom-left corner beside the dock; the journal stays on the rail")
 	for window_size in [Vector2i(1440,900),Vector2i(1280,720),Vector2i(1920,1080)]:
 		DisplayServer.window_set_size(window_size)
 		for sizes in [Vector2i(100,100),Vector2i(125,130)]:
 			root.get_node("UiAccess").apply(sizes.x,sizes.y);city.set_tool("road");hud.close_build_tray();await frames()
 			var queued: int=city.core.commands.size()
-			await click(hud.speed_button)
-			var popup: PopupMenu=hud.speed_button.get_popup()
-			check(popup.visible and city.core.commands.size()==queued and popup.position.y+popup.size.y<=hud.speed_button.get_screen_position().y,"%s %s speed popup opens above its button without selecting an item"%[window_size,sizes])
-			popup.hide();await frames()
+			await click(hud.speed_buttons[1])
+			check(city.core.commands.size()==queued+1 and city.core.commands[-1]=="speed 1","%s %s a speed chevron sends its native speed"%[window_size,sizes])
+			city.core.commands.pop_back()
 			var card: Control=hud.get_node("%ActiveToolCard")
 			check(card.visible and Rect2(Vector2.ZERO,hud.size).encloses(card.get_global_rect()) and not card.get_global_rect().intersects(hud.get_node("%BottomBar").get_global_rect()) and not card.get_global_rect().intersects(hud.goals_panel.get_global_rect()),"%s %s selected road card fits above dock and native objectives"%[window_size,sizes])
 			check(hud.get_node("%ActiveToolTitle").text==city.tr(hud.build_entries.road.label) and hud.get_node("%ActiveToolPrice").text.contains(hud.cost_text(hud.build_entries.road)),"selected card retains translated name and exact native catalogue cost")

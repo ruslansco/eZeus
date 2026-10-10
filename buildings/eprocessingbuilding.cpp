@@ -58,8 +58,10 @@ void eProcessingBuilding::timeChanged(const int by) {
     if(enabled()) {
         if(!mTakeCart) {
             mTakeCart = spawnCart(eCartActionTypeSupport::take);
-            mTakeCart->setMaxDistance(eNumbers::sProcessingBuildingMaxResourceTakeDistance);
         }
+        // Saved carts keep the range they were created with: apply the
+        // current one so a changed setting reaches existing buildings.
+        mTakeCart->setMaxDistance(eNumbers::sProcessingBuildingMaxResourceTakeDistance);
         mProcessTime += by*effectiveness();
         if(mProcessTime > mProcessWaitTime) {
             mProcessTime -= mProcessWaitTime;

@@ -1,19 +1,20 @@
 {
   "asset": "walker_artemis",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_artemis.glb",
-  "bytes": 9603888,
-  "vertices": 15370,
+  "bytes": 9686304,
+  "vertices": 15404,
   "surfaces": 3,
   "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.671870768070221,
-      -0.5573994517326355,
+      -0.5340725183486938,
       -0.012000000104308128
     ],
     [
-      0.5576843619346619,
+      0.5650339722633362,
       1.9800000190734863,
       2.65842866897583
     ]
@@ -81,7 +82,7 @@
   "memory_optimization": {
     "version": 1,
     "targets_before": 264,
-    "targets_after": 143,
+    "targets_after": 144,
     "uv_attributes_removed": 0
   }
 }

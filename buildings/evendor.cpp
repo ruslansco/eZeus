@@ -141,21 +141,23 @@ void eVendor::timeChanged(const int by) {
             default:
                 break;
             }
-            switch(mResType) {
-            case eResourceType::food:
-            case eResourceType::fleece:
-            case eResourceType::oliveOil:
-            case eResourceType::wine:
-            case eResourceType::armor:
-                mCart->setMaxDistance(eNumbers::sBasicVendorMaxResourceTakeDistance);
-                break;
-            case eResourceType::horse:
-            case eResourceType::chariot:
-                mCart->setMaxDistance(eNumbers::sHorseVendorMaxResourceTakeDistance);
-                break;
-            default:
-                break;
-            }
+        }
+        // Saved carts keep the range they were created with: apply the
+        // current one so a changed setting reaches existing buildings.
+        switch(mResType) {
+        case eResourceType::food:
+        case eResourceType::fleece:
+        case eResourceType::oliveOil:
+        case eResourceType::wine:
+        case eResourceType::armor:
+            mCart->setMaxDistance(eNumbers::sBasicVendorMaxResourceTakeDistance);
+            break;
+        case eResourceType::horse:
+        case eResourceType::chariot:
+            mCart->setMaxDistance(eNumbers::sHorseVendorMaxResourceTakeDistance);
+            break;
+        default:
+            break;
         }
     }
     eEmployingBuilding::timeChanged(by);

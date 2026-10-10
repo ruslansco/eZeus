@@ -1,19 +1,20 @@
 {
   "asset": "walker_jason",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_jason.glb",
-  "bytes": 9892776,
-  "vertices": 15899,
+  "bytes": 9910584,
+  "vertices": 15927,
   "surfaces": 3,
   "source_surfaces": 21,
   "bounds_blender": [
     [
       -0.34945881366729736,
-      -0.20643635094165802,
+      -0.2007293999195099,
       0.0005599489668384194
     ],
     [
-      0.2154843509197235,
+      0.23327887058258057,
       0.2427070587873459,
       1.01450514793396
     ]

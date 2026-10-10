@@ -1,19 +1,20 @@
 {
   "asset": "walker_hoplite",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hoplite.glb",
-  "bytes": 7695008,
-  "vertices": 15673,
+  "bytes": 7709004,
+  "vertices": 15701,
   "surfaces": 3,
   "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.2783004641532898,
-      -0.18594591319561005,
+      -0.17924624681472778,
       0.0004999842494726181
     ],
     [
-      0.20230115950107574,
+      0.20710420608520508,
       0.2588009238243103,
       1.1299999952316284
     ]

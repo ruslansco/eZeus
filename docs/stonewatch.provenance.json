@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "purpose": "Private third-campaign adaptation evidence; excluded from shipping",
+  "records": [
+    {
+      "id": "stonewatch-chapters-v1",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/stonewatch_chapters.json",
+        "build-content-research/stonewatch/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: orius and underlying rightsholders; complete chain not verified",
+      "origin": "New three-parent-chapter settlement, defense and hero campaign on reviewed One Against the World parent terrain/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=514",
+        "source_pak_sha256": "450a507cf59ca8b4abf19307ede142dfdaa30ff7e2b96d29f93cad056edf3ddf",
+        "recipe_version": 1
+      },
+      "license_or_agreement": "No explicit commercial redistribution permission established",
+      "evidence_location": [
+        "docs/STONEWATCH.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/stonewatch/current.json"
+      ],
+      "reviewed_sha256_by_file": {
+        "content/scenarios/stonewatch_chapters.json": "1b91072d105c9aa9394fd5c1ee4884186c2ec5b4e4e904b43b0ef3579b414bf8",
+        "build-content-research/stonewatch/build-1791567553611581000/eZeus/Adventures/Stonewatch Chapters/ATTRIBUTION.md": "d77d9414d687d116d11d7be723038aa0ea3391fbc1c4f24232a78546b45a3c2f",
+        "build-content-research/stonewatch/build-1791567553611581000/eZeus/Adventures/Stonewatch Chapters/Stonewatch Chapters_ru.txt": "5005c9975b2613c69f09e9d34b17f2e6f28c84ba07f1fc7fb49a6c4057b1a857",
+        "build-content-research/stonewatch/build-1791567553611581000/eZeus/Adventures/Stonewatch Chapters/Stonewatch Chapters.epak": "1648076719d691e201cae7a384530451cdd831959b63eb4ded60bc23a29c425e",
+        "build-content-research/stonewatch/build-1791567553611581000/eZeus/Adventures/Stonewatch Chapters/Stonewatch Chapters.txt": "473181ffa06f156ce2970424518860e117ce0d20edcdb4f80fc3a86bf0d5f3a2"
+      },
+      "source_input_records": [
+        "heavengames-adventure-514",
+        "Existing original-game/development compatibility resources; release review pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-09",
+        "scope": "New English/Russian story, briefings, endings, objectives, permission sets, trade and native invasion/monster settings; no new terrain/art/audio in this slice"
+      },
+      "attribution_requirements": [
+        "Retain One Against the World / orius, source URL, untouched archive/notes/hashes and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Human playtesting/pacing; actual Windows/minimum machines; retained map/world/content commercial permission or replacement before release",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "authoring_checks": 10,
+        "validation_pending": false,
+        "ordinary_playthrough": {
+          "okay": true,
+          "chapters": 3,
+          "commands": 824,
+          "service_calls": 2150,
+          "test_commands_used": false,
+          "final_population": 648.0,
+          "final_treasury": 16441.0,
+          "proof": {
+            "battle_won": true,
+            "fight_chosen": true,
+            "hero_fought": true,
+            "hero_summoned": true,
+            "invaders_seen": true,
+            "invasion_seen": true,
+            "monster_seen": true
+          }
+        },
+        "visible_review_checks": {
+          "en": 49,
+          "ru": 49
+        },
+        "shared_menu_review_checks": {
+          "en": 86,
+          "ru": 86
+        }
+      }
+    }
+  ]
+}

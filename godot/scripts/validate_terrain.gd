@@ -56,13 +56,13 @@ func run() -> void:
 		if flags & 16:
 			vegetation = vegetation and is_equal_approx(data.g, .75)
 		elif flags & 8:
-			vegetation = vegetation and data.g == 0
+			vegetation = vegetation and data.g == 0 and data.b == 1.0
 		roads = roads and ((style.road_image.get_pixelv(cell - origin).r > .5) == bool(int(tile[4])))
 	check(native_classes, "every native water/land center keeps its original classification")
 	check(finite, "all native coastal distances are finite and bounded")
 	check(near_depth == .5 and far_depth > 4, "channel shallows and deep open water have distinct distances")
 	check(water_levels, "water surfaces use native altitude without rounding")
-	check(vegetation, "forest keeps its material weight; fertile meadow matches plain grassland")
+	check(vegetation, "forest keeps its material weight; fertile meadow has its own channel")
 	check(roads, "road material mask matches the entire native road network")
 	var empty_cells := 0
 	var holes_empty := true

@@ -2,7 +2,7 @@
 #define EMENU3D_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL_ttf.h>
 #include "efonts.h"
 
 #include "textures/egeometrybatch.h"

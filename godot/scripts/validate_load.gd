@@ -1,7 +1,7 @@
 extends SceneTree
 # Loading a saved city through the real scene start (the restart a load performs), headless:
-# a save made in one session opens in the next with the same state, a missing or broken file falls back to the
-# test city with a notice, and nothing is left behind. The designated save is only read.
+# a save made in one session opens in the next with the same state; corrupt files
+# are rejected rather than silently opening a different city. Designated source is read-only.
 var okay := true
 var checks := 0
 
@@ -11,6 +11,8 @@ func check(value: bool, message: String) -> void:
 	okay = okay and value
 
 func _initialize() -> void:
+	Engine.set_meta("ezeus_settings_path",OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH"))
+	Engine.set_meta("ezeus_save_directory",OS.get_environment("EZEUS_REVIEW_SAVE_DIRECTORY"))
 	call_deferred("run")
 
 func start_city() -> Node:
@@ -70,15 +72,15 @@ func run() -> void:
 	check(third.state.money == untouched_money and roads(third) == untouched_roads, "starting without a load opens the test city as before")
 	third.free()
 	await process_frame
-	# A broken file falls back to the test city.
+	# Direct unchecked startup rejects a broken file; the live UI preflights loads.
 	var broken := directory.path_join(name + " broken.ez")
 	var file := FileAccess.open(broken, FileAccess.WRITE)
 	file.store_string("this is not a city")
 	file.close()
 	Engine.set_meta("ezeus_load", broken)
 	var fourth = await start_city()
-	check(not fourth.state.is_empty() and fourth.state.money == untouched_money, "a broken save falls back to the test city")
-	check(fourth.hint.text != "", "and says so")
+	check(fourth.state.is_empty() and fourth.core.simulation==null, "a broken save cannot silently switch the player to the test city")
+	check(fourth.hint.text != "", "and reports the load failure")
 	fourth.free()
 	await process_frame
 	# The live path: a running game asks to load, and the scene restarts around the file (the old city must be
@@ -91,7 +93,8 @@ func run() -> void:
 	var live_money: int = live.state.money
 	live.save_game(name)
 	live.load_game(path)
-	for i in 240:
+	var deadline:=Time.get_ticks_msec()+45000
+	while Time.get_ticks_msec()<deadline:
 		await process_frame
 		if current_scene != live and current_scene != null and not current_scene.state.is_empty():
 			break

@@ -1,19 +1,20 @@
 {
   "asset": "walker_achilles",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_achilles.glb",
-  "bytes": 9197528,
-  "vertices": 15674,
+  "bytes": 9213056,
+  "vertices": 15700,
   "surfaces": 3,
   "source_surfaces": 21,
   "bounds_blender": [
     [
       -0.3495205342769623,
-      -0.2097618281841278,
+      -0.20077775418758392,
       0.0005600157892331481
     ],
     [
-      0.22699260711669922,
+      0.23397871851921082,
       0.24214386940002441,
       1.3328001499176025
     ]

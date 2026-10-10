@@ -1,19 +1,20 @@
 {
   "asset": "walker_priestess",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_priestess.glb",
-  "bytes": 10976104,
-  "vertices": 15500,
+  "bytes": 11187364,
+  "vertices": 15810,
   "surfaces": 3,
-  "source_surfaces": 17,
+  "source_surfaces": 18,
   "bounds_blender": [
     [
-      -0.18070891499519348,
-      -0.18771006166934967,
+      -0.181460902094841,
+      -0.18432816863059998,
       0.0005000103265047073
     ],
     [
-      0.19102387130260468,
+      0.19396553933620453,
       0.16024206578731537,
       0.8498969674110413
     ]
@@ -32,7 +33,7 @@
         "name": "Priestess",
         "sex": "female",
         "profile": {
-          "age": 39,
+          "age": 69,
           "jaw": 0.96,
           "cheek": 1.03,
           "nose": 0.001,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2944808577,
           "skin": [
             0.53,

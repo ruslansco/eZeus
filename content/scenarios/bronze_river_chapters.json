@@ -1,0 +1,235 @@
+{
+  "id": "bronze_river_chapters",
+  "development_name": "Bronze River Chapters",
+  "workspace_slug": "bronze-river",
+  "source_working_copy": "armory",
+  "profile_namespace": "chapters",
+  "version": 1,
+  "source_record": "heavengames-adventure-653",
+  "rights_status": "needs_evidence",
+  "ships_in_release": false,
+  "target_minutes": [
+    45,
+    90
+  ],
+  "start_year": -1180,
+  "initial_funds": 24000,
+  "difficulty": 1,
+  "review_script": "review_bronze_river.gd",
+  "playthrough_script": "playthrough_bronze_river.gd",
+  "trade": {
+    "buys": {
+      "8192": 48,
+      "65536": 48
+    },
+    "sells": {
+      "2048": 24,
+      "4096": 32
+    }
+  },
+  "chapters": [
+    {
+      "id": "river_settlement",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "timberMill",
+        "tradePost",
+        "pier"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 240
+        },
+        {
+          "type": 12,
+          "enum1": 64,
+          "count": 24
+        },
+        {
+          "type": 12,
+          "enum1": 8192,
+          "count": 16
+        }
+      ]
+    },
+    {
+      "id": "bronze_chain",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "hospital",
+        "fleeceVendor",
+        "bibliotheke",
+        "park",
+        "bench",
+        "flowerGarden",
+        "foundry",
+        "armory"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 480
+        },
+        {
+          "type": 7,
+          "housing": 3,
+          "count": 64
+        },
+        {
+          "type": 12,
+          "enum1": 16384,
+          "count": 16
+        },
+        {
+          "type": 12,
+          "enum1": 65536,
+          "count": 12
+        },
+        {
+          "type": 11,
+          "count": 1,
+          "working_route": 1
+        }
+      ]
+    },
+    {
+      "id": "covenant",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "timberMill",
+        "tradePost",
+        "pier",
+        "hospital",
+        "fleeceVendor",
+        "bibliotheke",
+        "park",
+        "bench",
+        "flowerGarden",
+        "foundry",
+        "armory",
+        "palace",
+        "taxOffice",
+        "oilVendor",
+        "observatory",
+        "wall",
+        "tower",
+        "gatehouse"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 700
+        },
+        {
+          "type": 12,
+          "enum1": 65536,
+          "count": 16
+        },
+        {
+          "type": 13,
+          "count": 1500
+        },
+        {
+          "type": 8,
+          "enum1": 65536,
+          "count": 16
+        },
+        {
+          "type": 9,
+          "count": 0,
+          "enum1": 2,
+          "enum2": 6
+        }
+      ],
+      "challenge": {
+        "event_type": 22,
+        "god": 12,
+        "year": 0,
+        "month": 3,
+        "duration_days": 60
+      }
+    }
+  ],
+  "text": {
+    "en": {
+      "parent_name": "Bronze River",
+      "partner_name": "Willow Quay",
+      "leader": "River Council",
+      "Adventure_Title": "Bronze River",
+      "Adventure_Introduction": "@PA river valley holds copper and timber, but prosperity will depend on people, not ore. Build a working town, turn bronze into armor and trade for the comforts the valley cannot provide. Three chapters; the same city carries forward.",
+      "Adventure_Complete": "@PThe river towns have accepted the covenant. Your workshops can support the households that work them, your trade has endured a closed route, and a public reserve is ready for the next shortage. Bronze River has become a place to live, not merely a place to extract wealth.",
+      "Parent_Episode_1_Title": "A Town Before a Forge",
+      "Parent_Episode_1_Introduction": "@PThe council has chosen a wooded river valley with copper-bearing rock and a broad meadow. Before lighting a furnace, build homes, fountains, food supply and maintenance. Farms belong on meadow; timber mills need forest within reach. Keep warehouses and noisy industry away from the residential streets.@PWillow Quay buys timber and will later buy armor. It supplies the fleece and oil our valley lacks. Open its route from the Trade menu and follow its land or sea connection. A post needs employees and a road; enable timber exports and set a positive stock limit, such as 32. Trade can fund the town, but the first goals are residents, wheat and timber.",
+      "Parent_Episode_1_Complete": "@PThere is now a town behind the trade ledger. Food reaches the market, clean water reaches the houses, and timber leaves the valley. The council can offer a second promise: every new workshop will help support a comfortable home.",
+      "Parent_Episode_2_Title": "Ore, Hands and Hearths",
+      "Parent_Episode_2_Introduction": "@PFoundries and armories are now available. Place foundries near the copper-bearing rock and connect them to storage and roads. The copper district is across the river: build a bridge and join both road networks so armor can reach the trading post. Put a maintenance office on the industrial roads as well as the residential streets. Reserve warehouse bays for bronze and armor so imported fleece cannot fill every bay. An armory consumes bronze to make armor; a warehouse alone cannot make the chain work without miners, workshop employees and deliveries.@POur meadow has no domestic fleece supply. At Willow Quay's post, enable fleece imports with a positive stock limit, then add a fleece stall to the market. Give homes food, water, library science and nearby flower gardens to reach Homestead or better. Keep the industrial district farther away to protect appeal.@PEnable armor exports as production grows. The route goal requires a staffed, connected post with an enabled export and storage space; the annual production goals require actual bronze and armor output.",
+      "Parent_Episode_2_Complete": "@PThe copper has become bronze, the bronze has become armor, and the proceeds are paying for the valley's missing goods. More people are choosing to stay. Our last promise is harder: keep the town solvent and protect a reserve when the river's trade falters.",
+      "Parent_Episode_3_Title": "The River Covenant",
+      "Parent_Episode_3_Introduction": "@PExpand carefully to 700 residents, produce 16 armor in a year and earn 1,500 net profit in a year. Build a palace before relying on tax collectors. Workshop wages and imported fleece count against profit, so watch the finance page as well as export income.@PThree months from now, Poseidon's disruption will close Willow Quay's trade for 60 days. Keep food and fleece in storage beforehand. The route reopens by itself; no payment or military response is required. The chapter remains open for at least six months so the town must live through the interruption.@PReserve 16 armor for the planned downstream colony through the objective's Set aside button. Reserved goods leave city stock and stay credited to the goal. Temporarily pause armor exports if the reserve is hard to accumulate, then reopen them after setting it aside. Keep enough production for both the reserve and ongoing exports.",
+      "Parent_Episode_3_Complete": "@PThe closed route did not close the town. Households remained supplied, trade resumed, and the reserve belongs to the community rather than the next merchant. The River Covenant is fulfilled."
+    },
+    "ru": {
+      "parent_name": "Бронзовая река",
+      "partner_name": "Ивовая пристань",
+      "leader": "Речной совет",
+      "Adventure_Title": "Бронзовая река",
+      "Adventure_Introduction": "@PВ речной долине есть медь и лес, но благополучие зависит от людей. Постройте город, наладьте производство доспехов и обменивайте их на товары, которых здесь нет. Три главы; город сохраняется между ними.",
+      "Adventure_Complete": "@PРечные города приняли соглашение. Мастерские обеспечивают своих работников, торговля пережила закрытие пути, а общественный запас готов к следующему дефициту. Бронзовая река стала местом для жизни, а не только для добычи.",
+      "Parent_Episode_1_Title": "Город прежде кузницы",
+      "Parent_Episode_1_Introduction": "@PСовет выбрал лесистую речную долину с медной рудой и просторным лугом. До постройки литейных создайте жильё, водоснабжение, продовольствие и обслуживание. Фермам нужен луг, лесопилкам — лес поблизости. Склады и промышленность размещайте подальше от жилых улиц.@PИвовая пристань покупает древесину, а затем сможет покупать доспехи. Она продаёт шерсть и масло, которых нет в долине. Откройте её путь через меню торговли, учитывая сухопутное или морское сообщение. Торговому зданию нужны работники и дорога. Включите экспорт древесины и задайте положительный предел запаса, например 32. Первые цели — жители, пшеница и древесина.",
+      "Parent_Episode_1_Complete": "@PЗа торговыми цифрами появился настоящий город. Еда поступает на рынок, вода — к домам, древесина — к покупателям. Теперь совет обещает, что новые мастерские будут поддерживать удобные дома.",
+      "Parent_Episode_2_Title": "Руда, труд и домашний очаг",
+      "Parent_Episode_2_Introduction": "@PОткрыты литейные и оружейные. Литейные ставьте рядом с медной рудой, соединяя их дорогами со складами. Медный район находится за рекой: постройте мост и соедините дорожные сети, чтобы доспехи доходили до торгового здания. Промышленным улицам нужна собственная служба обслуживания. Выделите складские места под бронзу и доспехи, чтобы импортная шерсть не заняла все секции. Оружейная расходует бронзу и производит доспехи. Цепочке нужны рудокопы, работники мастерских и доставка материалов.@PМестной шерсти нет. В торговом здании Ивовой пристани включите её импорт с положительным пределом запаса, затем добавьте шерстяной прилавок на рынок. Еда, вода, знания библиотеки и цветники рядом с домами помогут довести жильё до усадьбы или выше. Промышленность держите дальше, чтобы сохранить привлекательность.@PПо мере роста выпуска включите экспорт доспехов. Для цели торговли требуется действующее торговое здание с работниками, дорогой, включённым экспортом и местом для товара. Годовые цели требуют реального выпуска бронзы и доспехов.",
+      "Parent_Episode_2_Complete": "@PИз руды получается бронза, из бронзы — доспехи, а выручка оплачивает недостающие товары. Всё больше людей остаются в долине. Последнее обещание — сохранить прибыль и общественный запас даже при остановке торговли.",
+      "Parent_Episode_3_Title": "Речное соглашение",
+      "Parent_Episode_3_Introduction": "@PДостигните 700 жителей, произведите 16 доспехов за год и получите 1 500 чистой годовой прибыли. Для сбора налогов сначала постройте дворец. Зарплаты и импорт шерсти уменьшают прибыль: следите за финансами, а не только за экспортной выручкой.@PЧерез три месяца вмешательство Посейдона закроет торговлю с Ивовой пристанью на 60 дней. Заранее запасите еду и шерсть. Путь откроется сам; платить или отправлять войска не нужно. Глава продлится не менее шести месяцев, чтобы город пережил остановку.@PОтложите 16 доспехов для будущей колонии вниз по реке кнопкой в целях. Они покидают городской запас и засчитываются в резерв. Если резерв не накапливается, временно остановите экспорт доспехов и включите его после откладывания запаса. Производства должно хватить и на резерв, и на дальнейший экспорт.",
+      "Parent_Episode_3_Complete": "@PЗакрытый путь не остановил город. Жителям хватило припасов, торговля возобновилась, а резерв остался у общины. Речное соглашение выполнено."
+    }
+  }
+}

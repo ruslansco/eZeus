@@ -186,6 +186,10 @@ func run() -> void:
 	animal.free()
 	await god_float_checks(city, vat)
 	# This city was deliberately never readied; take ownership of its pre-created nodes.
+	city.add_child(city.walker_streets.ring)
+	city.add_child(city.army_view.root)
+	city.world_flight.overlay.add_child(city.world_flight.veil)
+	city.add_child(city.world_flight.overlay)
 	city.orbit.add_child(city.orbit.camera)
 	for property in city.get_property_list():
 		if int(property.usage) & PROPERTY_USAGE_SCRIPT_VARIABLE:

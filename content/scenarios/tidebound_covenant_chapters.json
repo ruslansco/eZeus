@@ -1,0 +1,215 @@
+{
+  "id": "tidebound_covenant_chapters",
+  "development_name": "Tidebound Covenant Chapters",
+  "workspace_slug": "tidebound-covenant",
+  "source_working_copy": "tributaries-3",
+  "profile_namespace": "chapters",
+  "version": 1,
+  "source_record": "heavengames-adventure-510",
+  "rights_status": "needs_evidence",
+  "ships_in_release": false,
+  "target_minutes": [
+    45,
+    90
+  ],
+  "start_year": -1180,
+  "initial_funds": 36000,
+  "difficulty": 1,
+  "start_focus": [
+    110,
+    -45
+  ],
+  "partner_index": 1,
+  "review_script": "review_tidebound_covenant.gd",
+  "playthrough_script": "playthrough_tidebound_covenant.gd",
+  "trade": {
+    "buys": {},
+    "sells": {}
+  },
+  "chapters": [
+    {
+      "id": "bread_before_bargains",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 240
+        },
+        {
+          "type": 12,
+          "enum1": 64,
+          "count": 32
+        }
+      ]
+    },
+    {
+      "id": "the_woven_city",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "cardingShed",
+        "sheep",
+        "fleeceVendor",
+        "hospital",
+        "bibliotheke",
+        "observatory",
+        "park",
+        "bench",
+        "flowerGarden",
+        "palace",
+        "taxOffice"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 480
+        },
+        {
+          "type": 7,
+          "housing": 3,
+          "count": 64
+        },
+        {
+          "type": 12,
+          "enum1": 4096,
+          "count": 16
+        }
+      ]
+    },
+    {
+      "id": "supplies_for_the_far_shore",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "warehouse",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "cardingShed",
+        "sheep",
+        "fleeceVendor",
+        "hospital",
+        "bibliotheke",
+        "observatory",
+        "park",
+        "bench",
+        "flowerGarden",
+        "palace",
+        "taxOffice",
+        "timberMill",
+        "university",
+        "laboratory",
+        "inventorsWorkshop",
+        "museum",
+        "wall",
+        "tower",
+        "gatehouse"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 700
+        },
+        {
+          "type": 12,
+          "enum1": 8192,
+          "count": 24
+        },
+        {
+          "type": 8,
+          "enum1": 8192,
+          "count": 32
+        },
+        {
+          "type": 8,
+          "enum1": 4096,
+          "count": 16
+        },
+        {
+          "type": 1,
+          "count": 5000
+        },
+        {
+          "type": 9,
+          "count": 0,
+          "enum1": 2,
+          "enum2": 6
+        }
+      ]
+    }
+  ],
+  "text": {
+    "ru": {
+      "parent_name": "Завет побережья",
+      "partner_name": "Дальний берег",
+      "leader": "Совет побережья",
+      "Adventure_Title": "Завет побережья",
+      "Adventure_Introduction": "@PНи один купец не снабдит это побережье. Вырастите хлеб на лугах, оденьте своих жителей и соберите припасы для поселения за проливом. Три главы, один город, без импорта и доходов от экспорта.",
+      "Adventure_Complete": "@PЗавет исполнен. Город кормит и одевает жителей без торговых караванов, а общественных припасов хватит для нового берега. Независимость держится на полях, мастерских и людях, которые обеспечивают их работу.",
+      "Parent_Episode_1_Title": "Хлеб прежде торговли",
+      "Parent_Episode_1_Introduction": "@PНа лугу у северного залива хватит места для города, но каждый житель должен питаться плодами этого берега. Дальний берег остаётся далёким соседом и не торгует. В этой кампании нет импорта, экспорта и автоматических поставок дани.@PБерегите плодородную землю для полей и будущих овечьих пастбищ. Соедините дорогами дома, фонтаны, службы обслуживания, амбар и агору с продуктовым прилавком. Пшеничным фермам нужны плодородная земля, работники и доступный для тележек амбар. Не расширяйте город слишком быстро до первого урожая. Рыболовство и охота могут дополнить питание там, где позволяет местность.@PДостигните 240 жителей и соберите 32 пшеницы за год. Годовой выпуск учитывает настоящий местный урожай, а не запас на складе. Мосты доступны на подходящих протоках, но ближайшая дорога должна действительно соединяться с работающим поселением.",
+      "Parent_Episode_1_Complete": "@PПервый урожай наполнил амбар. Теперь поселенцам можно предложить хлеб и воду, не обещая караван, который никогда не придёт. Пора превратить временное убежище в город, где хочется остаться.",
+      "Parent_Episode_2_Title": "Город ткачей",
+      "Parent_Episode_2_Introduction": "@PОткрыты шерстяные мастерские и овцы. Разместите овец на плодородной земле рядом с укомплектованными мастерскими и соедините мастерские со складом. Оставьте открытые пастбища, не застраивайте каждый луг. Для выпуска шерсти мастерской нужны овцы поблизости; сам склад одежду не создаёт.@PДобавьте на агоры шерстяные прилавки. Это атлантический город: ранние научные услуги оказывают библиотеки и обсерватории. Еда, вода, наука, одежда и сады помогают обычным домам улучшаться. По возможности держите мастерские дальше от жилья; растущему району нужны обслуживание и больница.@PДворец и налоговые службы теперь позволяют собирать местный доход. Без экспортного рынка бюджет зависит от налогов и разумного числа рабочих мест. Достигните 480 жителей, поселите 64 человека в усадьбах или лучшем жилье и произведите 16 шерсти за год. Не оставляйте фермы без работников ради новых предприятий.",
+      "Parent_Episode_2_Complete": "@PУ города есть собственная одежда, места учения и общественный доход. Новичков больше не просят терпеть жизнь в лагере. Следующее обещание дано тем, кто построит поселение за проливом: первые припасы должны ждать их до отплытия.",
+      "Parent_Episode_3_Title": "Припасы для дальнего берега",
+      "Parent_Episode_3_Introduction": "@PОткрыты лесопилки и новые научные службы. Ставьте лесопилки с работниками рядом с живым лесом и соединяйте их со складом. Не вырубайте весь лес ради дорог и зданий. На этой карте есть обычные скалы, но нет месторождений, поэтому первые припасы будущего поселения — древесина и шерсть.@PДостигните 700 жителей, произведите 24 древесины за год и сохраните 5 000 в казне. Поддерживайте занятость на фермах и в шерстяных мастерских. Выделите древесине и шерсти отдельные складские секции: полный склад способен остановить исправное производство. Необязательные стены и башни защищают город, но не приносят дохода.@PКнопками в целях отложите 32 древесины и 16 шерсти для будущей колонии. Каждый взнос удаляет товар из городского запаса и остаётся зачтённым в цели. Оставьте дополнительную шерсть рынкам. Проживите не менее шести месяцев и выполните все цели. Эта глава готовит припасы и завершает кампанию; второй игровой город не открывается.",
+      "Parent_Episode_3_Complete": "@PПрипасы для нового берега запечатаны, а у города остаются еда, одежда и достаток в казне. Завет стал повседневным делом: готовить будущее, не отнимая необходимого у живого города."
+    },
+    "en": {
+      "parent_name": "Tidebound Covenant",
+      "partner_name": "Far Shore",
+      "leader": "Shore Council",
+      "Adventure_Title": "Tidebound Covenant",
+      "Adventure_Introduction": "@PNo merchant will provision this coast. Turn open meadow into bread, clothe your own people and assemble supplies for a settlement beyond the inlet. Three chapters, one city, no imports or export income.",
+      "Adventure_Complete": "@PThe covenant has been kept. The town feeds and clothes its people without a merchant convoy, and the public stores can provision the next shore. Independence now rests on farms, workshops and the people who keep them working.",
+      "Parent_Episode_1_Title": "Bread Before Bargains",
+      "Parent_Episode_1_Introduction": "@PThe meadow beside the northern inlet is broad enough for a town, but every mouth must be fed from this coast. Far Shore remains a distant contact; it offers no trade. There are no imports, exports or automatic tribute deliveries in this campaign.@PKeep the fertile ground for farms and later sheep pastures. Build connected homes, fountains, maintenance offices, a granary and an agora with a food stall. Wheat farms need fertile land, employees and a granary within reach of their harvest carts. Let the first harvest arrive before expanding too quickly. Fishing or hunting may supplement food where the native terrain permits.@PReach 240 residents and harvest 32 wheat in a year. Annual production counts a real local harvest, not goods sitting in storage. Bridges are available for crossing suitable channels, but a nearby road must actually connect to your working settlement.",
+      "Parent_Episode_1_Complete": "@PThe first harvest has filled the granary. The settlement can offer newcomers bread and water without promising a convoy that will never arrive. Now we must turn temporary shelter into a town worth staying in.",
+      "Parent_Episode_2_Title": "The Woven City",
+      "Parent_Episode_2_Introduction": "@PCarding sheds and sheep are now available. Put sheep on fertile ground near staffed sheds and connect the sheds to a warehouse. Leave pasture open instead of covering every meadow with buildings. Each shed needs nearby sheep to produce fleece; a warehouse alone cannot create clothing.@PAdd fleece stalls to the agoras. This is an Atlantean town: bibliothekes and observatories provide its early science services. Food, water, science, clothing and gardens help common homes improve. Keep workshops away from homes where possible and provide maintenance and a hospital as the district grows.@PA palace and tax offices can now collect local income. With no export market, taxes and controlled employment must support the budget. Reach 480 residents, house 64 people in Homesteads or better and produce 16 fleece in a year. Keep food production running while the new workplaces recruit.",
+      "Parent_Episode_2_Complete": "@PThe town has its own clothing, learning places and public income. We no longer ask newcomers to endure a camp. The next promise is to those who will build beyond the inlet: their first supplies must be ready before they leave.",
+      "Parent_Episode_3_Title": "Supplies for the Far Shore",
+      "Parent_Episode_3_Introduction": "@PTimber mills and further science services are now available. Place staffed mills near living forest and connect their output to warehouse space. Do not clear the whole forest for roads or buildings. This map has ordinary rock, not mineral deposits, so the outpost will begin with timber and cloth.@PReach 700 residents, produce 24 timber in a year and retain 5,000 in the treasury. Keep farms and fleece sheds supplied with workers. Give timber and fleece their own warehouse bays; a full warehouse can stop an otherwise healthy production chain. Optional walls and towers protect the settlement without creating income.@PUse the objectives Set aside buttons to commit 32 timber and 16 fleece for a future colony. Each commitment removes goods from city stock and remains credited to that objective. Keep extra fleece for your markets. Remain for at least six months and complete every objective. This chapter prepares the outpost supplies and ends the campaign; it does not open a second playable city.",
+      "Parent_Episode_3_Complete": "@PThe stores are sealed for the next shore, while the town still has food, clothing and a solvent treasury. The covenant has become a working habit: prepare for the future without taking away what the living city needs."
+    }
+  }
+}

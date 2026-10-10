@@ -35,6 +35,9 @@ func run() -> void:
 		quit(1)
 		return
 	check(not audio.enabled, "headless runs are silent")
+	# Exercise retained recordings explicitly; the original score is reviewed by
+	# validate_city_clarity.gd alongside the new soundscape preference.
+	audio.set_original_soundscape(false)
 	check(audio.workspace.ends_with("Zeus & Poseidon") and DirAccess.dir_exists_absolute(audio.workspace.path_join("Audio")), "the manager finds the game's Audio folder")
 
 	# The original files load.

@@ -6,6 +6,26 @@ var entries: Array = []
 var cache := {}
 var loaded_paths := {}
 
+func remember(key: Variant, value: Texture2D, origin: String) -> Texture2D:
+	if cache.size()>=18 and not cache.has(key):
+		var oldest: Variant=cache.keys()[0]
+		cache.erase(oldest);loaded_paths.erase(oldest)
+	cache[key]=value;loaded_paths[key]=origin
+	return value
+
+func campaign_texture(path: String) -> Texture2D:
+	if path.is_empty():return null
+	if cache.has(path):return cache[path]
+	if ResourceLoader.exists(path):return remember(path,load(path) as Texture2D,path)
+	# Newly captured private images work before an editor import. Packaged builds
+	# use the imported resource branch above; there is no live card viewport.
+	if not path.begins_with("res://assets/campaigns/") or not FileAccess.file_exists(path):return null
+	var image:=Image.load_from_file(path)
+	if image==null or image.is_empty():return null
+	if image.get_width()>960:image.resize(960,roundi(960.0*image.get_height()/image.get_width()),Image.INTERPOLATE_LANCZOS)
+	image.generate_mipmaps()
+	return remember(path,ImageTexture.create_from_image(image),path)
+
 func texture(engine: String, bitmap: int) -> Texture2D:
 	if cache.has(bitmap):
 		return cache[bitmap]
@@ -46,6 +66,4 @@ func texture(engine: String, bitmap: int) -> Texture2D:
 		image.resize(960, roundi(960.0 * image.get_height() / image.get_width()), Image.INTERPOLATE_LANCZOS)
 	image.generate_mipmaps()
 	var result := ImageTexture.create_from_image(image)
-	cache[bitmap] = result
-	loaded_paths[bitmap] = origin
-	return result
+	return remember(bitmap,result,origin)

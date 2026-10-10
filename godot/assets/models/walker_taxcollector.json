@@ -1,19 +1,20 @@
 {
   "asset": "walker_taxcollector",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_taxcollector.glb",
-  "bytes": 5225724,
-  "vertices": 15643,
+  "bytes": 6785780,
+  "vertices": 15830,
   "surfaces": 3,
   "source_surfaces": 18,
   "bounds_blender": [
     [
       -0.1831081658601761,
-      -0.18496373295783997,
+      -0.1652245819568634,
       0.0004999544471502304
     ],
     [
-      0.19499999284744263,
+      0.2240000069141388,
       0.20693224668502808,
       0.849421501159668
     ]
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2898562914,
           "skin": [
             0.66,
@@ -63,9 +64,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "af4f083d094b94b7a95e3b1b3f8eed9ff6361efbea17a172b39abc1fbf9cf56a",
         "clavi_srgb": [
-          0.33,
-          0.065,
-          0.27
+          0.16,
+          0.62,
+          0.66
         ]
       }
     ],
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 72,
+    "targets_before": 129,
+    "targets_after": 94,
     "uv_attributes_removed": 0
   }
 }

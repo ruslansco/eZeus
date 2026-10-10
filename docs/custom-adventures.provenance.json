@@ -1,0 +1,339 @@
+{
+  "schema_version": 1,
+  "purpose": "Private development references and adaptation candidates; no content cleared for release",
+  "release_identity": "independent ancient city-builder; final name unapproved",
+  "commercial_route": "independent_game_pending_audit",
+  "records": [
+    {
+      "id": "heavengames-adventure-532",
+      "category": "fan_adventure_reference",
+      "repository_paths": [
+        "build-content-research/archives/532.zip",
+        "build-content-research/review-copies/532"
+      ],
+      "package_paths": [],
+      "creator": "LVLarry",
+      "rightsholder": "Author and any underlying content rightsholders; complete chain not verified",
+      "origin": "Community adventure downloaded from Zeus Heaven at the user request",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=532",
+        "retrieved_date": "2026-10-08",
+        "archive_sha256": "44b93e36e4a84eb8ece4d99c49c88de52ee8037dd8de8969618a1104379cae87"
+      },
+      "license_or_agreement": "Author invites editing in the page and bundled notes; no explicit commercial redistribution grant established",
+      "evidence_location": [
+        "build-content-research/532.html",
+        "build-content-research/archives/532.zip",
+        "docs/CUSTOM_ADVENTURE_RESEARCH.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/archives/532.zip": "44b93e36e4a84eb8ece4d99c49c88de52ee8037dd8de8969618a1104379cae87",
+        "build-content-research/review-copies/532/AlexandriaC1.map": "61835653cc8a7ee6bcea0e1ad171692aaaddd4f4e2b7582562f5758521722134",
+        "build-content-research/review-copies/532/AlexandriaC2.map": "0f9e56bf86630a384a870574778b6f574a9a87d739ddaa2c5bb9ec6faf26fb52",
+        "build-content-research/review-copies/532/AlexandriaC3.map": "43219861a32de8c378e2e9bae9b428761ba4ab67c356bb04aefd77851faeed23",
+        "build-content-research/review-copies/532/AlexandriaP.map": "c20a92b83d72d7c21d769cea1bca9da9f4001843c9b73ed29e1f6be737937a9c",
+        "build-content-research/review-copies/532/Author Comments.txt": "a54d2f404af8e93f142b5d869854e35f5ef4976537f6193a7460ac3f08e8521e",
+        "build-content-research/review-copies/532/Alexandria.pak": "989f096ddbdf5f8f053e7805dcf078effcf8697f088b2a00b49281377a643b48",
+        "build-content-research/review-copies/532/Alexandria.set": "f63825451d2e613fe545fce61ad9dc0f0b93a8f233f284e5e03f55c72caffb4a",
+        "build-content-research/review-copies/532/Alexandria.txt": "66f80ba9ae9d6e0d92928f629eb13cc18fef6fc3c1d45455ead7ca413dd5ff85"
+      },
+      "source_input_records": [
+        "Underlying Sierra/Impressions compatibility content not independently cleared"
+      ],
+      "generated_content_details": null,
+      "attribution_requirements": [
+        "Retain source author/title, author notes, source URL and archive hashes during development; shipping terms still need evidence"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex archival inspection; not rights clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish permission for commercial redistribution of retained expression or replace retained source content before Steam packaging",
+      "ships_in_release": false,
+      "notes": {
+        "title": "Alexandria",
+        "catalog_downloads": 16554,
+        "catalog_rating": 4.5,
+        "catalog_review_count": 7,
+        "prototype_fit": "first terrain candidate; editable settings and four map files included",
+        "archive_bytes": 1190170,
+        "integrity": "ZIP CRC and bounded path/member checks passed; extracted data hashes match archive",
+        "runtime_import_verified": false,
+        "commercial_rights_verified": false
+      }
+    },
+    {
+      "id": "heavengames-adventure-653",
+      "category": "fan_adventure_reference",
+      "repository_paths": [
+        "build-content-research/archives/653.zip",
+        "build-content-research/review-copies/653"
+      ],
+      "package_paths": [],
+      "creator": "Nightwolf / David Masters",
+      "rightsholder": "Author and any underlying content rightsholders; complete chain not verified",
+      "origin": "Community adventure downloaded from Zeus Heaven at the user request",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=653",
+        "retrieved_date": "2026-10-08",
+        "archive_sha256": "bedba05f6a4c089f1ead485e7d4acb6c5c01f52bfbafc3a2be9f277b4a7d6fef"
+      },
+      "license_or_agreement": "No explicit modification/commercial redistribution grant found in the inspected page and extracted text",
+      "evidence_location": [
+        "build-content-research/653.html",
+        "build-content-research/archives/653.zip",
+        "docs/CUSTOM_ADVENTURE_RESEARCH.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/archives/653.zip": "bedba05f6a4c089f1ead485e7d4acb6c5c01f52bfbafc3a2be9f277b4a7d6fef",
+        "build-content-research/review-copies/653/Armory_author.txt": "1c4290e29c6ee57cf08ca7ae8beb5ebac184fa04edcb43321b776bfcb2973980",
+        "build-content-research/review-copies/653/Armory.txt": "b2ea2ed049b61d68aa63f169f84e1868a174d3c9a7e5cfff70d1c5093050649f",
+        "build-content-research/review-copies/653/Armory.pak": "d997082df87a9880f5b6b4066256c0c89050a790ba999d1c1cd7ce76da5ff51a"
+      },
+      "source_input_records": [
+        "Underlying Sierra/Impressions compatibility content not independently cleared"
+      ],
+      "generated_content_details": null,
+      "attribution_requirements": [
+        "Retain source author/title, author notes, source URL and archive hashes during development; shipping terms still need evidence"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex archival inspection; not rights clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish permission for commercial redistribution of retained expression or replace retained source content before Steam packaging",
+      "ships_in_release": false,
+      "notes": {
+        "title": "Armory",
+        "catalog_downloads": 10624,
+        "catalog_rating": 4.7,
+        "catalog_review_count": 4,
+        "prototype_fit": "later production and military benchmark",
+        "archive_bytes": 403831,
+        "integrity": "ZIP CRC and bounded path/member checks passed; extracted data hashes match archive",
+        "runtime_import_verified": true,
+        "commercial_rights_verified": false,
+        "private_adaptation": "bronze-river-chapters-v1"
+      }
+    },
+    {
+      "id": "heavengames-adventure-514",
+      "category": "fan_adventure_reference",
+      "repository_paths": [
+        "build-content-research/archives/514.zip",
+        "build-content-research/review-copies/514"
+      ],
+      "package_paths": [],
+      "creator": "orius",
+      "rightsholder": "Author and any underlying content rightsholders; complete chain not verified",
+      "origin": "Community adventure downloaded from Zeus Heaven at the user request",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=514",
+        "retrieved_date": "2026-10-08",
+        "archive_sha256": "9c3c8db52a01ebd3145ebf01e42e4e1a72b4aea4beb66341090dc2d57c6284bb"
+      },
+      "license_or_agreement": "No explicit modification/commercial redistribution grant found in the inspected page and extracted text",
+      "evidence_location": [
+        "build-content-research/514.html",
+        "build-content-research/archives/514.zip",
+        "docs/CUSTOM_ADVENTURE_RESEARCH.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/archives/514.zip": "9c3c8db52a01ebd3145ebf01e42e4e1a72b4aea4beb66341090dc2d57c6284bb",
+        "build-content-research/review-copies/514/One Against the World.txt": "dfe4c851490f4f92b0c8bb4673906e59b47ec3655fb514d476eea4edda1e8563",
+        "build-content-research/review-copies/514/One Against the World.pak": "450a507cf59ca8b4abf19307ede142dfdaa30ff7e2b96d29f93cad056edf3ddf"
+      },
+      "source_input_records": [
+        "Underlying Sierra/Impressions compatibility content not independently cleared"
+      ],
+      "generated_content_details": null,
+      "attribution_requirements": [
+        "Retain source author/title, author notes, source URL and archive hashes during development; shipping terms still need evidence"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex archival inspection; not rights clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish permission for commercial redistribution of retained expression or replace retained source content before Steam packaging",
+      "ships_in_release": false,
+      "notes": {
+        "title": "One Against the World",
+        "catalog_downloads": 8995,
+        "catalog_rating": 4.2,
+        "catalog_review_count": 7,
+        "prototype_fit": "later military and survival benchmark",
+        "archive_bytes": 569177,
+        "integrity": "ZIP CRC and bounded path/member checks passed; extracted data hashes match archive",
+        "runtime_import_verified": false,
+        "commercial_rights_verified": false
+      }
+    },
+    {
+      "id": "heavengames-adventure-828",
+      "category": "fan_adventure_reference",
+      "repository_paths": [
+        "build-content-research/archives/828.zip",
+        "build-content-research/review-copies/828"
+      ],
+      "package_paths": [],
+      "creator": "Genis",
+      "rightsholder": "Author and any underlying content rightsholders; complete chain not verified",
+      "origin": "Community adventure downloaded from Zeus Heaven at the user request",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=828",
+        "retrieved_date": "2026-10-08",
+        "archive_sha256": "bfaf4ba304d20f326661fff5b929359a5745ac7a90634590ff22d761fac90b0a"
+      },
+      "license_or_agreement": "No explicit modification/commercial redistribution grant found in the inspected page and extracted text",
+      "evidence_location": [
+        "build-content-research/828.html",
+        "build-content-research/archives/828.zip",
+        "docs/CUSTOM_ADVENTURE_RESEARCH.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/archives/828.zip": "bfaf4ba304d20f326661fff5b929359a5745ac7a90634590ff22d761fac90b0a",
+        "build-content-research/review-copies/828/Everybody loves oranges/Everybody loves oranges.pak": "01a69cc5d1d3665208e726113d58f713af3dd814c7a93c8ec53dc6dc56b7caa2",
+        "build-content-research/review-copies/828/Everybody loves oranges/Everybody loves oranges.txt": "edb5970a3da0e8e3b92f19ba97a9d9c1a134d70acc4a4d298dd0b3b9e82ee3e6"
+      },
+      "source_input_records": [
+        "Underlying Sierra/Impressions compatibility content not independently cleared"
+      ],
+      "generated_content_details": null,
+      "attribution_requirements": [
+        "Retain source author/title, author notes, source URL and archive hashes during development; shipping terms still need evidence"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex archival inspection; not rights clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish permission for commercial redistribution of retained expression or replace retained source content before Steam packaging",
+      "ships_in_release": false,
+      "notes": {
+        "title": "Everybody loves oranges",
+        "catalog_downloads": 8253,
+        "catalog_rating": 4.9,
+        "catalog_review_count": 20,
+        "prototype_fit": "advanced event and terrain reference; guide/audio retained only in untouched archive",
+        "archive_bytes": 1363060,
+        "integrity": "ZIP CRC and bounded path/member checks passed; extracted data hashes match archive",
+        "runtime_import_verified": true,
+        "commercial_rights_verified": false,
+        "private_adaptation": "sunlit-terraces-chapters-v1"
+      }
+    },
+    {
+      "id": "heavengames-adventure-510",
+      "category": "fan_adventure_reference",
+      "repository_paths": [
+        "build-content-research/archives/510.zip",
+        "build-content-research/review-copies/510"
+      ],
+      "package_paths": [],
+      "creator": "Nightwolf / David Masters",
+      "rightsholder": "Author and any underlying content rightsholders; complete chain not verified",
+      "origin": "Community adventure downloaded from Zeus Heaven at the user request",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=510",
+        "retrieved_date": "2026-10-08",
+        "archive_sha256": "273cda6da2515486f569054281e90c31dd11f7e0ff56d99ef06edfd4197c55fc"
+      },
+      "license_or_agreement": "No explicit modification/commercial redistribution grant found in the inspected page and extracted text",
+      "evidence_location": [
+        "build-content-research/510.html",
+        "build-content-research/archives/510.zip",
+        "docs/CUSTOM_ADVENTURE_RESEARCH.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/archives/510.zip": "273cda6da2515486f569054281e90c31dd11f7e0ff56d99ef06edfd4197c55fc",
+        "build-content-research/review-copies/510/Tributaries 3.txt": "a4209fe26ba9447623accabc5e3ec9292bddf6851c52c6dc22fab7530e37c690",
+        "build-content-research/review-copies/510/Tributaries 3.pak": "0ba1cef045bde7bc62d2cd27c744adddfef6553173dafe602a713ec2b39ef777",
+        "build-content-research/review-copies/510/t3_author.txt": "b8102163dac57119994c1ee8be4a4b0773fc0bc921e6a88d8aef17f50c089449"
+      },
+      "source_input_records": [
+        "Underlying Sierra/Impressions compatibility content not independently cleared"
+      ],
+      "generated_content_details": null,
+      "attribution_requirements": [
+        "Retain source author/title, author notes, source URL and archive hashes during development; shipping terms still need evidence"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex archival inspection; not rights clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish permission for commercial redistribution of retained expression or replace retained source content before Steam packaging",
+      "ships_in_release": false,
+      "notes": {
+        "title": "Tributaries 3",
+        "catalog_downloads": 8211,
+        "catalog_rating": 5.0,
+        "catalog_review_count": 2,
+        "prototype_fit": "advanced tribute and constrained economy reference",
+        "archive_bytes": 484268,
+        "integrity": "ZIP CRC and bounded path/member checks passed; extracted data hashes match archive",
+        "runtime_import_verified": true,
+        "commercial_rights_verified": false,
+        "private_adaptation": "tidebound-covenant-chapters-v1"
+      }
+    },
+    {
+      "id": "heavengames-adventure-867",
+      "category": "fan_adventure_reference",
+      "repository_paths": [
+        "build-content-research/archives/867.zip",
+        "build-content-research/review-copies/867"
+      ],
+      "package_paths": [],
+      "creator": "Haspen",
+      "rightsholder": "Author and any underlying content rightsholders; complete chain not verified",
+      "origin": "Community adventure downloaded from Zeus Heaven at the user request",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=867",
+        "retrieved_date": "2026-10-08",
+        "archive_sha256": "e038032932717a10752f5044da44913b59ab3718e15fe901263eab33aa8f6421"
+      },
+      "license_or_agreement": "No explicit modification/commercial redistribution grant found in the inspected page and extracted text",
+      "evidence_location": [
+        "build-content-research/867.html",
+        "build-content-research/archives/867.zip",
+        "docs/CUSTOM_ADVENTURE_RESEARCH.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/archives/867.zip": "e038032932717a10752f5044da44913b59ab3718e15fe901263eab33aa8f6421",
+        "build-content-research/review-copies/867/Augea - Open Play/Augea - Open Play.pak": "113347c9f78671053b0230a63618f72be54f1d7463ccc0e02a2f29236d0a4629",
+        "build-content-research/review-copies/867/Augea - Open Play/Augea - Open Play.set": "4b6b2a67041735374bf1a2062a27d31b9de05b3496118bea0ac38f894e60acdb",
+        "build-content-research/review-copies/867/Augea - Open Play/Augea - Open Play.txt": "17cf5d638d4433bc1fdaf4cf6fd5fec7eea5feed69dd0f0e66a2ad55a311ac25",
+        "build-content-research/review-copies/867/Augea - Open Play/Augea - Open PlayP.map": "3f45faa915087b3450b926bd6eb87522e9dc268bd46aec8c5cf11606f10c994f"
+      },
+      "source_input_records": [
+        "Underlying Sierra/Impressions compatibility content not independently cleared"
+      ],
+      "generated_content_details": null,
+      "attribution_requirements": [
+        "Retain source author/title, author notes, source URL and archive hashes during development; shipping terms still need evidence"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex archival inspection; not rights clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish permission for commercial redistribution of retained expression or replace retained source content before Steam packaging",
+      "ships_in_release": false,
+      "notes": {
+        "title": "Augea - Open Play",
+        "catalog_downloads": 2525,
+        "catalog_rating": 4.9,
+        "catalog_review_count": 4,
+        "prototype_fit": "single-map alternative with editor/map sources",
+        "archive_bytes": 406876,
+        "integrity": "ZIP CRC and bounded path/member checks passed; extracted data hashes match archive",
+        "runtime_import_verified": false,
+        "commercial_rights_verified": false
+      }
+    }
+  ]
+}

@@ -1,19 +1,20 @@
 {
   "asset": "walker_odysseus",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_odysseus.glb",
-  "bytes": 12429840,
-  "vertices": 15962,
+  "bytes": 12444304,
+  "vertices": 15980,
   "surfaces": 3,
   "source_surfaces": 22,
   "bounds_blender": [
     [
-      -0.31690335273742676,
-      -0.20643635094165802,
+      -0.3168908953666687,
+      -0.2007293999195099,
       0.0005599489668384194
     ],
     [
-      0.2154843509197235,
+      0.23370087146759033,
       0.2366110384464264,
       0.9932735562324524
     ]

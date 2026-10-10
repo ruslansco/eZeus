@@ -1,0 +1,45 @@
+{
+  "version": "aegean_cinematic_v2",
+  "date": "2026-10-09",
+  "scope": "Photorealistic main-menu presentation with an animated registered portal. No native game or live Blender changes.",
+  "asset": "aegean_cinematic_v2.png",
+  "dimensions": [
+    1672,
+    941
+  ],
+  "bytes": 3234408,
+  "sha256": "fca2368e27061e210fd3849b8f97f525da358500a09c25c652150b980688623e",
+  "generation": {
+    "mode": "built-in image_gen",
+    "prompt": "aegean_cinematic_v2.prompt.txt",
+    "prompt_sha256": "091d2f63fa4dc9b86ba8d08b89954e5c4bd9e7fbb66a2380c0a9b77d3cf8255a",
+    "inputs": "Scene descriptions and user-supplied visual references; no logos, text, menu UI or reference pixels embedded."
+  },
+  "composition": "Realistic Greek sanctuary terrace, populated coastal city, Acropolis, jagged mountains, olive foliage, ships and weathered gateway. Scenic people/landscape are a raster plate.",
+  "runtime": "res://scripts/cinematic_menu_world.gd",
+  "portal_shader": "res://shaders/login_portal.gdshader",
+  "portal_registration": {
+    "source_dimensions": [
+      1672,
+      941
+    ],
+    "opening_pixels": [
+      1194,
+      204,
+      268,
+      468
+    ],
+    "policy": "Shared cover crop/drift; source-image distance mask follows the perspective arch, projecting jambs and sloping threshold.",
+    "distance_mask": "aegean_portal_distance.png",
+    "distance_mask_sha256": "1a3ed28848bca12d59a98791ad6fb3f5f1c810dbfd5d694f13699742eb9a5310",
+    "distance_range_pixels": 256.0,
+    "derivation": "tools/calibrate_menu_portal.py: connected dark opening, threshold 28/255, signed octile distance; original artwork unchanged.",
+    "calibrated": "2026-10-10"
+  },
+  "blender_reference": "art/menu/cinematic/aegean-cinematic-v2.blend",
+  "blender_builder": "eZeus/tools/build_cinematic_menu_reference.py",
+  "blender_scope": "Separate packed 2.5D reference. Artwork is one image, with an editable registered portal mesh/procedural preview. It is not an anatomical/architectural full-scene reconstruction.",
+  "retained_sources": "Prior Godot procedural scenery/bake, historical Blender city source, portal composer and original local model/texture manifests remain intact.",
+  "release_status": "Generated development art; user visual acceptance and platform/minimum-device review remain pending. Existing upstream GPL/source notices retained.",
+  "blender_reference_sha256": "87411af3ca54dae088ce1b195af31f3034ce94825bb565e37c5afa96c63cc57b"
+}

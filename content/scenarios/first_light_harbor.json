@@ -1,0 +1,120 @@
+{
+  "id": "first_light_harbor",
+  "development_name": "First Light Harbor",
+  "version": 3,
+  "source_record": "heavengames-adventure-532",
+  "rights_status": "needs_evidence",
+  "ships_in_release": false,
+  "target_minutes": [
+    30,
+    60
+  ],
+  "start_year": -1200,
+  "initial_funds": 18000,
+  "difficulty": 1,
+  "goals": [
+    {
+      "type": 0,
+      "count": 400
+    },
+    {
+      "type": 7,
+      "housing": 3,
+      "count": 64
+    },
+    {
+      "type": 12,
+      "enum1": 64,
+      "count": 24
+    },
+    {
+      "type": 12,
+      "enum1": 8192,
+      "count": 16
+    },
+    {
+      "type": 11,
+      "count": 1,
+      "working_route": 1
+    },
+    {
+      "type": 12,
+      "enum1": 4096,
+      "count": 8
+    },
+    {
+      "type": 13,
+      "count": 500
+    }
+  ],
+  "trade": {
+    "buys": {
+      "8192": 36,
+      "64": 24
+    },
+    "sells": {
+      "4096": 24,
+      "2048": 16
+    }
+  },
+  "challenge": {
+    "event_type": 22,
+    "god": 12,
+    "year": 0,
+    "duration_days": 90,
+    "month": 6
+  },
+  "text": {
+    "en": {
+      "Adventure_Title": "First Light Harbor",
+      "Adventure_Introduction": "A sheltered bay has become the meeting place of families seeking a fresh beginning. Establish a small, self-supporting harbor before inviting the next fleet. This development scenario uses terrain adapted from Alexandria by LVLarry. The settlement story and objectives are newly written.",
+      "Adventure_Complete": "The harbor lights stay bright through the winter. Grain fills the stores, timber reaches the quay, and neighboring captains know your city can keep its promises. Your first settlement is ready to welcome a new generation.",
+      "Parent_Episode_1_Title": "A Shore Worth Staying On",
+      "Parent_Episode_1_Introduction": "Use the prepared roads as a backbone for homes, a fountain and maintenance. Grow wheat on the meadow, store it in a granary and sell it through a food vendor in an agora. Keep workplaces connected to roads and staffed. Add sheep and a carding shed for fleece; a fleece vendor and local science services help homes improve. Aim for 400 residents, including 64 in level-four homes or better. Produce 24 wheat and 16 timber in a year, operate a staffed, road-connected trade post with an enabled export and produce eight fleece in a year. Reedhaven buys wheat and timber and can supply fleece and olive oil. After six months, Poseidon will close that route for ninety days. Keep local food and clothing supplies ready; the route reopens without a payment or battle. Earn an annual profit of 500 and meet every objective to finish. There is no defeat deadline. The suggested playtime is 30–60 minutes; pacing is still under review.",
+      "Parent_Episode_1_Complete": "The sea has tested your preparations, and your harbor has endured. Neighbors trade with you again, families have settled in, and the council's stores are ready. You have built a city that can provide for itself.",
+      "parent_name": "First Light",
+      "partner_name": "Reedhaven",
+      "leader": "Harbor Council"
+    },
+    "ru": {
+      "Adventure_Title": "Гавань первого света",
+      "Adventure_Introduction": "В защищённой бухте собираются семьи, решившие начать новую жизнь. Постройте небольшую самостоятельную гавань, прежде чем приглашать следующий флот. В этом тестовом сценарии использован изменённый ландшафт карты Alexandria автора LVLarry. История поселения и цели написаны заново.",
+      "Adventure_Complete": "Огни гавани не погасли зимой. Склады полны зерна, древесина поступает к причалу, а соседние капитаны знают: ваш город держит слово. Первое поселение готово принять новое поколение.",
+      "Parent_Episode_1_Title": "Берег, на котором хочется остаться",
+      "Parent_Episode_1_Introduction": "Используйте готовые дороги как основу для домов, фонтана и службы обслуживания. Выращивайте пшеницу на плодородной земле, храните её в амбаре и раздавайте через продовольственную лавку на агоре. Рабочим местам нужны дороги и сотрудники. Добавьте овец и чесальную мастерскую для шерсти; шерстяная лавка и научные службы помогут улучшить дома. Достигните 400 жителей, из них 64 должны жить в домах четвёртого уровня или выше. Произведите за год 24 пшеницы и 16 древесины, откройте торговый пост с сотрудниками, доступом к дороге и включённым экспортом и произведите восемь шерсти за год. Камышовая гавань покупает пшеницу и древесину и продаёт шерсть и оливковое масло. Через шесть месяцев Посейдон закроет этот путь на девяносто дней. Подготовьте местные запасы еды и одежды; торговля возобновится без платы и сражения. Получите годовую прибыль 500 и выполните все цели. Срока поражения нет. Ориентир — 30–60 минут; темп ещё проверяется.",
+      "Parent_Episode_1_Complete": "Море испытало ваши запасы, но гавань выстояла. Соседи снова торгуют с вами, семьи обжились, а запасы совета готовы. Вы построили город, способный обеспечить себя.",
+      "parent_name": "Первый свет",
+      "partner_name": "Камышовая гавань",
+      "leader": "Совет гавани"
+    }
+  },
+  "allowed_buildings": [
+    "wheatFarm",
+    "carrotsFarm",
+    "onionsFarm",
+    "dairy",
+    "cardingShed",
+    "fishery",
+    "huntingLodge",
+    "timberMill",
+    "commonHouse",
+    "road",
+    "fountain",
+    "hospital",
+    "maintenanceOffice",
+    "watchPost",
+    "taxOffice",
+    "warehouse",
+    "granary",
+    "tradePost",
+    "commonAgora",
+    "foodVendor",
+    "fleeceVendor",
+    "oilVendor",
+    "bibliotheke",
+    "park",
+    "bench",
+    "flowerGarden",
+    "bridge"
+  ]
+}

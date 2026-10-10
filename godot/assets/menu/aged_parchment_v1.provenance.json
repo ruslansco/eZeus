@@ -1,0 +1,54 @@
+{
+  "version": "aged_parchment_v1",
+  "date": "2026-10-09",
+  "scope": "Original blank parchment for menu story briefings and optional full chapter reading only; the preceding adventure-selection preview uses a code-native dark slate surface. All writing is native translated Control text.",
+  "generation": {
+    "mode": "built-in image_gen",
+    "transparent_background": true,
+    "inputs": "Text prompt only; no reference screenshots or third-party UI pixels embedded.",
+    "prompt": "aged_parchment_v1.prompt.txt",
+    "prompt_sha256": "702de189e7bd199e755d283755f42f3a4cea2f3216ed458db58bb3a93fcf05cb"
+  },
+  "asset": "aged_parchment_v1.png",
+  "dimensions": [
+    1536,
+    1024
+  ],
+  "bytes": 2938517,
+  "sha256": "09b80f2000244275cbe190fdfed0adfe2508d27cbfa9748c498bf9230bfca496",
+  "transparency": "True RGBA alpha; Godot audit detects alpha and verifies corner alpha=0.",
+  "runtime": [
+    "res://ui/menu_skin.gd",
+    "res://ui/menu_navigation.gd",
+    "res://ui/menu_text_reader.gd"
+  ],
+  "presentation": "Raster parchment with a blank central reading area. Dark native ink uses padded content bounds, sepia page controls and measured full-prose pagination. Objectives remain visible together.",
+  "native_scope": "Menu presentation only. Native goals, full prose, quantities, difficulty callbacks, campaign identity, save scopes, simulation and city episode layout remain authoritative.",
+  "release_status": "Generated development artwork; user visual acceptance and broader platform/device review remain pending. Existing project attribution remains intact.",
+  "validation": {
+    "date": "2026-10-10",
+    "platform": "Apple M4, Godot 4.6.3 Metal/Forward Mobile",
+    "adventure_cards": {
+      "en": 59,
+      "ru": 59
+    },
+    "main_menu": {
+      "en": 61,
+      "ru": 61
+    },
+    "campaign_library": {
+      "en": 89,
+      "ru": 89
+    },
+    "scope": "Owned disposable native reviews; normal and 125% UI / 130% text at 1280x800/720. All objectives visible, frame-safe headers/footer, full prose retained. Protected source/save/preference bytes unchanged. Broader platforms/device profiling and user visual acceptance remain pending."
+  },
+  "runtime_usage": "As of 2026-10-10: EpisodePaper and ParchmentSheet only. AdventurePaper is dark slate with bronze trim; source PNG and prompt bytes remain unchanged.",
+  "preview_refinement_validation": {
+    "date": "2026-10-10",
+    "adventure_cards": {
+      "en": 62,
+      "ru": 62
+    },
+    "scope": "Parchment retained only on story surfaces. Preview uses code-native dark slate; description, heading and objective contrast is at least 7:1. Native wording, grouped objectives, story paging and enlarged layouts retained. Source image and prompt unchanged."
+  }
+}

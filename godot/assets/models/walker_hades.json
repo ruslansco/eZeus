@@ -1,5 +1,6 @@
 {
   "asset": "walker_hades",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hades.glb",
   "bytes": 11547772,

@@ -1,11 +1,18 @@
 source,ru
- (overflow: %d), (излишек: %d)
+Unavailable,Недоступно
+No buildings in this category are currently available.,Сейчас в этой категории нет доступных зданий.
+Harvest readiness: %d%%,Готовность к сбору: %d%%
+Street width: %d tiles,Ширина улицы: %d клетки
+Loading your city,Загрузка города
+Preparing your city…,Подготовка города…
+Entering the city…,Входим в город…
+The city could not be loaded,Не удалось загрузить город
+(overflow: %d), (излишек: %d)
 %d %s %d AD,%d %s %d н. э.
 %d %s %d BC,%d %s %d до н. э.
 %d dr each,%d др. за штуку
 %d existing,уже есть: %d
 %d° orbit  •  %d FPS  •  %d / %d city objects covered  •  %d tiles,Поворот %d°  •  %d FPS  •  %d / %d объектов города готовы  •  %d клеток
-%s citizens,%s жителей
 %s dr,%s др.
 A burning building cannot be demolished,Горящее здание нельзя снести
 A burning building cannot be managed,Горящим зданием нельзя управлять
@@ -55,7 +62,6 @@ Choose a valid stock limit,Выберите допустимый лимит за
 Choose an adventure,Выберите приключение
 "Choose the goods this post trades and how much to keep in store: an import is bought until that much is held, an export is sold from the stock above nothing.","Выберите товары, которыми торгует пост, и какой запас держать: импорт закупается, пока не накопится столько, экспорт продаётся из имеющихся запасов."
 City Rebuild,Город заново
-City ground,Земля города
 City problems,Проблемы города
 City: %s,Город: %s
 "Columns over houses: green and tall when the taxes are paid, a short red stub when they are not.","Столбики над домами: высокий зелёный — налоги уплачены, короткий красный — нет."
@@ -219,7 +225,6 @@ Security and defences,Безопасность и стены
 "Sells to you (price, this year / limit)","Продаёт вам (цена, в этом году / предел)"
 Sep,сен
 Set aside,Отложить
-Show or hide the objectives,Показать или скрыть задачи
 Silver,Серебро
 Sound,Звук
 Sound off,Звук выключен
@@ -245,7 +250,6 @@ Tax collection,Сбор налогов
 Terrain: %s,Местность: %s
 That adventure could not be opened,Не удалось открыть это приключение
 That save could not be opened,Это сохранение не удалось открыть
-That save could not be opened; the test city was loaded instead,Это сохранение не удалось открыть; загружен тестовый город
 That trade partner cannot get a post now,Для этого партнёра сейчас нельзя построить пост
 The action could not be completed,Действие не выполнено
 The city's credit limit has been reached,Достигнут предел долга города
@@ -326,6 +330,10 @@ Colony,Колония
 Distant city,Далёкий город
 Enchanted place,Заколдованное место
 Ruins,Руины
+Ruins of %s,Руины: %s
+Clear the rubble to build here again.,"Уберите обломки, чтобы снова строить здесь."
+Demolish · Cost: %d,Снести · Стоимость: %d
+Remove this entire ruined building. Demolition cannot be undone.,Убрать все руины этого здания. Снос нельзя отменить.
 Ally,Союзник
 Vassal,Вассал
 Rival,Соперник
@@ -494,7 +502,7 @@ Turn left,Повернуть влево
 Fill wall rectangle,Заполнить прямоугольник стеной
 Facing: %d°,Поворот: %d°
 "Click for one tile, or drag a road. The route follows the native grid.",Щёлкните для одного участка или протяните дорогу. Маршрут проходит по сетке.
-Drag an outline. Fill places the whole rectangle; Shift also fills it.,Протяните контур. Заполнение размещает весь прямоугольник; Shift также заполняет его.
+Drag a wall outline. Hold Shift to fill the whole rectangle.,Протяните контур стены. Удерживайте Shift для заполнения всего прямоугольника.
 "Click for one plot, or drag to place an area.",Щёлкните для одного участка или протяните область.
 Click to place. T turns the preview; Esc returns to inspection.,Щёлкните для размещения. T поворачивает макет; Esc возвращает к осмотру.
 Choose a building tile to start placement.,"Выберите карточку здания, чтобы начать размещение."
@@ -554,10 +562,9 @@ Show city map,Показать карту города
 Hide city map,Скрыть карту города
 Click to read the full message,"Нажмите, чтобы прочитать сообщение"
 Dismiss notification,Скрыть уведомление
+Right-click: %s,Правая кнопка мыши: %s
 Review decision,Рассмотреть решение
 Fold decision,Свернуть решение
-Decision required · Click to review,Требуется решение · Нажмите для просмотра
-%d pending decisions · Click to review,Ожидают решения: %d · Нажмите для просмотра
 Refuse,Отказать
 The Aegean world,Эгейский мир
 The Atlantean world,Мир Атлантиды
@@ -621,7 +628,6 @@ Orbit and tilt the camera,Вращение и наклон камеры
 Left button,Левая кнопка
 Place a building or inspect it,Построить здание или осмотреть его
 Right button,Правая кнопка
-Cancel a drag; send the selected banner to a tile,Отменить перетаскивание; отправить выбранное знамя на клетку
 Left / Right,Влево / Вправо
 On the world map: the previous and the next city,На карте мира: предыдущий и следующий город
 Click a key to change it; Escape cancels.,"Нажмите на клавишу, чтобы изменить её; Esc — отмена."
@@ -663,10 +669,7 @@ Keep these display settings? Reverting in %d seconds.,Сохранить нас�
 Could not save display settings. Revert to try again.,Не удалось сохранить настройки экрана. Верните прежние настройки и повторите.
 Inbox (%d),Входящие (%d)
 City journal,Городской журнал
-Fill %d vacant jobs to reach full staffing.,Для полного штата заполните %d свободных рабочих мест.
-Connect this building to the road network.,Соедините здание с дорожной сетью.
 This industry is paused city-wide. Resume it in the production controls.,Эта отрасль остановлена во всём городе. Возобновите её в настройках производства.
-Check the native recipe and available inputs below.,Проверьте рецепт и доступное сырьё ниже.
 Space for %d more residents.,Есть место ещё для %d жителей.
 Reduce interface motion,Уменьшить анимацию интерфейса
 City stock: %s — %s,Запас города: %s — %s
@@ -676,7 +679,7 @@ Open jobs: %d
 Unemployed: %d","Занято: %d / %d
 Свободных мест: %d
 Безработных: %d"
-Drag to lay a row along a path,Протяните, чтобы проложить ряд по пути
+Drag to lay a row along a path,"Протяните, чтобы проложить ряд по пути"
 This needs a shore with water beside it,Нужен берег с водой рядом
 The city has a palace already,В городе уже есть дворец
 The city has a stadium already,В городе уже есть стадион
@@ -736,6 +739,7 @@ Elite houses need horses: a horse ranch and a horse trainer.,Особнякам 
 Awaiting your decision,Ожидается ваше решение
 Awaiting your decision · %d pending,Ожидается ваше решение · в очереди: %d
 Paused · Awaiting your reply,Пауза · Ожидается ваш ответ
+Right-click to postpone,Правый щелчок — отложить
 Olympian,Олимпиец
 Hero,Герой
 Monster,Чудовище
@@ -906,3 +910,259 @@ No fixed victory objectives,Без заданных целей победы
 Episode 1 · %s,Эпизод 1 · %s
 Build at your own pace. This adventure has no fixed victory objectives.,Развивайте город в своём темпе. В этом приключении нет заданных целей победы.
 No opening objectives are specified for this episode.,Для этого эпизода первые цели не заданы.
+%d main episodes · %d colony scenarios,Основных эпизодов: %d · Колоний: %d
+Demolish these landmarks?,Снести эти важные здания?
+Spare landmarks,Пощадить важные здания
+Demolition: %d  •  Cost: %d,Снос: %d  •  Стоимость: %d
+%d landmarks need confirmation,важных зданий: %d (нужно подтверждение)
+This area holds %d landmarks or stocked markets. Demolishing everything costs %d; sparing them costs %d. Demolition cannot be undone.,"В области важных зданий или рынков с продавцами: %d. Снести всё стоит %d, не трогая их — %d. Снос нельзя отменить."
+Click a building to demolish it  •  or drag over an area to demolish all of it,"Нажмите на здание, чтобы снести его  •  или протяните по области, чтобы снести всё"
+Building collapse,Обрушение здания
+Earthquake,Землетрясение
+Flood,Наводнение
+Lava flow,Поток лавы
+Plague,Чума
+Invasion,Вторжение
+A god attacks,Бог нападает
+A god visits,Бог посещает город
+A hero arrives,Прибыл герой
+The army returns,Войско возвращается
+Click to look · right click to put away,"Нажмите, чтобы посмотреть · правая кнопка убирает"
+Stalls,Прилавки
+Stock,Запас
+Orders,Приказы
+Limit,Лимит
+All goods,Все товары
+Mixed,Разные
+Set the order for every good in this store,Задать приказ для всех товаров склада
+Set the limit for every good in this store,Задать лимит для всех товаров склада
+Distributing,Раздаёт
+No goods,Нет товара
+No vendor,Нет торговца
+Saving…,Сохранение…
+Changes apply automatically,Изменения применяются сами
+A fountain or well that covers this house.,"Фонтан или колодец, обслуживающий этот дом."
+"Plant gardens, statues or fountains nearby, and keep industry and storage away.","Разбейте рядом сады, поставьте статуи или фонтаны и уберите производство и склады."
+Food from an agora food stall whose walker reaches this house.,"Еда с прилавка агоры, торговец которого доходит до этого дома."
+A fleece vendor in an agora that reaches this house.,"Торговец шерстью на агоре, до которой доходит этот дом."
+An olive oil vendor in an agora that reaches this house.,"Торговец оливковым маслом на агоре, до которой доходит этот дом."
+A wine vendor in an agora that reaches this house.,"Торговец вином на агоре, до которой доходит этот дом."
+An arms vendor in an agora that reaches this house.,"Торговец оружием на агоре, до которой доходит этот дом."
+A horse vendor in an agora that reaches this house.,"Торговец лошадьми на агоре, до которой доходит этот дом."
+Needed to keep this level,"Нужно, чтобы сохранить уровень"
+%s: every need is met,%s: все нужды удовлетворены
+To reach %s,Чтобы достичь: %s
+%d of %d needs met,Удовлетворено нужд: %d из %d
+Already met,Уже удовлетворено
+Surroundings must rise above the number shown. ,Привлекательность должна стать выше показанного числа. 
+Land gives way,Земля уходит из-под ног
+A monster approaches,Приближается чудовище
+Risk warning,Предупреждение об опасности
+Latest saved city,Последний сохранённый город
+Campaigns and sandbox maps,Кампании и карты для свободной игры
+Story,История
+Adventure briefing,Начало приключения
+Next chapter,Следующая глава
+Completed objectives,Выполненные задачи
+Lower difficulty,Снизить сложность
+Higher difficulty,Повысить сложность
+Colonies,Колонии
+Popularity is superb,Популярность превосходная
+Popularity is great,Популярность отличная
+Popularity is high,Популярность высокая
+Popularity is good,Популярность хорошая
+Popularity is ok,Популярность сносная
+Popularity is poor,Популярность низкая
+Popularity is bad,Популярность плохая
+Popularity is awful,Популярность ужасная
+Popularity is terrible,Популярность катастрофическая
+Treasury: %s drachmas,Казна: %s драхм
+the bar fills as the month passes,полоса заполняется по ходу месяца
+Housing: %s free of %s places,Жильё: свободно %s из %s мест
+Residents: %s,Жителей: %s
+No room left: new settlers cannot move in,Мест нет: новые поселенцы не смогут заселиться
+"Monthly balance: %s (taxes, trade and tribute less wages and imports, over the last twelve months; construction not counted)","Баланс за месяц: %s (налоги, торговля и дань за вычетом жалованья и импорта, за последние двенадцать месяцев; без строительства)"
+"This year: income %s, running costs %s, construction %s","В этом году: доход %s, текущие расходы %s, строительство %s"
+%s (%d of 100),%s (%d из 100)
+Click to keep this message open,"Нажмите, чтобы оставить сообщение открытым"
+"Homes, roads, bridges and roadblocks.","Жильё, дороги, мосты и дорожные заграждения."
+"Farms, orchards, livestock and fishing.","Фермы, сады, скотоводство и рыбная ловля."
+Workshops that turn raw materials into goods.,"Мастерские, превращающие сырьё в товары."
+Store food and goods in granaries and warehouses.,Храните пищу и товары в житницах и складах.
+Trade with other cities by land and sea.,Торгуйте с другими городами по суше и морю.
+Bring food and supplies to your citizens.,Обеспечьте жителей пищей и необходимыми товарами.
+"Fountains, baths and care for your citizens.","Фонтаны, бани и забота о здоровье жителей."
+"Manage taxes, maintain buildings and keep order.","Собирайте налоги, обслуживайте здания и поддерживайте порядок."
+"Walls, towers, horses and the navy.","Стены, башни, конница и военный флот."
+"Education, theatre, athletics and races.","Образование, театр, спорт и состязания."
+"Learning, research and invention.","Знания, исследования и изобретения."
+Build a sanctuary for an Olympian god.,Постройте святилище олимпийского бога.
+Raise the great monuments of Atlantis.,Возведите великие памятники Атлантиды.
+Honor the gods with smaller places of worship.,Почтите богов небольшими храмами.
+Build the halls that welcome legendary heroes.,Постройте обители легендарных героев.
+Beautify your city with greenery and monuments.,Украсьте город зеленью и памятниками.
+More buildings available to this city.,"Другие здания, доступные этому городу."
+Inspect the city or select a building.,Осмотрите город или выберите здание.
+Connect your city. Click and drag to lay a road.,"Соедините районы города. Нажмите и протяните, чтобы проложить дорогу."
+Remove buildings or drag across an area. Landmarks ask for confirmation.,Удаляйте здания или выделите область. Для важных сооружений требуется подтверждение.
+Undo the most recent construction.,Отмените последнее строительство.
+There is no recent construction to undo.,"Нет недавнего строительства, которое можно отменить."
+Browse every building available to this city.,"Просмотрите все здания, доступные этому городу."
+"See services, supplies and conditions across your city.","Посмотрите обеспеченность услугами, запасы и состояние районов города."
+Speed,Скорость
+Current city,Текущий город
+Monthly balance,Баланс за месяц
+Resources,Ресурсы
+%s free / %s,Свободно %s / %s
+The bar shows occupied housing.,Полоса показывает занятые места.
+Review staffing and open jobs in the industry view.,Посмотрите занятость и свободные рабочие места в промышленном обзоре.
+Current city stocks. Select a good to inspect its supply view.,"Запасы текущего города. Выберите товар, чтобы посмотреть его снабжение."
+Select a good to inspect its city supply view.,"Выберите товар, чтобы посмотреть его снабжение в городе."
+Choose the pace of city time. This does not resume a paused city.,Выберите скорость игрового времени. Приостановленный город не возобновит работу.
+Inspect this service across the city.,Посмотрите обеспеченность этой услугой в городе.
+Stop or resume city time. Required decisions still wait for your reply.,Остановите или возобновите игровое время. Обязательные решения всё равно ждут вашего ответа.
+No companies are available,Нет доступных отрядов
+This company is abroad and cannot be called out or sent home,Этот отряд за границей: его нельзя вывести или вернуть домой
+This company is abroad and its banner cannot be moved,Этот отряд за границей: его знамя нельзя переместить
+This company has no banner placed on the map,Знамя этого отряда ещё не размещено на карте
+Unassigned,Не назначено
+Open your adventure goals and set aside required goods.,Откройте цели приключения и отложите необходимые товары.
+"Read the full history of city reports, warnings and decisions.","История городских сообщений, предупреждений и решений."
+All reports,Все сообщения
+Warnings,Предупреждения
+Decisions,Решения
+No reports in this view,В этом разделе нет сообщений
+"Review the threat and the hero who can defeat it.","Узнайте об угрозе и герое, который может её устранить."
+Cargo,Груз
+Supplies from %s,Запасы из: %s
+No Agora available,Агора недоступна
+No goods carried,Нет перевозимых товаров
+Cargo loads,Грузов
+Collected,Собрано
+City attention,Городу требуется внимание
+The recovery copy could not be secured. The previous save was kept.,Не удалось защитить копию восстановления. Предыдущее сохранение не изменено.
+Another save operation is using this name. Try again shortly.,Сейчас с этим именем выполняется другое сохранение. Попробуйте чуть позже.
+The save failed its integrity check.,Сохранение не прошло проверку целостности.
+The saved file is damaged or incomplete.,Файл сохранения повреждён или не дописан.
+The save contains unsupported presentation data.,Сохранение содержит неподдерживаемые данные отображения.
+This save needs a newer game version.,Для этого сохранения нужна более новая версия игры.
+This save needs a newer game version. Your current city and the saved files are unchanged.,Для этого сохранения нужна более новая версия игры. Текущий город и сохранённые файлы не изменены.
+Recovery copies available,Доступны копии для восстановления
+Load saved city,Загрузить город
+Load recovered copy,Загрузить копию восстановления
+Checking the saved city…,Проверка сохранённого города…
+A readable recovery copy from %s is available. Load it? Your original save will be kept.,"Доступна исправная копия восстановления от %s. Загрузить её? Исходное сохранение будет сохранено."
+Use saved version,Использовать сохранённую версию
+This city could not be loaded. No readable recovery copy was found. Your current city and the saved files are unchanged.,Не удалось загрузить этот город. Исправная копия восстановления не найдена. Текущий город и сохранённые файлы не изменены.
+Recovery copy loaded. The original save was kept.,Копия восстановления загружена. Исходное сохранение не изменено.
+Loading cancelled. Your current city is unchanged.,Загрузка отменена. Текущий город не изменён.
+"The save was written, but disk durability could not be confirmed. Keep another copy.","Сохранение записано, но надёжность записи на диск не подтверждена. Сохраните ещё одну копию."
+Construction is paused. Resume it with the button below when you are ready.,"Строительство приостановлено. Возобновите его кнопкой ниже, когда будете готовы."
+Construction needs road access. Connect the monument to the road used by your artisans and deliveries.,Для строительства нужна дорога. Соедините монумент с дорогой для ремесленников и доставки материалов.
+Still to deliver: %s. Keep these materials in reachable storage for the artisans.,"Осталось доставить: %s. Храните эти материалы на складе, доступном ремесленникам."
+Materials are ready. A staffed artisans' guild must send builders along a connected road.,Материалы готовы. Укомплектованная гильдия ремесленников должна отправить строителей по соединённой дороге.
+Builders are assigned. Keep deliveries flowing; construction advances while the city runs.,"Строители назначены. Поддерживайте доставку материалов; строительство продолжается, пока город работает."
+All,Все
+Refresh,Обновить
+City attention…,Городу требуется внимание…
+Settlement guide,Первое поселение
+Settlement guide…,Первое поселение…
+City attention and settlement guide,Проблемы города и первое поселение
+Missing workers,Не хватает работников
+Housing is declining,Жильё приходит в упадок
+Under construction,Строится
+Construction progress,Ход строительства
+%d jobs are vacant. Bring in residents with food and water; check workforce priorities in the City window.,Не занято рабочих мест: %d. Привлекайте жителей едой и водой; проверьте приоритеты рабочей силы в окне города.
+This building also needs a road connection.,Этому зданию также нужен выход к дороге.
+Run a road along an edge of this building and connect it to your settlement. A road touching only a corner does not give access.,Проложите дорогу вдоль стороны здания и соедините её с поселением. Касание только угла не даёт доступа.
+"Needs %d more %s for the next batch. Produce or import it, allow storage to accept it, and check the delivery road.","Для следующей партии не хватает %d ед. товара «%s». Произведите или импортируйте его, разрешите приём на складе и проверьте дорогу доставки."
+"Produce or import the required input, allow storage to accept it, and check the delivery road.","Произведите или импортируйте нужное сырьё, разрешите приём на складе и проверьте дорогу доставки."
+No suitable resource is available to this collector. Check nearby deposits or crops and a reachable route to them.,Сборщику недоступен подходящий ресурс. Проверьте ближайшие залежи или посадки и путь к ним.
+Restore %s to keep this housing level. Open the house to see the exact supply and service requirements.,"Восстановите снабжение: %s, чтобы сохранить уровень жилья. Откройте дом и проверьте точные требования к товарам и услугам."
+The building is burning. Check fire coverage and keep roads clear for maintenance walkers.,Здание горит. Проверьте противопожарное обслуживание и доступность дорог для работников службы.
+%d%% built. Construction needs delivered materials and a staffed artisans' guild with road access.,Построено: %d%%. Для строительства нужны доставленные материалы и гильдия ремесленников с работниками и выходом к дороге.
+Staff the required venues and connect their walkers to this house's road. The missing venue types are listed below.,"Обеспечьте нужные учреждения работниками и дорогами, по которым их служащие смогут дойти до дома. Недостающие виды учреждений указаны ниже."
+Start with a short road,Начните с короткой дороги
+Welcome your first residents,Встретьте первых жителей
+Supply water,Обеспечьте водой
+Deliver food to homes,Доставьте еду в дома
+Keep services working,Поддерживайте работу служб
+Grow at a sustainable pace,Расширяйтесь постепенно
+Step %d of %d,Шаг %d из %d
+"Lay a short road from the entry road into open land. Leave space on both sides for houses and services, and keep the first settlement compact.",Проложите короткую дорогу от въездной дороги на свободную землю. Оставьте по обе стороны место для домов и служб; первое поселение должно быть компактным.
+"Place a few houses along the road, then let time run. Settlers arrive and become the workers your services need. Grow in small steps rather than opening many jobs at once.","Поставьте несколько домов вдоль дороги и запустите время. Прибывшие поселенцы станут работниками ваших служб. Расширяйтесь понемногу, не открывая сразу много рабочих мест."
+"Build a fountain (or a well, where available) near the houses and make sure it has workers. Check the water view: each house needs water itself, being nearby is not always enough.","Постройте рядом с домами фонтан (или колодец, если он доступен) и убедитесь, что в нём есть работники. Проверьте режим воды: вода нужна каждому дому, одной близости недостаточно."
+Farm or import a food this adventure allows and store it in a granary. Then add a food vendor to an agora beside the houses; the vendor carries food to each home.,Выращивайте или импортируйте доступную в этом приключении еду и храните её в амбаре. Затем добавьте продуктовую лавку на агоре рядом с домами: торговец разносит еду по домам.
+Build a maintenance office with workers and road access to prevent fires and collapses. The Issues tab shows buildings that need help.,"Постройте службу обслуживания с работниками и выходом к дороге, чтобы предотвращать пожары и обрушения. Вкладка «Проблемы» покажет здания, которым нужна помощь."
+"Keep food arriving and jobs filled before adding industry. Check your objectives, then expand in small blocks. If a building stops, the Issues tab explains why.","Прежде чем строить промышленность, наладьте поставки еды и заполните рабочие места. Сверьтесь с целями и расширяйтесь небольшими кварталами. Если здание остановилось, вкладка «Проблемы» объяснит причину."
+Issues,Проблемы
+Guide,Обучение
+Collapse,Свернуть
+Expand,Развернуть
+%d of %d done,Выполнено: %d из %d
+Not yet,Пока нет
+Road tiles: %s,Клеток дороги: %s
+Homes with water: %s,Домов с водой: %s
+Homes with food: %s,Домов с едой: %s
+Working maintenance offices: %s,Работающих служб обслуживания: %s
+Workers employed: %s,Занятых работников: %s
+Vacant jobs: %s,Свободных рабочих мест: %s
+Buildings without a road: %s,Зданий без дороги: %s
+Declining homes: %s,Домов в упадке: %s
+Choose this building tool,Выбрать этот инструмент строительства
+Open in the build menu,Открыть в меню строительства
+Show or hide this view of the city,Показать или скрыть этот режим просмотра города
+Don't offer again,Больше не предлагать
+Stop opening this guide when a new city begins. It stays available from ? and the Game menu.,Не открывать обучение при начале нового города. Оно останется доступным через кнопку ? и меню игры.
+Buildings needing attention: %s,Зданий требуют внимания: %s
+Next step,Следующий шаг
+Finish guide,Завершить обучение
+Click a warning to visit the building and see how to help it.,"Нажмите предупреждение, чтобы перейти к зданию и узнать, как ему помочь."
+No issues in this category.,В этой категории проблем нет.
+%d–%d of %d,%d–%d из %d
+Nothing needs attention right now.,Сейчас ничего не требует внимания.
+Previous page,Предыдущая страница
+Next page,Следующая страница
+Housing warnings show needs required to keep a home's current level. Optional upgrades are explained in the house inspector.,Предупреждения о жилье показывают требования для сохранения текущего уровня. Требования для улучшения указаны в окне дома.
+City help will be available after relaunching the game.,Помощь по городу станет доступна после перезапуска игры.
+Original lyre score and countryside ambience,Новая музыка лиры и звуки природы
+1 job is vacant. Bring in residents with food and water; check workforce priorities in the City window.,Не занято одно рабочее место. Привлекайте жителей едой и водой; проверьте приоритеты рабочей силы в окне города.
+"Development soundscape. Battle music, effects and voices keep their current recordings.","Новый звуковой фон в разработке. Боевая музыка, эффекты и голоса используют текущие записи."
+Goods awaiting collection,Товары ожидают вывоза
+"Stored goods are waiting for pickup. Check accepting storage or buyers, free capacity and a clear delivery road.","Готовые товары ожидают вывоза. Проверьте приём на складах или у покупателей, свободное место и дорогу доставки."
+Graphics settings,Настройки графики
+Graphics settings…,Настройки графики…
+Balanced,Сбалансированное
+High,Высокое
+Preview the city now. Apply remembers this choice; Cancel restores the previous graphics.,Изменения видны сразу. Применить сохраняет выбор; Отмена возвращает прежнюю графику.
+Could not save graphics settings. Cancel restores your previous choice.,Не удалось сохранить настройки графики. Отмена возвращает прежний выбор.
+"The current city appearance: full 3D resolution, smooth edges, sun shadows and normal ground foliage.","Текущий вид города: полное разрешение 3D, сглаженные края, тени от солнца и обычная растительность."
+"Full 3D resolution, more detailed distant meshes, farther shadows and ground foliage. Uses more graphics power.","Полное разрешение 3D, более подробные дальние модели, тени и растительность видны дальше. Требует больше мощности видеосистемы."
+Chapter %d,Глава %d
+Chapter %d · %s,Глава %d · %s
+Chapter objectives,Цели главы
+Default difficulty: %s,Сложность по умолчанию: %s
+Preview a chapter; Start begins at chapter one,Просмотр главы; начало игры — с первой главы
+Latest save: %s,Последнее сохранение: %s
+No saved progress for this campaign,В этой кампании пока нет сохранений
+Previous campaign profile,Предыдущий профиль кампании
+%d years,%d лет
+%d months,%d месяцев
+%d days,%d дней
+Complete within %s,Завершить за %s
+Remain for %s,Продержаться %s
+Beginner,Новичок
+Mortal,Смертный
+Titan,Титан
+Read chapter briefing,Прочитать вступление к главе
+Hide chapter briefing,Скрыть вступление к главе
+Extras,Дополнительно
+Profiles,Правители
+Graphics,Графика
+Interface,Интерфейс
+Search adventures,Поиск приключений
+Search saved games,Поиск сохранений
+Search profiles,Поиск правителей
+Page %d of %d,Страница %d из %d
+Objective %d of %d,Цель %d из %d
+No matches,Ничего не найдено

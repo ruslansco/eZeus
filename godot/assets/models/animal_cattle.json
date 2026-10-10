@@ -1,5 +1,6 @@
 {
   "asset": "animal_cattle",
+  "variant_of": null,
   "source": "art/characters/animals/build_animal.py",
   "file": "animal_cattle.glb",
   "bytes": 4824884,

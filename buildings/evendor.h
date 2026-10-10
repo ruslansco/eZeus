@@ -53,6 +53,9 @@ public:
     eProvide provideType() const { return mProvType; }
 
     int peddlerResource() const;
+    // What the stall holds and can hold, in the units its goods are counted by (the agora inspector's page).
+    int stockUnits() const { return mResource/mResMult; }
+    int capacityUnits() const { return mMaxResource/mResMult; }
     int takeForPeddler(const int t);
 
     void setResMult(const int m) { mResMult = m; }

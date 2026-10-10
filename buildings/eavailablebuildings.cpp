@@ -377,6 +377,11 @@ bool eAvailableBuildings::available(
         return mGodMonuments.at(t);
     } break;
     default:
+        // Ordinary episode permissions use the existing keyed availability
+        // records (with no monument levels). Missing entries retain legacy
+        // unrestricted behavior; the binary layout stays compatible.
+        if(const auto entry = fPyramids.find(type); entry != fPyramids.end())
+            return entry->second.fA == eAvailable::available;
         return true;
     }
     return true;
@@ -517,6 +522,13 @@ void eAvailableBuildings::allow(
             *aa = true;
             return;
         }
+        if(type != eBuildingType::none && type != eBuildingType::goat &&
+           type != eBuildingType::sheep && type != eBuildingType::cattle &&
+           type != eBuildingType::growersLodge && type != eBuildingType::orangeTendersLodge) {
+            auto& entry = fPyramids[type];
+            entry.fA = eAvailable::available;
+            entry.fLevels.clear();
+        }
     } break;
     }
 }
@@ -542,9 +554,22 @@ void eAvailableBuildings::disallow(
         *aa = false;
         return;
     }
+    if(type != eBuildingType::none && type != eBuildingType::goat &&
+       type != eBuildingType::sheep && type != eBuildingType::cattle &&
+       type != eBuildingType::growersLodge && type != eBuildingType::orangeTendersLodge) {
+        auto& entry = fPyramids[type];
+        entry.fA = eAvailable::notAvailable;
+        entry.fLevels.clear();
+    }
 }
 
 void eAvailableBuildings::startEpisode(const eAvailableBuildings& o) {
+    // Ordinary permissions are exact for this episode. Do not retain a lock
+    // from a previous stage that has no override; completed wonders still persist.
+    for(auto entry = fPyramids.begin(); entry != fPyramids.end();) {
+        if(!eBuilding::sPyramidBuilding(entry->first)) entry = fPyramids.erase(entry);
+        else ++entry;
+    }
     for(auto& op : o.fPyramids) {
         auto& oa = op.second;
         auto& a = fPyramids[op.first];

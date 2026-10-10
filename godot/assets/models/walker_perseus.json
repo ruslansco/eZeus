@@ -1,19 +1,20 @@
 {
   "asset": "walker_perseus",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_perseus.glb",
-  "bytes": 10687680,
-  "vertices": 15660,
+  "bytes": 10705248,
+  "vertices": 15685,
   "surfaces": 3,
   "source_surfaces": 21,
   "bounds_blender": [
     [
       -0.34945881366729736,
-      -0.20643635094165802,
+      -0.2007293999195099,
       0.0005599489668384194
     ],
     [
-      0.2154843509197235,
+      0.23287005722522736,
       0.24214386940002441,
       0.993109405040741
     ]

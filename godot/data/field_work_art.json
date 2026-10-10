@@ -1,0 +1,35 @@
+{
+  "content_id": "authored_field_work_v1",
+  "created": "2026-10-05",
+  "sources": [
+    "art/characters/people/people.py",
+    "art/characters/people/people2.py",
+    "art/characters/animals/build_animal.py",
+    "eZeus/tools/godot_field_work_art.py"
+  ],
+  "exporter": "eZeus/tools/export_field_workers.py",
+  "runtime": "godot/scripts/gathering_motion.gd",
+  "provenance_status": "needs_evidence",
+  "scale": "one world unit per native tile",
+  "motion": "native gameplay clock; horizontal distance for carrying/leading; no simulation root motion",
+  "transition_seconds": 0.22,
+  "stance_tiles": 0.3,
+  "clips": "24 work/leading samples, 12 carry or animal-rest samples; per-asset manifests are authoritative",
+  "limitations": [
+    "visible reviews use render-only fixtures",
+    "full material baking and slope foot IK pending",
+    "minimum-Mac profiling and user visual acceptance pending"
+  ],
+  "verification": {
+    "work_checks": 235,
+    "pose_samples": 1661,
+    "optimization_primitive_pose_frames": 2309,
+    "visible_views_per_language": 8,
+    "languages": [
+      "en",
+      "ru"
+    ],
+    "seeded_replay_cases": 6,
+    "pose_texture_mib": 96.05
+  }
+}

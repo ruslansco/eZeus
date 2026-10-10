@@ -1,6 +1,120 @@
 # Independent city-builder: production roadmap
 
-Repository audit: 29 September 2026. Working direction: a separately named, premium ancient-city game, initially on Apple Silicon macOS. This is a proposed product direction, not an approved name, price or launch date. Windows support follows platform validation. Nothing has been published or legally cleared by this work.
+## Fifth private campaign: Tidebound Covenant — 10 October 2026
+
+The reviewed Tributaries 3 map now supplies a fifth featured campaign. Three new
+EN/RU chapters develop local food, domestic fleece/science/housing, then timber
+and reserves for a future outpost. Ordinary gameplay completes all chapters
+without trade or injected stock/victory. Source terrain, phased native permissions,
+same-city carry and separate saves are retained. Campaign reviews pass 52 and the
+five-campaign library passes 137 per language. See
+[scope, evidence and limits](TIDEBOUND_COVENANT.md).
+
+The remaining archived map candidate is **Augea - Open Play**. Human newcomer
+pacing, clean-platform builds and retained-content commercial clearance remain
+release gates. Existing Windows kits are frozen and exclude this campaign.
+
+## Fourth private campaign: Sunlit Terraces — 10 October 2026
+
+The next shortlisted map, Genis's Everybody loves oranges, now supplies a fourth
+featured campaign. New EN/RU chapters focus on raised orange orchards, olive oil
+and Greek housing services, then wine and a shared reserve. Ordinary gameplay
+completes all three with actual fruit trade and local processing; phased native
+tools, source terrain and separate saves are retained. Campaign reviews pass 52
+per language; the expanded four-campaign library passes 113 per language. See
+[scope, evidence and limits](SUNLIT_TERRACES.md).
+
+At that stage the remaining candidates were Tributaries 3 and Augea - Open Play;
+the fifth-campaign update above records the subsequent Tributaries adaptation.
+Newcomer pacing, clean-platform builds and commercial retained-content clearance
+remain release gates. Existing Windows kits are frozen and exclude this campaign.
+
+## Third campaign implemented in simulation — 9 October 2026
+
+Stonewatch adds a distinct defense/mythology progression to the normal campaign
+browser: forest settlement/sea trade, supported archers and a native invasion,
+then Theseus's hall/supplies and actual Minotaur slaying. Its full ordinary-command
+run completes three new EN/RU chapters on the reviewed orius map. First Light,
+Bronze River and prior saves remain available. See [evidence and scope](STONEWATCH.md).
+Next acceptance is newcomer playtesting across the three different campaign loops,
+then verified clean-platform builds and retained-content rights work. Frozen Windows
+kits are unchanged and do not include Stonewatch; no public release is performed.
+
+
+## Normal campaign browser and Continuation — 9 October 2026
+
+All three authored campaigns now appear first in normal New game, with descriptions,
+native chapter/difficulty previews, static city views and saved-progress labels.
+Independent campaign slots protect autosaves; previous-launcher profiles are
+offered in place and Continue restores the actual saved chapter after full
+preflight. EN/RU checks pass 86 each, retained menu checks 30 each, save recovery
+36 each. See [campaign library](GODOT_CAMPAIGN_LIBRARY.md). Next acceptance remains
+newcomer playtesting and actual clean-platform packaging. Retained-input permissions remain unresolved for public release.
+
+## Second private campaign: Bronze River — 9 October 2026
+
+Bronze River adapts the reviewed Armory parent map into a new EN/RU production/trade
+story with three chapters and native building unlocks. Ordinary gameplay completes
+the mining/armor/import/export/reserve chain and the trade interruption; visible
+checks pass 53 per language. First Light remains available. See
+[campaign scope](BRONZE_RIVER.md). Retained map/world/content permissions, human
+playtesting and this campaign's actual Windows package/execution remain release
+gates, alongside standalone Mac packaging.
+
+## First campaign completed in simulation — 9 October 2026
+
+The three-chapter First Light campaign now has staged tools and EN/RU writing.
+An ordinary-command settlement wins all chapters with real food/clothing/science,
+housing appeal, exports and profit. City/treasury carry and saved unlocks are checked.
+The old prototype/profile is retained. A fresh private Windows Chapters kit includes
+current native fixes/campaign and passes static/hash checks. Next acceptance is human
+newcomer pacing/clarity and actual Dell execution, followed by content/rights review.
+See `FIRST_LIGHT_CHAPTERS.md`; this remains private adaptation content, not Steam
+clearance or a release-qualified platform build.
+
+## First scenario implementation — 8 October 2026
+
+The private [First Light Harbor prototype](FIRST_LIGHT_HARBOR.md) is playable from
+its separate Mac launcher. It retains selected fan terrain and has new EN/RU prose,
+one episode, seven objectives and a recoverable native trade challenge. Visible
+menu/construction/save/event checks pass in both languages. Next content acceptance
+is a complete natural settlement playthrough and pacing/balance revision. It remains
+excluded from shipping pending retained-input/commercial permission and wider content
+coverage; no independent-release clearance is inferred from new writing.
+
+## Community map starting points — 8 October 2026
+
+The user approved evaluating popular fan adventures instead of creating a map
+from scratch. Six private downloads and a separate Alexandria working copy are
+prepared. Its editable source maps and author invitation to edit make it the first
+prototype candidate; Augea is a one-map alternative. See
+[candidate evidence and next implementation](CUSTOM_ADVENTURE_RESEARCH.md).
+Source/file hashes and author records remain `needs_evidence`, excluded from
+shipping. Isolated import and a newly written short adaptation are next; commercial
+redistribution permission must cover any retained fan/original-game expression.
+
+## Desktop targets and platform work — 8 October 2026
+
+The user prefers a modern Windows/Mac minimum specification instead of adapting
+visuals to an old 1 GB card; a Dell laptop is available for Windows tests.
+Balanced/High now preserve full-resolution city rendering and shadows. Practical
+proposed hardware/acceptance targets and owned performance evidence are in
+[GODOT_RELEASE_PERFORMANCE.md](GODOT_RELEASE_PERFORMANCE.md). They are not
+published Steam minimums. Windows x64 build/test preparation is implemented;
+actual MSVC/Dell execution remains pending. Current Mac libraries require macOS
+26 and Homebrew, so the intended earlier OS floor and standalone package need
+proper dependency rebuilding/bundling and launch tests. No new platform or
+package is release-qualified by these source changes.
+
+Repository audit: 29 September 2026. **Independent branding confirmed by the user on 7 October 2026.** The intended product is a separately named ancient-city game. Premium pricing remains a proposal; no final name, price or launch date is approved. The current validated development platform is Apple Silicon macOS; shipping platform claims, including Windows, require validation. Nothing has been published or legally cleared by this decision. See [release direction](RELEASE_IDENTITY.md).
+
+The user plans new campaigns through changes to existing maps, prose and objectives,
+and reports custom music already implemented, with effects/other audio to follow.
+These are development plans and a user-reported implementation status. Modified
+original content is recorded as an adaptation until retained expression and
+permission/replacement evidence are assessed; it is not automatically cleared by
+new branding or regeneration. File-level music ownership/coverage still needs an
+audit. The original installation remains intact as a development reference.
 
 ## Decisions supported by this project
 

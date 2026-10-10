@@ -10,6 +10,20 @@ uniform vec3 robe_accent : source_color = vec3(0.24, 0.43, 0.64);
 uniform vec3 clavi_0 : source_color = vec3(.64,.055,.075);
 uniform vec3 clavi_1 : source_color = vec3(.64,.055,.075);
 uniform vec3 clavi_2 : source_color = vec3(.64,.055,.075);
+// Per-walker variety for townspeople (scripts/citizen_variety.gd): 0 keeps the authored look; any other value picks a
+// stable small shift of tunic shade and hue, hair colour and skin tone, so a job keeps its colour but neighbours differ.
+instance uniform float citizen_variant = 0.0;
+
+float variant_hash(float k) { return fract(sin(citizen_variant * 91.7 + k * 37.3) * 43758.5453); }
+
+vec3 rotate_hue(vec3 c, float a) {
+	const mat3 to_yiq = mat3(vec3(.299,.596,.211), vec3(.587,-.274,-.523), vec3(.114,-.322,.312));
+	const mat3 to_rgb = mat3(vec3(1.0,1.0,1.0), vec3(.956,-.272,-1.106), vec3(.621,-.647,1.703));
+	vec3 yiq = to_yiq * c;
+	float ca = cos(a), sa = sin(a);
+	yiq.yz = vec2(yiq.y*ca - yiq.z*sa, yiq.y*sa + yiq.z*ca);
+	return max(to_rgb * yiq, vec3(0.0));
+}
 
 float meander(vec2 p) {
 	p = fract(p);
@@ -30,6 +44,10 @@ void fragment() {
 		float pore = sin(UV.x*1687.0+UV.y*523.0)*sin(UV.y*1843.0-UV.x*419.0);
 		float detail = 1.0-smoothstep(.002,.012,length(fwidth(UV)));
 		ALBEDO *= 1.0+pore*.008*detail;
+		if (citizen_variant > 0.0) {
+			float tone = variant_hash(1.0);
+			ALBEDO *= mix(vec3(.88,.86,.84), vec3(1.10,1.08,1.05), tone);
+		}
 		ROUGHNESS = .66+pore*.025*detail;
 		BACKLIGHT = ALBEDO*.055;
 		if (elder_portrait) {
@@ -52,6 +70,10 @@ void fragment() {
 		float weave = sin(UV.x*1900.0)*sin(UV.y*1700.0);
 		float detail = 1.0-smoothstep(.001,.008,length(fwidth(UV)));
 		ALBEDO *= 1.0+weave*.035*detail;
+		if (citizen_variant > 0.0) {
+			// Dyed in another batch: a touch lighter or darker, a little warmer or cooler.
+			ALBEDO = rotate_hue(ALBEDO, (variant_hash(2.0)-.5)*.32) * mix(.80, 1.14, variant_hash(3.0));
+		}
 		ROUGHNESS = .91;
 		if (kind == 8 && !greek_robe) {
 			int person = int(floor(UV2.y*8.0));
@@ -77,6 +99,12 @@ void fragment() {
 		float locks = sin(UV.x*1320.0+sin(UV.y*53.0)*2.0);
 		float detail = 1.0-smoothstep(.001,.01,length(fwidth(UV)));
 		ALBEDO *= 1.0+locks*.085*detail;
+		float pick = variant_hash(4.0);
+		if (citizen_variant > 0.0 && pick > .25) {
+			// Black, dark brown, chestnut or grey; one walker in four keeps the authored colour.
+			vec3 shade = pick < .45 ? vec3(.016,.012,.010) : pick < .68 ? vec3(.055,.032,.018) : pick < .86 ? vec3(.12,.062,.030) : vec3(.30,.29,.27);
+			ALBEDO = mix(ALBEDO, shade*(1.0+locks*.12*detail), .85);
+		}
 		ROUGHNESS = .73;
 		SPECULAR = .18;
 		if (hades_flame && COLOR.r > COLOR.b*3.0 && COLOR.r > .15) {

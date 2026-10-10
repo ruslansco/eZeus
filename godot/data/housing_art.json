@@ -1,0 +1,9 @@
+{
+  "revision": 1,
+  "source": "eZeus/tools/godot_housing.py",
+  "native_footprint": [2, 2],
+  "architecture_heights": [0.96, 1.16, 1.36, 1.58, 1.84, 2.18, 2.56],
+  "vertex_budget": 24000,
+  "design": "Original starter wattle-and-daub cottage, improved mud-brick dwelling, then retained Greek courtyard and upper-storey architecture; muted soil, limestone and reed materials",
+  "rights_status": "needs_evidence"
+}

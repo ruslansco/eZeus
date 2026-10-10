@@ -29,11 +29,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="Panel" type="PanelContainer" parent="Themed/Center" unique_id=1577407915]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(820, 560)
 layout_mode = 2
+theme_type_variation = &"EpisodeShell"
 
 [node name="Card" type="VBoxContainer" parent="Themed/Center/Panel" unique_id=126904816 instance=ExtResource("3_e38a2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 10
 script = ExtResource("4_ed0ul")

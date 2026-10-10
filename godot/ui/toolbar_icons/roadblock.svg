@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+<defs><linearGradient id="stone" x2=".8" y2="1"><stop stop-color="#fff0cd"/><stop offset="1" stop-color="#ad9674"/></linearGradient><linearGradient id="wood" x2=".5" y2="1"><stop stop-color="#daac6b"/><stop offset="1" stop-color="#775335"/></linearGradient><linearGradient id="red" x2=".6" y2="1"><stop stop-color="#df8061"/><stop offset="1" stop-color="#993f30"/></linearGradient></defs>
+<ellipse cx="48" cy="85" rx="36" ry="5" fill="#081723" opacity=".3"/>
+<g stroke="#253d43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+<path d="m37 16 21 6 29 52-43 17-33-16Z" fill="url(#stone)"/>
+<path d="m34 34 32-1M23 51l49-4M18 69l62-7M40 22l-4 62m18-57 8 56" fill="none" stroke="#9b8769"/>
+<path d="M20 29h8v48l-8 4Zm51-11h8v46l-8 4Z" fill="url(#wood)"/>
+<path d="m17 39 64-14v15L17 54Z" fill="url(#red)"/>
+<path d="m30 36 11-2v15l-11 2Zm26-6 11-2v15l-11 2Z" fill="#f8e4b7"/>
+<path d="m16 72 16-4v9l-16 5Zm52-10 16-4v9l-16 5Z" fill="url(#wood)"/>
+<path d="m21 29 5-2m46-9 5-2" stroke="#f4d395"/>
+</g></svg>

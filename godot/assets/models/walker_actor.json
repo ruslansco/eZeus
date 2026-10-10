@@ -1,21 +1,22 @@
 {
   "asset": "walker_actor",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_actor.glb",
-  "bytes": 5305032,
-  "vertices": 15937,
-  "surfaces": 3,
-  "source_surfaces": 18,
+  "bytes": 6802864,
+  "vertices": 15883,
+  "surfaces": 2,
+  "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.18872003257274628,
-      -0.18185600638389587,
+      -0.39230525493621826,
+      -0.27662715315818787,
       0.0005000140517950058
     ],
     [
-      0.24434193968772888,
+      0.39230525493621826,
       0.19140255451202393,
-      0.8497485518455505
+      0.9229950904846191
     ]
   ],
   "walk_samples": 24,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 3298138436,
           "skin": [
             0.61,
@@ -63,9 +64,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "a7b022bb7da9da35cc7a2e6dbf0806d8111c0a44c7b105b2e0fb69bad7ed244f",
         "clavi_srgb": [
-          0.52,
-          0.055,
-          0.19
+          0.46,
+          0.54,
+          0.66
         ]
       }
     ],
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 86,
+    "targets_after": 64,
     "uv_attributes_removed": 0
   }
 }

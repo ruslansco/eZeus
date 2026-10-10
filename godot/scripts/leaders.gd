@@ -5,6 +5,7 @@ extends RefCounted
 
 const SaveFiles = preload("res://scripts/save_files.gd")
 const UserSettings = preload("res://scripts/user_settings.gd")
+const Campaigns = preload("res://scripts/campaign_library.gd")
 const MAX_LENGTH := 24
 const FORBIDDEN := ["/", "\\", ":", "*", "?", "\"", "<", ">", "|"]
 
@@ -17,6 +18,8 @@ static func list() -> Array:
 		for name in DirAccess.get_directories_at(root()):
 			if not name.begins_with("."):
 				names.append(name)
+	for name in Campaigns.previous_leaders():
+		if not names.has(name): names.append(name)
 	names.sort_custom(func(a, b): return String(a).naturalnocasecmp_to(String(b)) < 0)
 	return names
 
@@ -51,13 +54,33 @@ static func create(name: String) -> bool:
 	return DirAccess.make_dir_recursive_absolute(root().path_join(clean)) == OK
 
 # Removes a leader: the saves in its folder and the folder (nothing outside the save root is ever touched).
+static func can_delete(name: String) -> bool:
+	var directory := DirAccess.open(root())
+	return directory != null and name in list() and not name in Campaigns.previous_leaders() and not directory.is_link(root().path_join(name)) and DirAccess.dir_exists_absolute(root().path_join(name))
+
+static func remove_folder(folder: String) -> bool:
+	var directory := DirAccess.open(folder)
+	if directory == null: return false
+	directory.include_hidden = true
+	directory.include_navigational = false
+	directory.list_dir_begin()
+	var name := directory.get_next()
+	while not name.is_empty():
+		var child := folder.path_join(name)
+		if directory.is_link(child):
+			if DirAccess.remove_absolute(child) != OK: return false
+		elif directory.current_is_dir():
+			if not remove_folder(child): return false
+		elif DirAccess.remove_absolute(child) != OK: return false
+		name = directory.get_next()
+	directory.list_dir_end()
+	return DirAccess.remove_absolute(folder) == OK
+
 static func delete(name: String) -> bool:
-	if not name in list():
+	if not can_delete(name):
 		return false
 	var folder := root().path_join(name)
-	for file in DirAccess.get_files_at(folder):
-		DirAccess.remove_absolute(folder.path_join(file))
-	var removed := DirAccess.remove_absolute(folder) == OK
+	var removed := remove_folder(folder)
 	if removed and str(UserSettings.get_value("profile", "leader", "")) == name:
 		set_current("")
 	return removed

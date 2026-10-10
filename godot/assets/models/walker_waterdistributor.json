@@ -1,15 +1,16 @@
 {
   "asset": "walker_waterdistributor",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_waterdistributor.glb",
-  "bytes": 5592252,
-  "vertices": 16845,
+  "bytes": 7209304,
+  "vertices": 16828,
   "surfaces": 3,
   "source_surfaces": 31,
   "bounds_blender": [
     [
-      -0.19081616401672363,
-      -0.4414900243282318,
+      -0.2063334435224533,
+      -0.4208787679672241,
       0.0005000140517950058
     ],
     [
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 4066107194,
           "skin": [
             0.61,
@@ -91,8 +92,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 390207614,
           "skin": [
             0.61,
@@ -118,8 +119,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 129,
+    "targets_after": 85,
     "uv_attributes_removed": 0
   }
 }

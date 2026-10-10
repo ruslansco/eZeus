@@ -27,11 +27,13 @@ void eResourceBuildingBase::timeChanged(const int by) {
     if(enabled()) {
         if(!mCart) {
             mCart = spawnCart(eCartActionTypeSupport::give);
-            mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
-        } else if(mCart && mCart->waiting() && mResource > 0) {
+        } else if(mCart->waiting() && mResource > 0) {
             const int a = mCart->add(mResType, mResource);
             mResource -= a;
         }
+        // Saved carts keep the range they were created with: apply the
+        // current one so a changed setting reaches existing buildings.
+        mCart->setMaxDistance(eNumbers::sResourceBuildingMaxResourceGiveDistance);
     }
     eEmployingBuilding::timeChanged(by);
 }

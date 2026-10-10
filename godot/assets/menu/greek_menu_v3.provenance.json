@@ -1,0 +1,62 @@
+{
+  "version": "greek_menu_v3",
+  "date": "2026-10-09",
+  "scope": "Menu-only generated raster frames and enamel button art. Real Control text and actions remain accessible and translated.",
+  "generation": {
+    "mode": "built-in image_gen",
+    "transparent_background": true,
+    "inputs": "Text art direction informed by the user references. No reference screenshot, logo, menu text or third-party UI pixels embedded.",
+    "prompt_set": "greek_menu_v3.prompts.md"
+  },
+  "assets": [
+    {
+      "asset": "greek_menu_panel_v3.png",
+      "dimensions": [
+        887,
+        1774
+      ],
+      "bytes": 3163469,
+      "sha256": "c629411cb5740d6e0f4824bb624401d31196264063e780111cf8810bbb6bae18",
+      "prompt": "greek_menu_panel_v3.prompt.txt",
+      "prompt_sha256": "29200bde2459f12aa312e717849664edf812cebd9b07af11cd10204401c3e59e"
+    },
+    {
+      "asset": "greek_menu_button_v3.png",
+      "dimensions": [
+        2098,
+        749
+      ],
+      "bytes": 1461286,
+      "sha256": "997dfc27c4801085898c8005a1cb49e840c1359a9e817cb19c60192605c96a96",
+      "prompt": "greek_menu_button_v3.prompt.txt",
+      "prompt_sha256": "4035354a269cdb82486026b9baebf49e160361b2eb1634f87c7979fe6164f153"
+    },
+    {
+      "asset": "greek_menu_sheet_v3.png",
+      "dimensions": [
+        1586,
+        992
+      ],
+      "bytes": 3201821,
+      "sha256": "d0bd1b5dcad72f8ef87b09e94adf8443e5e0814827d6e164d1ce13bc6c90401b",
+      "prompt": "greek_menu_sheet_v3.prompt.txt",
+      "prompt_sha256": "62968843e33dcf18c563148768075706558f6dfdedc459c0ec9f8e24068f2583"
+    }
+  ],
+  "runtime": [
+    "res://ui/menu_skin.gd",
+    "res://ui/menu_navigation.gd",
+    "res://ui/menu_list_pager.gd",
+    "res://ui/menu_text_reader.gd"
+  ],
+  "button_runtime_crop_pixels": [
+    0,
+    178,
+    2098,
+    361
+  ],
+  "button_runtime_texture_width": 520,
+  "presentation": "Static raster frames with painted depth, nine-slice buttons, hover/pressed/disabled/focus feedback. These frame assets are not separate 3D meshes. The retained cinematic scenery and live 3D portal remain.",
+  "native_scope": "Presentation only: preserve native campaign, save, leader, settings and city callbacks; catalog pagination maps visible rows to original authoritative indexes.",
+  "release_status": "Generated development artwork; user visual acceptance and broader device/platform review remain pending. Upstream source and licensing notices are retained."
+}

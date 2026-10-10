@@ -20,6 +20,8 @@ const SAME_SOUND_GAP := .12
 const AMBIENT_ODDS := 1.0 / 250.0
 const FADE := 1.0
 const MENU_TRACK := "Audio/Music/Setup.mp3"
+const ORIGINAL_SCORE := "res://assets/audio/original/settlement.wav"
+const ORIGINAL_AMBIENCE := "res://assets/audio/original/countryside.wav"
 const BATTLE_TRACKS := ["Battle1", "Battle2", "Battle3", "Battle4", "Battle_long", "Battle_long2"]
 const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--capture=", "--terrain-review=", "--garden-review=", "--sanctuary-review=", "--pyramid-review=", "--controls-review=", "--objectives-review=", "--street-review=",
 	"--character-review=", "--silent"]
@@ -33,6 +35,8 @@ var pool: Array[AudioStreamPlayer] = []
 var music: AudioStreamPlayer
 var music_fading: AudioStreamPlayer
 var voice: AudioStreamPlayer
+var soundscape: AudioStreamPlayer
+var original_soundscape := false
 var music_kind := ""
 var music_track := ""
 var general_tracks: Array = []
@@ -60,6 +64,8 @@ func _ready() -> void:
 	music = _player("Music")
 	music_fading = _player("Music")
 	voice = _player("Voice")
+	soundscape = _player("Ambient")
+	original_soundscape = bool(UserSettings.get_value("sound","original_soundscape",false))
 	for i in POOL:
 		pool.append(_player("Effects"))
 	music.finished.connect(_player_finished.bind(music))
@@ -109,6 +115,7 @@ func apply_settings() -> void:
 # A path relative to the game folder ("Audio/Wavs/fire.wav"), or absolute. Voices live in a folder per language; ask for
 # Audio/Voice/... and the voice language's file is used (the interface language unless the player chose one: Game settings), English when it has none.
 func resolve(path: String) -> String:
+	if path.begins_with("res://"): return ProjectSettings.globalize_path(path)
 	if path.is_absolute_path():
 		return path
 	if path.begins_with("Audio/Voice/"):
@@ -122,6 +129,10 @@ func resolve(path: String) -> String:
 	return workspace.path_join(path)
 
 func load_stream(path: String) -> AudioStream:
+	if path.begins_with("res://"):
+		# Imported WAVs also work from a production PCK, where the source file may
+		# be remapped. Duplicate loop settings without changing the shared import.
+		return load(path).duplicate() if ResourceLoader.exists(path) else null
 	var full := resolve(path)
 	if full.is_empty() or not FileAccess.file_exists(full):
 		return null
@@ -283,7 +294,28 @@ func play_music(kind: String) -> void:
 			track = _pick(battle)
 		_:
 			return
+	if original_soundscape and kind in ["menu","city"]: track=ORIGINAL_SCORE
+	if track==ORIGINAL_SCORE and not ResourceLoader.exists(ORIGINAL_SCORE):track=MENU_TRACK if kind=="menu" else _pick(general_tracks)
+	set_soundscape(kind in ["city","battle"] and original_soundscape)
 	_start_music(kind, track)
+
+func set_original_soundscape(value: bool) -> void:
+	original_soundscape=value
+	UserSettings.set_value("sound","original_soundscape",value)
+	var kind:=music_kind
+	if kind in ["menu","city","battle"]:
+		music_kind=""; play_music(kind)
+	else: set_soundscape(false)
+
+func set_soundscape(playing: bool) -> void:
+	if not playing or not enabled:
+		if soundscape.playing: soundscape.stop()
+		return
+	if soundscape.playing:return
+	var stream:=load_stream(ORIGINAL_AMBIENCE)
+	if stream is AudioStreamWAV:
+		stream.loop_mode=AudioStreamWAV.LOOP_FORWARD;stream.loop_end=roundi(stream.get_length()*stream.mix_rate)
+		soundscape.stream=stream;soundscape.volume_db=-8;soundscape.play()
 
 func _pick(tracks: Array) -> String:
 	var options: Array = tracks.filter(func(item): return item != music_track)
@@ -313,12 +345,15 @@ func _start_music(kind: String, track: String) -> void:
 		out.tween_callback(old.stop)
 	if stream is AudioStreamMP3:
 		stream.loop = kind == "menu"
+	if track==ORIGINAL_SCORE and stream is AudioStreamWAV:
+		stream.loop_mode=AudioStreamWAV.LOOP_FORWARD;stream.loop_end=roundi(stream.get_length()*stream.mix_rate)
 	music.stream = stream
 	music.volume_db = -60.0
 	music.play()
 	create_tween().tween_property(music, "volume_db", 0.0, FADE)
 
 func stop_music(fade := FADE) -> void:
+	set_soundscape(false)
 	music_kind = ""
 	if music.playing:
 		var out := create_tween()

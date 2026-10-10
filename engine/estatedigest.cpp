@@ -14,9 +14,20 @@
 #include <fstream>
 #include <set>
 #include <sstream>
+#ifdef _WIN32
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
 
 namespace {
+int processId() {
+#ifdef _WIN32
+    return _getpid();
+#else
+    return getpid();
+#endif
+}
 constexpr uint64_t kBasis = 1469598103934665603ull;
 uint64_t fnv(uint64_t hash, const char* data, const size_t count) {
     for(size_t i = 0; i < count; ++i) {
@@ -105,7 +116,7 @@ std::string eStateDigest(eGameBoard& board, std::string* sections) {
 std::string eSaveDigest(const eGameBoard& board) {
     // The save writer targets files or fixed memory; a temporary file keeps it unchanged.
     const auto path = std::filesystem::temp_directory_path() /
-                      ("ezeus-digest-" + std::to_string(getpid()) + ".bin");
+                      ("ezeus-digest-" + std::to_string(processId()) + ".bin");
     {
         std::ofstream file(path, std::ios::out | std::ios::binary | std::ios::trunc);
         eWriteTarget target(&file);

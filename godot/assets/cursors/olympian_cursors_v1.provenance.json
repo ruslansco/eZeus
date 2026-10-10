@@ -1,0 +1,287 @@
+{
+  "version": "olympian_cursors_v1",
+  "date": "2026-10-09",
+  "scope": "Original Greek-style global cursor artwork for the Godot presentation. No C++ simulation, native save or model changes.",
+  "generation": {
+    "mode": "built-in image_gen",
+    "transparent_background": true,
+    "inputs": "Text art direction informed by the user cursor reference. No third-party screenshot, logo or cursor pixels embedded.",
+    "prompt": "olympian_cursors_v1.prompt.txt",
+    "prompt_sha256": "3ff588d8dbedc84aa3474f89f41baf5cf3e778c7a4be03aae9077eaada49b650"
+  },
+  "source": {
+    "asset": "olympian_cursors_v1.png",
+    "dimensions": [
+      1774,
+      887
+    ],
+    "bytes": 1002261,
+    "sha256": "34887ece47f87ff317b8adbf12fc724f11f64a0e40c14397abc1ac26f2d6c26c",
+    "layout": "4 columns by 2 rows; eight isolated original sprites"
+  },
+  "derivation": {
+    "builder": "res://scripts/bake_game_cursors.gd",
+    "manifest": "runtime.json",
+    "manifest_sha256": "58b17fb4d350d31b9f8a3168a5014a73ea957278c02feecd6e326a7618e14e6b",
+    "process": "Alpha-bounded crops, Lanczos proportional reduction and transparent padding in Godot. Source atlas retained unchanged. Five additional original SVG resize/help symbols rasterized in Godot.",
+    "texture_size": 48,
+    "maximum_art_size": 38,
+    "interface_texture_sizes": {
+      "100": 48,
+      "110": 53,
+      "125": 60
+    },
+    "tip_hotspots": [
+      "arrow",
+      "point",
+      "busy"
+    ],
+    "center_hotspots": "All other roles",
+    "assets": [
+      {
+        "name": "arrow",
+        "asset": "runtime/arrow.png",
+        "sha256": "d798710ab4fa53bb69efeb6889b9979b5521693f0e4dcd584bdddd73187345c4",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          7,
+          5
+        ],
+        "crop": [
+          110,
+          66,
+          271,
+          305
+        ]
+      },
+      {
+        "name": "back_diagonal",
+        "asset": "runtime/back_diagonal.png",
+        "sha256": "385a1144cae1c908f98b7f3f2241121e2d2afa35459e76abac51df7c588bebd7",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "vector_source": "back_diagonal.svg",
+        "vector_sha256": "8990c779807936076314697109ce396be79526d6f7aabd30441215a3b67d2d6e"
+      },
+      {
+        "name": "busy",
+        "asset": "runtime/busy.png",
+        "sha256": "8407aae669fbe758aae721c8146b6b2ad0437b00bd95e84d8e575167d5f7d3b2",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          5,
+          5
+        ],
+        "crop": [
+          523,
+          497,
+          318,
+          315
+        ]
+      },
+      {
+        "name": "cross",
+        "asset": "runtime/cross.png",
+        "sha256": "c2abef043df42b02f5edc9f85f52c1daf3233f1b9e65fefc1e823adc56386f4d",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "crop": [
+          1379,
+          55,
+          338,
+          331
+        ]
+      },
+      {
+        "name": "drag",
+        "asset": "runtime/drag.png",
+        "sha256": "089d6582ca20b9849fc8f86dbc90c6fa75b6f3437b95c03952e8207b02b98087",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "crop": [
+          961,
+          469,
+          270,
+          362
+        ]
+      },
+      {
+        "name": "forbidden",
+        "asset": "runtime/forbidden.png",
+        "sha256": "962d65751df0dca47301ce14a6fffd9b7c9622bc4a8613bac4180657c32361e5",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "crop": [
+          1390,
+          497,
+          316,
+          313
+        ]
+      },
+      {
+        "name": "forward_diagonal",
+        "asset": "runtime/forward_diagonal.png",
+        "sha256": "acf712d27420fc03ffdaa197d888298e31ac84a1cd93eed353113c15a7dae47a",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "vector_source": "forward_diagonal.svg",
+        "vector_sha256": "a1480be45f0ffcdbc3c092d44f9347949f7e2bb026580e8fcfe382a820733a06"
+      },
+      {
+        "name": "help",
+        "asset": "runtime/help.png",
+        "sha256": "d2f4335563c3f272168c0970a41b0f5f0eb964d69b06384b680e69b2bc9eb480",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "vector_source": "help.svg",
+        "vector_sha256": "f84bf48f5803c443e65cb1d4eb7ed8a00f787825e17fc0cc0ceb56e0fdcfd1dc"
+      },
+      {
+        "name": "horizontal",
+        "asset": "runtime/horizontal.png",
+        "sha256": "4ddffc8de604def4e8ccca342deee4e4d5f583b824673c279a861a41e2cf7920",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "vector_source": "horizontal.svg",
+        "vector_sha256": "db45e725ccbfe78a340d973c2c41554c92f30423a87cb16e8d33ffb20d1f143e"
+      },
+      {
+        "name": "point",
+        "asset": "runtime/point.png",
+        "sha256": "bd3a535b7fc2b5e633d105cb9a1a14bd3e6f56757a4053bcf19bf599a02d7f65",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          10,
+          5
+        ],
+        "crop": [
+          536,
+          56,
+          271,
+          330
+        ]
+      },
+      {
+        "name": "text",
+        "asset": "runtime/text.png",
+        "sha256": "15ca8738764a05fd9a9c37150c4a946105c1fc7cc57b625917ef5a1be2c9363d",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          23,
+          24
+        ],
+        "crop": [
+          1047,
+          67,
+          121,
+          307
+        ]
+      },
+      {
+        "name": "vertical",
+        "asset": "runtime/vertical.png",
+        "sha256": "8e0012143e5492c55821f86762b75c9e4396e1709519dd6554d973af1e08ac7d",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "vector_source": "vertical.svg",
+        "vector_sha256": "84110e2edc3522892cb16c67a0cf19d6f7aabdead52317e08499e7ebcbf1dd1c"
+      },
+      {
+        "name": "wait",
+        "asset": "runtime/wait.png",
+        "sha256": "fe26292a40382453435305672031a495e330bf218ea6a2cf226c2e01c0771521",
+        "dimensions": [
+          48,
+          48
+        ],
+        "hotspot": [
+          24,
+          24
+        ],
+        "crop": [
+          128,
+          501,
+          191,
+          313
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "autoload": "GameCursor",
+    "script": "res://scripts/game_cursor.gd",
+    "api": "Input.set_custom_mouse_cursor",
+    "roles": 17,
+    "textures": 13,
+    "scaling": "Interface size only. Cached per size; text size alone leaves textures untouched.",
+    "input": "Existing Control shapes select hardware cursors. No frame loop, input interception or mouse capture/visibility change. Headless runs prepare resources without hardware registration."
+  },
+  "validation": {
+    "main_menu_en": 58,
+    "main_menu_ru": 58,
+    "native_cursor_review": 44,
+    "contrast_sheet": "res://captures/game-cursors.png",
+    "scope": "Apple M4 macOS Metal/Forward Mobile native-window reviews. Godot selected-role checks and resource contrast sheet; viewport captures omit the operating-system cursor."
+  },
+  "release_status": "Generated development artwork plus original code-native SVG symbols. User visual acceptance, other operating systems and high-DPI/multi-monitor review remain pending. Upstream notices retained."
+}

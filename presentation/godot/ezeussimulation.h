@@ -32,7 +32,9 @@ public:
     void advance(double delta);
     Dictionary replay(int ticks, int64_t seed);
     void set_save_directory(const String& directory);
-    Dictionary save_city(const String& name);
+    Dictionary save_city(const String& name,const Dictionary& view);
+    Dictionary check_save(const String& path);
+    Dictionary save_info(const String& path);
     Dictionary snapshot(bool full);
     Dictionary command(const String& command);
     Dictionary diagnostics() const;

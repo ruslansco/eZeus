@@ -3,8 +3,11 @@
 #include "elimits.h"
 
 #include <cstdlib>
+#include <cstdio>
+#ifndef _WIN32
 #include <execinfo.h>
 #include <unistd.h>
+#endif
 
 std::random_device eRand::sDev;
 static unsigned initialSeed(std::random_device& device) {
@@ -22,10 +25,15 @@ int eRand::rand() {
         // EZEUS_RAND_TRACE=<count>: print the call stack of the first draws made from a worker thread.
         static const long traced = std::getenv("EZEUS_RAND_TRACE") ? std::atol(std::getenv("EZEUS_RAND_TRACE")) : 0;
         if(n <= traced) {
+#ifndef _WIN32
             void* frames[24];
             const int depth = backtrace(frames, 24);
             dprintf(2, "RAND_OFF_THREAD draw %ld\n", n);
             backtrace_symbols_fd(frames, depth, 2);
+#else
+            // Preserve the counter and RNG sequence without POSIX-only tracing.
+            std::fprintf(stderr, "RAND_OFF_THREAD draw %ld\n", n);
+#endif
         }
     }
     return sDist(sRng);

@@ -2,19 +2,19 @@
   "asset": "walker_artisan",
   "source": "art/characters/people/build_person.py",
   "file": "walker_artisan.glb",
-  "bytes": 5321392,
-  "vertices": 15978,
+  "bytes": 11872040,
+  "vertices": 16014,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.18755289912223816,
-      -0.18225902318954468,
+      -0.19148746132850647,
+      -0.17922267317771912,
       0.0004999544471502304
     ],
     [
-      0.19235599040985107,
-      0.18021810054779053,
+      0.20865726470947266,
+      0.2526128888130188,
       0.8492265939712524
     ]
   ],
@@ -25,6 +25,17 @@
   "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "build": 24,
+      "buildstand": 24,
+      "die": 8
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
   "character": {
     "revision": "natural_people_v1",
     "identities": [
@@ -78,8 +89,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 276,
+    "targets_after": 139,
     "uv_attributes_removed": 0
   }
 }

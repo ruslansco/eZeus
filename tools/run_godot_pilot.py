@@ -56,6 +56,7 @@ def main():
     parser.add_argument('--character-review', choices=['before', 'after'], help='Capture matched character portraits, poses and city pedestrians, then exit')
     parser.add_argument('--character-subjects', nargs='+', help='Optionally review only these model IDs')
     parser.add_argument('--terrain-review', choices=['before', 'after', 'elevation-before', 'elevation-after', 'detail-before', 'detail-after', 'polish-after', 'mineral-before', 'mineral-after', 'road-before', 'road-after'], help='Capture terrain at fixed positions/angles, then exit')
+    parser.add_argument('--view-review', help='Measure render cost (primitives, draw calls, GPU/CPU ms) and capture fixed camera views into captures/viewbounds-<tag>-*.png, then exit')
     parser.add_argument('--capture', type=Path)
     parser.add_argument('--headless', action='store_true')
     parser.add_argument('--renderer', choices=['metal', 'compatibility'], default='metal')
@@ -78,7 +79,7 @@ def main():
         command += ['--rendering-method', 'mobile', '--rendering-driver', 'metal'] if args.renderer == 'metal' else ['--rendering-method', 'gl_compatibility']
         if args.headless:
             command.append('--headless')
-        automated = args.skip_start or args.validate or args.asset_review or args.garden_review or args.sanctuary_review or args.pyramid_review or args.menu_rest_review or args.start_review or args.controls_review or args.objectives_review or args.street_review or args.attack_review or args.rite_review or args.character_review or args.terrain_review or args.capture
+        automated = args.skip_start or args.validate or args.asset_review or args.garden_review or args.sanctuary_review or args.pyramid_review or args.menu_rest_review or args.start_review or args.controls_review or args.objectives_review or args.street_review or args.attack_review or args.rite_review or args.character_review or args.terrain_review or args.view_review or args.capture
         language = args.lang or ('en' if automated else None)
         command.append('--')
         if language:
@@ -115,6 +116,8 @@ def main():
             command.append('--character-subjects=' + ','.join(args.character_subjects))
         if args.terrain_review:
             command.append('--terrain-review=' + args.terrain_review)
+        if args.view_review:
+            command.append('--view-review=' + args.view_review)
         if args.capture:
             args.capture.parent.mkdir(parents=True, exist_ok=True)
             command.append('--capture=' + str(args.capture.resolve()))

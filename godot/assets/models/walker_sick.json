@@ -1,19 +1,20 @@
 {
   "asset": "walker_sick",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_sick.glb",
-  "bytes": 5312384,
-  "vertices": 15959,
+  "bytes": 6873048,
+  "vertices": 16010,
   "surfaces": 3,
   "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.18013137578964233,
-      -0.19100943207740784,
+      -0.19573111832141876,
+      -0.1407853364944458,
       -4.4971704483032227e-05
     ],
     [
-      0.18897345662117004,
+      0.2047394961118698,
       0.25487208366394043,
       0.8330036401748657
     ]
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 1983423296,
           "skin": [
             0.61,
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 129,
+    "targets_after": 85,
     "uv_attributes_removed": 0
   }
 }

@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <cstring>
 #include <cassert>
+#include <stdexcept>
+#include <limits>
 
 #include "pointers/estdpointer.h"
 #include "efileformat.h"
@@ -36,15 +38,22 @@ using eDirectionTimes = std::map<eTile*, eDirectionLastUseTime>;
 
 class eReadSource {
 public:
-    eReadSource(std::ifstream* const file) :
-        fFile(file) {}
+    eReadSource(std::ifstream* const file, size_t limit = std::numeric_limits<size_t>::max()) : fFile(file) {
+        const auto position=file->tellg();
+        file->seekg(0,std::ios::end);const auto end=file->tellg();file->seekg(position);
+        fFilePos=position>=0?size_t(position):0;fFileEnd=end>=0?size_t(end):0;
+        if(limit<fFileEnd-fFilePos)fFileEnd=fFilePos+limit;
+    }
     eReadSource(void* mem) :
         fMem(mem) {}
 
     inline size_t read(void* const data, const size_t len) {
         assert(fFile || fMem);
         if(fFile) {
+            if(len>remaining())throw std::runtime_error("truncated native stream");
             fFile->read(static_cast<char*>(data), len);
+            if(size_t(fFile->gcount())!=len)throw std::runtime_error("unreadable native stream");
+            fFilePos+=len;
             return len;
         } else if(fMem) {
             std::memcpy(data, static_cast<char*>(fMem) + fMemPos, len);
@@ -53,10 +62,15 @@ public:
         }
         return 0;
     }
+    size_t remaining() const {
+        if(!fFile)return std::numeric_limits<size_t>::max();
+        return fFileEnd>=fFilePos?fFileEnd-fFilePos:0;
+    }
 private:
     std::ifstream* fFile = nullptr;
     void* fMem = nullptr;
     size_t fMemPos = 0;
+    size_t fFilePos=0,fFileEnd=0;
 };
 
 class eReadStream {
@@ -111,6 +125,7 @@ public:
     inline eReadStream& operator>>(std::vector<T>& val) {
         int size;
         *this >> size;
+        if(size<0 || size_t(size)>mSrc.remaining())throw std::runtime_error("invalid native list length");
         for(int i = 0; i < size; i++) {
             T& t = val.emplace_back();
             *this >> t;
@@ -129,6 +144,7 @@ public:
     inline eReadStream& operator>>(std::string& val) {
         int32_t size;
         *this >> size;
+        if(size<0 || size_t(size)>mSrc.remaining())throw std::runtime_error("invalid native string length");
         if(size == 0) {
             val = "";
         } else {

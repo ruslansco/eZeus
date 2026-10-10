@@ -1,9 +1,10 @@
 {
   "asset": "walker_competitor",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_competitor.glb",
-  "bytes": 5266148,
-  "vertices": 15758,
+  "bytes": 6784968,
+  "vertices": 15757,
   "surfaces": 3,
   "source_surfaces": 14,
   "bounds_blender": [
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0.013,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2255397109,
           "skin": [
             0.58,
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 72,
+    "targets_before": 129,
+    "targets_after": 96,
     "uv_attributes_removed": 0
   }
 }

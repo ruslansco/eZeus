@@ -1,0 +1,16 @@
+{
+	"batches": 27,
+	"inputs": {
+		"res://assets/models/common_house_3a.glb": "a821c11667f0c50afdddda96ee3a456ffcad0b539255078e0e17d8d94efe5a48",
+		"res://assets/models/common_house_5a.glb": "7eae87f44584c41b3beadf5cd0d6c4f5b523d76e975775e563fdd7b5085c52cd",
+		"res://assets/models/sanctuary_statue_zeus.glb": "576ed7c43560a6e49bd027fe648cf42c7f880c46b068c58045e6d29f06694574",
+		"res://scripts/login_scene_3d.gd": "b2a800d20e1fa0fa87cce7e6bc1c3414da8e7984ee71511eefa734fcde60ba8b",
+		"res://scripts/olympian_menu_world.gd": "64e122c813239756ed80de9d7bcbacc200a0f7cbb282cc3a2cbabc366173c590",
+		"res://shaders/aegean_water.gdshader": "21a395183bd60102c2e86d26837e4097d2cd7d39a7ccefacb3a8d095ca60e092",
+		"res://shaders/login_portal.gdshader": "8160cff9ef4f71ac1b9615f90c40da160ba08ebfc047b6f78c6accc742bca5b4",
+		"res://shaders/olympian_finish.gdshader": "29cc2b34599f7bc3566ba5ad1951d2957ce2c5d73c43fc98db4a1d3ba43518e3",
+		"res://shaders/olympian_ground.gdshader": "3f22f671c63f26dd7e8ac54c397576dcbe74b2f7af557e53838bf0d7a9c99ac6"
+	},
+	"source": "Original procedural Aegean sanctuary; retained local portal and model inputs. See olympian_menu_sources.json.",
+	"triangles": 576037
+}

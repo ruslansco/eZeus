@@ -3,7 +3,7 @@
 Installed inside disposable background Blender exports. Reuses the local CC0
 male/female sculpts and their rigs; keeps child anatomy, hand targets and props.
 """
-import copy
+import copy, os, random
 import hashlib
 import math
 import sys
@@ -28,7 +28,7 @@ AGES = {'Grower':29, 'Trader':46, 'Firefighter':32, 'Shepherd':54,
         'Peddler':52, 'Tax collector':49, 'Scholar':61, 'Watchman':38,
         'Actor':27, 'Competitor':23, 'Gymnast':26, 'Water carrier A':31,
         'Water carrier B':45, 'Sick':56, 'Urchin gatherer':34,
-        'Greek physician':36, 'Greek transporter':41}
+        'Greek physician':36, 'Greek transporter':41, 'Homeless man':47}
 
 def profile(name, previous=None):
     seed = int.from_bytes(hashlib.sha256(name.encode()).digest()[:4], 'little')
@@ -39,6 +39,20 @@ def profile(name, previous=None):
         hair=((.027,.016,.009),(.095,.048,.022)), hair_length=.015,
         beard_length=.02 if not name.startswith('walker_') or 'woman' not in name.lower() else 0, grey=.65, seed=seed)
     p['skin'] = SKINS[seed % len(SKINS)]
+    variant = int(os.environ.get('EZEUS_IDENTITY_VARIANT', '0'))
+    if variant:
+        # A different person in the same job (face variants of common walkers, 5 October): age, face proportions,
+        # skin, hair and beard re-drawn from a stable per-variant generator; the costume and props stay the role's.
+        r = random.Random(f'{name}#{variant}')
+        p['age'] = int(min(70, max(19, p['age'] + r.choice([-22, -15, -9, 9, 14, 20]))))
+        p.update(jaw=p['jaw']*r.uniform(.93, 1.09), cheek=p['cheek']*r.uniform(.94, 1.07), nose=p['nose']+r.uniform(-.003, .005),
+                 chin=p['chin']+r.uniform(-.003, .004), eye=p['eye']*r.uniform(.97, 1.03), skin=SKINS[r.randrange(len(SKINS))],
+                 hair=r.choice([((.027,.016,.009),(.095,.048,.022)), ((.012,.009,.007),(.04,.03,.022)),
+                                ((.06,.03,.012),(.17,.085,.03)), ((.09,.05,.025),(.24,.14,.07))]),
+                 hair_length=p['hair_length']*r.uniform(.8, 1.6), seed=(p['seed'] ^ (variant * 7919)) & 0xffffffff)
+        if p.get('beard_length', 0) > 0 or not p.get('soft_features'):
+            p['beard_length'] = r.choice([0, .012, .022, .036]) if p.get('beard_length', 0) > 0 else p.get('beard_length', 0)
+        p['grey'] = .04 if p['age'] < 38 else .25 if p['age'] < 52 else .6
     if name == 'Urchin gatherer':
         # Preserve the clean-shaven city identity when exporting the newly connected work clips.
         p.update(beard_length=0, grey=.08)

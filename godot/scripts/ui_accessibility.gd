@@ -24,6 +24,7 @@ func _ready() -> void:
 		load_preferences()
 		# Restore confirmed display preferences along with the interface sizes.
 		PlayOptions.apply_window()
+	preload("res://scripts/graphics_settings.gd").startup(get_tree())
 
 func load_preferences() -> void:
 	var motion: Variant=Settings.get_value("interface","reduced_motion",false)

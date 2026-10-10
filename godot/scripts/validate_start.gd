@@ -75,7 +75,7 @@ func run() -> void:
 	# The list of adventures.
 	menu.new_game_button.pressed.emit()
 	await frames(2)
-	check(menu.get_node("%AdventurePage").visible and menu.listing.size() >= 20 and menu.adventure_list.item_count == menu.listing.size(), "New game lists the adventures (%d)" % menu.listing.size())
+	check(menu.get_node("%AdventurePage").visible and menu.listing.size() >= 20 and menu.navigation.adventure_pager.records.size() == menu.listing.size() and menu.adventure_list.item_count > 0, "New game lists the adventures in pages (%d)" % menu.listing.size())
 	check(menu.adventure_list.get_selected_items() == PackedInt32Array([0]) and not menu.adventure_title.text.is_empty() and not menu.adventure_text.text.is_empty(), "the first one is chosen and described")
 	var titles: Array = menu.listing.map(func(item): return String(item.title))
 	check(not titles.any(func(title): return title.is_empty()), "every adventure has a title")
@@ -84,8 +84,8 @@ func run() -> void:
 		if menu.listing[index].title == "The Founding of Athens":
 			pick = index
 	check(pick >= 0, "The Founding of Athens is listed")
-	menu.adventure_list.select(pick)
-	menu.adventure_list.item_selected.emit(pick)
+	menu.navigation.adventure_pager.select_index(pick)
+	menu.show_adventure(pick)
 	check(menu.adventure_title.text == "The Founding of Athens", "choosing an entry shows its title")
 
 	# Start, read the story, go back, start again.
@@ -137,7 +137,7 @@ func run() -> void:
 	await seconds(1.5)
 	menu = current()
 	check(menu != null and menu.scene_file_path == "res://ui/start_menu.tscn", "confirming returns to the start menu")
-	check(not menu.continue_button.disabled and menu.continue_button.text == "Continue: quicksave", "Continue now offers the new save (%s)" % menu.continue_button.text)
+	check(not menu.continue_button.disabled and menu.continue_button.text == "Continue" and menu.get_node("%ContinueSaveName").text == "quicksave", "Continue card now offers the new quicksave")
 
 	# Continue reopens it: the road is there.
 	menu.continue_button.pressed.emit()

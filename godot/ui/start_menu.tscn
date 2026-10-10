@@ -22,24 +22,6 @@ height = 8
 fill_from = Vector2(0, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mainpage"]
-content_margin_left = 28.0
-content_margin_top = 22.0
-content_margin_right = 28.0
-content_margin_bottom = 22.0
-bg_color = Color(0.016, 0.026, 0.034, 0.62)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.58, 0.44, 0.23, 0.55)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0, 0, 0, 0.45)
-shadow_size = 18
-
 [node name="StartMenu" type="Control" unique_id=1032324734]
 layout_mode = 3
 anchors_preset = 15
@@ -61,11 +43,14 @@ mouse_filter = 2
 texture = SubResource("GradientTexture2D_fl3bm")
 
 [node name="MainAnchor" type="MarginContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 0
-anchor_right = 0.36
 anchor_bottom = 1.0
+offset_right = 560.0
 theme_override_constants/margin_left = 48
-theme_override_constants/margin_right = 16
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_bottom = 32
 mouse_filter = 2
 
 [node name="Center" type="CenterContainer" parent="." unique_id=1633436851]
@@ -74,84 +59,147 @@ layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="MainPage" type="PanelContainer" parent="MainAnchor" unique_id=304296399]
+[node name="MainPage" type="PanelContainer" parent="MainAnchor"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(420, 0)
+custom_minimum_size = Vector2(460, 640)
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_mainpage")
+theme_type_variation = &"MainMenuShell"
 
-[node name="MainColumn" type="VBoxContainer" parent="MainAnchor/MainPage" unique_id=1693688610]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="MainAnchor/MainPage/MainColumn" unique_id=1002797804]
+[node name="MainScroll" type="MarginContainer" parent="MainAnchor/MainPage"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Title"
-horizontal_alignment = 1
 
-[node name="Tagline" type="Label" parent="MainAnchor/MainPage/MainColumn" unique_id=1086408568]
+[node name="MainColumn" type="VBoxContainer" parent="MainAnchor/MainPage/MainScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="MainBrand" type="HBoxContainer" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="MainEmblem" type="TextureRect" parent="MainAnchor/MainPage/MainScroll/MainColumn/MainBrand"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="MainAnchor/MainPage/MainScroll/MainColumn/MainBrand"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MainMenuTitle"
+autowrap_mode = 3
+
+[node name="Tagline" type="Label" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Caption"
-horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="MainRule" type="HSeparator" parent="MainAnchor/MainPage/MainColumn" unique_id=1290210608]
-layout_mode = 2
-
-[node name="Continue" type="Button" parent="MainAnchor/MainPage/MainColumn" unique_id=2119571417]
+[node name="LeaderSlot" type="PanelContainer" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"Primary"
+theme_type_variation = &"MainMenuProfile"
 
-[node name="ContinueInfo" type="Label" parent="MainAnchor/MainPage/MainColumn" unique_id=1004449321]
+[node name="MainRule" type="HSeparator" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+layout_mode = 2
+theme_type_variation = &"MainMenuRule"
+
+[node name="ContinueCard" type="PanelContainer" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MainMenuSave"
+
+[node name="ContinueColumn" type="VBoxContainer" parent="MainAnchor/MainPage/MainScroll/MainColumn/ContinueCard"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ContinueHeading" type="Label" parent="MainAnchor/MainPage/MainScroll/MainColumn/ContinueCard/ContinueColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MainMenuEyebrow"
+
+[node name="ContinueSaveName" type="Label" parent="MainAnchor/MainPage/MainScroll/MainColumn/ContinueCard/ContinueColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Subheading"
+text_overrun_behavior = 3
+
+[node name="ContinueInfo" type="Label" parent="MainAnchor/MainPage/MainScroll/MainColumn/ContinueCard/ContinueColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Detail"
-horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="NewGame" type="Button" parent="MainAnchor/MainPage/MainColumn" unique_id=269284539]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 46)
-layout_mode = 2
-
-[node name="LoadGame" type="Button" parent="MainAnchor/MainPage/MainColumn" unique_id=841661667]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 46)
-layout_mode = 2
-
-[node name="MainFooter" type="HBoxContainer" parent="MainAnchor/MainPage/MainColumn" unique_id=1263514808]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="Language" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter" unique_id=170927244]
+[node name="Continue" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn/ContinueCard/ContinueColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"MainMenuContinue"
+alignment = 0
 
-[node name="Sound" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter" unique_id=1959725905]
+[node name="NewGame" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_type_variation = &"MainMenuPrimary"
+alignment = 0
+
+[node name="NewGameHint" type="Label" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+
+[node name="LoadGame" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-size_flags_horizontal = 3
+theme_type_variation = &"MainMenuSecondary"
+alignment = 0
 
-[node name="Quit" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter" unique_id=1507367940]
+[node name="MainFooterRule" type="HSeparator" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+layout_mode = 2
+theme_type_variation = &"MainMenuRule"
+
+[node name="MainFooter" type="HBoxContainer" parent="MainAnchor/MainPage/MainScroll/MainColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Language" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn/MainFooter"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(44, 38)
+layout_mode = 2
+theme_type_variation = &"MainMenuUtility"
+
+[node name="Sound" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn/MainFooter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"MainMenuUtility"
 
-[node name="Interface" type="Button" parent="MainAnchor/MainPage/MainColumn/MainFooter"]
+[node name="Interface" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn/MainFooter"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(38,46)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-focus_mode = 0
-theme_type_variation = &"Quiet"
+size_flags_horizontal = 3
+theme_type_variation = &"MainMenuUtility"
+
+[node name="Quit" type="Button" parent="MainAnchor/MainPage/MainScroll/MainColumn/MainFooter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MainMenuUtility"
 
 [node name="AdventurePage" type="PanelContainer" parent="Center"]
 unique_name_in_owner = true
@@ -340,11 +388,11 @@ unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(820, 580)
 layout_mode = 2
+theme_type_variation = &"EpisodeShell"
 
 [node name="IntroCard" type="VBoxContainer" parent="Center/IntroPage" unique_id=126904816 instance=ExtResource("3_lb6g3")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 10
 script = ExtResource("4_fl3bm")
 
 [node name="LoadPage" type="PanelContainer" parent="Center" unique_id=1800552770]

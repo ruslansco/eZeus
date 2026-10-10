@@ -30,7 +30,7 @@ func run() -> void:
 	root.gui_disable_input=true
 	if city.language!="en":city.change_language()
 	for group in city.hud.build_groups:
-		for item in group.items: city.hud.thumbnails.request(item.asset)
+		for item in group.items: city.hud.thumbnails.request(item)
 	for frame in 600:
 		await process_frame
 		if not city.hud.thumbnails.busy and city.hud.thumbnails.pending.is_empty():break

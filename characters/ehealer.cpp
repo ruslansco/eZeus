@@ -1,12 +1,25 @@
 #include "ehealer.h"
 
 #include "textures/egametextures.h"
+#include "buildings/esmallhouse.h"
+#include "engine/egameboard.h"
 
 eHealer::eHealer(eGameBoard& board) :
     eBasicPatroler(board, &eCharacterTextures::fHealer,
                    eCharacterType::healer) {
     eGameTextures::loadHealer();
     setProvide(eProvide::hygiene, 100000);
+}
+
+void eHealer::provideToBuilding(eBuilding* const b) {
+    if(!b || provideCount() <= 0) return;
+    eBasicPatroler::provideToBuilding(b);
+    // A medical visit treats an existing infection as well as restoring
+    // hygiene. Full-hygiene houses still need treatment; use the board's
+    // recovery path to remove the house from its outbreak and alert count.
+    if(const auto house = dynamic_cast<eSmallHouse*>(b)) {
+        if(house->plague()) getBoard().healHouse(house);
+    }
 }
 
 void eHealer::incTime(const int by) {

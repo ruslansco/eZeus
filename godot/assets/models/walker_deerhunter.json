@@ -1,0 +1,96 @@
+{
+  "asset": "walker_deerhunter",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_deerhunter.glb",
+  "bytes": 17680056,
+  "vertices": 21018,
+  "surfaces": 3,
+  "source_surfaces": 27,
+  "bounds_blender": [
+    [
+      -0.19158023595809937,
+      -0.7646210193634033,
+      -0.004479559138417244
+    ],
+    [
+      0.7320594191551208,
+      0.7637619376182556,
+      0.8858262300491333
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "hunt": 24,
+      "carry": 12,
+      "die": 8
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Deer hunter",
+        "sex": "male",
+        "profile": {
+          "age": 66,
+          "jaw": 1.1199999999999999,
+          "cheek": 0.95,
+          "nose": 0.003,
+          "chin": 0.004,
+          "eye": 1.01,
+          "hair": [
+            [
+              0.027,
+              0.016,
+              0.009
+            ],
+            [
+              0.095,
+              0.048,
+              0.022
+            ]
+          ],
+          "hair_length": 0.015,
+          "beard_length": 0.02,
+          "grey": 0.65,
+          "seed": 650304582,
+          "skin": [
+            0.66,
+            0.445,
+            0.345
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "d84685affaf29a147843460802dbdfdfc488d875df53783844c97ad38b75d991",
+        "clavi_srgb": [
+          0.25,
+          0.37,
+          0.2
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 20000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 240,
+    "targets_after": 198,
+    "uv_attributes_removed": 0
+  }
+}

@@ -40,6 +40,26 @@ void eCampaign::initialize(const std::string& name) {
     addParentCityEpisode();
 }
 
+void eCampaign::keepParentAsSingleEpisode(const std::string& name) {
+    mParentBoard->waitUntilFinished();
+    for(const auto& board : mColonyBoards) board->waitUntilFinished();
+    mParentCityEpisodes.clear();
+    mColonyEpisodes.clear();
+    mColonyBoards.clear();
+    mPlayedColonyEpisodes.clear();
+    mForColony.clear();
+    mForParent.clear();
+    mCurrentParentEpisode = mCurrentColonyEpisode = 0;
+    mCurrentEpisodeType = mPreviousEpisodeType = eEpisodeType::parentCity;
+    mName = mTitle = name;
+    mIntroduction.clear();
+    mComplete.clear();
+    mIsPak = false;
+    mPakFilename.clear();
+    mBriefId = mCompleteId = 0;
+    addParentCityEpisode();
+}
+
 int eCampaign::initialFunds(const ePlayerId pid) const {
     const auto it = mDrachmas.find(pid);
     if(it == mDrachmas.end()) return 0;
@@ -648,7 +668,7 @@ bool eCampaign::finished() const {
 
 std::vector<eColonyEpisode*> eCampaign::remainingColonies() const {
     std::vector<eColonyEpisode*> result;
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < int(mColonyEpisodes.size()); i++) {
         const bool p = eVectorHelpers::contains(mPlayedColonyEpisodes, i);
         if(p) continue;
         const auto& ep = mColonyEpisodes[i];

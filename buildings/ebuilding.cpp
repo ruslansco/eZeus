@@ -2470,6 +2470,16 @@ void eBuilding::collapse() {
                          tp == eBuildingType::cattle ||
                          tp == eBuildingType::road;
     const bool onFire = mOnFire;
+    SDL_Rect siteRect = mTileRect;
+    for(const auto tile : tiles) {
+        const int right = std::max(siteRect.x + siteRect.w, tile->x() + 1);
+        const int bottom = std::max(siteRect.y + siteRect.h, tile->y() + 1);
+        siteRect.x = std::min(siteRect.x, tile->x());
+        siteRect.y = std::min(siteRect.y, tile->y());
+        siteRect.w = right - siteRect.x;
+        siteRect.h = bottom - siteRect.y;
+    }
+    const auto site = std::make_shared<const SDL_Rect>(siteRect);
     setOnFire(false);
     erase();
     if(noRuins) return;
@@ -2480,6 +2490,7 @@ void eBuilding::collapse() {
         const auto cid = t->cityId();
         const auto ruins = e::make_shared<eRuins>(b, cid);
         ruins->setWasType(tp);
+        ruins->setSite(site);
         ruins->setOnFire(eRand::rand() % 2 ? onFire : false);
         ruins->setCenterTile(t);
         t->setUnderBuilding(ruins);

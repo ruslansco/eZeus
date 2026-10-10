@@ -1,19 +1,20 @@
 {
   "asset": "walker_archerposeidon",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_archerposeidon.glb",
-  "bytes": 8787732,
-  "vertices": 15596,
+  "bytes": 8855912,
+  "vertices": 15627,
   "surfaces": 3,
   "source_surfaces": 24,
   "bounds_blender": [
     [
       -0.2239569127559662,
-      -0.1851343810558319,
+      -0.17923447489738464,
       0.0004999842494726181
     ],
     [
-      0.19244550168514252,
+      0.2087736576795578,
       0.6568455696105957,
       0.9054171442985535
     ]
@@ -79,7 +80,7 @@
   "memory_optimization": {
     "version": 1,
     "targets_before": 177,
-    "targets_after": 130,
+    "targets_after": 131,
     "uv_attributes_removed": 0
   }
 }

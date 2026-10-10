@@ -50,9 +50,8 @@ func run(scene: Node3D) -> bool:
 	check(not hud.get_node("%BuildTray").visible and hud.get_node("%MinimapPanel").visible and hud.get_node("%MapToggle").button_pressed,"one map click closes the tray and restores the live minimap")
 	city.set_tool("wall");hud.close_build_tray();hud.open_category("Walls and defence")
 	for frame in 5:await city.get_tree().process_frame
-	check(hud.get_node("%WallFill").visible and not hud.get_node("%RotateRow").visible,"wall tool shows native fill options instead of facing controls")
-	await click(hud.get_node("%WallFill"))
-	check(city.road_drag.wall_fill and hud.get_node("%WallFill").button_pressed,"wall checkbox updates the existing native drag mode")
+	check(not hud.get_node("%WallFill").visible and not hud.get_node("%RotateRow").visible,"wall choices omit fill and facing controls")
+	check(not city.road_drag.wall_fill,"wall dragging defaults to the native outline mode")
 	city.road_drag.tool="wall"
 	var candidate:=Vector2i(99999,99999)
 	for point in city.tiles:
@@ -62,11 +61,9 @@ func run(scene: Node3D) -> bool:
 	check(candidate.x!=99999,"native query finds a free footprint for contextual preview checks")
 	if candidate.x!=99999:
 		var end:=candidate+Vector2i(2,2)
-		var filled: Dictionary=city.core.query(city.road_drag.preview_text(candidate,end))
-		await click(hud.get_node("%WallFill"))
+		var filled: Dictionary=city.core.query("preview_wall %d %d %d %d 1"%[candidate.x,candidate.y,end.x,end.y])
 		var outline: Dictionary=city.core.query(city.road_drag.preview_text(candidate,end))
-		check(filled.get("new",0)==9 and outline.get("new",0)==8 and int(filled.cost)>int(outline.cost),"fill checkbox quotes the native nine-piece fill and eight-piece outline")
-		check(not city.road_drag.wall_fill and not hud.get_node("%WallFill").button_pressed,"wall checkbox returns to outline mode")
+		check(filled.get("new",0)==9 and outline.get("new",0)==8 and int(filled.cost)>int(outline.cost),"native filled rectangles and default outline retain their nine-piece and eight-piece quotes")
 		city.set_tool("hospital");hud.close_build_tray()
 		city.picked=candidate;city.refresh_placement()
 		var text: Label=hud.get_node("%PlacementText")

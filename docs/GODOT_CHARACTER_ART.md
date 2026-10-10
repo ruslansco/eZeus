@@ -1,5 +1,107 @@
 # Natural people refinement — 30 September 2026
 
+## Bounded slope clearance — 7 October 2026
+
+`walker_ground_contact.gd` adds capped sole-area root clearance for human
+walk/idle poses near native slopes. Four small terrain probes are cached by a
+1/32-tile position bucket, heading, native offset and surface revision. Flat
+ground, boats, gods, perched guards and combat skip the correction. Native
+positions, routes, planar stride, animation phases and all model/VAT/UV/LOD
+contracts remain intact. This reduces penetration without independently planting
+both feet; slope IK and the physician benchmark's user acceptance remain pending.
+See `GODOT_CITY_CLARITY.md` and current validation.
+
+## Variety, face variants and townspeople's deaths — 5 October 2026
+
+- **Colour variety:** `character.gdshader` has an instance uniform `citizen_variant`; `scripts/citizen_variety.gd` sets it
+  per walker from the core's walker id for townspeople only (not gods, heroes, monsters, soldiers or the priestess). A
+  non-zero value shifts tunic shade (x.80–1.14) and hue (±.16 rad), picks black, dark brown, chestnut or grey hair (one
+  walker in four keeps the authored colour) and varies skin tone ±10%. Accent stripes keep the role's colour.
+- **Face variants:** `export_godot_pilot.py --asset <asset>_v2|_v3` exports the same spec and clips with the identity
+  re-drawn by `godot_character_realism.profile` (`EZEUS_IDENTITY_VARIANT`: age, face proportions, skin, hair, beard).
+  Installed: `transporter_v2/_v3`, `walker_waterdistributor_v2/_v3`, `walker_peddler_v2/_v3`; manifests record
+  `variant_of`. `CitizenVariety.model_name` picks one of three per walker id; the walker keeps its base asset name
+  everywhere else (cargo beds, clips, contracts). Six geometry baseline entries were added for them alone.
+- **Deaths:** `DEATHS` in `tools/godot_asset_sources.py` (actor, competitor, gymnast, ox driver, peddler, porter,
+  scholar, tax collector, trader, water carriers, sick, homeless) exports only the spec's `die` clip, which
+  `walker_combat.gd` already plays for any model that has it.
+- `validate_characters.gd` now expects 112 character models (adds the field work's deer hunter, goatherd and corral
+  worker, the homeless man and the six face variants) and passes in full (228 checks).
+
+## Actor, tax collector, gymnast, elite citizen, porter, firefighter after the originals — 5 October 2026
+
+Second batch from the original `i30.e` sprites (native frame counts and clips unchanged):
+
+- **Actor** (`people.actor`): short blue-grey costume tunic (wardrobe `plain`, no cape) and a pair of great
+  white stage wings: three layers of feathers fanned from the shoulder blades, `attach_rest` to the chest. He keeps the mask.
+- **Tax collector** (`people2.tax_collector`): pale yellow robe with sea-green clavi (new wardrobe option
+  `'nocloak'`: clavi in the accent colour, no cloak) and a sea-green sash; a gilded coin pot full of silver
+  drachmas swings from his right hand; the wax tablet stays in his left.
+- **Gymnast** (`people2.gymnast`): sun-bronzed, bare-chested in a brown loincloth (`perizoma`), sea-blue belt and headband, oil flask.
+- **Elite citizen** (`people10`, infantry builder): white robe with purple clavi (`nocloak`), a gilded laurel
+  wreath (new `headgear` kind `wreath`) and a gold brooch (new infantry gear `brooch`); sword and fight clips unchanged.
+- **Porter** (`people2.porter`): bare-chested in a light blue loincloth, a yellow-wrapped roped bale on his back
+  with a red bundle lashed on top, gripping the carrying ropes at his chest (the amphora is gone).
+- **Firefighter**: orange robe with an orange-red cloak and the original's wide red hat (`petasos`).
+
+Helpers in `people2.py`: `body_ring` (a band fitted to the torso cross-section, as `lorica` fits armour) and
+`front_point` (the chest surface for brooches). Exports 15,758–16,043 vertices; `verify_glb_optimization.py
+--require-uv` reports no differences; `validate_characters.gd` passes both checks for each, and the geometry gate passes.
+SDL HD sprites were not re-rendered.
+
+## Transporter, watchman and homeless after the originals — 5 October 2026
+
+Remodelled from the original `i30.e` sprites, keeping the native frame counts:
+
+- **Transporter** (`art/characters/transporter/build_sprites.py`): a deep box of warm brown oak with
+  flared three-strake sides, stakes, a front board and rest legs; ten-spoked wheels (radius .16 before
+  `CART_SCALE`) with bronze hub caps that now roll forward (`WHEELS`, half a turn per cycle; the spokes
+  are symmetric under half a turn, so the loop closes). The man wears a plain cream working tunic without
+  the cape (wardrobe "Greek transporter", `plain`). `HANDS`, `CART_AHEAD` and `CART_SCALE` are unchanged;
+  `cart_cargo.gd` `BEDS.transporter` was refitted to the deeper box (floor .33, room .40 x .26 x .56).
+- **Watchman** (`people10.SPECS10['watchman']`, the infantry builder; the old Roman legionary spec in
+  `people.py` is gone): blue scale cuirass over a sea-blue tunic, bronze Corinthian helmet with a pale crest,
+  round blue shield with a red triskelion (`clipeus(kind='spiral')` in `people4.py`), spear. It is now in
+  `COMBAT`, so the export carries `fight` (the 8-frame spear thrust) and `die` clips (111 merged poses).
+- **Homeless** (`people2.homeless`, new asset `walker_homeless`; identity and wardrobe "Homeless man"):
+  a gaunt bearded man in a faded rust robe with a grey cloth bundle on a stick over his shoulder; walk 12,
+  die 8. `esimulationservice.cpp` maps `eCharacterType::homeless` to it (before: the settler family), so
+  the extension was rebuilt; a new `geometry_baseline.json` entry was added for it alone.
+- The peddler's wheels were re-exported rolling forward (they turned backwards).
+
+Exports: transporter 15,679 vertices, watchman 15,882, homeless 15,832; `verify_glb_optimization.py
+--require-uv` reports no differences and `validate_characters.gd` passes both checks for each. Its overall
+count check reads 106 against a hard-coded 102: it was already 105 before this change, and the homeless
+model adds one. The SDL HD sprites of these walkers were not re-rendered.
+
+## Agora peddler's booth cart — 5 October 2026
+
+`walker_peddler` now pushes the covered stall of the original sprite instead of the small
+shared handcart: `booth_cart()` in `art/characters/people/people2.py` (a plank box on a long
+chassis whose rails rise to the handles, two solid three-plank wheels of radius .195 with iron
+tyres, a gabled roof of sun-bleached boards on four posts, cloth bolts, amphorae, a fruit basket
+and a red drape inside, four pots hung from the rear tie beam that swing with his step). The
+wheels turn half a revolution per walk cycle (they are two-fold symmetric, so the loop closes)
+and the cart reaches 1.17 tiles ahead of his feet, .60 wide. The man wears the original's dark
+brown (wardrobe "Peddler": tunic (.30,.20,.12), blue short cloak) and a grey conical sun hat.
+The settler cart keeps `handcart()`. Export: 16,058 vertices, 72 merged poses, verified with
+`--require-uv`; `validate_characters.gd` passes both peddler checks and the geometry gate passes.
+The SDL HD sprites in `Textures/Remastered/characters/peddler` were **not** re-rendered and still
+show the old handcart.
+
+## Field-worker activity — 5 October 2026
+
+Hunters now play spear attacks and display their native prey load on the return
+trip. Sheep handlers shear with hand-anchored tools and carry fleece; goat
+handlers milk and carry a jug. Growers prune/pick vines and olives, and native
+orange tenders use their own tree-working model and clips. Corral workers guide
+cattle with a crook; the building's existing processing cycle follows actual
+native processing. Boar/deer attack and collapse poses are connected. Work,
+carry/leading phase, pause and transitions follow native observations/time;
+empty hunting/livestock returns display no invented goods. Native rules, coordinates and saves
+stay intact. See [field-work contracts](GODOT_FIELD_WORK.md) and the validation evidence for
+export sources, geometry budgets, review fixtures and remaining limits.
+
 ## Current panel-only curator benchmark — 4 October 2026
 
 The user rejected the older curly portraits as doll-like and requested one older,
@@ -417,7 +519,7 @@ The seventeen monsters of the engine use the same pipeline as the soldiers and g
 
 ## The cape behind the arms — 3 October 2026
 
-Every person of the people kit whose wardrobe profile has a cloak colour (`art/characters/roman/wardrobe.py`, `PROFILES`; a name that is not listed gets the default cloak) wears the "Roman draped cloak". It was a rigid half-tube whose side edges lay on the body's middle plane, exactly where the arms hang, narrower than the arms and skinned to the torso only: every arm swing went through it, most visibly the right arm from behind, and it read as a board. `_cloak_shape(h, hem)` now fits it to each person: it is measured on the dressed body in the rest pose (body and garments, not hair or props) in bands of height; across the back it is the width of the deltoids plus .03, flaring .05 to the hem; its side edges lie .04 behind the arms' back surface (the walk swings the arms mostly forward, away from it) and its middle .045 behind the torso; over the shoulders it wraps forward as a yoke onto the shoulder tops; vertical folds deepen toward the hem with a per-person phase; the profile is smoothed down the cape. Only the yoke follows the upper arms (half weight) so a deltoid cannot push through, while the rest hangs from chest, spine and pelvis; the right shoulder's pin sits at the yoke's front corner. 59 Godot models carry it and were re-exported: 49 walkers of the townspeople, soldiers, gods and heroes, the cyclops, Hector, Medusa, the maenads, the harpies, the priestess, the astronomer, inventor and curator, the philosopher (his cape stays hidden under his blue himation) and the settler family. The SDL sprite renders under `art/characters/people/<who>/` were not re-rendered. Check a cape with a scratch render that never writes the art folders (renders of the walk from four sides); `build_person.py --validate-only` passes for every spec with it.
+Every person of the people kit whose wardrobe profile has a cloak colour (`art/characters/roman/wardrobe.py`, `PROFILES`; a name that is not listed gets the default cloak) wears the "Roman draped cloak". It was a rigid half-tube whose side edges lay on the body's middle plane, exactly where the arms hang, narrower than the arms and skinned to the torso only: every arm swing went through it, most visibly the right arm from behind, and it read as a board. `_cloak_shape(h, hem)` now fits it to each person: it is measured on the dressed body in the rest pose (body and garments, not hair or props) in bands of height; across the back it is the width of the deltoids plus .03, flaring .05 to the hem; its side edges lie .04 behind the arms' back surface (the walk swings the arms mostly forward, away from it) and its middle .045 behind the torso; over the shoulders it wraps forward as a yoke onto the shoulder tops; vertical folds deepen toward the hem with a per-person phase; the profile is smoothed down the cape. Only the yoke follows the upper arms (half weight) so a deltoid cannot push through, while the rest hangs from chest, spine and pelvis; the right shoulder's pin sits at the yoke's front corner. Every Godot people model exported since 3 October carries it. On 7 October the 33 still exported with the old cape were re-exported from the current sources: the 13 gods (Hades's menu guardian rebuilt with `make_hades_guardian.py`), the 8 heroes, the hoplite, Poseidon hoplite, rock thrower, archer, Poseidon archer, Poseidon chariot and horseman, the priestess, and the astronomer, inventor and curator. The townspeople, philosopher (his cape stays hidden under his blue himation), settler family and human-bodied monsters had been re-exported on 4-6 October with it already. Since then other sessions removed the cloak from the watchman, actor, porter, gymnast, transporter and tax collector profiles. The SDL sprite renders under `art/characters/people/<who>/` were not re-rendered. Check a cape with a scratch render that never writes the art folders (renders of the walk from four sides); `build_person.py --validate-only` passes for every spec with it.
 
 
 ## Character window portraits are pre-rendered images — 4 October 2026
@@ -447,7 +549,10 @@ lighting or panel-framing change.
 
 The user had another AI paint four portraits from the reference renders in `art/ai_portraits/references/` (brief
 `art/ai_portraits/PROMPT.md`; masters, candidates, notes and `PROVENANCE.md` in `art/ai_portraits/generated/<asset>/`).
-They replace the 3D-rendered curator still: `walker_curator`, `transporter`, `walker_hoplite` and `philosopher`
+They replace the 3D-rendered curator still: `walker_curator`, `transporter`, `walker_hoplite` and `philosopher`; by
+the evening 22 more followed (26 in all: tax collector, watchman, water carrier, physician, firefighter, peddler, trader,
+actor, scholar, gymnast, competitor, astronomer, inventor, artisan, grower, lumberjack, bronze/marble/silver miners,
+shepherd, hunter, orange tender)
 (`godot/assets/portraits/<asset>.png`, 592×760 = 2× the 296×380 frame, opaque, painted dark teal background).
 
 - Import: lossy WebP at quality 0.9 with mipmaps (`<asset>.png.import`), about 95–155 KB each in the build instead of

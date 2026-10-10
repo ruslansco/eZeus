@@ -1,15 +1,16 @@
 {
   "asset": "walker_ares",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_ares.glb",
-  "bytes": 7417112,
-  "vertices": 15950,
+  "bytes": 7436644,
+  "vertices": 15985,
   "surfaces": 3,
   "source_surfaces": 22,
   "bounds_blender": [
     [
       -0.936050295829773,
-      -0.5735999345779419,
+      -0.4690624177455902,
       0.0
     ],
     [

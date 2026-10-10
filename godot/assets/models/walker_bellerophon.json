@@ -1,9 +1,10 @@
 {
   "asset": "walker_bellerophon",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_bellerophon.glb",
-  "bytes": 24791524,
-  "vertices": 32810,
+  "bytes": 24814500,
+  "vertices": 32840,
   "surfaces": 3,
   "source_surfaces": 26,
   "bounds_blender": [

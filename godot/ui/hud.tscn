@@ -7,6 +7,9 @@
 [ext_resource type="Script" path="res://ui/inspection_summary.gd" id="5_summary"]
 [ext_resource type="Script" path="res://ui/overlay_summary.gd" id="6_overlay"]
 [ext_resource type="Script" path="res://ui/objective_wreath.gd" id="7_wreath"]
+[ext_resource type="Script" path="res://ui/toolbar_button.gd" id="8_toolbar"]
+[ext_resource type="Script" path="res://ui/status_info.gd" id="9_status_info"]
+[ext_resource type="Script" path="res://ui/notification_button.gd" id="10_notification"]
 
 [node name="Hud" type="Control" unique_id=2052319287]
 layout_mode = 3
@@ -38,21 +41,37 @@ layout_mode = 2
 theme_override_constants/separation = 5
 
 [node name="OverviewRow" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
 [node name="CityPlaque" type="PanelContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 1
+size_flags_vertical = 4
 theme_type_variation = &"OverviewInset"
 
-[node name="CityName" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/CityPlaque"]
+[node name="CityColumn" type="VBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/CityPlaque"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="CityCaption" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/CityPlaque/CityColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+horizontal_alignment = 1
+text = "Current city"
+
+[node name="CityName" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/CityPlaque/CityColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(90, 0)
 text_overrun_behavior = 3
-theme_type_variation = &"CityName"
+horizontal_alignment = 0
+theme_type_variation = &"HeaderCityTitle"
 
 [node name="StatsGroup" type="PanelContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow"]
 unique_name_in_owner = true
@@ -60,63 +79,176 @@ layout_mode = 2
 theme_type_variation = &"OverviewInset"
 
 [node name="StatsRow" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="Money" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="MoneyIcon" type="TextureRect" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money"]
+[node name="Housing" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_override_constants/separation = 8
+script = ExtResource("9_status_info")
+
+[node name="HousingIcon" type="TextureRect" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Housing"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Treasury" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money"]
+[node name="HousingColumn" type="VBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Housing"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="HousingCaption" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Housing/HousingColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Housing"
+
+[node name="HousingGauge" type="ProgressBar" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Housing/HousingColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(142, 26)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+max_value = 1.0
+step = 0.0
+show_percentage = false
+
+[node name="HousingText" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Housing/HousingColumn/HousingGauge"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_type_variation = &"HeaderValue"
+
+[node name="Money" type="PanelContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 1
-theme_type_variation = &"StatusValue"
+theme_type_variation = &"HeaderWell"
+script = ExtResource("9_status_info")
+
+[node name="MoneyRow" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TreasuryIcon" type="TextureRect" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TreasuryColumn" type="VBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="TreasuryCaption" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow/TreasuryColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Treasury"
+
+[node name="Treasury" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow/TreasuryColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderValue"
+
+[node name="FinanceDivider" type="VSeparator" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow"]
+layout_mode = 2
+
+[node name="MonthlyColumn" type="VBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="MonthlyCaption" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow/MonthlyColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Monthly balance"
+
+[node name="Income" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Money/MoneyRow/MonthlyColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderTrend"
 
 [node name="Citizens" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 10
+size_flags_horizontal = 3
+mouse_filter = 1
+theme_override_constants/separation = 8
+script = ExtResource("9_status_info")
 
 [node name="CitizensIcon" type="TextureRect" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(18, 18)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Population" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens"]
-unique_name_in_owner = true
+[node name="PopulationColumn" type="VBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens"]
 layout_mode = 2
-mouse_filter = 1
-theme_type_variation = &"StatusValue"
+size_flags_vertical = 4
+theme_override_constants/separation = 2
 
-[node name="Jobs" type="Button" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
+[node name="PopulationCaption" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens/PopulationColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Population"
+
+[node name="PopulationRow" type="HBoxContainer" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens/PopulationColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-focus_mode = 2
-theme_type_variation = &"StatusTool"
+theme_override_constants/separation = 6
+
+[node name="Population" type="Label" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow/Citizens/PopulationColumn/PopulationRow"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderValue"
 
 [node name="ResourcesToggle" type="Button" parent="StatusBar/ResourceRibbon/ResourceLayout/OverviewRow/StatsGroup/StatsRow"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 4
 custom_minimum_size = Vector2(30, 28)
-focus_mode = 0
+focus_mode = 2
 toggle_mode = true
-text = "▾"
-theme_type_variation = &"StatusTool"
+text = "Resources ▾"
+theme_type_variation = &"HeaderAction"
+script = ExtResource("8_toolbar")
 
 [node name="ResourcesReveal" type="Control" parent="StatusBar"]
 unique_name_in_owner = true
@@ -137,67 +269,50 @@ columns = 24
 theme_override_constants/h_separation = 3
 theme_override_constants/v_separation = 2
 
-[node name="WelfareGroup" type="PanelContainer" parent="StatusBar"]
-unique_name_in_owner = true
-layout_mode = 0
-theme_type_variation = &"StatusStrip"
-
-[node name="WelfareButtons" type="HBoxContainer" parent="StatusBar/WelfareGroup"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 3
-
 [node name="EventRail" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 0
-theme_type_variation = &"Rail"
+theme_type_variation = &"NotificationRail"
 
 [node name="RailColumn" type="VBoxContainer" parent="EventRail"]
 layout_mode = 2
-theme_override_constants/separation = 5
-
-[node name="TimeGroup" type="PanelContainer" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 16.0
-offset_top = 12.0
-theme_type_variation = &"StatusStrip"
-
-[node name="StatusRow" type="VBoxContainer" parent="TimeGroup"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="TimeActions" type="HBoxContainer" parent="TimeGroup/StatusRow"]
-layout_mode = 2
-theme_override_constants/separation = 4
-
-[node name="Pause" type="Button" parent="TimeGroup/StatusRow/TimeActions"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(28, 26)
-layout_mode = 2
-focus_mode = 0
-theme_type_variation = &"StatusTool"
-
-[node name="Speed" type="OptionButton" parent="TimeGroup/StatusRow/TimeActions"]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-action_mode = 0
-theme_type_variation = &"StatusSpeed"
-
-[node name="Date" type="Label" parent="TimeGroup/StatusRow"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_filter = 1
-theme_type_variation = &"Caption"
+theme_override_constants/separation = 6
 
 [node name="Messages" type="Button" parent="EventRail/RailColumn"]
 unique_name_in_owner = true
-theme_type_variation = &"RailButton"
+theme_type_variation = &"NotificationButton"
 layout_mode = 2
 focus_mode = 2
 size_flags_horizontal = 3
+toggle_mode = true
+script = ExtResource("10_notification")
+
+[node name="ObjectivesButton" type="Button" parent="EventRail/RailColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+toggle_mode = true
+script = ExtResource("10_notification")
+
+[node name="DecisionReview" type="Button" parent="EventRail/RailColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+script = ExtResource("10_notification")
+
+[node name="AlertScroll" type="ScrollContainer" parent="EventRail/RailColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+horizontal_scroll_mode = 0
+follow_focus = true
+
+[node name="AlertList" type="VBoxContainer" parent="EventRail/RailColumn/AlertScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
 [node name="BottomBar" type="PanelContainer" parent="."]
 unique_name_in_owner = true
@@ -210,35 +325,18 @@ offset_left = -550.0
 offset_top = -74.0
 offset_right = 550.0
 offset_bottom = -12.0
-theme_type_variation = &"Dock"
+theme_type_variation = &"ToolbarDock"
 
-[node name="Tools" type="HBoxContainer" parent="BottomBar"]
+[node name="Tools" type="VBoxContainer" parent="BottomBar"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
-
-[node name="MapToggle" type="Button" parent="BottomBar/Tools"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 30)
-layout_mode = 2
-focus_mode = 0
-toggle_mode = true
-button_pressed = false
-theme_type_variation = &"Tool"
-
-[node name="ToolButtons" type="HBoxContainer" parent="BottomBar/Tools"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="ToolDivider" type="VSeparator" parent="BottomBar/Tools"]
-unique_name_in_owner = true
-layout_mode = 2
 
 [node name="CategoryScroll" type="ScrollContainer" parent="BottomBar/Tools"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+follow_focus = true
 horizontal_scroll_mode = 1
 vertical_scroll_mode = 0
 
@@ -246,32 +344,148 @@ vertical_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ToolbarRule" type="HSeparator" parent="BottomBar/Tools"]
+layout_mode = 2
+
+[node name="ToolbarUtilities" type="HBoxContainer" parent="BottomBar/Tools"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Undo" type="Button" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+focus_mode = 2
+theme_type_variation = &"ToolbarTool"
+script = ExtResource("8_toolbar")
+
+[node name="ToolButtons" type="HBoxContainer" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="ToolDivider" type="VSeparator" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ToolbarContext" type="Label" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_type_variation = &"ToolbarContext"
+text = "Construction"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+clip_text = true
+
+[node name="UtilityDivider" type="VSeparator" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BuildMenu" type="MenuButton" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+focus_mode = 2
+theme_type_variation = &"ToolbarTool"
+text = "Build"
+action_mode = 1
+switch_on_hover = false
+script = ExtResource("8_toolbar")
+
+[node name="OverlayMenu" type="Button" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+focus_mode = 2
+theme_type_variation = &"ToolbarTool"
+text = "Overlays"
+toggle_mode = true
+script = ExtResource("8_toolbar")
+
+[node name="Jobs" type="Button" parent="BottomBar/Tools/ToolbarUtilities"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 2
+theme_type_variation = &"ToolbarTool"
+script = ExtResource("8_toolbar")
+
+[node name="LayersPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+theme_type_variation = &"ToolbarDock"
+
+[node name="LayerColumn" type="VBoxContainer" parent="LayersPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LayerHeader" type="HBoxContainer" parent="LayersPanel/LayerColumn"]
+layout_mode = 2
+
+[node name="LayerTitle" type="Label" parent="LayersPanel/LayerColumn/LayerHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_type_variation = &"PanelTitle"
+text = "Overlays"
+
+[node name="LayersClose" type="Button" parent="LayersPanel/LayerColumn/LayerHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 2
+theme_type_variation = &"ToolbarTool"
+script = ExtResource("8_toolbar")
+
+[node name="WelfareGroup" type="PanelContainer" parent="LayersPanel/LayerColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StatusStrip"
+
+[node name="WelfareButtons" type="HBoxContainer" parent="LayersPanel/LayerColumn/WelfareGroup"]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="UtilityDivider" type="VSeparator" parent="BottomBar/Tools"]
+[node name="WelfareCaption" type="Label" parent="LayersPanel/LayerColumn/WelfareGroup/WelfareButtons"]
 unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "City views"
+
+[node name="LayerRule" type="HSeparator" parent="LayersPanel/LayerColumn"]
 layout_mode = 2
 
-[node name="BuildMenu" type="MenuButton" parent="BottomBar/Tools"]
+[node name="LayerScroll" type="ScrollContainer" parent="LayersPanel/LayerColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 30)
 layout_mode = 2
-focus_mode = 0
-theme_type_variation = &"Tool"
+size_flags_horizontal = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
 
-[node name="Undo" type="Button" parent="BottomBar/Tools"]
+[node name="LayerChoices" type="GridContainer" parent="LayersPanel/LayerColumn/LayerScroll"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 30)
 layout_mode = 2
-focus_mode = 0
-theme_type_variation = &"Tool"
+size_flags_horizontal = 3
+columns = 2
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
 
-[node name="OverlayMenu" type="MenuButton" parent="BottomBar/Tools"]
+[node name="OverlayCatalog" type="MenuButton" parent="LayersPanel/LayerColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 30)
+visible = false
 layout_mode = 2
-focus_mode = 0
-theme_type_variation = &"Tool"
 
 [node name="Feedback" type="PanelContainer" parent="."]
 unique_name_in_owner = true
@@ -456,8 +670,98 @@ visible = false
 layout_mode = 2
 theme_type_variation = &"Caption"
 
+[node name="TimeBar" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+theme_type_variation = &"ToolbarDock"
+
+[node name="TimeColumn" type="VBoxContainer" parent="TimeBar"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TimeRow" type="HBoxContainer" parent="TimeBar/TimeColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="Pause" type="Button" parent="TimeBar/TimeColumn/TimeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+size_flags_vertical = 4
+focus_mode = 2
+theme_type_variation = &"HeaderAction"
+script = ExtResource("8_toolbar")
+
+[node name="SpeedColumn" type="VBoxContainer" parent="TimeBar/TimeColumn/TimeRow"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="SpeedCaption" type="Label" parent="TimeBar/TimeColumn/TimeRow/SpeedColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Speed"
+
+[node name="Speed" type="HBoxContainer" parent="TimeBar/TimeColumn/TimeRow/SpeedColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Calendar" type="VBoxContainer" parent="TimeBar/TimeColumn"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="TimeCaption" type="Label" parent="TimeBar/TimeColumn/Calendar"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HeaderCaption"
+text = "Date"
+
+[node name="MonthProgress" type="ProgressBar" parent="TimeBar/TimeColumn/Calendar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(168, 26)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 1
+max_value = 1.0
+step = 0.0
+show_percentage = false
+script = ExtResource("9_status_info")
+
+[node name="Date" type="Label" parent="TimeBar/TimeColumn/Calendar/MonthProgress"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_type_variation = &"HeaderValue"
+
+[node name="MapToggle" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 0
+focus_mode = 2
+toggle_mode = true
+button_pressed = false
+theme_type_variation = &"ToolbarTool"
+script = ExtResource("8_toolbar")
+
 [node name="MapPeek" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
 anchor_left = 1.0
 anchor_top = 1.0
@@ -566,7 +870,7 @@ show_percentage = false
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
-focus_mode = 0
+focus_mode = 2
 theme_type_variation = &"Quiet"
 
 [node name="GoalsScroll" type="ScrollContainer" parent="GoalsPanel/GoalsColumn"]
@@ -638,6 +942,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+follow_focus = true
 
 [node name="InspectorContents" type="VBoxContainer" parent="Inspector/InspectorColumn/InspectorScroll"]
 unique_name_in_owner = true
@@ -661,89 +966,137 @@ unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("3_en2x2")
 
+[node name="DecisionShade" type="ColorRect" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.015, 0.035, 0.05, 0.55)
+
 [node name="EventsBox" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(0, 0)
 layout_mode = 0
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -190.0
-offset_top = 72.0
-offset_right = 190.0
+offset_left = -460.0
+offset_right = 460.0
 grow_horizontal = 2
 theme_type_variation = &"DecisionCard"
 
 [node name="EventColumn" type="VBoxContainer" parent="EventsBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
-[node name="DecisionCaption" type="Label" parent="EventsBox/EventColumn"]
+[node name="DecisionHeader" type="HBoxContainer" parent="EventsBox/EventColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="DecisionTitles" type="VBoxContainer" parent="EventsBox/EventColumn/DecisionHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="DecisionCaption" type="Label" parent="EventsBox/EventColumn/DecisionHeader/DecisionTitles"]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
 theme_type_variation = &"NoticeCaption"
 
-[node name="DecisionToggle" type="Button" parent="EventsBox/EventColumn"]
+[node name="DecisionToggle" type="Button" parent="EventsBox/EventColumn/DecisionHeader/DecisionTitles"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"DecisionButton"
+theme_type_variation = &"EnvoyTitleButton"
 alignment = 0
 text_overrun_behavior = 3
+autowrap_mode = 3
 
-[node name="EnvoyHeader" type="HBoxContainer" parent="EventsBox/EventColumn"]
+[node name="DecisionFold" type="Button" parent="EventsBox/EventColumn/DecisionHeader"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"Quiet"
+
+[node name="EnvoyContent" type="BoxContainer" parent="EventsBox/EventColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 18
 
-[node name="EnvoyIdentity" type="VBoxContainer" parent="EventsBox/EventColumn/EnvoyHeader"]
+[node name="EnvoyHeader" type="VBoxContainer" parent="EventsBox/EventColumn/EnvoyContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="EnvoyIdentity" type="VBoxContainer" parent="EventsBox/EventColumn/EnvoyContent/EnvoyHeader"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="EnvoyCity" type="Label" parent="EventsBox/EventColumn/EnvoyContent/EnvoyHeader/EnvoyIdentity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"EnvoyCityName"
+autowrap_mode = 3
+
+[node name="EnvoyLeader" type="Label" parent="EventsBox/EventColumn/EnvoyContent/EnvoyHeader/EnvoyIdentity"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Detail"
+autowrap_mode = 3
+
+[node name="EnvoyLetter" type="PanelContainer" parent="EventsBox/EventColumn/EnvoyContent"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 4
+theme_type_variation = &"EnvoyPaper"
 
-[node name="EnvoyCity" type="Label" parent="EventsBox/EventColumn/EnvoyHeader/EnvoyIdentity"]
+[node name="EventScroll" type="ScrollContainer" parent="EventsBox/EventColumn/EnvoyContent/EnvoyLetter"]
+unique_name_in_owner = true
+focus_mode = 2
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Events" type="VBoxContainer" parent="EventsBox/EventColumn/EnvoyContent/EnvoyLetter/EventScroll"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"Subheading"
-autowrap_mode = 3
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
-[node name="EnvoyLeader" type="Label" parent="EventsBox/EventColumn/EnvoyHeader/EnvoyIdentity"]
+[node name="DecisionFooter" type="VBoxContainer" parent="EventsBox/EventColumn"]
 unique_name_in_owner = true
 layout_mode = 2
-autowrap_mode = 3
+theme_override_constants/separation = 10
 
-[node name="EnvoyPause" type="Label" parent="EventsBox/EventColumn/EnvoyHeader/EnvoyIdentity"]
+[node name="Rule" type="HSeparator" parent="EventsBox/EventColumn/DecisionFooter"]
+layout_mode = 2
+
+[node name="EnvoyPause" type="Label" parent="EventsBox/EventColumn/DecisionFooter"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"NoticeCaption"
 text = "Paused · Awaiting your reply"
 autowrap_mode = 3
 
-[node name="EventScroll" type="ScrollContainer" parent="EventsBox/EventColumn"]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
-horizontal_scroll_mode = 0
-
-[node name="Events" type="VBoxContainer" parent="EventsBox/EventColumn/EventScroll"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="EventActionScroll" type="ScrollContainer" parent="EventsBox/EventColumn"]
+[node name="EventActionScroll" type="ScrollContainer" parent="EventsBox/EventColumn/DecisionFooter"]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="EventActions" type="VBoxContainer" parent="EventsBox/EventColumn/EventActionScroll"]
+[node name="EventActions" type="GridContainer" parent="EventsBox/EventColumn/DecisionFooter/EventActionScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
 
 [node name="MessagePanel" type="PanelContainer" parent="." unique_id=1906759111]
 unique_name_in_owner = true
@@ -783,6 +1136,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+follow_focus = true
 
 [node name="MessageList" type="VBoxContainer" parent="MessagePanel/MessageColumn/MessageScroll" unique_id=138900519]
 unique_name_in_owner = true

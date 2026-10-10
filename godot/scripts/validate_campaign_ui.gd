@@ -52,7 +52,7 @@ func run() -> void:
 	await seconds(.4)
 	for index in menu.listing.size():
 		if menu.listing[index].title == "The Founding of Athens":
-			menu.adventure_list.select(index)
+			menu.navigation.adventure_pager.select_index(index)
 			menu.show_adventure(index)
 	menu.adventure_start.pressed.emit()
 	await seconds(1.5)
@@ -87,14 +87,12 @@ func run() -> void:
 	game.core.query("test_stock 2048 16")
 	await seconds(2.6)
 	var aside_buttons := 0
-	for line in game.hud.goals_list.get_children():
-		for node in line.get_children():
-			aside_buttons += 1 if node is Button and node.text == "Set aside" else 0
+	for node in game.hud.goals_list.find_children("*", "Button", true, false):
+		aside_buttons += 1 if node.text == "Set aside" else 0
 	check(aside_buttons == 1, "the objectives panel offers to set the olive oil aside once it is in store")
-	for line in game.hud.goals_list.get_children():
-		for node in line.get_children():
-			if node is Button and node.text == "Set aside":
-				node.pressed.emit()
+	for node in game.hud.goals_list.find_children("*", "Button", true, false):
+		if node.text == "Set aside":
+			node.pressed.emit()
 	await seconds(.5)
 	var oil_met := false
 	for goal in game.core.query("episode").goals:
@@ -139,7 +137,7 @@ func run() -> void:
 	check(await wait_for_overlay(), "winning the colony shows its result")
 	game.episode_overlay.card.primary.pressed.emit()
 	await seconds(.3)
-	check(game.episode_overlay.card.mode == "intro" and game.episode_overlay.card.subtitle.text.contains("2"), "the campaign goes on with the second parent episode (%s)" % game.episode_overlay.card.subtitle.text)
+	check(game.episode_overlay.card.mode == "intro" and game.episode_overlay.card.episode_progress.text == "Episode 2 of 4", "the campaign goes on with the second parent episode (%s)" % game.episode_overlay.card.episode_progress.text)
 	game.episode_overlay.card.primary.pressed.emit()
 	await seconds(3.5)
 	game = city()

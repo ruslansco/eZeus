@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+<defs>
+  <linearGradient id="skin" x1="0" y1="0" x2=".65" y2="1"><stop stop-color="#eec69a"/><stop offset="1" stop-color="#b88760"/></linearGradient>
+  <linearGradient id="linen" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fff0cd"/><stop offset="1" stop-color="#b49d75"/></linearGradient>
+  <linearGradient id="clay" x1="0" y1="0" x2=".5" y2="1"><stop stop-color="#e99467"/><stop offset="1" stop-color="#a84835"/></linearGradient>
+  <linearGradient id="blue" x1="0" y1="0" x2=".65" y2="1"><stop stop-color="#8cd5dd"/><stop offset="1" stop-color="#296c92"/></linearGradient>
+  <linearGradient id="hair" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#886244"/><stop offset="1" stop-color="#42382e"/></linearGradient>
+</defs>
+<ellipse cx="49" cy="86" rx="36" ry="5" fill="#081723" opacity=".3"/>
+<g stroke="#253d43" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M50 39c-2-16 4-25 16-25s18 10 16 26l-2 23H51Z" fill="url(#hair)"/>
+  <path d="M58 47v10L46 63l-4 20h43l-3-20-12-6V47" fill="url(#skin)"/>
+  <path d="M47 61 57 56l9 14 9-14 8 7 4 20H42Z" fill="url(#clay)"/>
+  <path d="m74 59-10 24h-8l9-13Z" fill="url(#linen)" stroke="none"/>
+  <path d="M55 30v10c0 9 5 15 11 15s11-6 11-15V30" fill="url(#skin)"/>
+  <path d="M52 32c1-13 9-19 18-16 7 2 11 9 10 17l-9-4-6-8-4 8Z" fill="url(#hair)"/>
+  <path d="M60 38h2m7 0h2" fill="none" stroke="#644c39" stroke-width="2"/>
+  <path d="M25 47v12L13 66 9 84h47l-4-19-13-6V47" fill="url(#skin)"/>
+  <path d="m14 65 12-7 8 13 9-12 10 7 5 18H9Z" fill="url(#linen)"/>
+  <path d="m39 58 13 6 6 20H31l7-15Z" fill="url(#blue)"/>
+  <path d="M20 29v12c0 11 6 18 14 18s14-7 14-18V29" fill="url(#skin)"/>
+  <path d="M18 34c-2-12 5-20 16-20s17 8 16 18l-9-3-5-5-6 7Z" fill="url(#hair)"/>
+  <path d="M21 42c4 3 4 6 7 7h12l7-7-2 12-11 8-10-8Z" fill="url(#hair)"/>
+  <path d="M26 36h3m10 0h3m-12 14h9" fill="none" stroke="#594737" stroke-width="2"/>
+  <path d="m20 68 6 12m18-13-7 14" fill="none" stroke="#dfdcc4" stroke-width="2.4"/>
+</g>
+</svg>

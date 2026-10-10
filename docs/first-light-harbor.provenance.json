@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "purpose": "Private adaptation evidence; excluded from shipping",
+  "records": [
+    {
+      "id": "first-light-harbor-prototype-v2",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/first_light_harbor.json",
+        "build-content-research/first-light-harbor/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: LVLarry and any underlying rightsholders; final rights not verified",
+      "origin": "New single-episode prototype using reviewed Alexandria parent terrain/roads/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=532",
+        "source_pak_sha256": "989f096ddbdf5f8f053e7805dcf078effcf8697f088b2a00b49281377a643b48",
+        "recipe_version": 2
+      },
+      "license_or_agreement": "Source author invites editing; commercial redistribution remains unestablished",
+      "evidence_location": [
+        "docs/FIRST_LIGHT_HARBOR.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/first-light-harbor/current.json"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/first-light-harbor/build-1791512397990217000/eZeus/Adventures/First Light Harbor/First Light Harbor.txt": "2f805327c11fe8bc29e32d8cbcf5754c23298237c32c236764476b893611da54",
+        "build-content-research/first-light-harbor/build-1791512397990217000/eZeus/Adventures/First Light Harbor/ATTRIBUTION.md": "5c33a62bcae5d4a6f095c4105ff267465024dddb8876f83ba694af22cd818391",
+        "build-content-research/first-light-harbor/build-1791512397990217000/eZeus/Adventures/First Light Harbor/First Light Harbor_ru.txt": "c32d847ebd24cb607ff8842ca20be8da2dec89bbe6ca5dff6796645727c2096d",
+        "build-content-research/first-light-harbor/build-1791512397990217000/eZeus/Adventures/First Light Harbor/First Light Harbor.epak": "97eb94a6cb5f9805aa24b1de7ca8ffe6df753ffe8c0337cf47a9284f4827a51b",
+        "content/scenarios/first_light_harbor.json": "d29f512c46f657c4f7f97629616fc1f449fa11e430400b25c2f05ae4fc0657e5"
+      },
+      "source_input_records": [
+        "heavengames-adventure-532",
+        "Existing development compatibility resources; release review remains pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-08",
+        "scope": "New English/Russian campaign and episode prose, objective choices and partner/challenge settings; no generated terrain/art/audio in this slice"
+      },
+      "attribution_requirements": [
+        "Retain LVLarry/Alexandria source URL, untouched archive and file hashes, and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-08",
+      "replacement_task": "Establish retained-map/world commercial rights or replace retained expression; complete natural progression/balance/playtest",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "visible_review_checks": {
+          "en": 32,
+          "ru": 32
+        },
+        "editor_checks": 64,
+        "embedded_checks": 101,
+        "full_playthrough_verified": false,
+        "pacing_verified": false,
+        "windows_verified": false,
+        "positive_export_progression_verified": false,
+        "ending_test_is_fixture": true
+      }
+    },
+    {
+      "id": "first-light-harbor-prototype-v3",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/first_light_harbor.json",
+        "build-content-research/first-light-harbor/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: LVLarry and any underlying rightsholders; final rights not verified",
+      "origin": "New single-episode prototype using reviewed Alexandria parent terrain/roads/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=532",
+        "source_pak_sha256": "989f096ddbdf5f8f053e7805dcf078effcf8697f088b2a00b49281377a643b48",
+        "recipe_version": 3
+      },
+      "license_or_agreement": "Source author invites editing; commercial redistribution remains unestablished",
+      "evidence_location": [
+        "docs/FIRST_LIGHT_HARBOR.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/first-light-harbor/current.json"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/first-light-harbor/build-1791518821994721000/eZeus/Adventures/First Light Harbor/First Light Harbor.txt": "2f805327c11fe8bc29e32d8cbcf5754c23298237c32c236764476b893611da54",
+        "build-content-research/first-light-harbor/build-1791518821994721000/eZeus/Adventures/First Light Harbor/ATTRIBUTION.md": "5c33a62bcae5d4a6f095c4105ff267465024dddb8876f83ba694af22cd818391",
+        "build-content-research/first-light-harbor/build-1791518821994721000/eZeus/Adventures/First Light Harbor/First Light Harbor_ru.txt": "c32d847ebd24cb607ff8842ca20be8da2dec89bbe6ca5dff6796645727c2096d",
+        "build-content-research/first-light-harbor/build-1791518821994721000/eZeus/Adventures/First Light Harbor/First Light Harbor.epak": "ed080b7b81ee74e88765b196527948b9cb801b3cce4d68ed21dc10d9857d4e86",
+        "content/scenarios/first_light_harbor.json": "ff641a679463095123b6e4b75b5eb35c110afc48d2ddaf9b8f163f8c70decbb0"
+      },
+      "source_input_records": [
+        "heavengames-adventure-532",
+        "Existing development compatibility resources; release review remains pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-08",
+        "scope": "Version-3 complete native building permissions; retained version-2 scenario writing/objectives/terrain and existing game rules"
+      },
+      "attribution_requirements": [
+        "Retain LVLarry/Alexandria source URL, untouched archive and file hashes, and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Establish retained-map/world commercial rights or replace retained expression; complete natural progression/balance/playtest",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "visible_review_checks": {
+          "en": 34,
+          "ru": 34
+        },
+        "editor_checks": 64,
+        "embedded_checks": 101,
+        "full_playthrough_verified": false,
+        "pacing_verified": false,
+        "windows_verified": false,
+        "positive_export_progression_verified": false,
+        "ending_test_is_fixture": true,
+        "episode_permission_checks": {
+          "en": 37,
+          "ru": 37
+        },
+        "building_regressions": 505,
+        "campaign_regressions": 26,
+        "chapter_layout": "one chapter; seven objectives; optional three-stage choice unanswered"
+      }
+    },
+    {
+      "id": "first-light-harbor-chapters-v4",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/first_light_harbor_chapters.json",
+        "build-content-research/first-light-harbor/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: LVLarry and any underlying rightsholders; final rights not verified",
+      "origin": "New single-episode prototype using reviewed Alexandria parent terrain/roads/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=532",
+        "source_pak_sha256": "989f096ddbdf5f8f053e7805dcf078effcf8697f088b2a00b49281377a643b48",
+        "recipe_version": 4
+      },
+      "license_or_agreement": "Source author invites editing; commercial redistribution remains unestablished",
+      "evidence_location": [
+        "docs/FIRST_LIGHT_HARBOR.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/first-light-harbor/current.json",
+        "docs/FIRST_LIGHT_CHAPTERS.md"
+      ],
+      "reviewed_sha256_by_file": {
+        "build-content-research/first-light-harbor/build-1791528692603460000/eZeus/Adventures/First Light Harbor Chapters/ATTRIBUTION.md": "5c33a62bcae5d4a6f095c4105ff267465024dddb8876f83ba694af22cd818391",
+        "build-content-research/first-light-harbor/build-1791528692603460000/eZeus/Adventures/First Light Harbor Chapters/First Light Harbor Chapters_ru.txt": "891a7f738e495964738f3545a09736b7306099673c948d0e28b7ea2b5632c30e",
+        "build-content-research/first-light-harbor/build-1791528692603460000/eZeus/Adventures/First Light Harbor Chapters/First Light Harbor Chapters.txt": "a7bcbf8a2a3a18651acc0f6a002e8f5383da91617ca8159df7fd5fcffbcbe0c9",
+        "build-content-research/first-light-harbor/build-1791528692603460000/eZeus/Adventures/First Light Harbor Chapters/First Light Harbor Chapters.epak": "03f3e7866efd747a0505c6dc8c89b2b422acc3075d82ed358b6a3808abf4c160",
+        "content/scenarios/first_light_harbor_chapters.json": "f6b740184bc98304077946bc4a17d0ea4a7146943e88005e75853879748d5d83"
+      },
+      "source_input_records": [
+        "heavengames-adventure-532",
+        "Existing development compatibility resources; release review remains pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-08",
+        "scope": "New three-chapter EN/RU campaign and goals with staged building permissions; retained fan terrain/world"
+      },
+      "attribution_requirements": [
+        "Retain LVLarry/Alexandria source URL, untouched archive and file hashes, and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Human pacing/clarity, actual Windows tests and retained-input commercial-rights review before release",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "visible_review_checks": {
+          "en": 38,
+          "ru": 38
+        },
+        "editor_checks": 64,
+        "embedded_checks": 101,
+        "full_playthrough_verified": true,
+        "pacing_verified": false,
+        "windows_verified": false,
+        "positive_export_progression_verified": true,
+        "ending_test_is_fixture": false,
+        "episode_permission_checks": {
+          "en": 37,
+          "ru": 37
+        },
+        "building_regressions": 505,
+        "campaign_regressions": 26,
+        "chapter_layout": "three parent chapters, retained city, phased buildings",
+        "natural_commands": 241,
+        "native_service_calls": 2660,
+        "simulation_units": 792900,
+        "exports_final_year": 1650,
+        "profit_final_year": 1046
+      }
+    }
+  ]
+}

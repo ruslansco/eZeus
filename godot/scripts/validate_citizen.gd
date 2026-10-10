@@ -339,6 +339,8 @@ func check_swap() -> void:
 	for i in 40:
 		walkers[i + 1] = make_walker(Vector3(0.5 * (i + 1), 0, 0), 0.2 * i, 0.1 * i, i % 2 == 0)
 	var camera := Vector3.ZERO
+	lod.update(walkers, Vector3(1000, 1000, 1000), batches, models)
+	check(lod.pool.is_empty() and lod.active.is_empty() and batches.loads == 0, "distant physicians do not load or instantiate unused detailed models")
 	lod.update(walkers, camera, batches, models)
 	var expected := mini(CitizenLod.MAX_SKELETAL, int(CitizenLod.NEAR / 0.5) - 1)
 	check(skeletal_count(walkers) == expected, "the nearest %d walkers inside %.0f units become skeletal (%d)" % [expected, CitizenLod.NEAR, skeletal_count(walkers)])

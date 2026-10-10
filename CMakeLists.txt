@@ -4,9 +4,12 @@ project(eZeus LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+option(EZEUS_BUILD_GODOT_EXTENSION "Embed the existing simulation in Godot" OFF)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "/O2")
+    add_compile_options(/bigobj /utf-8)
+    add_compile_definitions(NOMINMAX)
 else()
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 endif()
@@ -23,8 +26,18 @@ if(NOT TARGET SDL2::SDL2 OR NOT TARGET SDL2_ttf::SDL2_ttf OR NOT TARGET SDL2_ima
     set(SDL_SHARED ON CACHE BOOL "" FORCE)
     set(SDL_STATIC OFF CACHE BOOL "" FORCE)
     set(SDL_TEST OFF CACHE BOOL "" FORCE)
-    set(SDLIMAGE_AVIF OFF)
-    set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
+    set(SDL2IMAGE_AVIF OFF CACHE BOOL "" FORCE)
+    set(SDL2TTF_VENDORED ON CACHE BOOL "" FORCE)
+    if(EZEUS_BUILD_GODOT_EXTENSION)
+        # Godot owns the window and sound device. SDL remains a data-loading helper.
+        set(SDL_VIDEO OFF CACHE BOOL "" FORCE)
+        set(SDL_AUDIO OFF CACHE BOOL "" FORCE)
+        set(SDL_JOYSTICK OFF CACHE BOOL "" FORCE)
+        set(SDL_HAPTIC OFF CACHE BOOL "" FORCE)
+        set(SDL_SENSOR OFF CACHE BOOL "" FORCE)
+        set(SDL2IMAGE_VENDORED ON CACHE BOOL "" FORCE)
+        set(SDL2MIXER_VENDORED ON CACHE BOOL "" FORCE)
+    endif()
     if(MINGW)
         add_compile_options(-Wa,-mbig-obj)
     endif()
@@ -3437,7 +3450,6 @@ target_link_libraries(eZeus PRIVATE SDL2_mixer::SDL2_mixer)
 
 # The headless simulation and legacy view share exactly the same stepping order.
 target_sources(eZeus PRIVATE engine/esimulationstep.cpp engine/estatedigest.cpp engine/eagoraplacement.cpp engine/eadventurelist.cpp engine/eshoreplacement.cpp engine/ebuildplacement.cpp engine/ecitydata.cpp engine/ebuildinginfotext.cpp engine/echaracterinfotext.cpp engine/etradepartners.cpp engine/ecityadvisor.cpp engine/etradesummary.cpp buildings/ehousecard.cpp engine/eterrainedit.cpp)
-option(EZEUS_BUILD_GODOT_EXTENSION "Embed the existing simulation in Godot" OFF)
 if(EZEUS_BUILD_GODOT_EXTENSION)
     set(GODOTCPP_API_VERSION "4.6" CACHE STRING "" FORCE)
     set(GODOTCPP_BUILD_PROFILE "${CMAKE_CURRENT_SOURCE_DIR}/presentation/godot/build_profile.json" CACHE PATH "" FORCE)
@@ -3451,6 +3463,27 @@ if(EZEUS_BUILD_GODOT_EXTENSION)
     target_include_directories(ezeus_godot PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     get_target_property(EZEUS_SDL_INCLUDE SDL2::SDL2 INTERFACE_INCLUDE_DIRECTORIES)
     target_include_directories(ezeus_godot SYSTEM PRIVATE ${EZEUS_SDL_INCLUDE})
-    target_link_libraries(ezeus_godot PRIVATE godot::cpp "${CMAKE_CURRENT_SOURCE_DIR}/godot/bin/libSDL2-2.0.0.dylib" SDL2_ttf::SDL2_ttf SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer)
-    set_target_properties(ezeus_godot PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/godot/bin")
+    if(APPLE)
+        # Retain the private macOS SDL2, never Homebrew SDL2-compat/SDL3.
+        set(EZEUS_CORE_SDL "${CMAKE_CURRENT_SOURCE_DIR}/godot/bin/libSDL2-2.0.0.dylib")
+    else()
+        set(EZEUS_CORE_SDL SDL2::SDL2)
+    endif()
+    target_link_libraries(ezeus_godot PRIVATE godot::cpp ${EZEUS_CORE_SDL} SDL2_ttf::SDL2_ttf SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer)
+    set(EZEUS_GODOT_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/godot/bin" CACHE PATH "Extension output; may be staged before atomic installation")
+    set_target_properties(ezeus_godot PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${EZEUS_GODOT_OUTPUT_DIRECTORY}"
+        RUNTIME_OUTPUT_DIRECTORY "${EZEUS_GODOT_OUTPUT_DIRECTORY}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${EZEUS_GODOT_OUTPUT_DIRECTORY}")
+    if(WIN32)
+        set_target_properties(ezeus_godot PROPERTIES PREFIX "")
+        if(CMAKE_VERSION VERSION_LESS "3.21")
+            message(FATAL_ERROR "Windows extension dependency staging requires CMake 3.21 or later")
+        endif()
+        # Includes transitive codec/font DLL targets, not just the four SDL helpers.
+        add_custom_command(TARGET ezeus_godot POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_RUNTIME_DLLS:ezeus_godot> "${EZEUS_GODOT_OUTPUT_DIRECTORY}"
+            COMMAND_EXPAND_LISTS VERBATIM)
+    endif()
 endif()

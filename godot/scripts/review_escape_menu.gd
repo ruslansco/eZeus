@@ -11,6 +11,8 @@ func _initialize() -> void:
 func check(value: bool, description: String) -> void:
 	checks+=1;okay=okay and value
 	print("ESCAPE_CHECK ","PASS " if value else "FAIL ",description)
+	if not value:
+		print("ESCAPE_CONTEXT ",JSON.stringify({"mode":city.mode,"goals":city.hud.goals_list.visible,"inspector":city.inspector.visible,"header_focus":city.hud._header_has_focus(),"resources":city.hud.resources_open,"help":is_instance_valid(city.city_help) and city.city_help.visible,"dialog":root.get_node("UiAccess").dialog_open,"windows":city.hud.get_children().filter(func(node):return node is Window and node.visible).map(func(node):return node.name),"focus":str(root.gui_get_focus_owner()),"menu":is_instance_valid(city.escape_menu)}))
 func frames(count:=10) -> void:
 	for frame in count:await process_frame
 func escape() -> void:
@@ -18,10 +20,12 @@ func escape() -> void:
 		var key:=InputEventKey.new();key.physical_keycode=KEY_ESCAPE;key.keycode=KEY_ESCAPE;key.pressed=pressed
 		key.set_meta("review_input",true);root.push_input(key,true)
 	await frames()
-func right_click(point: Vector2) -> void:
+func right_click(point: Vector2, surface: Window=null) -> void:
 	for pressed in [true,false]:
 		var event:=InputEventMouseButton.new();event.position=point;event.button_index=MOUSE_BUTTON_RIGHT;event.pressed=pressed
-		event.set_meta("review_input",true);root.push_input(event,true)
+		event.set_meta("review_input",true)
+		if surface==null:root.push_input(event,true)
+		else:surface.window_input.emit(event)
 	await frames()
 
 func click(button: Control) -> void:
@@ -47,13 +51,17 @@ func run() -> void:
 	DisplayServer.window_set_size(Vector2i(1600,1000));await frames()
 	var hud: Control=city.hud
 	check(not hud.has_node("Utilities") and not hud.has_node("Language") and not hud.has_node("GameMenu"),"language and gear panel removed from game HUD")
-	check(hud.get_node("%ResourceRibbon").get_global_rect().encloses(hud.get_node("%StatsGroup").get_global_rect()) and hud.get_node("%StatsGroup").get_parent().name=="OverviewRow","native treasury, population and jobs share the top resource bar")
+	check(hud.get_node("%ResourceRibbon").get_global_rect().encloses(hud.get_node("%StatsGroup").get_global_rect()) and hud.get_node("%StatsGroup").get_parent().name=="OverviewRow","native treasury and population share the top resource bar")
 	hud.set_minimap_open(true);await frames();await capture("city-map")
 	var chart: Control=hud.minimap
 	check(chart.map_scale()*chart.occupied_radius>minf(chart.size.x,chart.size.y)*.5 and not chart._has_point(Vector2.ONE),"native chart covers circle with clipped, click-through corners")
 	var map_image:=root.get_texture().get_image();var map_rect: Rect2=hud.get_node("%MinimapPanel").get_global_rect();var pixel_scale:=Vector2(map_image.get_size())/hud.size
 	map_image.get_region(Rect2i(map_rect.position*pixel_scale,map_rect.size*pixel_scale)).save_png("res://captures/escape-map-detail-"+language+".png")
 	var native_before: Dictionary=city.core.simulation.snapshot(true)
+	# This open-play fixture has no goals. A disposable presentation goal covers
+	# disclosure dismissal; it never changes the native episode or callbacks.
+	if hud.goals_state.get("goals",[]).is_empty():
+		hud.set_goals({"met":0,"total":1,"goals":[{"kind":"population","text":city.tr("Population"),"current":native_before.population,"required":int(native_before.population)+100,"met":false,"progress":.5}]})
 	hud.open_category("Industry");city.set_tool("olive_press");await frames()
 	await right_click(hud.get_node("%BuildTray").get_global_rect().get_center())
 	check(not hud.get_node("%BuildTray").visible and city.mode=="select","right-click over building tray dismisses it and cancels tool")
@@ -67,7 +75,9 @@ func run() -> void:
 	check(not hud.message_panel.visible,"right-click closes the journal")
 	check(absf(hud.get_node("%EventRail").get_global_rect().end.x-(hud.size.x-16))<1,"journal icon sits at the right screen edge")
 	hud.set_messages_open(true);await frames()
-	check(absf(hud.message_panel.get_global_rect().position.y-hud.get_node("%EventRail").get_global_rect().end.y-8)<1 and absf(hud.message_panel.get_global_rect().end.x-hud.get_node("%EventRail").get_global_rect().end.x)<1,"journal opens below its right-side icon with aligned edges")
+	var journal: Rect2=hud.message_panel.get_global_rect()
+	var rail: Rect2=hud.get_node("%EventRail").get_global_rect()
+	check(Rect2(Vector2.ZERO,hud.size).encloses(journal) and not journal.intersects(rail) and journal.position.y>=hud.get_node("%StatusBar").get_global_rect().end.y and absf(journal.end.x-(rail.position.x-8))<1,"journal clears the right icon rail and resource header")
 	await capture("journal-right")
 	hud.set_messages_open(false)
 	hud.set_resources_open(true);await create_timer(.3).timeout
@@ -82,12 +92,13 @@ func run() -> void:
 	hud.set_decision({});hud.set_minimap_open(false,true)
 	city.open_escape_menu();await frames();await right_click(Vector2(500,400))
 	check(not is_instance_valid(city.escape_menu),"right-click closes game menu through its existing return callback")
-	var speed_popup: PopupMenu=hud.speed_button.get_popup()
+	var speed_popup: PopupMenu=hud.overlay_catalog.get_popup()
 	speed_popup.popup(Rect2i(Vector2i(300,300),Vector2i(180,140)))
 	await frames()
-	check(speed_popup.visible,"speed popup opens for right-click dismissal")
-	await right_click(Vector2(speed_popup.position)+Vector2(speed_popup.size)*.5)
-	check(not speed_popup.visible,"right-click folds a nested popup without selecting speed")
+	check(speed_popup.visible,"a nested popup opens for right-click dismissal")
+	# Popup OS events enter through Window.window_input in local coordinates.
+	await right_click(Vector2(speed_popup.size)*.5,speed_popup)
+	check(not speed_popup.visible,"right-click folds a nested popup without choosing an item")
 	city.close_inspection()
 	hud.set_messages_open(true);await frames();await escape()
 	check(not hud.message_panel.visible and not is_instance_valid(city.escape_menu),"Escape closes journal without opening settings")
@@ -142,6 +153,12 @@ func run() -> void:
 	var display: Window=window();var before_window:=DisplayOptions.capture(root)
 	display.choices.frame_limit.select(1);display.apply_or_keep();await frames();await escape()
 	check(not is_instance_valid(display) and gameplay.visible and root.size==before_window.actual_size and Engine.max_fps==before_window.frame_limit,"Escape reverts display preview, closes it and returns to gameplay settings")
+	var graphics_options = preload("res://scripts/graphics_settings.gd")
+	var original_graphics: String = graphics_options.current
+	gameplay.settings_buttons.graphics.pressed.emit(); await frames()
+	var graphics: Window = window()
+	graphics.choice.select(0); graphics.preview(); await frames(); await escape()
+	check(not is_instance_valid(graphics) and gameplay.visible and graphics_options.current == original_graphics,"Escape restores graphics preview and returns one level to game settings")
 	await escape();check(menu.visible and window()==null,"next Escape closes gameplay settings and restores main menu")
 	var initial_language: String=city.language
 	menu.language_choice.item_selected.emit(0 if initial_language=="ru" else 1);await frames()

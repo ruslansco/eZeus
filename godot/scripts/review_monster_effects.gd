@@ -2,6 +2,7 @@ extends SceneTree
 const Fixture = preload("res://scripts/monster_effects_fixture.gd")
 var city: Node3D
 var language := "en"
+var kind := "hydra"
 var checks := 0
 var okay := true
 var captures: Array = []
@@ -44,7 +45,8 @@ func capture(core: RefCounted, phase: String) -> void:
 	check(city.monster_effects.puffs.get_instance_transform(0) == transform, "effect frozen during " + phase)
 	check(city.monster_effects.puff_count > 0, "visible particles during " + phase)
 	await RenderingServer.frame_post_draw
-	var path := "res://captures/monster-effects-" + phase + "-" + language + ".png"
+	var prefix := "monster-effects-" if kind=="hydra" else "monster-reference-"+kind+"-"
+	var path := "res://captures/" + prefix + phase + "-" + language + ".png"
 	root.get_texture().get_image().save_png(path)
 	captures.append(path)
 	core.command("pause 0")
@@ -53,6 +55,8 @@ func run() -> void:
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--lang="):
 			language = argument.get_slice("=", 1)
+		if argument.begins_with("--monster="):
+			kind = argument.get_slice("=", 1)
 	Engine.set_meta("ezeus_language", language)
 	city = load("res://main.tscn").instantiate()
 	root.add_child(city)
@@ -65,8 +69,8 @@ func run() -> void:
 	city.ui_layer.visible = false
 	var core: RefCounted = city.core.simulation
 	core.enable_test_commands()
-	var fixture: Dictionary = Fixture.prepare(core)
-	check(not fixture.has("error"), "real native Hydra attack fixture " + str(fixture.get("error", "")))
+	var fixture: Dictionary = Fixture.prepare(core,kind)
+	check(not fixture.has("error"), "real native " + kind + " attack fixture " + str(fixture.get("error", "")))
 	if fixture.has("error"):
 		quit(1); return
 	city.orbit.target = city.world_position((fixture.source.x + fixture.target.x) * .5, (fixture.source.y + fixture.target.y) * .5, 0)
@@ -121,7 +125,8 @@ func run() -> void:
 	check(city.monster_effects.collapses >= 1, "destruction follows native collapse")
 	check(city.monster_effects.get_child_count() == 2, "two draw batches and no added collision")
 	var result := {"okay": okay, "checks": checks, "language": language, "captures": captures, "recorded_frames": recorded, "launches": city.monster_effects.launches, "impacts": city.monster_effects.impacts, "collapses": city.monster_effects.collapses}
-	var file := FileAccess.open("res://captures/monster-effects-" + language + ".json", FileAccess.WRITE)
+	var prefix := "monster-effects-" if kind=="hydra" else "monster-reference-"+kind+"-"
+	var file := FileAccess.open("res://captures/" + prefix + language + ".json", FileAccess.WRITE)
 	file.store_string(JSON.stringify(result, "\t"))
 	print("MONSTER_FX_REVIEW ", "PASS" if okay else "FAIL", " checks=", checks)
 	quit(0 if okay else 1)

@@ -35,6 +35,7 @@ func _ready() -> void:
 	column.add_child(note)
 	option_row(column, "voice_language", "Voice language", func(value): return tr("Same as the interface") if str(value) == "auto" else ("English" if str(value) == "en" else "Русский"))
 	for spec in [["display", "Display settings…", "res://ui/display_dialog.gd"],
+		["graphics", "Graphics settings…", "res://ui/graphics_dialog.gd"],
 		["interface", "Interface options…", "res://ui/interface_dialog.gd"],
 		["controls", "Controls…", "res://ui/controls_dialog.gd"]]:
 		var button := Button.new()

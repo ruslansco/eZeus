@@ -31,7 +31,8 @@ func frames_valid(frames: Dictionary) -> bool:
 	for index in range(12):
 		valid = valid and frames.has("idle_%02d" % index)
 	for label in clips:
-		valid = valid and label in ["fight", "fight2", "die", "bless", "curse", "disappear", "appear"]
+		# Combat clips, or the authored work clips gathering_motion.gd plays (field work, the townspeople's crews).
+		valid = valid and (label in ["fight", "fight2", "die", "bless", "curse", "disappear", "appear"] or preload("res://scripts/gathering_motion.gd").COUNTS.has(label))
 		for index in int(clips[label]):
 			valid = valid and frames.has("%s_%02d" % [label, index])
 	return valid
@@ -47,7 +48,7 @@ func run() -> void:
 			if manifest.has("character"):
 				names.append(file.trim_suffix(".json"))
 	names.sort()
-	check(names.size() == 102,"all 102 human walker assets are refined (the 31 townspeople, heroes and gods, the archer, the 52 soldiers, gods and heroes of the fighting slice, the eight monsters with human bodies, the altar's priestess, the Greek chariot, the four racing teams, the silver and orichalc miners and the two rioters) (%d)" % names.size())
+	check(names.size() == 104,"all 104 human walker assets retain their anatomy adapter; the eight humanoid monsters now use the separately validated monster sculptures (%d)" % names.size())
 	var appearance := Appearance.new()
 	var bodies := {}
 	for asset in names:

@@ -16,9 +16,10 @@ const TABLE := .84
 # How far (in tiles, toward tile -y) each victim is moved to lie in the middle of the table once rolled, and how it is sized to it.
 const VICTIM_SHIFT := {"sheep": .17, "bull": .26}
 const VICTIM_SCALE := {"sheep": 1.0, "bull": .72}
-const BULL_COAT := Color(.42, .27, .18)
+# A multiply over the ox's own greyish-brown coat (exported in colour from 6 October; it was white before, when this was .42/.27/.18).
+const BULL_COAT := Color(.92, .68, .52)
 
-# Finishes a part's node when it is made: the bull is shrunk to the table and given a dark coat (the ox model is pale; a multiply over it browns it), the
+# Finishes a part's node when it is made: the bull is shrunk to the table and given a darker, redder coat (a multiply over the ox's own coat), the
 # offering of goods is sized to the table.
 static func dress(node: Node3D, walker: Dictionary) -> void:
 	var rite := str(walker.get("rite", ""))

@@ -1,0 +1,7 @@
+Use case: stylized-concept.
+Asset type: production game UI parchment background texture, a single blank aged paper sheet seen exactly front-on, landscape 3:2 composition.
+Primary request: a realistic old maritime parchment, like an antique treasure-chart paper, for story text in an ancient Greek mythology game.
+Materials: warm muted honey-ivory paper, natural fine fibers, subtle uneven age, lightly creased vellum, softly weathered brown outer edges and restrained water staining near the perimeter. Shallow irregular deckled edges, slightly curled corners with subtle depth, completely isolated on a genuinely transparent background. The sheet fills almost the whole image with only a small transparent gutter.
+Composition: absolutely blank, clean and quiet central 80 percent reserved for dark readable game text. Central paper stays a light warm tan with very low contrast texture and no strong folds or marks. More age and shading at the narrow edge only. No frame, no ornament, no metallic border, no attached objects.
+Lighting: soft even light, no heavy cast shadow, no perspective, no glow, no bright white center.
+Constraints: no writing, no letters, no numbers, no maps, no symbols, no logos, no skulls, no burned holes, no objects, no watermark, no checkerboard baked into the image. Preserve true alpha outside the paper.

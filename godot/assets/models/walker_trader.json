@@ -1,19 +1,20 @@
 {
   "asset": "walker_trader",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_trader.glb",
-  "bytes": 5242564,
-  "vertices": 15678,
+  "bytes": 6891112,
+  "vertices": 16014,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.17686313390731812,
-      -0.18511541187763214,
+      -0.1933414489030838,
+      -0.1750773787498474,
       0.0004999842494726181
     ],
     [
-      0.2037884145975113,
+      0.20675088465213776,
       0.17521809041500092,
       0.8700000047683716
     ]
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 803175312,
           "skin": [
             0.66,
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 129,
+    "targets_after": 85,
     "uv_attributes_removed": 0
   }
 }

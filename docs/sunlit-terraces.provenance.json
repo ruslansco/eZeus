@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "purpose": "Private fourth-campaign adaptation evidence; excluded from shipping",
+  "records": [
+    {
+      "id": "sunlit-terraces-chapters-v1",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/sunlit_terraces_chapters.json",
+        "build-content-research/sunlit-terraces/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: Genis and underlying rightsholders; complete chain not verified",
+      "origin": "New three-parent-chapter Greek settlement, orange, oil and wine campaign on reviewed Everybody loves oranges parent terrain/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=828",
+        "source_pak_sha256": "01a69cc5d1d3665208e726113d58f713af3dd814c7a93c8ec53dc6dc56b7caa2",
+        "recipe_version": 1
+      },
+      "license_or_agreement": "No explicit commercial redistribution permission established",
+      "evidence_location": [
+        "docs/SUNLIT_TERRACES.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/sunlit-terraces/current.json"
+      ],
+      "reviewed_sha256_by_file": {
+        "content/scenarios/sunlit_terraces_chapters.json": "7e00cc7f61857ad44aae0fb6bc5635758a1060ec525da91e1b418adcc3ae934c",
+        "build-content-research/sunlit-terraces/build-1791635675990327000/eZeus/Adventures/Sunlit Terraces Chapters/Sunlit Terraces Chapters_ru.txt": "6a53c4705ad7ca8712d6a864c0ff19c3a32a802ed4f26c65a94c1a32d3fc4d8c",
+        "build-content-research/sunlit-terraces/build-1791635675990327000/eZeus/Adventures/Sunlit Terraces Chapters/ATTRIBUTION.md": "15e0aa87d81f5fb04d7e1336fbb6c1e65e88c8bffde8c311630da3289a57d290",
+        "build-content-research/sunlit-terraces/build-1791635675990327000/eZeus/Adventures/Sunlit Terraces Chapters/Sunlit Terraces Chapters.epak": "5bdb4db5bf13748eeab361adbcd5fd538627b71a9010466f9b07560bbed0ba0e",
+        "build-content-research/sunlit-terraces/build-1791635675990327000/eZeus/Adventures/Sunlit Terraces Chapters/Sunlit Terraces Chapters.txt": "8fd4ceb12a99ae1963a07125d95400e2f3641eeb822960ce2debc6c5b7a1ced6"
+      },
+      "source_input_records": [
+        "heavengames-adventure-828",
+        "Existing original-game/development compatibility resources; release review pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-10",
+        "scope": "New English/Russian story, briefings, endings, goals, phased permissions and trade settings; native parent terrain/elevation and Greek culture retained"
+      },
+      "attribution_requirements": [
+        "Retain Everybody loves oranges / Genis, source URL, untouched archive/text/hashes and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-10",
+      "replacement_task": "Human playtesting/pacing; actual Windows/minimum machines; retained map/world/content commercial permission or replacement before release",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "authoring_checks": 9,
+        "validation_pending": false,
+        "ordinary_playthrough": {
+          "okay": true,
+          "chapters": 3,
+          "commands": 777,
+          "service_calls": 4100,
+          "test_commands_used": false,
+          "final_population": 1080.0,
+          "final_treasury": 33562.0,
+          "proof": {
+            "elevated_orange_trees": true,
+            "largest_annual_grain_imports": 70,
+            "largest_annual_orange_sales": 22,
+            "local_oil": 12,
+            "local_wine": 13,
+            "reserve_committed": true
+          }
+        },
+        "visible_review_checks": {
+          "en": 52,
+          "ru": 52
+        },
+        "shared_menu_review_checks": {
+          "en": 113,
+          "ru": 113
+        }
+      }
+    }
+  ]
+}

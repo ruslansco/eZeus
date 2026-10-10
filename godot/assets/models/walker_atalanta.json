@@ -1,9 +1,10 @@
 {
   "asset": "walker_atalanta",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_atalanta.glb",
-  "bytes": 9013728,
-  "vertices": 15348,
+  "bytes": 9087628,
+  "vertices": 15388,
   "surfaces": 3,
   "source_surfaces": 21,
   "bounds_blender": [
@@ -13,7 +14,7 @@
       0.0005600449512712657
     ],
     [
-      0.21654482185840607,
+      0.22054758667945862,
       0.7391999959945679,
       0.9484936594963074
     ]
@@ -80,7 +81,7 @@
   "memory_optimization": {
     "version": 1,
     "targets_before": 225,
-    "targets_after": 129,
+    "targets_after": 130,
     "uv_attributes_removed": 0
   }
 }

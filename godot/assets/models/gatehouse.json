@@ -1,21 +1,22 @@
 {
   "asset": "gatehouse",
-  "source": "art/tower/build_sprites.py",
+  "variant_of": null,
+  "source": "eZeus/tools/godot_defences.py",
   "file": "gatehouse.glb",
-  "bytes": 336652,
-  "vertices": 2358,
+  "bytes": 1523612,
+  "vertices": 10356,
   "surfaces": 3,
-  "source_surfaces": 7,
+  "source_surfaces": 10,
   "bounds_blender": [
     [
-      -2.496999979019165,
-      -0.996999979019165,
+      -2.5,
+      -1.1440000534057617,
       0.0
     ],
     [
-      2.496999979019165,
-      0.996999979019165,
-      1.9500000476837158
+      2.5,
+      1.1440000534057617,
+      3.6399998664855957
     ]
   ],
   "walk_samples": 0,
@@ -24,5 +25,15 @@
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
   "draw_batching": "vertex_palette_compatible_PBR",
-  "idle_mode": null
+  "idle_mode": null,
+  "defence": {
+    "revision": 3,
+    "wall_walk": 2.0,
+    "tower_platform": 3.05,
+    "tower_safe_half": 0.58,
+    "wall_lane_half": 0.15,
+    "design": "Original Olympian marble adaptation: coursed white stone, Ionic propylon, carved laurel relief, restrained blue/red meander and bronze details",
+    "source": "eZeus/tools/godot_defences.py",
+    "rights_status": "needs_evidence"
+  }
 }

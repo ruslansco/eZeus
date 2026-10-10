@@ -17,6 +17,8 @@ eMissile::eMissile(eGameBoard& board, const eMissileType type,
                    const std::vector<ePathPoint>& path) :
     mType(type), mBoard(board), mPath(path) {
     mBoard.registerMissile(this);
+    // A launch the front end may draw (arrows, spears and rocks of soldiers and towers; observation only, empty in the SDL view).
+    if(type == eMissileType::arrow || type == eMissileType::spear || type == eMissileType::rock) mBoard.observeMissile(this, 0);
 }
 
 eMissile::~eMissile() {

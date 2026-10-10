@@ -1,15 +1,16 @@
 {
   "asset": "walker_athena",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_athena.glb",
-  "bytes": 9160244,
-  "vertices": 15456,
+  "bytes": 9178460,
+  "vertices": 15474,
   "surfaces": 3,
   "source_surfaces": 23,
   "bounds_blender": [
     [
       -0.936050295829773,
-      -0.5833081603050232,
+      -0.5340725183486938,
       -0.012000000104308128
     ],
     [

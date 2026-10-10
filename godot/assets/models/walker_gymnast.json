@@ -1,11 +1,12 @@
 {
   "asset": "walker_gymnast",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_gymnast.glb",
-  "bytes": 5196256,
-  "vertices": 15546,
+  "bytes": 6782216,
+  "vertices": 15758,
   "surfaces": 3,
-  "source_surfaces": 15,
+  "source_surfaces": 16,
   "bounds_blender": [
     [
       -0.1757482886314392,
@@ -51,8 +52,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 391165047,
           "skin": [
             0.53,
@@ -63,9 +64,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "201e1e87570177a6855b47d620843b81cfe637400eb0ab1a9a0d8d1375f3a927",
         "clavi_srgb": [
-          0.69,
-          0.15,
-          0.09
+          0.4,
+          0.22,
+          0.1
         ]
       }
     ],
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 70,
+    "targets_before": 129,
+    "targets_after": 94,
     "uv_attributes_removed": 0
   }
 }

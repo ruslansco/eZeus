@@ -39,12 +39,15 @@ func run(scene: Node3D) -> bool:
 	for asset in ["hospital","warehouse","olive_press"]:
 		var data:=inspect(asset)
 		check(summary.visible and summary.metrics.workers.reading.text=="%d / %d"%[int(data.employees),int(data.max_employees)],asset+" summary shows the exact native staffing")
-		check(summary.metrics.maintenance.reading.text=="%d%%"%int(data.maintenance) and summary.metrics.road.reading.text==city.tr("Connected" if data.road_access else "Not connected"),asset+" maintenance and road summaries use native observations")
-		if data.has("production"):check(summary.status_id==data.production.status and summary.status.text==city.tr(summary.STATUS[data.production.status]),"production summary preserves the core's own operational status")
+		check(summary.metrics.maintenance.reading.text=="%d%%"%int(data.maintenance) and summary.metrics.road.column.visible==(not data.road_access),asset+" maintenance is shown and the road chip appears only for an unconnected building")
+		if data.has("production"):
+			var observed: String=str(data.production.status)
+			var allowed: Array=["operational","understaffed","waiting_dispatch"] if observed=="operational" else [observed]
+			check(summary.status_id in allowed and data.production.status==observed and summary.status.text==city.tr(summary.STATUS.get(summary.status_id,summary.Guidance.TITLES.get(summary.status_id,"Building status"))),"production summary preserves native stop reasons and labels staffing or full-stock hints")
 	var home: Dictionary=city.state.buildings.filter(func(b):return b.asset.begins_with("common_house_"))[0]
 	city.inspected=Vector2i(home.x,home.y);city.refresh_inspection()
 	var home_data: Dictionary=city.inspector_controls.value
-	check(summary.metrics.residents.column.visible and summary.metrics.residents.reading.text=="%d / %d"%[home_data.residents,home_data.capacity] and summary.needs.visible,"housing summary shows occupancy and the native next-level needs")
+	check(summary.metrics.residents.column.visible and summary.metrics.residents.reading.text=="%d / %d"%[home_data.residents,home_data.capacity] and (summary.needs.visible or summary.house_box.visible),"housing summary shows occupancy and the native next-level needs")
 	await click(summary.views.get_child(0))
 	check(city.overlay_view.mode=="supplies" and hud.current_overlay=="supplies","housing's related-view button opens the real supplies overlay")
 	var service: VBoxContainer=hud.get_node("%OverlaySummary")
@@ -72,7 +75,7 @@ func run(scene: Node3D) -> bool:
 	var editor: VBoxContainer=city.inspector_controls
 	var row: Dictionary=editor.rows[resource]
 	var draft:=0 if int(row.limit.value)>0 else 4
-	row.limit.value=draft;editor.mark_dirty(resource)
+	row.limit.value=draft;editor.edit_storage(resource,600000)
 	var token: int=store.target_token
 	access.apply(125,130);await frames();city.refresh_inspection()
 	check(editor.rows[resource].dirty and int(editor.rows[resource].limit.value)==draft and int(editor.value.target_token)==token,"larger text/interface and live refresh preserve an unfinished storage edit")

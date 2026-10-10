@@ -11,22 +11,25 @@ offset_left = -404.0
 offset_top = 72.0
 offset_right = -16.0
 offset_bottom = -180.0
+theme_type_variation = &"FloatingTray"
 script = ExtResource("1_1dhl1")
 
-[node name="ArmyColumn" type="VBoxContainer" parent="." unique_id=2014070407]
+[node name="ArmyFrame" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ArmyHeader" type="HBoxContainer" parent="ArmyColumn" unique_id=1092711670]
+[node name="ArmyHeader" type="HBoxContainer" parent="ArmyFrame"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ArmyTitle" type="Label" parent="ArmyColumn/ArmyHeader" unique_id=2005355519]
+[node name="ArmyTitle" type="Label" parent="ArmyFrame/ArmyHeader" unique_id=2005355519]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Heading"
 
-[node name="ArmyClose" type="Button" parent="ArmyColumn/ArmyHeader" unique_id=304798249]
+[node name="ArmyClose" type="Button" parent="ArmyFrame/ArmyHeader" unique_id=304798249]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
@@ -35,95 +38,116 @@ size_flags_vertical = 0
 focus_mode = 0
 theme_type_variation = &"Quiet"
 
-[node name="ArmySummary" type="Label" parent="ArmyColumn" unique_id=664797159]
+[node name="ArmyContent" type="ScrollContainer" parent="ArmyFrame"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ArmyColumn" type="VBoxContainer" parent="ArmyFrame/ArmyContent" unique_id=2014070407]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="ArmySummary" type="Label" parent="ArmyFrame/ArmyContent/ArmyColumn" unique_id=664797159]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Caption"
 autowrap_mode = 3
 
-[node name="ArmyActions" type="HBoxContainer" parent="ArmyColumn" unique_id=1709380190]
+[node name="ArmyActions" type="HBoxContainer" parent="ArmyFrame/ArmyContent/ArmyColumn" unique_id=1709380190]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CallAll" type="Button" parent="ArmyColumn/ArmyActions" unique_id=550617923]
+[node name="CallAll" type="Button" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyActions" unique_id=550617923]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+clip_text = true
+text_overrun_behavior = 3
 theme_type_variation = &"Primary"
 
-[node name="HomeAll" type="Button" parent="ArmyColumn/ArmyActions" unique_id=1473378530]
+[node name="HomeAll" type="Button" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyActions" unique_id=1473378530]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+clip_text = true
+text_overrun_behavior = 3
 
-[node name="ArmyScroll" type="ScrollContainer" parent="ArmyColumn" unique_id=87207400]
+[node name="ArmyScroll" type="VBoxContainer" parent="ArmyFrame/ArmyContent/ArmyColumn" unique_id=87207400]
 layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
+size_flags_horizontal = 3
 
-[node name="ArmyList" type="VBoxContainer" parent="ArmyColumn/ArmyScroll" unique_id=1771552946]
+[node name="ArmyList" type="VBoxContainer" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyScroll" unique_id=1771552946]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="ArmyEmpty" type="Label" parent="ArmyColumn" unique_id=1047003695]
+[node name="ArmyEmpty" type="Label" parent="ArmyFrame/ArmyContent/ArmyColumn" unique_id=1047003695]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Caption"
 autowrap_mode = 3
 
-[node name="ArmyDetail" type="PanelContainer" parent="ArmyColumn" unique_id=536178121]
+[node name="ArmyDetail" type="PanelContainer" parent="ArmyFrame/ArmyContent/ArmyColumn" unique_id=536178121]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Card"
 
-[node name="DetailColumn" type="VBoxContainer" parent="ArmyColumn/ArmyDetail" unique_id=1438411910]
+[node name="DetailColumn" type="VBoxContainer" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail" unique_id=1438411910]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="DetailName" type="Label" parent="ArmyColumn/ArmyDetail/DetailColumn" unique_id=506225709]
+[node name="DetailName" type="Label" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail/DetailColumn" unique_id=506225709]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Subheading"
 autowrap_mode = 3
 
-[node name="DetailInfo" type="Label" parent="ArmyColumn/ArmyDetail/DetailColumn" unique_id=1838015410]
+[node name="DetailInfo" type="Label" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail/DetailColumn" unique_id=1838015410]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"Caption"
 autowrap_mode = 3
 
-[node name="DetailRow" type="HBoxContainer" parent="ArmyColumn/ArmyDetail/DetailColumn" unique_id=494084186]
+[node name="DetailRow" type="HBoxContainer" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail/DetailColumn" unique_id=494084186]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="DetailGo" type="Button" parent="ArmyColumn/ArmyDetail/DetailColumn/DetailRow" unique_id=316698522]
+[node name="DetailGo" type="Button" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail/DetailColumn/DetailRow" unique_id=316698522]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+clip_text = true
+text_overrun_behavior = 3
 
-[node name="DetailToggle" type="Button" parent="ArmyColumn/ArmyDetail/DetailColumn/DetailRow" unique_id=1631281392]
+[node name="DetailToggle" type="Button" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail/DetailColumn/DetailRow" unique_id=1631281392]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+clip_text = true
+text_overrun_behavior = 3
 theme_type_variation = &"Primary"
 
-[node name="DetailPlace" type="Button" parent="ArmyColumn/ArmyDetail/DetailColumn" unique_id=1491272248]
+[node name="DetailPlace" type="Button" parent="ArmyFrame/ArmyContent/ArmyColumn/ArmyDetail/DetailColumn" unique_id=1491272248]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+clip_text = true
+text_overrun_behavior = 3

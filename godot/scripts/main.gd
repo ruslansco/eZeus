@@ -19,10 +19,13 @@ const WalkerVat = preload("res://scripts/walker_vat.gd")
 const WalkerMotion = preload("res://scripts/walker_motion.gd")
 const WalkerCombat = preload("res://scripts/walker_combat.gd")
 const WalkerStreets = preload("res://scripts/walker_streets.gd")
+const DefencePerch = preload("res://scripts/defence_perch.gd")
+const CartCargo = preload("res://scripts/cart_cargo.gd")
 const AltarRite = preload("res://scripts/altar_rite.gd")
 const GodFloat = preload("res://scripts/god_float.gd")
 const Horizon = preload("res://scripts/horizon.gd")
 const UiText = preload("res://scripts/ui_text.gd")
+const LoadingScreen = preload("res://ui/loading_screen.gd")
 const HudScene = preload("res://ui/hud.tscn")
 const RoadDrag = preload("res://scripts/road_drag.gd")
 # Buildings the core turns itself (a pier or fishery faces its water, a stadium its length, a roadblock across its street).
@@ -60,6 +63,7 @@ const MessageLog = preload("res://scripts/message_log.gd")
 const NotificationPolicy = preload("res://scripts/notification_policy.gd")
 var pending_info_ack := {}
 const BuildCatalog = preload("res://scripts/build_catalog.gd")
+const BuildingPreview = preload("res://scripts/building_preview.gd")
 const UserSettings = preload("res://scripts/user_settings.gd")
 const KeyBindings = preload("res://scripts/key_bindings.gd")
 const PlaySettings = preload("res://scripts/play_settings.gd")
@@ -84,12 +88,18 @@ const RouteEditor = preload("res://scripts/route_editor.gd")
 const EditorPanel = preload("res://ui/editor_panel.gd")
 const HouseCard = preload("res://ui/house_card.gd")
 const BuildingFires = preload("res://scripts/building_fires.gd")
+const BuildingAuras = preload("res://scripts/building_auras.gd")
+const DisasterEffects = preload("res://scripts/disaster_effects.gd")
+const ThrownShots = preload("res://scripts/thrown_shots.gd")
+const WolfAttacks = preload("res://scripts/wolf_attacks.gd")
 const WaterLife = preload("res://scripts/water_life.gd")
+const CitizenVariety = preload("res://scripts/citizen_variety.gd")
 const MonsterEffects = preload("res://scripts/monster_effects.gd")
 const Leaders = preload("res://scripts/leaders.gd")
 const ArmyPanelScene = preload("res://ui/army_panel.tscn")
 const InvasionBanner = preload("res://ui/invasion_banner.gd")
 const MonsterCard = preload("res://ui/monster_card.gd")
+const HazardRail = preload("res://ui/hazard_rail.gd")
 const EnlistDialog = preload("res://ui/enlist_dialog.gd")
 const CharacterPanel = preload("res://ui/character_panel.gd")
 const START_MENU := "res://ui/start_menu.tscn"
@@ -99,6 +109,7 @@ const AUTOSAVE_SLOTS := 3
 var core = Link.new()
 var orbit = Orbit.new()
 var state: Dictionary = {}
+var graphics_sun: DirectionalLight3D
 var origin := Vector2i.ZERO
 var tiles: Dictionary = {}
 var buildings: Dictionary = {}
@@ -106,6 +117,7 @@ var walkers: Dictionary = {}
 var models: Dictionary = {}
 var character_appearance = CharacterAppearance.new()
 var walker_vat = WalkerVat.new()
+var walker_contact=preload("res://scripts/walker_ground_contact.gd").new()
 var citizen_lod = CitizenLod.new()
 var road_drag = RoadDrag.new()
 var message_log = MessageLog.new()
@@ -129,8 +141,10 @@ var terrain_style = TerrainPresentation.new()
 var terrain_geometry = TerrainGeometry.new()
 var terrain_details = TerrainDetails.new()
 var static_batches = Batches.new()
+var building_sites = preload("res://scripts/building_sites.gd").new()
+var farm_crops = preload("res://scripts/farm_crops.gd").new()
 var forest_batches = TerrainForest.new()
-# Olives along avenues, cypresses down boulevard medians (terrain_avenues.gd).
+# Clear paved avenues/boulevards with trees and sculpture at their outside edges.
 var street_trees = TerrainAvenues.new()
 var terrain_bridges = TerrainBridges.new()
 var trireme_orders = TriremeOrders.new()
@@ -142,6 +156,14 @@ var editor_panel = null
 var house_card = HouseCard.new()
 # Flames and smoke over the burning buildings (the snapshot's `fires`).
 var building_fires = BuildingFires.new()
+# The plague over sick houses, and blessed and cursed buildings (the snapshot's `auras`).
+var building_auras = BuildingAuras.new()
+# Tidal waves, lava, earthquakes and landslides, drawn from the terrain changes they make (scripts/disaster_effects.gd).
+var disaster_effects = DisasterEffects.new()
+# Arrows, spears and rocks in flight (the snapshot's `shots`).
+var thrown_shots = ThrownShots.new()
+var wolf_attacks = WolfAttacks.new()
+var view_box_sent := ""
 var water_life = WaterLife.new()
 var monster_effects = MonsterEffects.new()
 var extent := Vector2i(32, 32)
@@ -152,14 +174,17 @@ var building_signature := 0
 var hud: Control
 var events_panel: VBoxContainer
 var event_signature := ""
+var decision_reply_pending := -1
 var selection := MeshInstance3D.new()
 var preview := MeshInstance3D.new()
 # Bigger people, road lanes and the hover ring (walker_streets.gd).
 var walker_streets = WalkerStreets.new()
+var defence_perch = DefencePerch.new()
 var ghost := Node3D.new()
 var footprint_cells := Node3D.new()
 # Empty agora spaces: paved squares drawn by the presentation (the native building has no geometry of its own).
 var plazas := Node3D.new()
+var plaza_nodes := {}
 # The braziers of the finished altars burn as animated flames, higher while a rite is on the altar (altar_rite.gd).
 var altar_fires := AltarRite.Fires.new()
 # City overlays (view modes): the core says what each shows, overlay_view draws it, update_buildings and the walker
@@ -173,6 +198,8 @@ var escape_menu: Control
 var menu_resume := false
 var menu_held_before := false
 var character_panel: Control
+var city_help: Control
+var save_load_busy:=false
 # Render-only: where scripts/render_portraits.gd keeps the portrait models (never set in the game).
 var character_portrait_source := ""
 var character_resume := false
@@ -191,8 +218,12 @@ var enlist_dialog
 # The red notice while an enemy force is in the city (the snapshot carries `invaders` only then).
 var invasion_banner
 var monster_card
+# One rail button for each kind of hazard alert (ui/hazard_rail.gd).
+var hazard_rail
 var monster_card_age := 0.0
 var building_index: Dictionary = {}
+# Where each placed building stands ("x,y" -> its asset and transform), for effects that follow a building's own meshes (soot on a burning one).
+var building_placements: Dictionary = {}
 # The partner city of the trade post or pier being placed (its number in the core's list), or -1.
 var trade_partner := -1
 # The tile the current placement preview was made for: the pointer tile, or a nearby fitting shore tile for a pier.
@@ -219,11 +250,11 @@ var build_menu: MenuButton
 var undo_button: Button
 var demolition_dialog: ConfirmationDialog
 var demolition_request := ""
+var demolition_spare_request := ""
 var demolition_was_running := false
 var hint: Label
 var details: Label
 var pause_button: Button
-var speed_button: OptionButton
 var language := "en"
 var language_chosen := false
 # Only a session reached through the start menu writes the player's language back to their settings.
@@ -238,6 +269,14 @@ var terrain_signature := ""
 var asset_count := 0
 # Microseconds spent in each stage of the last receive_state(), for profiling.
 var receive_timing: Dictionary = {}
+var surface_revision := 0
+var placement_revision := 0
+var geometry_revision := 0
+var building_draw_cache := {}
+var building_render_key: Array = []
+var building_render_updates := 0
+var footprint_key: Array = []
+var footprint_cache := PackedVector2Array()
 # The same stages for the very first snapshot (city load), plus the core open time.
 var startup_timing: Dictionary = {}
 var capture_path := ""
@@ -252,6 +291,7 @@ var tool_buttons: Dictionary = {}
 var captured := false
 var asset_review := false
 var terrain_review := ""
+var view_review := ""
 var garden_review := ""
 var sanctuary_review := ""
 var pyramid_review := ""
@@ -266,6 +306,10 @@ var character_review := ""
 var character_subjects: Array = []
 
 func _ready() -> void:
+	# The root loading surface has already drawn. Hold city input and native ticks
+	# through initial geometry/UI construction and the first complete city frame.
+	if LoadingScreen.current(get_tree()) != null:
+		process_mode = Node.PROCESS_MODE_DISABLED
 	var port := 0
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--bridge-port="):
@@ -279,6 +323,8 @@ func _ready() -> void:
 			asset_review = true
 		if argument.begins_with("--terrain-review="):
 			terrain_review = argument.trim_prefix("--terrain-review=")
+		if argument.begins_with("--view-review="):
+			view_review = argument.trim_prefix("--view-review=")
 		if argument.begins_with("--garden-review="):
 			garden_review = argument.trim_prefix("--garden-review=")
 		if argument.begins_with("--sanctuary-review="):
@@ -314,6 +360,8 @@ func _ready() -> void:
 	add_child(world)
 	world.add_child(terrain)
 	world.add_child(static_batches)
+	world.add_child(building_sites)
+	world.add_child(farm_crops)
 	world.add_child(forest_batches)
 	world.add_child(street_trees)
 	world.add_child(terrain_bridges)
@@ -337,6 +385,10 @@ func _ready() -> void:
 	world.add_child(plazas)
 	world.add_child(altar_fires)
 	world.add_child(building_fires)
+	world.add_child(building_auras)
+	world.add_child(disaster_effects)
+	world.add_child(thrown_shots)
+	world.add_child(wolf_attacks)
 	world.add_child(monster_effects)
 	world.add_child(water_life)
 	world.add_child(army_view.root)
@@ -356,7 +408,7 @@ func _ready() -> void:
 	if port:
 		core.start(port)
 	else:
-		var engine := ProjectSettings.globalize_path("res://..").simplify_path()
+		var engine := str(Engine.get_meta("ezeus_engine_directory", ProjectSettings.globalize_path("res://..").simplify_path()))
 		var designated := engine.path_join("Save/Hippodamus/CLAUDE-TESTING-ADVENTURE.ez")
 		var to_open := designated
 		if Engine.has_meta("ezeus_load"):
@@ -374,11 +426,14 @@ func _ready() -> void:
 			Engine.remove_meta("ezeus_simulation")
 			core.adopt(adopted, save_directory())
 		else:
-			core.start_embedded(engine, to_open, core_language, save_directory())
-		if core.simulation == null and to_open != designated:
-			# A save that cannot be opened must not leave an empty world: fall back to the test city.
-			core.start_embedded(engine, designated, core_language, save_directory())
-			hint.text = tr("That save could not be opened; the test city was loaded instead")
+			var verified: Dictionary=Engine.get_meta("ezeus_verified_save",{})
+			var read_directory: String=to_open.get_base_dir() if not verified.is_empty() else save_directory()
+			core.start_embedded(engine, to_open, core_language, read_directory)
+			if core.simulation!=null:core.simulation.set_save_directory(save_directory())
+			if not verified.is_empty():
+				Engine.remove_meta("ezeus_verified_save")
+				preload("res://scripts/save_loader.gd").clean(verified)
+				if verified.get("recovered",false) and core.simulation!=null:hint.text=tr("Recovery copy loaded. The original save was kept.")
 		# The leader's name, which the city's messages address (validation keeps the designated save's own).
 		if core.simulation != null and not validate and not Leaders.current().is_empty():
 			core.query("player_name " + Leaders.current())
@@ -392,6 +447,35 @@ func _ready() -> void:
 		refresh_catalog()
 		if core.simulation != null and state.get("paused", true):
 			world_map.prewarm(core)
+	if LoadingScreen.current(get_tree()) != null:
+		finish_city_loading.call_deferred()
+	elif Engine.has_meta("ezeus_offer_settlement_guide"):
+		offer_settlement_guide.call_deferred()
+
+func finish_city_loading() -> void:
+	var loading := LoadingScreen.current(get_tree())
+	if loading == null:
+		return
+	if core.simulation == null or state.is_empty():
+		loading.fail(return_to_start)
+		return
+	loading.set_status(tr("Entering the city…"))
+	await get_tree().process_frame
+	if not is_inside_tree() or not is_instance_valid(loading):
+		return
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+	if not is_inside_tree() or not is_instance_valid(loading):
+		return
+	loading.dismiss()
+	process_mode = Node.PROCESS_MODE_INHERIT
+	offer_settlement_guide()
+
+func offer_settlement_guide() -> void:
+	var requested: bool=bool(Engine.get_meta("ezeus_offer_settlement_guide",false))
+	Engine.remove_meta("ezeus_offer_settlement_guide")
+	if requested and not UserSettings.get_value("interface","settlement_guide_finished",false) and int(state.get("housing",{}).get("people",0))==0 and editor_panel==null:
+		open_city_help("guide")
 
 func material(color: Color, transparent := false) -> StandardMaterial3D:
 	var result := StandardMaterial3D.new()
@@ -443,10 +527,13 @@ func setup_lighting() -> void:
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS
 	sun.directional_shadow_max_distance = 70
 	add_child(sun)
+	graphics_sun = sun
+	add_to_group("ezeus_graphics_city")
+	preload("res://scripts/graphics_settings.gd").apply(get_tree(), preload("res://scripts/graphics_settings.gd").current)
 
 # The quick tools. Inspecting is the city's resting mode, not a button: a right click, Escape or the tool card's close button
 # returns to it (as the SDL game's right click drops the building tool).
-const TOOLS := [["road", "Road"], ["house", "Housing"], ["demolish", "Demolish"]]
+const TOOLS := [["select", "Inspect"], ["house", "Housing"], ["road", "Road"], ["roadblock", "Road Block"], ["demolish", "Demolish"]]
 
 func setup_ui() -> void:
 	var layer := CanvasLayer.new()
@@ -464,14 +551,24 @@ func setup_ui() -> void:
 	hint = hud.hint
 	details = hud.details
 	pause_button = hud.pause_button
-	speed_button = hud.speed_button
 	tool_buttons = hud.tool_buttons
 	hud.set_tools(TOOLS)
-	hud.set_model_factory(model)
+	hud.set_model_factory(building_preview_model)
 	hud.tool_selected.connect(set_tool)
+	hud.toolbar_focus_changed.connect(func(blocked):
+		orbit.toolbar_input_blocked = blocked
+		if blocked: orbit.dragging = false)
+	hud.decision_visibility_changed.connect(func(expanded):
+		orbit.modal_input_blocked = expanded
+		if expanded: orbit.dragging = false)
 	hud.placement_turn_requested.connect(turn_placement)
 	hud.wall_fill_changed.connect(func(filled): road_drag.wall_fill=filled;road_drag.key="")
 	hud.inspector_closed.connect(close_inspection)
+	var help_button:=Button.new(); help_button.name="CityHelpButton";help_button.text="?"; help_button.theme_type_variation="HeaderAction"
+	help_button.custom_minimum_size=Vector2(28,28);help_button.size_flags_vertical=Control.SIZE_SHRINK_CENTER
+	help_button.tooltip_text="City attention and settlement guide"
+	help_button.pressed.connect(func():open_city_help("attention"))
+	hud.get_node("%StatsRow").add_child(help_button)
 	hud.pause_pressed.connect(func(): core.send("pause %d" % (0 if state.get("paused", true) else 1)))
 	hud.speed_selected.connect(func(index): core.send("speed %d" % index))
 	hud.undo_pressed.connect(func(): core.send("undo"))
@@ -479,6 +576,9 @@ func setup_ui() -> void:
 		core.send(demolition_request)
 		finish_demolition_dialog())
 	hud.demolition_canceled.connect(finish_demolition_dialog)
+	hud.demolition_spared.connect(func():
+		core.send(demolition_spare_request)
+		finish_demolition_dialog())
 	hud.message_dismissed.connect(func(id):
 		if id >= 0:
 			pending_info_ack[id] = true
@@ -516,9 +616,18 @@ func setup_ui() -> void:
 	# The monsters at large: a button in the rail under the journal and the card it opens (ui/monster_card.gd).
 	monster_card = MonsterCard.new()
 	hud.add_child(monster_card)
-	monster_card.attach(hud.get_node("EventRail/RailColumn"), hud.icon("close"), hud.icon("monster"))
+	monster_card.attach(hud.get_node("%AlertList"), hud.icon("close"), hud.toolbar_icon("notice_monster"))
+	hazard_rail = HazardRail.new()
+	hud.add_child(hazard_rail)
+	hazard_rail.attach(hud.get_node("%AlertList"), func(name): return hud.toolbar_icon("notice_"+name.trim_prefix("alert_")))
+	hud.decision_visibility_changed.connect(func(expanded): hazard_rail.suspended=expanded)
+	hazard_rail.go_requested.connect(func(cell): jump_to_cell(Vector2(cell)))
+	hazard_rail.changed.connect(func():
+		hud._layout_panels.call_deferred()
+		place_monster_card.call_deferred())
 	monster_card.opened.connect(func():
 		hud.set_messages_open(false)
+		hud.set_goals_expanded(false)
 		refresh_monster_card())
 	monster_card.visibility_changed.connect(place_monster_card)
 	monster_card.go_requested.connect(func(cell): jump_to_cell(Vector2(cell)))
@@ -547,6 +656,11 @@ func setup_ui() -> void:
 			hud.set_messages(message_log.entries)
 			inspector.hide()
 		else: refresh_inspection())
+	hud.goals_toggled.connect(func(open):
+		if open:
+			monster_card.set_open(false)
+			army_panel.close()
+		refresh_inspection())
 	inspector_controls.action_requested.connect(func(command):
 		if not core.send(command):
 			inspector_controls.command_done(command, false)
@@ -567,6 +681,7 @@ func change_language() -> void:
 	army_panel.retranslate()
 	invasion_banner.retranslate()
 	monster_card.retranslate()
+	hazard_rail.retranslate()
 	placement_key = ""
 	update_hint()
 	if not state.is_empty():
@@ -593,6 +708,9 @@ func update_hint() -> void:
 		return
 	if mode in RoadDrag.PATH_TOOLS:
 		hint.text = tr("Drag to lay a row along a path")
+		return
+	if mode == "demolish":
+		hint.text = tr("Click a building to demolish it  •  or drag over an area to demolish all of it")
 		return
 	if mode in ["goat", "sheep", "cattle"]:
 		hint.text = tr("Click on fertile pasture to place livestock  •  click repeatedly to add more")
@@ -634,10 +752,17 @@ func finish_demolition_dialog() -> void:
 		core.send("pause 0")
 	demolition_was_running = false
 	demolition_request = ""
+	demolition_spare_request = ""
 
 func reason_text(code: String) -> String:
 	var messages := {
 		"save_failed": "The file could not be written",
+		"save_backup_failed": "The recovery copy could not be secured. The previous save was kept.",
+		"save_in_progress": "Another save operation is using this name. Try again shortly.",
+		"save_checksum_failed": "The save failed its integrity check.",
+		"invalid_save": "The saved file is damaged or incomplete.",
+		"invalid_save_metadata": "The save contains unsupported presentation data.",
+		"incompatible_save": "This save needs a newer game version.",
 		"invalid_save_name": "Choose a different name",
 		"save_directory_required": "No save folder is configured",
 		"no_path": "No road can reach that tile",
@@ -738,6 +863,22 @@ func refresh_catalog() -> void:
 	var listed: Array = core.query("buildable").get("buildings", [])
 	var partners: Array = core.query("trade_partners").get("partners", [])
 	hud.set_catalog(BuildCatalog.groups(listed, BuildCatalog.placeholders_wanted(), partners))
+	if hud.current_tool not in ["select", "demolish"] and not hud.build_entries.has(hud.current_tool):
+		set_tool("select")
+
+func building_preview_layout(tool: String) -> Dictionary:
+	# One read-only query per uncached composite design, using the native city focus
+	# so scenario-specific pyramid marble levels belong to the player's city.
+	# The native layout is returned even when that cell cannot accept construction.
+	var focus: Array = state.get("focus", [])
+	if focus.size() >= 2 and tiles.has(Vector2i(int(focus[0]), int(focus[1]))):
+		return core.query("preview %s %d %d 0" % [tool, int(focus[0]), int(focus[1])])
+	for cell in tiles:
+		return core.query("preview %s %d %d 0" % [tool, cell.x, cell.y])
+	return {}
+
+func building_preview_model(item: Dictionary) -> Node3D:
+	return BuildingPreview.create(item, model, model_basis, building_preview_layout, PYRAMID_RISE)
 
 # The trade partner a trade post or pier command carries.
 func partner_suffix() -> String:
@@ -798,6 +939,8 @@ func refresh_placement() -> void:
 	if asset == "":
 		ghost.visible = false
 		hint.text = tr("Cost: %d  •  %s") % [int(placement_result.cost), tr("Ready to place") if valid else reason_text(placement_result.reason)]
+		if mode == "demolish" and valid:
+			hint.text = tr("Demolition: %d  •  Click to remove; demolition cannot be undone") % int(placement_result.cost)
 		hud.set_placement_feedback(hint.text,valid)
 		return
 	if ghost_asset != asset:
@@ -823,6 +966,8 @@ func refresh_placement() -> void:
 	# A pier faces the water the core found, not the key-turned facing.
 	var facing: int = int(placement_result.orientation) if mode in CORE_FACING else StreetFacing.facing(tiles, asset, int(placement_result.x), int(placement_result.y), int(placement_result.w), int(placement_result.h), orientation)
 	ghost.transform = Transform3D(model_basis(asset, placement_result.w, placement_result.h, facing), center + Vector3.UP * .02)
+	if mode not in ["road", "demolish"]:
+		ghost.transform = StreetSetback.apply(tiles, placement_result, ghost.transform)
 	if asset == "road":
 		var normal := terrain_geometry.normal_at(terrain_geometry.profile(picked),.5,.5)
 		ghost.basis = Basis(Quaternion(Vector3.UP,normal)) * ghost.basis
@@ -900,7 +1045,7 @@ func refresh_inspection() -> void:
 			close_inspection()
 			return
 		value["name"] = labels[kind]
-	inspector.visible = not hud.message_panel.visible
+	inspector.visible = not hud.message_panel.visible and not hud.goals_list.visible
 	hud.set_inspection_header(value)
 	var lines: Array[String] = []
 	if value.has("footprint"):
@@ -930,6 +1075,11 @@ func refresh_inspection() -> void:
 
 func command_finished(command: String, result: Dictionary) -> void:
 	placement_key = ""
+	if command.begins_with("event ") and int(command.get_slice(" ", 1)) == decision_reply_pending:
+		decision_reply_pending = -1
+		if result.has("error"):
+			event_signature = ""
+			update_events()
 	if result.has("error"):
 		hint.text = reason_text(result.error)
 	elif command.begins_with("build"):
@@ -990,7 +1140,7 @@ func command_finished(command: String, result: Dictionary) -> void:
 	elif command.begins_with("sanctuary_attack") and result.has("attack_answer") and result.attack_answer != null:
 		hint.text = str(result.attack_answer.text)
 		inspector_controls.show_attack_answer(result.attack_answer)
-	if command.begins_with("storage") or command.begins_with("industry") or command.begins_with("building_switch") or command.begins_with("trade ") or command.begins_with("hero_summon") or command.begins_with("monument_halt") or command.begins_with("sanctuary_help") or command.begins_with("sanctuary_attack"):
+	if command.begins_with("demolish_ruin") or command.begins_with("storage") or command.begins_with("industry") or command.begins_with("building_switch") or command.begins_with("trade ") or command.begins_with("hero_summon") or command.begins_with("monument_halt") or command.begins_with("sanctuary_help") or command.begins_with("sanctuary_attack"):
 		inspector_controls.command_done(command, not result.has("error"))
 	refresh_inspection()
 
@@ -1021,29 +1171,50 @@ func sanitize_save_name(text: String) -> String:
 	var clean := expression.sub(text, "-", true).strip_edges()
 	while clean.begins_with("."):
 		clean = clean.substr(1)
-	return clean.left(64).strip_edges()
+	while clean.to_utf8_buffer().size()>64:clean=clean.left(clean.length()-1)
+	return clean.strip_edges()
 
 func save_game(save_name: String) -> bool:
 	var clean := sanitize_save_name(save_name)
 	if clean.is_empty():
 		hint.text = tr("Enter a name for the save")
 		return false
-	var result: Dictionary = core.simulation.save_city(clean) if core.simulation != null else {"error": "city_not_loaded"}
+	var result: Dictionary = core.simulation.save_city(clean,save_view()) if core.simulation != null else {"error": "city_not_loaded"}
 	if result.has("saved"):
-		hint.text = tr("Game saved as “%s”") % clean
+		hint.text = tr("Game saved as “%s”") % clean if result.get("durability_confirmed",true) else tr("The save was written, but disk durability could not be confirmed. Keep another copy.")
 		return true
 	hint.text = tr("The game could not be saved: %s") % reason_text(str(result.get("error", "save_failed")))
 	return false
 
+func save_view() -> Dictionary:
+	var point:=tile_coordinates(orbit.target)
+	return {"x":point.x,"y":point.y,"yaw":orbit.yaw,"pitch":orbit.pitch,"distance":orbit.distance}
+
 # Saved games, newest first, with a one-line description for the load dialog.
 func list_saves() -> Array:
-	return SaveFiles.list(save_directory())
+	return SaveFiles.list(save_directory()) if validate or not street_review.is_empty() else SaveFiles.list()
 
 func load_game(path: String) -> void:
-	if not FileAccess.file_exists(path):
-		hint.text = tr("That save could not be opened")
+	if save_load_busy or core.simulation==null:return
+	save_load_busy=true
+	var held: bool=core.commands_held
+	var observed: Dictionary=core.simulation.snapshot(false)
+	core.snapshot_received.emit(observed)
+	var resume: bool=not observed.paused
+	core.commands_held=true
+	if resume:core.snapshot_received.emit(core.query("pause 1"))
+	if is_instance_valid(escape_menu):escape_menu.suspend()
+	var checked: Dictionary=await preload("res://scripts/save_loader.gd").choose_city(hud,path,language)
+	save_load_busy=false
+	if not checked.get("ok",false):
+		core.commands_held=held
+		if resume:core.snapshot_received.emit(core.query("pause 0"))
+		if is_instance_valid(escape_menu):escape_menu.restore()
+		hint.text=tr("Loading cancelled. Your current city is unchanged.")
 		return
-	Engine.set_meta("ezeus_load", path)
+	Engine.set_meta("ezeus_load", checked.stage)
+	Engine.set_meta("ezeus_verified_save",checked)
+	SaveFiles.activate(str(checked.get("episode",{}).get("campaign_ref","")))
 	Engine.set_meta("ezeus_language", language)
 	hint.text = tr("Loading…")
 	get_tree().reload_current_scene.call_deferred()
@@ -1132,6 +1303,8 @@ func place_banner(cell: Vector2i) -> void:
 
 func game_action(action: String) -> void:
 	match action:
+		"attention", "guide":
+			open_city_help(action)
 		"main_menu":
 			hud.confirm_main_menu()
 		"sound":
@@ -1185,7 +1358,7 @@ func autosave() -> bool:
 		var older := directory.path_join("autosave %d.ez" % (slot - 1))
 		if FileAccess.file_exists(older):
 			DirAccess.rename_absolute(older, directory.path_join("autosave %d.ez" % slot))
-	var saved: bool = core.simulation != null and core.simulation.save_city("autosave 1").has("saved")
+	var saved: bool = core.simulation != null and core.simulation.save_city("autosave 1",save_view()).has("saved")
 	if saved:
 		hint.text = tr("Autosaved")
 	return saved
@@ -1206,18 +1379,41 @@ func place_monster_card() -> void:
 	if monster_card == null or not monster_card.visible:
 		return
 	var rail: Control = hud.get_node("%EventRail")
-	var top := rail.offset_top + rail.get_combined_minimum_size().y + 8
+	var top: float = maxf(hud.get_node("%ResourceRibbon").get_global_rect().end.y+12,hud.get_node("%ObjectivesButton").get_global_rect().end.y+8)
 	var wanted: float = monster_card.list.get_combined_minimum_size().y + 80
-	var room := maxf(160, hud.size.y - top - 110)
-	monster_card.offset_right = -16
-	monster_card.offset_left = -16 - 400
+	var room: float = maxf(0,hud.get_node("%BottomBar").position.y-top-8)
+	monster_card.offset_right = rail.position.x-8-hud.size.x
+	monster_card.offset_left = monster_card.offset_right-minf(maxf(400,monster_card.get_combined_minimum_size().x),hud.size.x-100)
 	monster_card.offset_top = top
 	monster_card.offset_bottom = top + minf(wanted, room)
 
 func jump_to_cell(cell: Vector2) -> void:
+	orbit.cancel_wheel_zoom()
 	orbit.target = world_position(cell.x, cell.y, 0)
 	orbit.clamp_target()
 	orbit.snap_to_ground()
+
+func open_city_help(which: String) -> void:
+	if not is_instance_valid(city_help):
+		city_help=preload("res://ui/city_help_panel.gd").new()
+		city_help.city=self; hud.add_child(city_help)
+	city_help.open(which)
+
+func focus_attention(item: Dictionary) -> void:
+	# A warning must not select a demolished/replaced building at the same address.
+	var current: Dictionary=building_index.get(int(item.id),{})
+	var target:=Vector2i(int(item.x),int(item.y))
+	if current.is_empty() or not Rect2i(Vector2i(int(current.x),int(current.y)),Vector2i(int(current.w),int(current.h))).has_point(target):
+		if is_instance_valid(city_help):city_help.refresh()
+		return
+	set_tool("select")
+	hud.set_goals_expanded(false);hud.set_messages_open(false)
+	jump_to_cell(Vector2(float(current.x)+(float(current.w)-1)*.5,float(current.y)+(float(current.h)-1)*.5))
+	orbit.distance=minf(orbit.distance,maxf(14.0,maxf(float(current.w),float(current.h))*2.5))
+	orbit.refresh()
+	# Pyramid pieces are registered at their far native corner while their
+	# presentation footprint extends back from it. Inspect the reported native tile.
+	inspected=target; refresh_inspection()
 
 # Tile coordinates of a world point (x right, y up in the minimap).
 func tile_coordinates(point: Vector3) -> Vector2:
@@ -1225,15 +1421,40 @@ func tile_coordinates(point: Vector3) -> Vector2:
 
 # The camera's footprint on the ground, as tile coordinates for the minimap outline.
 func view_footprint() -> PackedVector2Array:
-	var polygon := PackedVector2Array()
 	var rect := get_viewport().get_visible_rect()
+	var key := [orbit.camera.global_transform, orbit.camera.projection, orbit.camera.fov,
+		orbit.camera.size, orbit.camera.keep_aspect, orbit.camera.h_offset, orbit.camera.v_offset,
+		orbit.camera.near, orbit.camera.far, orbit.camera.frustum_offset,
+		rect, origin, extent, geometry_revision]
+	if key == footprint_key: return footprint_cache
+	var polygon := PackedVector2Array()
 	for corner in [rect.position, rect.position + Vector2(rect.size.x, 0), rect.end, rect.position + Vector2(0, rect.size.y)]:
 		var hit = orbit.terrain_point(corner)
 		if hit == null:
 			hit = orbit.ground_point(corner)
 		if hit != null:
 			polygon.append(tile_coordinates(hit))
+	footprint_key = key
+	footprint_cache = polygon
 	return polygon
+
+# Tells the core which tiles the camera shows, so the sounds the native game plays only for what is on screen (a fire's crackle, gods,
+# monsters, archers, builders) play for what the player sees. Sent only when the box changes.
+func send_view_box() -> void:
+	if core.simulation == null or tiles.is_empty():
+		return
+	var polygon := view_footprint()
+	if polygon.is_empty():
+		return
+	var low := polygon[0]
+	var high := polygon[0]
+	for corner in polygon:
+		low = low.min(corner)
+		high = high.max(corner)
+	var box := "view_box %d %d %d %d" % [floori(low.x), floori(low.y), ceili(high.x), ceili(high.y)]
+	if box != view_box_sent:
+		view_box_sent = box
+		core.query(box)
 
 func terrain_height_world(x: float, z: float) -> float:
 	if tiles.is_empty():
@@ -1292,11 +1513,19 @@ func receive_state(value: Dictionary) -> void:
 	orbit.configure_map(extent)
 	if initial:
 		var focus: Array = state.get("focus", [origin.x + 15.5, origin.y + 15.5])
+		if Engine.has_meta("ezeus_new_game_focus"):
+			focus = Engine.get_meta("ezeus_new_game_focus")
+			Engine.remove_meta("ezeus_new_game_focus")
+		var saved_view: Array=state.get("saved_camera",[])
+		if saved_view.size()==5:
+			focus=[saved_view[0],saved_view[1]]
+			orbit.yaw=float(saved_view[2]);orbit.pitch=clampf(float(saved_view[3]),25,75);orbit.distance=clampf(float(saved_view[4]),orbit.MINIMUM_DISTANCE,orbit.maximum_distance)
 		orbit.target = world_position(focus[0], focus[1], 0)
-		orbit.refresh()
+		orbit.clamp_target();orbit.snap_to_ground()
 	var dirty := {}
 	var changed: Array[Vector2i] = []
 	var geometry_changes: Array[Vector2i] = []
+	var street_changes: Array[Vector2i] = []
 	if initial and state.has("tiles"):
 		tiles.clear()
 	for tile in state.get("tiles", state.get("tile_changes", [])):
@@ -1308,6 +1537,8 @@ func receive_state(value: Dictionary) -> void:
 		var old_geometry := int(old[6]) if old.size() >= 8 else 0
 		var new_geometry := int(tile[6]) if tile.size() >= 8 else 0
 		var geometry_changed := old.is_empty() or height_changed or coast_changed or bool((old_geometry ^ new_geometry) & 3) or (bool((old_geometry | new_geometry) & 1) and bool((old_geometry ^ new_geometry) & 8))
+		var street_changed: bool = old.is_empty() or old[4] != tile[4] or (old.size() >= 9 and tile.size() >= 9 and old[8] != tile[8])
+		if street_changed: street_changes.append(key)
 		if geometry_changed:
 			geometry_changes.append(key)
 			dirty[Vector2i(floori(float(key.x - origin.x) / 32), floori(float(key.y - origin.y) / 32))] = true
@@ -1321,8 +1552,17 @@ func receive_state(value: Dictionary) -> void:
 		# A road appearing or going changes which buildings step back from it (street_setback.gd).
 		if not initial and old.size() > 4 and int(old[4]) != int(tile[4]):
 			building_signature = 0
+		if not initial:
+			disaster_effects.note(key, old, tile)
 		tiles[key] = tile
 		terrain_levels[int(tile[2])] = true
+	if not changed.is_empty(): surface_revision += 1
+	if not geometry_changes.is_empty(): geometry_revision += 1
+	if not geometry_changes.is_empty() or not street_changes.is_empty():
+		placement_revision += 1
+		building_signature = 0
+	if initial or not street_changes.is_empty():
+		walker_streets.update_tiles(tiles, street_changes, initial)
 	var stamp := Time.get_ticks_usec()
 	var timing := {"tiles": stamp - receive_started}
 	# Lambdas capture locals by value, so the running stamp lives in a dictionary.
@@ -1345,6 +1585,7 @@ func receive_state(value: Dictionary) -> void:
 	for chunk in dirty:
 		build_chunk(chunk)
 	lap.call("chunks")
+	disaster_effects.flush(self)
 	if not changed.is_empty():
 		forest_batches.update(tiles,origin,extent,terrain_geometry,changed)
 		lap.call("forest")
@@ -1357,11 +1598,15 @@ func receive_state(value: Dictionary) -> void:
 	water_life.update_tiles(self, changed, initial)
 	water_life.receive(value)
 	update_buildings()
+	farm_crops.refresh(state.get("farm_crops",[]),self)
 	if value.has("fires"):
 		building_fires.update(value.fires, self)
+	if value.has("auras"):
+		building_auras.update(value.auras, self)
 	lap.call("buildings")
 	update_walkers()
 	monster_effects.receive(value, self)
+	thrown_shots.receive(value, self)
 	update_events()
 	# What the city may build changes while it is played (a monster unlocks its slayer's hall, an event allows a building):
 	# the core counts those changes and the Build menu asks again.
@@ -1374,6 +1619,22 @@ func receive_state(value: Dictionary) -> void:
 	var monster_at: Array = value.get("monster_at", [0, 0])
 	# Invaders keep the notice at the top of the city; monsters have their own button and card beside the journal.
 	invasion_banner.set_invaders(int(value.get("invaders", 0)), Vector2i(int(invader_at[0]), int(invader_at[1])))
+	if hazard_rail != null and value.has("alerts"):
+		hazard_rail.observe(value.alerts)
+	for alert in value.get("alerts", []):
+		disaster_effects.note_alert(int(alert.id), str(alert.kind))
+	if hazard_rail != null and value.has("fires"):
+		# The fire and plague buttons stay while the hazard lasts (smouldering ruins do not count).
+		var burning := 0
+		var burning_at = null
+		for fire in value.fires:
+			if int(fire[5]) == 0:
+				burning += 1
+				if burning_at == null: burning_at = Vector2i(int(fire[0]), int(fire[1]))
+		hazard_rail.set_persistent("fire", burning, burning_at)
+	if hazard_rail != null and value.has("plague"):
+		var sick: Dictionary = value.plague
+		hazard_rail.set_persistent("plague", int(sick.houses), Vector2i(int(sick.at[0]), int(sick.at[1])) if int(sick.at[0]) >= 0 else null)
 	var monsters_now := int(value.get("monsters", 0))
 	if monster_card != null and monsters_now != monster_card.count:
 		monster_card.set_count(monsters_now)
@@ -1415,9 +1676,11 @@ func update_events() -> void:
 			if NotificationPolicy.delivery(entry) == "journal":
 				pending_info_ack[int(entry.id)] = true
 			else:
-				hud.show_toast(int(entry.id), MessageLog.sentence(str(entry.title)), str(entry.text))
+				hud.show_toast(int(entry.id), MessageLog.sentence(str(entry.title)), str(entry.text), str(entry.get("kind","")))
 		if not informational and decision.is_empty():
 			decision = entry
+	if decision_reply_pending != int(decision.get("id", -1)):
+		decision_reply_pending = -1
 	if hud.message_panel.visible:
 		message_log.mark_read()
 		hud.set_messages(message_log.entries)
@@ -1431,22 +1694,50 @@ func update_events() -> void:
 		return
 	var body := Label.new()
 	body.text = str(decision.text)
+	body.theme_type_variation = "EnvoyBody"
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.custom_minimum_size.x = 0
 	events_panel.add_child(body)
-	for action in decision.actions:
+	for action in hud.decision_actions(decision):
 		var button := Button.new()
 		button.text = str(action.label)
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		button.theme_type_variation = "EnvoyAction"
+		button.theme_type_variation = hud.decision_action_style(decision, int(action.choice))
+		button.custom_minimum_size = Vector2(120, 46)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.set_meta("choice", int(action.choice))
+		button.disabled = decision_reply_pending == int(decision.id)
 		# "Send troops" (-2) asks the core for the forces that may go; the other choices answer the decision.
-		button.pressed.connect(func():
-			if int(action.choice) == -2:
-				open_troop_enlist(int(decision.id))
-			else:
-				core.send("event %d %d" % [decision.id, action.choice]))
+		button.pressed.connect(func(): reply_to_decision(int(decision.id), int(action.choice)))
 		hud.get_node("%EventActions").add_child(button)
+	hud._update_decision_focus.call_deferred()
 	hud._layout_panels.call_deferred()
+
+func reply_to_decision(event_id: int, choice: int) -> bool:
+	var current: Array = state.get("events", []).filter(func(entry): return int(entry.id) == event_id)
+	if current.is_empty() or not current[0].get("actions", []).any(func(action): return int(action.choice) == choice):
+		return false
+	if decision_reply_pending == event_id:
+		return true
+	if choice == -2:
+		open_troop_enlist(event_id)
+		return true
+	if not core.send("event %d %d" % [event_id, choice]):
+		return false
+	decision_reply_pending = event_id
+	for button in hud.get_node("%EventActions").get_children():
+		button.disabled = true
+	return true
+
+# A right-click is the offered native Postpone action, including its scheduling
+# and pause behavior. Invasions' choice 1 is Bribe and must never take this path.
+func postpone_decision() -> bool:
+	for entry in state.get("events", []):
+		if int(entry.id) == hud.decision_id and hud.decision_can_postpone(entry):
+			reply_to_decision(int(entry.id), 1)
+			# A full command queue keeps the panel open so the action can be retried.
+			return true
+	return false
 
 func build_chunk(key: Vector2i) -> void:
 	if chunks.has(key):
@@ -1528,12 +1819,14 @@ func model(name: String) -> Node3D:
 	if models.has(name):
 		var instance: Node3D = models[name].instantiate()
 		character_appearance.apply(instance, name, model_contract(name))
+		static_batches.finish.apply(instance,name)
 		return instance
 	return null
 
 func update_buildings() -> void:
 	# The embedded core flags an unchanged building list, so steady snapshots cost nothing.
 	# Other sources (the legacy bridge) carry no flag and fall back to hashing the list.
+	var forced := building_signature == 0
 	var signature: int
 	if state.has("buildings_changed"):
 		if not state.buildings_changed and building_signature != 0:
@@ -1544,22 +1837,43 @@ func update_buildings() -> void:
 		if signature == building_signature:
 			return
 	building_signature = signature
+	# Inspector records remain current even when stock/staffing metadata changes
+	# without changing any rendered geometry, work flags or occupied goods bays.
+	building_index.clear()
+	var rows: Array = []
+	for building in state.buildings:
+		building_index[int(building.id)] = building
+		var bays: Array = []
+		for bay in building.get("bays", []):
+			bays.append([int(bay.get("bay", -1)), str(bay.get("good", ""))])
+		rows.append([building.id, building.asset, building.x, building.y, building.w, building.h,
+			building.altitude, building.get("orientation", 0), building.get("stretch", false),
+			building.get("grow", 100), building.get("working", building.get("active", false)),
+			building.get("animation_offset", 0), bays])
+	var render_key := [rows, placement_revision, origin, extent, overlay_view.mode, overlay_view.visibility_signature]
+	if not forced and render_key == building_render_key:
+		if overlay_view.active(): overlay_view.redraw()
+		return
+	building_render_key = render_key
+	building_render_updates += 1
+	defence_perch.refresh(state.buildings)
 	hud.minimap.set_buildings(state.buildings)
 	var groups := {}
 	var placeholders: Array = []
 	var altars: Array = []
+	var alive := {}
+	var wanted_plazas := {}
 	asset_count = 0
-	for child in plazas.get_children():
-		child.free()
-	building_index.clear()
+	building_placements.clear()
 	var trade_now := 0
 	for building in state.buildings:
-		building_index[int(building.id)] = building
+		alive[int(building.id)] = true
 		trade_now += 1 if building.asset in ["trade_post", "harbour"] else 0
 		if building.asset in ["native_marker", "terrain_road"]:
 			asset_count += 1
 			continue
 		if building.asset == "agora_space":
+			wanted_plazas[int(building.id)] = true
 			add_plaza(building)
 			asset_count += 1
 			continue
@@ -1575,29 +1889,19 @@ func update_buildings() -> void:
 			placeholders.append(transform)
 			continue
 		asset_count += 1
-		# The front turns to the street (street_facing.gd); the stored facing is kept off roads.
-		var facing := StreetFacing.facing(tiles, str(building.asset), int(building.x), int(building.y), int(building.w), int(building.h), int(building.get("orientation", 0)))
-		transform.basis = model_basis(building.asset, building.w, building.h, facing)
-		# A sanctuary's paving tiles (and the slab of a piece not yet begun) are flat to a ten-thousandth of a tile: laid on the terrain they
-		# z-fight with it and flicker with the camera's angle. They lie just above the highest ground under their footprint.
-		if str(building.asset).begins_with("sanctuary_court_"):
-			transform.origin.y = flat_floor_height(building, transform.origin.y)
-		if str(building.asset).begins_with("pyramid_"):
-			transform.basis = transform.basis * Basis.from_scale(Vector3(1.0, PYRAMID_RISE, 1.0))
-		# A piece of a sanctuary rises as the workers build it (`grow`, percent): a low slab at first, the whole piece when done.
-		if bool(building.get("stretch", false)):
-			# The foundation of a large piece: the paving tile laid over the whole footprint.
-			transform.basis = transform.basis * Basis.from_scale(Vector3(building.w, 1.0, building.h))
-		elif int(building.get("grow", 100)) < 100:
-			transform.basis = transform.basis * Basis.from_scale(Vector3(1.0, maxf(float(building.grow) * .01, .12), 1.0))
-		if not bool(building.get("stretch", false)):
-			transform = StreetSetback.apply(tiles, building, transform)
+		transform = building_draw_transform(building)
 		if building.asset == "sanctuary_altar" and not bool(building.get("stretch", false)) and int(building.get("grow", 100)) >= 100:
 			altars.append({"id": int(building.id), "transform": transform, "key": rite_key(float(building.x) + building.w * .5, float(building.y) + building.h * .5)})
 		var group := "%s|%d:%d" % [building.asset, floori(float(building.x) / batch_cells), floori(float(building.y) / batch_cells)]
 		if not groups.has(group):
 			groups[group] = []
-		groups[group].append({"transform":transform,"working":building.get("working",building.get("active",false)),"animation_offset":building.get("animation_offset",0)})
+		var constructing: bool=static_batches.construction.active(building)
+		var construction_top:=0.0
+		if constructing:
+			var shape: Dictionary=building_sites.shape(building.asset,static_batches)
+			construction_top=transform.origin.y+(float(shape.low)+float(shape.height)*float(building.get("grow",100))*.01)*transform.basis.y.length()
+		groups[group].append({"transform":transform,"working":building.get("working",building.get("active",false)),"animation_offset":building.get("animation_offset",0),"constructing":constructing,"construction_top":construction_top})
+		building_placements["%d,%d" % [int(building.x), int(building.y)]] = {"asset": str(building.asset), "transform": transform}
 		if building.has("bays") and overlay_view.building_visible(building):
 			var cell_x := floori(float(building.x) / batch_cells)
 			var cell_y := floori(float(building.y) / batch_cells)
@@ -1626,7 +1930,14 @@ func update_buildings() -> void:
 						groups[good_group] = []
 					groups[good_group].append({"transform": bay_tf})
 	groups["__footprint"] = placeholders
+	for id in plaza_nodes.keys():
+		if not wanted_plazas.has(id):
+			plaza_nodes[id].free()
+			plaza_nodes.erase(id)
+	for id in building_draw_cache.keys():
+		if not alive.has(id): building_draw_cache.erase(id)
 	static_batches.rebuild(groups)
+	building_sites.refresh(state.buildings,self)
 	altar_fires.refresh(altars)
 	if overlay_view.active():
 		overlay_view.redraw()
@@ -1637,6 +1948,33 @@ func update_buildings() -> void:
 			refresh_catalog()
 			# A removed post leaves the map at once but frees its partner on the next simulation step: ask again.
 			get_tree().create_timer(1.5).timeout.connect(refresh_catalog)
+
+# Inventory/work changes retain the exact placement. Geometry, growth, facing,
+# road edits and elevation invalidate it before rebuilding the existing batches.
+func building_draw_transform(building: Dictionary) -> Transform3D:
+	if int(building.get("grow",100))<100 and static_batches.construction.eligible(str(building.asset)):
+		static_batches.template(str(building.asset))
+	var id := int(building.id)
+	var key := [building.asset, building.x, building.y, building.w, building.h,
+		building.altitude, building.get("orientation", 0), building.get("stretch", false),
+		building.get("grow", 100), placement_revision, origin, extent]
+	var cached: Dictionary = building_draw_cache.get(id, {})
+	if cached.get("key") == key: return cached.transform
+	var center := world_position(building.x + (building.w - 1) * .5, building.y + (building.h - 1) * .5, building.altitude)
+	var facing := StreetFacing.facing(tiles, str(building.asset), int(building.x), int(building.y), int(building.w), int(building.h), int(building.get("orientation", 0)))
+	var transform := Transform3D(model_basis(building.asset, building.w, building.h, facing), center)
+	if str(building.asset).begins_with("sanctuary_court_"):
+		transform.origin.y = flat_floor_height(building, transform.origin.y)
+	if str(building.asset).begins_with("pyramid_"):
+		transform.basis = transform.basis * Basis.from_scale(Vector3(1.0, PYRAMID_RISE, 1.0))
+	if bool(building.get("stretch", false)):
+		transform.basis = transform.basis * Basis.from_scale(Vector3(building.w, 1.0, building.h))
+	elif int(building.get("grow", 100)) < 100 and not static_batches.construction.active(building):
+		transform.basis = transform.basis * Basis.from_scale(Vector3(1.0, maxf(float(building.grow) * .01, .12), 1.0))
+	if not bool(building.get("stretch", false)):
+		transform = StreetSetback.apply(tiles, building, transform)
+	building_draw_cache[id] = {"key": key, "transform": transform}
+	return transform
 
 const FLAT_FLOOR_LIFT := .015
 
@@ -1657,14 +1995,19 @@ func add_plaza(building: Dictionary) -> void:
 	if plaza_material == null:
 		plaza_material = material(Color(.80, .72, .56))
 		plaza_material.roughness = .95
-	var slab := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(building.w - .06, .06, building.h - .06)
-	slab.mesh = box
-	slab.material_override = plaza_material
-	slab.position = world_position(building.x + (building.w - 1) * .5, building.y + (building.h - 1) * .5, building.altitude) + Vector3.UP * .03
-	slab.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	plazas.add_child(slab)
+	var id := int(building.id)
+	var slab: MeshInstance3D = plaza_nodes.get(id)
+	if slab == null:
+		slab = MeshInstance3D.new()
+		slab.mesh = BoxMesh.new()
+		slab.material_override = plaza_material
+		slab.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		plazas.add_child(slab)
+		plaza_nodes[id] = slab
+	var size := Vector3(building.w - .06, .06, building.h - .06)
+	if slab.mesh.size != size: slab.mesh.size = size
+	var position := world_position(building.x + (building.w - 1) * .5, building.y + (building.h - 1) * .5, building.altitude) + Vector3.UP * .03
+	if slab.position != position: slab.position = position
 
 func update_walkers() -> void:
 	var alive := {}
@@ -1676,8 +2019,9 @@ func update_walkers() -> void:
 		var cell := Vector2i(floori(walker.x),floori(walker.y))
 		var native_tile: Array = tiles.get(cell,[])
 		var offset := (float(walker.altitude)-float(native_tile[2]))*.22 if not native_tile.is_empty() else 0.0
-		# Archers stand on top of the wall or tower they patrol.
-		offset += float(walker.get("lift", 0.0))
+		var perch: Dictionary = defence_perch.roof(walker)
+		# Use the Godot model's roof instead of the retained SDL sprite height.
+		offset += DefencePerch.lift(perch, float(walker.get("lift", 0.0)))
 		# The parts of a rite on an altar stand around its centre, on the ground or on the table (altar_rite.gd).
 		if walker.has("scene"):
 			target += AltarRite.offset(walker)
@@ -1690,7 +2034,7 @@ func update_walkers() -> void:
 			walkers[id].node.queue_free()
 			walkers.erase(id)
 		if not walkers.has(id):
-			var node := AltarRite.goods_node() if str(walker.asset) == "sacrifice_goods" else model(walker.asset)
+			var node := AltarRite.goods_node() if str(walker.asset) == "sacrifice_goods" else model(CitizenVariety.model_name(str(walker.asset), id))
 			if node == null:
 				node = MeshInstance3D.new()
 				var marker := SphereMesh.new()
@@ -1704,6 +2048,7 @@ func update_walkers() -> void:
 			if morphs.is_empty():
 				collect_morphs(node, morphs)
 			walkers[id] = new_walker_entry(node, str(walker.asset), int(walker.get("type", -1)), target, offset, morphs)
+			CitizenVariety.apply(node, str(walker.asset), int(id))
 			walkers[id].action = int(walker.get("action", 1))
 			walkers[id].facing = int(walker.get("orientation", 0))
 			if walker.has("scene"):
@@ -1711,10 +2056,16 @@ func update_walkers() -> void:
 				AltarRite.dress(node, walker)
 			walker_streets.dress(walkers[id])
 		var entry: Dictionary = walkers[id]
+		entry.perch = perch
 		# What the core says the walker is doing (fight and die clips) and which way it faces.
 		entry.action = int(walker.get("action", 1))
 		entry.facing = int(walker.get("orientation", 0))
+		entry.field_load = int(walker.get("field_load", 0))
+		entry.field_task = str(walker.get("field_task", ""))
 		entry.selectable = bool(walker.get("selectable", false))
+		# A cart, or an ox cart's trailer, shows its load (cart_cargo.gd).
+		if CartCargo.BEDS.has(entry.asset):
+			CartCargo.update(self, entry, walker)
 		var shown: bool = overlay_view.walker_visible(entry.type)
 		if entry.node.visible != shown:
 			entry.node.visible = shown
@@ -1785,8 +2136,12 @@ func animate_walker(entry: Dictionary, dt: float, moved: float) -> void:
 		var idle := pose_pair(morph.table, IDLE_FRAMES, idle_phase) if blend < 1 else Vector3(-1,-1,0)
 		if morph.has("vat"):
 			# No per-instance meshes: the GPU blends both clips during acceleration and stopping.
-			if blend > 0.0: node.set_instance_shader_parameter("vat_pose", walk)
-			if blend < 1.0: node.set_instance_shader_parameter("vat_idle_pose", idle)
+			if blend > 0.0 and morph.get("pose") != walk:
+				node.set_instance_shader_parameter("vat_pose", walk)
+				morph.pose = walk
+			if blend < 1.0 and morph.get("idle_pose") != idle:
+				node.set_instance_shader_parameter("vat_idle_pose", idle)
+				morph.idle_pose = idle
 			if morph.get("blend", -1.0) != blend:
 				node.set_instance_shader_parameter("vat_walk_blend", blend)
 				morph.blend = blend
@@ -1804,7 +2159,9 @@ func animate_walker(entry: Dictionary, dt: float, moved: float) -> void:
 
 func pose_pair(table: Dictionary, frames: Array, phase: float) -> Vector3:
 	var first := int(floorf(phase))
-	return Vector3(int(table.get(frames[first], -1)), int(table.get(frames[(first+1)%frames.size()], -1)), fposmod(phase, 1.0))
+	var a := int(table.get(frames[first], -1))
+	var b := int(table.get(frames[(first+1)%frames.size()], -1))
+	return Vector3(a, b, 0.0 if a == b else fposmod(phase, 1.0))
 
 func add_pose_weights(weights: Dictionary, pair: Vector3, blend: float) -> void:
 	for item in [[int(pair.x), (1.0-pair.z)*blend], [int(pair.y), pair.z*blend]]:
@@ -1837,6 +2194,7 @@ func set_overlay(id: String, toggle := false) -> void:
 func apply_overlay_visibility() -> void:
 	building_signature = 0
 	update_buildings()
+	farm_crops.refresh(state.get("farm_crops",[]),self)
 	for entry in walkers.values():
 		entry.node.visible = overlay_view.walker_visible(entry.type)
 
@@ -1886,6 +2244,9 @@ func current_scene_is_city() -> bool:
 
 # Leaves the city for the start menu. The core closes with the scene; saving first is the player's choice.
 func return_to_start() -> void:
+	var loading := LoadingScreen.current(get_tree())
+	if loading != null:
+		loading.dismiss()
 	Engine.set_meta("ezeus_language", language)
 	get_tree().change_scene_to_file.call_deferred(START_MENU)
 
@@ -1902,6 +2263,7 @@ func _process(dt: float) -> void:
 		apply_overlay_visibility()
 	static_batches.activity.advance(dt)
 	monster_effects.advance(dt)
+	thrown_shots.advance(dt)
 	water_life.advance(dt)
 	frame_count += 1
 	if frame_count == 300:
@@ -1912,19 +2274,24 @@ func _process(dt: float) -> void:
 	for entry in walkers.values():
 		entry.age += dt
 		var before: Vector3 = entry.native_position
+		var shown_before: Vector3 = entry.node.position
 		var weight := clampf(entry.age/.1,0,1)
 		entry.native_position = entry.from.lerp(entry.to,weight)
 		entry.offset = lerpf(entry.from_offset,entry.to_offset,weight)
-		entry.node.position = walker_surface_position(entry.native_position,entry.offset,not entry.waterborne)
 		var delta: Vector3 = entry.native_position - before
 		var lane: Vector3 = walker_streets.lane(entry, delta, dt, self)
-		if lane != Vector3.ZERO:
-			entry.node.position = walker_surface_position(entry.native_position+lane,entry.offset,not entry.waterborne)
+		if not entry.get("perch", {}).is_empty():
+			entry.node.position = defence_perch.position(entry.native_position, entry.perch, self)
+		else:
+			entry.node.position = walker_draw_position(entry, lane)
 		if delta.length_squared() > .00000001:
 			if entry.get("god", false):
 				entry.node.rotation.y = GodFloat.heading(entry.node.rotation.y, delta, dt)
 			elif entry.get("human", false) or entry.get("lod_role", false):
-				entry.node.rotation.y = WalkerMotion.heading(entry.node.rotation.y, delta, dt)
+				# On wide roads face the actual bounded lane motion rather than sliding
+				# sideways while turning. Native route distance still drives the gait.
+				var shown_delta: Vector3 = entry.node.position-shown_before if entry.get("wide_road", false) else delta
+				entry.node.rotation.y = WalkerMotion.heading(entry.node.rotation.y, shown_delta, dt)
 			else:
 				entry.node.rotation.y = walker_heading(delta)
 		elif WalkerCombat.fighting(entry):
@@ -1934,6 +2301,7 @@ func _process(dt: float) -> void:
 		animate_walker(entry, dt, WalkerMotion.planar_distance(delta))
 		water_life.animate_gatherer(entry, self)
 	water_life.update_workers(self)
+	wolf_attacks.update(self, dt)
 	walker_streets.hover(self)
 	if frame_count % CitizenLod.CHECK_FRAMES == 0 and not walkers.is_empty():
 		citizen_lod.update(walkers, orbit.camera.global_position, static_batches, models)
@@ -1965,14 +2333,19 @@ func _process(dt: float) -> void:
 			ghost.visible = false
 			sanctuary_ghost.visible = false
 			footprint_cells.visible = false
-		if frame_count % 6 == 0:
+		if frame_count % 6 == 0 and hud.minimap.is_visible_in_tree():
 			hud.minimap.set_view(view_footprint())
 			hud.minimap.set_camera(tile_coordinates(orbit.target), orbit.yaw)
+		if frame_count % 12 == 0:
+			send_view_box()
 		if frame_count % 30 == 0:
 			update_details()
 		if validate and not checks_started and frame_count > 40:
 			checks_started = true
 			run_checks()
+		elif not view_review.is_empty() and not captured and frame_count > 80:
+			captured = true
+			await preload("res://scripts/review_view_bounds.gd").new().run(self, view_review)
 		elif not terrain_review.is_empty() and not captured and frame_count > 80:
 			captured = true
 			var reviewer := preload("res://scripts/review_terrain.gd").new()
@@ -2036,6 +2409,17 @@ func walker_surface_position(native_position: Vector3, native_offset: float, use
 	if tiles.has(Vector2i(roundi(x),roundi(y))):
 		result.y = (terrain_bridges.height_at(x,y) if uses_bridge else terrain_geometry.height_at(x,y))+native_offset
 	return result
+
+func walker_draw_position(entry: Dictionary, lane: Vector3) -> Vector3:
+	var track: Vector3 = entry.native_position + lane
+	if entry.get("surface_track") != track or entry.get("surface_offset") != entry.offset or entry.get("surface_revision", -1) != surface_revision:
+		entry.surface_position = walker_surface_position(track, entry.offset, not entry.waterborne)
+		entry.surface_track = track
+		entry.surface_offset = entry.offset
+		entry.surface_revision = surface_revision
+	var supported: Vector3=entry.surface_position
+	supported.y+=walker_contact.lift(entry,supported,self)
+	return supported
 
 func review_city_models() -> void:
 	# Explicit verification mode only; ordinary launches retain player camera controls.
@@ -2123,6 +2507,8 @@ func pick_tile(screen: Vector2) -> void:
 	refresh_placement()
 
 func _unhandled_input(event: InputEvent) -> void:
+	# The centered request owns city input; its Escape/fold controls never submit a reply.
+	if hud.decision_expanded: return
 	if world_flight.busy(): return
 	if editor_panel != null and editor_panel.input(event):
 		get_viewport().set_input_as_handled()
@@ -2134,6 +2520,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if focus is LineEdit or focus is TextEdit:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
+		if not is_instance_valid(escape_menu) and not episode_overlay.visible:
+			for action in KeyBindings.DOCK_ACTIONS:
+				if KeyBindings.matches(event,action):
+					hud.activate_dock_action(action)
+					get_viewport().set_input_as_handled()
+					return
 		# The keys the player may rebind (scripts/key_bindings.gd); Escape, Delete and the mouse stay as they are.
 		if KeyBindings.matches(event, "pause"):
 			core.send("pause %d" % (0 if state.get("paused", true) else 1))
@@ -2155,7 +2547,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			game_action("mythology")
 		if KeyBindings.matches(event, "city"):
 			game_action("city")
-		if KeyBindings.matches(event, "camera_home"):
+		if KeyBindings.matches(event, "camera_home") and not (hud._header_has_focus() or hud.toolbar_has_focus()):
 			orbit.overview(extent)
 		if KeyBindings.matches(event, "turn_placement"):
 			turn_placement(1)
@@ -2221,7 +2613,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		pick_tile(event.position)
 		if not tiles.has(picked):
 			return
-		if (mode == "road" or mode == "wall" or mode in RoadDrag.AREA_TOOLS or mode in RoadDrag.PATH_TOOLS) and not demolition_dialog.visible:
+		if (mode == "road" or mode == "wall" or mode == "demolish" or mode in RoadDrag.AREA_TOOLS or mode in RoadDrag.PATH_TOOLS) and not demolition_dialog.visible:
 			road_drag.begin(self, picked, mode)
 			return
 		if mode == "select":
@@ -2258,21 +2650,42 @@ func _unhandled_input(event: InputEvent) -> void:
 			refresh_placement()
 			if not placement_result.get("valid", false):
 				return
-			if mode == "demolish":
-				if placement_result.confirmation_required:
-					demolition_request = "demolish %d %d 1 %d" % [picked.x, picked.y, int(placement_result.target_token)]
-					demolition_was_running = not state.get("paused", true)
-					if demolition_was_running:
-						core.send("pause 1")
-					demolition_dialog.dialog_text = tr("This removes the complete landmark or stocked market. Cost: %d. Demolition cannot be undone.") % int(placement_result.cost)
-					demolition_dialog.popup_centered(Vector2i(470, 180))
-				else:
-					core.send("demolish %d %d 0" % [picked.x, picked.y])
-			else:
-				core.send("build %s %d %d %d%s" % [mode, placement_cell.x, placement_cell.y, orientation, partner_suffix()])
-				# A trade post is built for one partner: the tool ends with the placement, as in the SDL view.
-				if mode in ["trade_post", "pier"]:
-					set_tool("select")
+			core.send("build %s %d %d %d%s" % [mode, placement_cell.x, placement_cell.y, orientation, partner_suffix()])
+			# A trade post is built for one partner: the tool ends with the placement, as in the SDL view.
+			if mode in ["trade_post", "pier"]:
+				set_tool("select")
+
+# A press and release on one tile in the demolition tool: the single-tile demolition, which asks first for a landmark or stocked
+# market. A dragged rectangle is `RoadDrag`'s (`demolish_area`). Returns true when something was sent or asked.
+func demolish_click(cell: Vector2i) -> bool:
+	if tiles.has(cell):
+		picked = cell
+	placement_key = ""
+	refresh_placement()
+	if not placement_result.get("valid", false):
+		return false
+	if placement_result.confirmation_required:
+		demolition_request = "demolish %d %d 1 %d" % [cell.x, cell.y, int(placement_result.target_token)]
+		hud.set_demolition_area(false)
+		open_demolition_dialog(tr("This removes the complete landmark or stocked market. Cost: %d. Demolition cannot be undone.") % int(placement_result.cost))
+		return true
+	return core.send("demolish %d %d 0 %d" % [cell.x, cell.y, int(placement_result.target_token)])
+
+# A dragged rectangle holding landmarks or stocked markets: remove everything, spare those, or keep all.
+func ask_area_demolition(area: String, plan: Dictionary) -> void:
+	demolition_request = "demolish_area %s 1 %d" % [area, int(plan.target_token)]
+	demolition_spare_request = "demolish_area %s 0" % area
+	hud.set_demolition_area(true)
+	var text := tr("This area holds %d landmarks or stocked markets. Demolishing everything costs %d; sparing them costs %d. Demolition cannot be undone.")
+	open_demolition_dialog(text % [int(plan.protected), int(plan.cost), int(plan.cost_spared)])
+
+# The city stands still while the player decides.
+func open_demolition_dialog(text: String) -> void:
+	demolition_was_running = not state.get("paused", true)
+	if demolition_was_running:
+		core.send("pause 1")
+	demolition_dialog.dialog_text = text
+	demolition_dialog.popup_centered(Vector2i(470, 180))
 
 func capture() -> void:
 	await RenderingServer.frame_post_draw
@@ -2287,8 +2700,10 @@ func check(condition: bool, message: String) -> bool:
 func run_checks() -> void:
 	await preload("res://scripts/validate_main.gd").new().run(self)
 
-# Escape closes the foremost city surface before it opens settings. Never answer a native choice.
+# Right-click goes back from city surfaces; an offered decision Postpone is an explicit reply.
 func right_click_city(event: InputEventMouseButton) -> bool:
+	if is_instance_valid(city_help) and city_help.visible and city_help.card.get_global_rect().has_point(event.position):
+		city_help.hide();get_viewport().set_input_as_handled();return true
 	if world_flight.busy() or world_map.visible or episode_overlay.visible: return false
 	if is_instance_valid(escape_menu) or get_tree().root.get_node("UiAccess").dialog_open: return false
 	var popup: PopupMenu=hud.visible_popup()
@@ -2303,15 +2718,18 @@ func right_click_city(event: InputEventMouseButton) -> bool:
 			return true
 		if child is Window and child.visible: return false
 	# Selected armies retain native right-click orders on terrain; clicks on UI go back.
-	var army_map_click: bool = mode == "select" and ((army_panel.visible and army_panel.selected_id >= 0 and not army_panel.get_global_rect().has_point(event.position)) or trireme_orders.selected >= 0 or unit_selection.has_group(self)) and not hud.message_panel.visible and not hud.decision_expanded and not hud.get_node("%BuildTray").visible
-	for name in ["EventRail", "ResourceRibbon", "ResourcesReveal", "MinimapPanel", "GoalsPanel", "BottomBar", "TimeGroup"]:
+	var army_map_click: bool = mode == "select" and ((army_panel.visible and army_panel.selected_id >= 0 and not army_panel.get_global_rect().has_point(event.position)) or trireme_orders.selected >= 0 or unit_selection.has_group(self)) and not hud.message_panel.visible and not hud.decision_expanded and not hud.get_node("%BuildTray").visible and not hud.get_node("%LayersPanel").visible
+	for name in ["EventRail", "ResourceRibbon", "ResourcesReveal", "MinimapPanel", "GoalsPanel", "BottomBar", "MapToggle", "LayersPanel", "TimeBar"]:
 		var panel: Control = hud.get_node("%" + name)
 		if panel.is_visible_in_tree() and panel.get_global_rect().has_point(event.position): army_map_click = false
 	if army_map_click: return false
-	if route_editor.active and mode == "select" and not ui_at(hud, event.position): return false
+	if route_editor.active and mode == "select" and not hud.get_node("%LayersPanel").visible and not ui_at(hud, event.position): return false
 	get_viewport().set_input_as_handled()
-	if hud.message_panel.visible: hud.set_messages_open(false)
-	elif hud.decision_expanded: hud.set_decision_expanded(false)
+	var decision_icon: Control = hud.get_node("%DecisionReview")
+	if hud.decision_expanded or (decision_icon.is_visible_in_tree() and decision_icon.get_global_rect().has_point(event.position)):
+		if not postpone_decision(): hud.set_decision_expanded(false)
+	elif hud.get_node("%LayersPanel").visible: hud.set_layers_open(false)
+	elif hud.message_panel.visible: hud.set_messages_open(false)
 	elif hud.get_node("%BuildTray").visible:
 		hud.close_build_tray()
 		set_tool("select")
@@ -2321,7 +2739,9 @@ func right_click_city(event: InputEventMouseButton) -> bool:
 	elif inspector.visible and walker_at(event.position) < 0: close_inspection()
 	elif mode != "select": set_tool("select")
 	elif walker_at(event.position) >= 0: open_character(walker_at(event.position))
-	elif hud.resources_open: hud.set_resources_open(false)
+	elif hud.resources_open:
+		hud.set_resources_open(false)
+		hud._release_header_focus()
 	elif hud.goals_list.visible: hud.set_goals_expanded(false)
 	elif hud.get_node("%MinimapPanel").visible: hud.set_minimap_open(false, true)
 	elif overlay_view.active(): set_overlay("normal")
@@ -2334,6 +2754,13 @@ func right_click_city(event: InputEventMouseButton) -> bool:
 	return true
 
 func _input(event: InputEvent) -> void:
+	# Close Layers before a terrain click can reach a previously selected construction tool.
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and hud.get_node("%LayersPanel").visible:
+		if not hud.get_node("%LayersPanel").get_global_rect().has_point(event.position) and not hud.overlay_menu.get_global_rect().has_point(event.position):
+			hud.set_layers_open(false)
+			if not ui_at(hud,event.position):
+				get_viewport().set_input_as_handled()
+				return
 	# The editor's keys (Escape) and its right button (putting a tool down) come before the city's.
 	if editor_panel != null and (event is InputEventKey or (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT)) and editor_panel.input(event):
 		get_viewport().set_input_as_handled()
@@ -2346,9 +2773,12 @@ func _input(event: InputEvent) -> void:
 	for child in hud.get_children():
 		if child is Window and child.visible:return
 	get_viewport().set_input_as_handled()
-	if hud.message_panel.visible:hud.set_messages_open(false);return
-	if monster_card != null and monster_card.visible:monster_card.set_open(false);return
 	if hud.decision_expanded:hud.set_decision_expanded(false);return
+	if hud.get_node("%LayersPanel").visible:hud.set_layers_open(false);return
+	if hud.message_panel.visible:hud.set_messages_open(false);return
+	if hud.resources_open:hud.set_resources_open(false);hud._release_header_focus();return
+	if hud._header_has_focus():hud._release_header_focus();return
+	if monster_card != null and monster_card.visible:monster_card.set_open(false);return
 	if hud.get_node("%BuildTray").visible:hud.close_build_tray();return
 	if road_drag.active:road_drag.cancel(self);update_hint();return
 	if route_editor.active:route_editor.end();update_hint();return
@@ -2357,6 +2787,7 @@ func _input(event: InputEvent) -> void:
 	if trireme_orders.selected>=0:trireme_orders.clear();update_hint();return
 	if army_panel.visible:army_panel.close();return
 	if inspector.visible:close_inspection();return
+	if is_instance_valid(city_help) and city_help.visible:city_help.hide();return
 	if hud.goals_list.visible:hud.set_goals_expanded(false);return
 	if mode!="select":set_tool("select");return
 	if overlay_view.active():set_overlay("normal");return
@@ -2482,7 +2913,7 @@ func close_escape_menu() -> void:
 
 func escape_menu_action(action: String) -> void:
 	if not is_instance_valid(escape_menu):return
-	if action in ["world","army","quick_save","quick_load"]:
+	if action in ["world","army","quick_save","quick_load","attention","guide"]:
 		close_escape_menu();game_action(action);return
 	escape_menu.suspend()
 	game_action(action)

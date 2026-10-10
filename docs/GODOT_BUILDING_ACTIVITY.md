@@ -1,5 +1,16 @@
 # Building work animation — 1 October 2026
 
+## Smoother interpolation — 7 October 2026
+
+All 47 current activity assets retain their existing baked poses, texels, source
+hashes and native work flags/clock. The vertex shader now uses periodic cubic
+interpolation with neighbouring pose tangents, clamped between adjacent authored
+positions to avoid overshoot, including hidden effects. Inactive poses and
+pause/decision holds remain exact. Rest normals and worker anatomy are unchanged;
+this is interpolation refinement, not newly authored cycles. The shared static
+architecture finish does not replace activity materials. See
+`GODOT_CITY_CLARITY.md` and current validation for evidence and performance limits.
+
 The static Godot exports previously captured only `animate(0, True)` from the
 building recipes. Native staffing worked, but on-site workers and machinery had
 no playable work cycle. The activity derivative now samples the existing eight

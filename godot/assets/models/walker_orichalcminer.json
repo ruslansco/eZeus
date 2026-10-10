@@ -2,19 +2,19 @@
   "asset": "walker_orichalcminer",
   "source": "art/characters/people/build_person.py",
   "file": "walker_orichalcminer.glb",
-  "bytes": 5216816,
-  "vertices": 15673,
+  "bytes": 11388376,
+  "vertices": 15589,
   "surfaces": 3,
-  "source_surfaces": 16,
+  "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.19217915832996368,
+      -0.21660450100898743,
       -0.3362085223197937,
-      0.0005000140517950058
+      -0.030000001192092896
     ],
     [
       0.21676872670650482,
-      0.18021810054779053,
+      0.4449999928474426,
       0.9998072981834412
     ]
   ],
@@ -25,6 +25,17 @@
   "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "mine": 24,
+      "carry": 12,
+      "die": 8
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
   "character": {
     "revision": "natural_people_v1",
     "identities": [
@@ -78,8 +89,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 240,
+    "targets_after": 155,
     "uv_attributes_removed": 0
   }
 }

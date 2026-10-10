@@ -97,6 +97,26 @@ godot/data/test_city.json
 godot/captures/
 
 /build-godot/
+/build-godot-wheat/
+/build-windows-cross/
+/build-godot-windows/
+/dist-private/
+# Downloaded fan adventures, source pages and local adaptation copies; private research only.
+/build-content-research/
+
+# Verified private campaign installs are regenerated from the reviewed manifests.
+/Adventures/First Light Harbor Chapters/
+/Adventures/Bronze River Chapters/
+/Adventures/Stonewatch Chapters/
+/Adventures/Sunlit Terraces Chapters/
+/Adventures/Tidebound Covenant Chapters/
+/Adventures/First Light Harbor/
+/Adventures/.First Light Harbor Chapters-previous/
+/Adventures/.Bronze River Chapters-previous/
+/Adventures/.Stonewatch Chapters-previous/
+/Adventures/.Sunlit Terraces Chapters-previous/
+/Adventures/.Tidebound Covenant Chapters-previous/
+/Adventures/.First Light Harbor-previous/
 godot/bin/*.dylib
 # Portrait models for the character window (tools/godot_portrait_export.py); regenerate, manifests stay tracked.
 godot/assets/portraits/*.glb

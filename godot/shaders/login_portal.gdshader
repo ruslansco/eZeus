@@ -4,6 +4,10 @@ render_mode unshaded, cull_disabled, fog_disabled;
 uniform float scene_time = 0.0;
 uniform vec3 ember_color : source_color = vec3(1.0, 0.24, 0.028);
 uniform vec3 soul_color : source_color = vec3(0.14, 0.48, 0.46);
+// Optional source-image calibration; older procedural doorway meshes keep the arch.
+uniform bool registered_aperture = false;
+uniform sampler2D aperture_distance : filter_linear, repeat_disable;
+uniform float distance_to_portal_units = 1.0;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
 float noise(vec2 p) {
  vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
@@ -18,6 +22,11 @@ void fragment() {
  vec2 p=vec2((UV.x-.5)*9.2, (1.0-UV.y)*16.2);
  // Arch spring at 11.6, radius 4.6. Signed distance includes straight jambs.
  float edge=min(4.6-abs(p.x), p.y < 11.6 ? p.y : 4.6-length(p-vec2(0,11.6)));
+ if(registered_aperture) {
+  vec2 packed=texture(aperture_distance,UV).rg;
+  float distance=dot(packed,vec2(256.0/257.0,1.0/257.0));
+  edge=(distance-.5)*distance_to_portal_units;
+ }
  if(edge<0.0) discard;
  float t=scene_time;
  vec2 q=vec2(fbm(p*.34+vec2(t*.09,-t*.17)),fbm(p*.29+vec2(3.4,-t*.12)));

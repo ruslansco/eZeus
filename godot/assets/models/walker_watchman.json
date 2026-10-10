@@ -2,19 +2,19 @@
   "asset": "walker_watchman",
   "source": "art/characters/people/build_person.py",
   "file": "walker_watchman.glb",
-  "bytes": 5214292,
-  "vertices": 15636,
+  "bytes": 7748592,
+  "vertices": 15882,
   "surfaces": 3,
   "source_surfaces": 20,
   "bounds_blender": [
     [
-      -0.2783004641532898,
-      -0.18594591319561005,
+      -0.3120304346084595,
+      -0.17924624681472778,
       0.0004999842494726181
     ],
     [
       0.2021177113056183,
-      0.22768571972846985,
+      0.21770581603050232,
       1.190000057220459
     ]
   ],
@@ -51,8 +51,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 1044053757,
           "skin": [
             0.53,
@@ -63,9 +63,9 @@
         "body_height": 0.8700601623859257,
         "body_sha256": "ffcdcfb9b1cafa8562b3ae202b6c84dd647214c5ad8c68510ff3c93e23a5a446",
         "clavi_srgb": [
-          0.64,
-          0.055,
-          0.075
+          0.2,
+          0.5,
+          0.62
         ]
       }
     ],
@@ -78,8 +78,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 72,
+    "targets_before": 153,
+    "targets_after": 111,
     "uv_attributes_removed": 0
   }
 }

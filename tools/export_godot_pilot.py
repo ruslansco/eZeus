@@ -23,12 +23,18 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'eZeus/godot/assets/models'
 BUILDING_ACTIVITY = False
 BUILDING_ANIMATE = None
+# A face variant of a common walker (`--asset walker_peddler_v2`): the same spec and clips, exported under its own name with
+# the identity perturbed by godot_character_realism.profile (EZEUS_IDENTITY_VARIANT).
+OUTPUT_NAME = None
+# Animals whose native collapse, lying down and (boar, deer, wolf) attack are exported as clips (gathering_motion.gd plays them).
+# The wolf, sheep and goat joined the boar and deer on 6 October.
+ANIMAL_STATES = ('animal_boar', 'animal_deer', 'animal_wolf', 'animal_sheep_fleeced', 'animal_sheep_nude', 'animal_goat')
 # Extra clips of the walker being exported: (label, frame count, function) for fight, fight2 and die when the person is a soldier.
 EXTRA_CLIPS = []
 sys.path.insert(0, str(ROOT / 'art/_kit'))
 import ezkit as K
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from godot_asset_sources import RECIPES, COMBAT, MOUNTED, CREATURES
+from godot_asset_sources import RECIPES, COMBAT, MOUNTED, CREATURES, DEATHS
 from optimize_godot_models import batch_materials
 from godot_garden_foliage import ASSETS as GARDEN_ASSETS, FOOTPRINTS as GARDEN_FOOTPRINTS, BUDGETS as GARDEN_BUDGETS, REVISION as GARDEN_REVISION, adapt as adapt_gardens
 import godot_character_realism as character_art
@@ -72,8 +78,24 @@ def execute_source(source, args, stop=None, transform=None):
 
 
 def construct(name):
+    if name.startswith('common_house_'):
+        import godot_housing
+        if name in godot_housing.ASSETS:
+            godot_housing.build(K, name, execute_source)
+            return 'eZeus/tools/godot_housing.py', None, None
+    if name in ('tower', 'gatehouse') or name.startswith('wall_'):
+        source = Path(__file__).with_name('godot_defences.py')
+        args = ['--piece', 'wall', '--mask', name.removeprefix('wall_')] if name.startswith('wall_') else ['--piece', name]
+        execute_source(source, args)
+        return str(source.relative_to(ROOT)), None, None
     global BUILDING_ANIMATE
     EXTRA_CLIPS.clear()
+    from godot_monster_reference import ASSETS as MONSTER_REFERENCES
+    if name.removeprefix('walker_') in MONSTER_REFERENCES:
+        import godot_monster_reference
+        pose, idle, clips = godot_monster_reference.build(K, name.removeprefix('walker_'))
+        EXTRA_CLIPS.extend(clips)
+        return 'eZeus/tools/godot_monster_reference.py', pose, idle
     if name == 'walker_hydra':
         import godot_hydra
         pose, idle, clips = godot_hydra.build(K)
@@ -88,7 +110,7 @@ def construct(name):
         source = ROOT / 'art/characters/people/build_person.py'
         namespace = {'__file__': str(source), '__name__': '__godot_export__'}
         sys.path.insert(0, str(source.parent))
-        sys.argv = ['blender', '--', '--who', name.removeprefix('walker_')]
+        sys.argv = ['blender', '--', '--who', 'hunter' if name=='walker_rancher' else name.removeprefix('walker_')]
         tree = ast.parse(source.read_text())
         prefix = []
         for node in tree.body:
@@ -98,6 +120,9 @@ def construct(name):
         tree.body = prefix
         K.render = lambda *a, **kw: None
         exec(compile(tree, str(source), 'exec'), namespace)
+        from godot_field_work_art import CLIPS as FIELD_CLIPS, adapt as adapt_field, clips as field_clips
+        if name in FIELD_CLIPS or name=='walker_rancher':
+            adapt_field(namespace,name,K)
         fn = namespace['STATES'][0][3]
         samples = namespace['STATES'][0][1]
         # Sample authored gait at 24 phases; identities retain their own rigs and props.
@@ -108,6 +133,8 @@ def construct(name):
             # samples are all its first frame (the optimizer merges identical poses). The native art is not touched.
             pose, idle = god_float.poses(fn)
         EXTRA_CLIPS.clear()
+        if name in FIELD_CLIPS or name=='walker_rancher':
+            EXTRA_CLIPS.extend(field_clips(namespace['STATES'],name))
         if name.removeprefix('walker_') in COMBAT or name == 'walker_urchin':
             for state, count, _, state_fn, _ in namespace['STATES']:
                 if state in ('fight', 'fight2', 'die', 'bless', 'curse', 'disappear', 'appear') or (name == 'walker_urchin' and state in ('collect','carry','deposit')):
@@ -115,6 +142,8 @@ def construct(name):
                         from godot_gathering_art import retime_urchin
                         state_fn = retime_urchin(state_fn)
                     EXTRA_CLIPS.append((state, int(count), state_fn))
+        if name.removeprefix('walker_') in DEATHS:
+            EXTRA_CLIPS.extend((state, int(count), state_fn) for state, count, _, state_fn, _ in namespace['STATES'] if state == 'die')
         pose(0); K.root.rotation_euler.z = 0
         return str(source.relative_to(ROOT)), pose, idle
     if name.startswith('animal_'):
@@ -132,6 +161,16 @@ def construct(name):
                             lambda n: isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'only' for t in n.targets), tolerant)
         pose = lambda f: ns['walk'](f * ns['FR']['walk'] / 24)
         idle = lambda f: ns['walk'](0)
+        if name in ANIMAL_STATES:
+            # Collapse in place; the native source's sprite-camera fitting shift
+            # is an atlas concern and must never move a hunted animal in Godot.
+            count = int(ns['FR']['die'])
+            EXTRA_CLIPS.append(('fallen',12,lambda f,n=count:ns['_die_pose'](f*(n-1)/11)))
+            if ns['FR'].get('fight') and name in ('animal_boar','animal_deer','animal_wolf'):
+                # (A sheep's or goat's native "fight" frames are grazing; the engine never makes them attack.)
+                EXTRA_CLIPS.append(('animalattack',24,lambda f:ns['fight'](f*ns['FR']['fight']/24)))
+            if ns['FR'].get('lay'):
+                EXTRA_CLIPS.append(('restanimal',12,lambda f:ns['lay'](f*ns['FR']['lay']/12)))
         pose(0)
         return str(source.relative_to(ROOT)), pose, idle
     if name == 'transporter':
@@ -332,14 +371,24 @@ def evaluated(objects, collapse_hidden=False):
 
 
 def export(name):
-    human_asset = name in character_art.ASSETS
+    from godot_field_work_art import CLIPS as FIELD_CLIPS, install_skinning
+    from godot_monster_reference import ASSETS as MONSTER_REFERENCES
+    reference_monster = name.removeprefix('walker_') in MONSTER_REFERENCES
+    human_asset = name in character_art.ASSETS or name in FIELD_CLIPS or name == 'walker_rancher'
+    if reference_monster:
+        human_asset = False
+    if name in FIELD_CLIPS or name == 'walker_rancher':
+        install_skinning()
     if human_asset:
         character_art.install()
+    print("PILOT_CONSTRUCT",name,flush=True)
     source, pose, idle = construct(name)
+    print("PILOT_CONSTRUCTED",name,flush=True)
     activity = BUILDING_ANIMATE if BUILDING_ACTIVITY else None
     if BUILDING_ACTIVITY and activity is None:
         raise RuntimeError(f'{name}: no authored building activity callback')
     identities = character_art.prepare(K) if human_asset else []
+    print("PILOT_PREPARED",name,flush=True)
     if human_asset and pose:
         pose(0)
     root = bpy.data.objects.get('FOOTPRINT_ORIGIN')
@@ -410,6 +459,9 @@ def export(name):
             if name == 'walker_hydra':
                 label = material.name if material else ''
                 surface_kind = next((i for i, term in enumerate(('skin','belly','horn','mouth','teeth','eyes')) if term in label),0)
+            if reference_monster:
+                label = material.name if material else ''
+                surface_kind = next((i for i, term in enumerate(('skin','belly','horn','mouth','teeth','eyes','fur','metal','cloth','snake')) if label.startswith('Monster '+term)),0)
             cloth_owner = next((i for i,h in enumerate(character_art.HUMANS) if obj.startswith(h.name)),0) if human_asset else 0
             if human_asset and 'RomanClothRest' in attributes:
                 surface_kind = 8
@@ -458,6 +510,14 @@ def export(name):
     exported, mappings = [], []
     total = sum(len(g['vertices']) for g in groups.values())
     budget = (26000 if name == 'settlers1' else 12000) if pose else (2500 if name.startswith(('tree_', 'olive_', 'orange_', 'vine_', 'wall_', 'sanctuary_court_')) else 35000)
+    if name in ('tower', 'gatehouse'):
+        budget = 6000 if name == 'tower' else 16000
+    if name.startswith('common_house_'):
+        from godot_housing import ASSETS, ART
+        if name in ASSETS:
+            # The rich townhouse has many disconnected decorative islands;
+            # reserve seam/decimation headroom within the common housing cap.
+            budget = 22000 if name == 'common_house_6a' else ART['vertex_budget']
     if name == 'fishing_boat':
         budget = 19500
     if name in ('trireme', 'enemy_boat'):
@@ -468,6 +528,8 @@ def export(name):
     if human_asset:
         # A rider or a charioteer carries the horse (or two) with the person.
         budget = 32000 if name == 'settlers1' or name in MOUNTED else 15000
+        if name in ('walker_hunter','walker_deerhunter','walker_shepherd','walker_goatherd'):
+            budget = 20000  # The carried prey / hidden native work animal is part of these clips.
         if name == 'walker_hades':
             # The designed face keeps its eyes, brows, beard strands and hairline whole; the rest still gets its share.
             budget = 19000
@@ -477,6 +539,10 @@ def export(name):
     if name == 'walker_hydra':
         from godot_hydra import VERTEX_BUDGET
         budget = VERTEX_BUDGET
+    if reference_monster:
+        from godot_monster_reference import VERTEX_BUDGET
+        # Leave room for glTF surface seams and the small per-finish minimum.
+        budget = 14000 if name == 'walker_scylla' else VERTEX_BUDGET-700
     if activity:
         # Respect each already-optimized building's geometry tier. A moving
         # worker must not restore render-source architecture to 35K vertices.
@@ -537,6 +603,8 @@ def export(name):
             bpy.data.objects.remove(ob, do_unlink=True)
             continue
         uv = mesh.uv_layers.new(name='UVMap')
+        if name.startswith('common_house_'):
+            housing_uv = mesh.uv_layers.new(name='HousingSurface')
         if pose or human_asset or moving:
             original = np.array(group['vertices'], dtype=np.float32)
             tree = KDTree(len(original))
@@ -544,12 +612,14 @@ def export(name):
             tree.balance()
             low = np.array([v.co[:] for v in ob.data.vertices], dtype=np.float32)
             closest = np.array([tree.find(Vector(point))[1] for point in low], dtype=np.int64)
-        if name.removeprefix('walker_') in CREATURES:
+        # The animal kit's farm and wild animals carry the same per-point coat (6 October: they had been exported white).
+        coated = name.removeprefix('walker_') in CREATURES or reference_monster or name.startswith('animal_')
+        if coated:
             # Coats and scales are authored per point: keep them as the vertex palette the plain finish shows.
             colours = np.array(group['colours'],dtype=np.float32)[closest]
             palette = mesh.color_attributes.new(name='CityPalette',type='FLOAT_COLOR',domain='CORNER')
             ob['preserve_city_palette'] = True
-        if name == 'walker_hydra':
+        if name == 'walker_hydra' or reference_monster:
             semantics = mesh.uv_layers.new(name='MonsterSurface')
         if human_asset:
             colours = np.array(group['colours'],dtype=np.float32)[closest]
@@ -563,9 +633,11 @@ def export(name):
             for index in poly.loop_indices:
                 coordinate = mesh.vertices[mesh.loops[index].vertex_index].co
                 uv.data[index].uv = (coordinate[axes[0]], coordinate[axes[1]])
-                if name.removeprefix('walker_') in CREATURES and not human_asset:
+                if name.startswith('common_house_'):
+                    housing_uv.data[index].uv = uv.data[index].uv
+                if coated and not human_asset:
                     palette.data[index].color = colours[mesh.loops[index].vertex_index]
-                if name == 'walker_hydra':
+                if name == 'walker_hydra' or reference_monster:
                     semantics.data[index].uv = (key[5]/8.0,.5)
                 if human_asset:
                     vertex = mesh.loops[index].vertex_index
@@ -617,12 +689,12 @@ def export(name):
         ob.select_set(True)
     bpy.context.view_layer.objects.active = exported[0]
     OUT.mkdir(parents=True, exist_ok=True)
-    path = OUT / (name + '.glb')
+    path = OUT / ((OUTPUT_NAME or name) + '.glb')
     bpy.ops.export_scene.gltf(filepath=str(path), export_format='GLB', use_selection=True,
                              export_animations=False, export_morph=True, export_morph_normal=False,
                              export_cameras=False, export_lights=False, export_yup=True)
     coordinates = [v.co[:] for ob in exported for v in ob.data.vertices]
-    report = {'asset': name, 'source': source, 'file': path.name, 'bytes': path.stat().st_size,
+    report = {'asset': OUTPUT_NAME or name, 'variant_of': name if OUTPUT_NAME else None, 'source': source, 'file': path.name, 'bytes': path.stat().st_size,
               'vertices': sum(len(ob.data.vertices) for ob in exported), 'surfaces': len(exported), 'source_surfaces': source_surfaces,
               'bounds_blender': [np.min(coordinates, axis=0).tolist(), np.max(coordinates, axis=0).tolist()],
               'walk_samples': 24 if pose else 0, 'idle_samples': 12 if idle else 0,
@@ -630,6 +702,18 @@ def export(name):
               'material_mode': 'preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake',
               'draw_batching': 'vertex_palette_compatible_PBR',
               'idle_mode': ('breathing' if name == 'physician' else 'static_authored_held_pose') if idle else None}
+    if name in ('tower', 'gatehouse') or name.startswith('wall_'):
+        report['defence'] = json.loads((ROOT / 'eZeus/godot/data/defence_art.json').read_text())
+    if name.startswith('common_house_'):
+        from godot_housing import ASSETS, manifest
+        if name in ASSETS:
+            report['housing'] = manifest(name)
+            report['housing']['allocation_target'] = budget
+    from godot_field_work_art import CLIPS as FIELD_CLIPS
+    if name in FIELD_CLIPS or name=='walker_rancher' or name in ANIMAL_STATES:
+        report['field_work'] = {'revision':'authored_field_work_v1','clips':{label:count for label,count,_ in EXTRA_CLIPS},
+            'adapter':'eZeus/tools/godot_field_work_art.py','clock':'native gameplay time; carrying/leading follows horizontal travel',
+            'state':'read-only native action, actual load and cattle-leading observations; no root-motion or production changes'}
     if name in ('walker_urchin','fishing_boat'):
         report['gathering'] = {'revision':'authored_gather_v2','collect_samples':40,'period_seconds':5.0,
             'carry_samples':12 if name=='walker_urchin' else 0,'deposit_samples':12 if name=='walker_urchin' else 0,
@@ -639,6 +723,10 @@ def export(name):
         from godot_hydra import manifest
         report['monster'] = manifest()
         report['idle_mode'] = 'breathing_and_independent_neck_sway'
+    if reference_monster:
+        from godot_monster_reference import manifest
+        report['monster'] = manifest()
+        report['idle_mode'] = 'breathing_and_species_secondary_motion'
     if activity:
         import hashlib
         base = ROOT/'eZeus/godot/assets/models'/path.name
@@ -671,7 +759,7 @@ def export(name):
                              'seed': 'local_python_stable_strings_not_simulation_rng',
                              'native_footprint': GARDEN_FOOTPRINTS[name],
                              'park_variant': 'pine_1x1' if name == 'park' else None}
-    (OUT / (name + '.json')).write_text(json.dumps(report, indent=2) + '\n')
+    (OUT / ((OUTPUT_NAME or name) + '.json')).write_text(json.dumps(report, indent=2) + '\n')
     print('GODOT_EXPORT ' + json.dumps(report), flush=True)
 
 
@@ -683,4 +771,9 @@ args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 BUILDING_ACTIVITY = args.building_activity
 if args.output_dir:
     OUT = args.output_dir
-export(args.asset)
+import os, re
+variant = re.fullmatch(r'(walker_[a-z]+|transporter)_v([2-9])', args.asset)
+if variant:
+    os.environ['EZEUS_IDENTITY_VARIANT'] = variant[2]
+    OUTPUT_NAME = args.asset
+export(variant[1] if variant else args.asset)

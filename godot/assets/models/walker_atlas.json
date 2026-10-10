@@ -1,19 +1,20 @@
 {
   "asset": "walker_atlas",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_atlas.glb",
-  "bytes": 13772204,
-  "vertices": 16019,
+  "bytes": 13839532,
+  "vertices": 16072,
   "surfaces": 3,
   "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.5750916004180908,
-      -0.5486610531806946,
+      -0.5977907180786133,
+      -0.49799999594688416,
       -0.012000000104308128
     ],
     [
-      0.5736052393913269,
+      0.6038278937339783,
       0.47347021102905273,
       3.345325469970703
     ]

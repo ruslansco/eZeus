@@ -1,14 +1,15 @@
 {
   "asset": "walker_hercules",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hercules.glb",
-  "bytes": 8573264,
-  "vertices": 15932,
+  "bytes": 8590648,
+  "vertices": 15964,
   "surfaces": 3,
   "source_surfaces": 18,
   "bounds_blender": [
     [
-      -0.2140142172574997,
+      -0.21700994670391083,
       -0.3945992588996887,
       0.0005599489668384194
     ],

@@ -70,6 +70,8 @@ eHouseCard eHouseCards::card(eHouseBase* const h) {
         target = level + 1;
     }
     if(target < 0) return c;
+    c.fTargetLevel = target;
+    c.fTargetName = name(target);
     const auto& board = h->getBoard();
     const bool science = board.atlantean(h->cityId());
     const auto n = needs(target);

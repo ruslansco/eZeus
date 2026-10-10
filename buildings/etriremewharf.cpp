@@ -150,8 +150,10 @@ void eTriremeWharf::timeChanged(const int by) {
         const auto eff = effectiveness();
         if(!mTakeCart) {
             mTakeCart = spawnCart(eCartActionTypeSupport::take);
-            mTakeCart->setMaxDistance(eNumbers::sTriremeWharfMaxResourceTakeDistance);
         }
+        // Saved carts keep the range they were created with: apply the
+        // current one so a changed setting reaches existing buildings.
+        mTakeCart->setMaxDistance(eNumbers::sTriremeWharfMaxResourceTakeDistance);
         if(!mTrireme && mWoodCount > 1 && mArmorCount > 0) {
             mTriremeBuildingTime += by*eff;
             if(mTriremeBuildingTime > eNumbers::sTriremeWharfBuildTime) {

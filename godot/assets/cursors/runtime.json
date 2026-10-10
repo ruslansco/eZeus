@@ -1,0 +1,157 @@
+{
+	"art_size": 38,
+	"base_size": 48,
+	"cursors": {
+		"arrow": {
+			"crop": [
+				110,
+				66,
+				271,
+				305
+			],
+			"hotspot": [
+				7,
+				5
+			],
+			"path": "res://assets/cursors/runtime/arrow.png"
+		},
+		"back_diagonal": {
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/back_diagonal.png",
+			"source": "back_diagonal.svg"
+		},
+		"busy": {
+			"crop": [
+				523,
+				497,
+				318,
+				315
+			],
+			"hotspot": [
+				5,
+				5
+			],
+			"path": "res://assets/cursors/runtime/busy.png"
+		},
+		"cross": {
+			"crop": [
+				1379,
+				55,
+				338,
+				331
+			],
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/cross.png"
+		},
+		"drag": {
+			"crop": [
+				961,
+				469,
+				270,
+				362
+			],
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/drag.png"
+		},
+		"forbidden": {
+			"crop": [
+				1390,
+				497,
+				316,
+				313
+			],
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/forbidden.png"
+		},
+		"forward_diagonal": {
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/forward_diagonal.png",
+			"source": "forward_diagonal.svg"
+		},
+		"help": {
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/help.png",
+			"source": "help.svg"
+		},
+		"horizontal": {
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/horizontal.png",
+			"source": "horizontal.svg"
+		},
+		"point": {
+			"crop": [
+				536,
+				56,
+				271,
+				330
+			],
+			"hotspot": [
+				10,
+				5
+			],
+			"path": "res://assets/cursors/runtime/point.png"
+		},
+		"text": {
+			"crop": [
+				1047,
+				67,
+				121,
+				307
+			],
+			"hotspot": [
+				23,
+				24
+			],
+			"path": "res://assets/cursors/runtime/text.png"
+		},
+		"vertical": {
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/vertical.png",
+			"source": "vertical.svg"
+		},
+		"wait": {
+			"crop": [
+				128,
+				501,
+				191,
+				313
+			],
+			"hotspot": [
+				24,
+				24
+			],
+			"path": "res://assets/cursors/runtime/wait.png"
+		}
+	},
+	"source": "res://assets/cursors/olympian_cursors_v1.png",
+	"source_sha256": "34887ece47f87ff317b8adbf12fc724f11f64a0e40c14397abc1ac26f2d6c26c",
+	"source_size": [
+		1774,
+		887
+	],
+	"version": 1
+}

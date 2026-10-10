@@ -32,7 +32,7 @@ func start(title: String) -> void:
 	await seconds(.4)
 	for index in menu.listing.size():
 		if menu.listing[index].title == title:
-			menu.adventure_list.select(index)
+			menu.navigation.adventure_pager.select_index(index)
 			menu.show_adventure(index)
 	menu.adventure_start.pressed.emit()
 	await seconds(1.5)
@@ -122,12 +122,11 @@ func run() -> void:
 	var row: Dictionary = panel.trade_rows[key]
 	row.toggle.select(1)
 	row.toggle.item_selected.emit(1)
-	check(row.dirty and not row.apply.disabled, "changing a row enables Apply")
-	row.apply.pressed.emit()
+	check(row.dirty and panel.commit_at.has("t|" + key), "changing a row is a draft that sends itself, with no Apply")
 	await seconds(.8)
 	var info: Dictionary = game.core.query("inspect %d %d" % [post.x, post.y])
 	var listed: Array = info.trade.imports + info.trade.exports
-	check(listed.any(func(g): return g.enabled) and game.hint.text == game.tr("Trade orders updated. Traders will follow them."), "Apply sends the order to the core and the hint confirms it")
+	check(listed.any(func(g): return g.enabled) and game.hint.text == game.tr("Trade orders updated. Traders will follow them."), "the order reaches the core by itself and the hint confirms it")
 	check(panel.trade_rows[key].toggle.selected == 1 and not panel.trade_rows[key].dirty, "the panel shows it as set")
 
 	# Undo brings the partner back.

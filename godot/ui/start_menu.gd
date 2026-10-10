@@ -3,7 +3,7 @@ extends Control
 # adventures, load a saved game, switch language or quit. Choosing hands one of three things to the city scene
 # through Engine meta (a save path, or an adventure already opened here so it is read once), then changes scene.
 # Launches for automation (validation, captures, reviews, the legacy bridge) skip the menu and open the city.
-# The layout is ui/start_menu.tscn, styled by the one Theme ui/lapis_gold.tres; text is `tr()` keyed by its English
+# The layout is ui/start_menu.tscn, styled by a menu-owned copy of the shared Theme; text is `tr()` keyed by its English
 # source, so changing language re-applies it and never rebuilds a control.
 
 const UiText = preload("res://scripts/ui_text.gd")
@@ -11,9 +11,10 @@ const SaveFiles = preload("res://scripts/save_files.gd")
 const Leaders = preload("res://scripts/leaders.gd")
 const UserSettings = preload("res://scripts/user_settings.gd")
 const SoundDialog = preload("res://ui/sound_dialog.gd")
-const GameSettingsDialog=preload("res://ui/game_settings_dialog.gd")
 const CITY := "res://main.tscn"
 const AdventureArt = preload("res://scripts/adventure_art.gd")
+const LoadingScreen = preload("res://ui/loading_screen.gd")
+const Campaigns = preload("res://scripts/campaign_library.gd")
 const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--capture=", "--terrain-review=", "--garden-review=", "--sanctuary-review=", "--pyramid-review=", "--controls-review=", "--objectives-review=", "--street-review=",
 	"--character-review=", "--menu-rest-review=", "--attack-review=", "--rite-review=", "--skip-start"]
 
@@ -39,7 +40,7 @@ const AUTOMATION := ["--validate", "--asset-review", "--bridge-port=", "--captur
 @onready var adventure_mode: Label = %AdventureMode
 @onready var adventure_episodes: Label = %AdventureEpisodes
 @onready var adventure_episode: Label = %AdventureEpisode
-@onready var adventure_goals: VBoxContainer = %AdventureGoals
+@onready var adventure_goals: Container = %AdventureGoals
 @onready var adventure_empty_goals: Label = %AdventureEmptyGoals
 @onready var adventure_scroll: ScrollContainer = %AdventureScroll
 @onready var intro_card = %IntroCard
@@ -61,7 +62,7 @@ var leader_confirm: ConfirmationDialog
 @onready var episode_title: Label = intro_card.subtitle
 @onready var intro_text: Label = intro_card.body
 @onready var goals_heading: Label = intro_card.goals_heading
-@onready var intro_goals: VBoxContainer = intro_card.goals
+@onready var intro_goals: Container = intro_card.goals
 @onready var intro_back: Button = intro_card.secondary
 @onready var intro_begin: Button = intro_card.primary
 @onready var load_heading: Label = %LoadHeading
@@ -85,10 +86,15 @@ var adventure_previews := {}
 var preview_generation := 0
 var card_preview := {}
 var preview_busy := false
+var entering_city := false
 var editor_button: Button
 var new_row: HBoxContainer
 var new_name: LineEdit
+var chapter_picker: OptionButton
+var campaign_progress: Label
+var library_saves := []
 var new_button: Button
+var navigation: Node
 
 static func automated() -> bool:
 	for argument in OS.get_cmdline_user_args():
@@ -101,7 +107,7 @@ func _ready() -> void:
 	if automated():
 		get_tree().change_scene_to_file.call_deferred(CITY)
 		return
-	engine = ProjectSettings.globalize_path("res://..").simplify_path()
+	engine = str(Engine.get_meta("ezeus_engine_directory", ProjectSettings.globalize_path("res://..").simplify_path()))
 	var requested := ""
 	for argument in OS.get_cmdline_user_args():
 		if argument.begins_with("--lang="):
@@ -116,10 +122,15 @@ func _ready() -> void:
 	quit_button.pressed.connect(func(): get_tree().quit())
 	sound_button.pressed.connect(func(): SoundDialog.open(self))
 	%Interface.icon=load("res://ui/icons/gear.svg")
-	%Interface.pressed.connect(func():GameSettingsDialog.open(self))
-	adventure_back.pressed.connect(func(): show_page("main"))
+	%MainEmblem.texture = load("res://ui/icons/menu_emblem.svg")
+	new_game_button.icon = load("res://ui/icons/menu_adventure.svg")
+	load_game_button.icon = load("res://ui/icons/menu_load.svg")
+	continue_button.icon = load("res://ui/icons/menu_continue.svg")
+	sound_button.icon = load("res://ui/icons/menu_sound.svg")
+	%Interface.pressed.connect(func(): show_page("settings"))
+	adventure_back.pressed.connect(back_to_parent)
 	adventure_start.pressed.connect(start_adventure)
-	adventure_list.item_selected.connect(show_adventure)
+
 	adventure_list.item_activated.connect(func(_index): start_adventure())
 	intro_card.secondary_pressed.connect(close_intro)
 	intro_card.primary_pressed.connect(begin)
@@ -128,13 +139,22 @@ func _ready() -> void:
 			opened.command("difficulty %d" % value))
 	load_back.pressed.connect(func(): show_page("main"))
 	load_open.pressed.connect(func(): open_selected_save())
-	save_list.item_selected.connect(func(index): save_info.text = save_entries[index].detail if index < save_entries.size() else "")
+
 	save_list.item_activated.connect(func(_index): open_selected_save())
 	build_leaders()
 	build_editor_entry()
+	build_chapter_picker()
+	navigation = preload("res://ui/menu_navigation.gd").new()
+	navigation.setup(self)
+	adventure_scroll.get_v_scroll_bar().theme_type_variation = "AdventureScrollBar"
+	adventure_list.get_v_scroll_bar().theme_type_variation = "AdventureScrollBar"
 	get_viewport().size_changed.connect(fit_adventure_page)
+	get_viewport().size_changed.connect(fit_main_page)
 	UiAccess.changed.connect(fit_adventure_page)
+	UiAccess.changed.connect(fit_main_page)
+	%MainColumn.minimum_size_changed.connect(fit_main_page.call_deferred)
 	fit_adventure_page()
+	fit_main_page.call_deferred()
 	retranslate()
 	refresh_main()
 	for argument in OS.get_cmdline_user_args():
@@ -151,11 +171,11 @@ func _ready() -> void:
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		match page:
-			"adventures", "load":
-				show_page("main")
+			"adventures", "load", "settings", "extras":
+				back_to_parent()
 			"leaders":
 				if not Leaders.current().is_empty():
-					show_page("main")
+					back_to_parent()
 			"intro":
 				close_intro()
 		get_viewport().set_input_as_handled()
@@ -163,12 +183,16 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func core_language() -> String:
 	return language if language in ["en", "ru"] else "en"
 
+func back_to_parent() -> void:
+	show_page(str(navigation.parents.get(page,"main")))
+
 func show_page(name: String) -> void:
 	if name != "adventures":
 		preview_generation += 1
 	page = name
 	for key in pages:
 		pages[key].visible = key == name
+	if navigation != null: navigation.on_page(name)
 	match name:
 		"main":
 			refresh_main()
@@ -189,14 +213,18 @@ func retranslate() -> void:
 	continue_button.text = tr("Continue")
 	new_game_button.text = tr("New game")
 	load_game_button.text = tr("Load game")
-	language_button.text = UiText.next_language(TranslationServer.get_locale()).to_upper()
+	language_button.text = language.to_upper()
 	language_button.tooltip_text = tr("Switch language")
 	quit_button.text = tr("Quit")
 	sound_button.text = tr("Sound")
 	%Interface.tooltip_text=tr("Game settings")
+	%Interface.text = tr("Settings")
+	%ContinueHeading.text = tr("Latest saved city")
+	%NewGameHint.text = tr("Campaigns and sandbox maps")
 	adventure_heading.text = tr("Adventure editor") if editing else tr("Choose an adventure")
 	%AdventureHint.text = tr("Select an adventure to explore its story and opening goals.")
 	%AdventureGoalsHeading.text = tr("Opening objectives")
+	if chapter_picker != null: chapter_picker.tooltip_text = tr("Preview a chapter; Start begins at chapter one")
 	%AdventureArtFallback.text = tr("Artwork unavailable")
 	adventure_back.text = tr("Back")
 	adventure_start.text = tr("Edit") if editing else tr("Start")
@@ -213,17 +241,30 @@ func retranslate() -> void:
 	leader_proceed.text = tr("Proceed")
 	leader_back.text = tr("Back")
 	leader_change.text = tr("Change leader")
+	if navigation != null: navigation.retranslate()
 	refresh_main()
 
-# The Continue button names the newest save, or is off while there is none.
+# The Continue card names the newest save and stays hidden while there is none.
 func refresh_main() -> void:
 	if leader_line != null:
 		leader_line.text = tr("Leader: %s") % Leaders.current() if not Leaders.current().is_empty() else tr("No leader chosen")
+		leader_line.tooltip_text = leader_line.text
 	latest_save = SaveFiles.latest()
 	continue_button.disabled = latest_save.is_empty()
-	continue_button.text = tr("Continue") if latest_save.is_empty() else tr("Continue: %s") % latest_save.name
+	continue_button.text = tr("Continue")
+	%ContinueCard.visible = not latest_save.is_empty()
+	%ContinueSaveName.text = str(latest_save.get("name", ""))
+	%ContinueSaveName.tooltip_text = str(latest_save.get("name", ""))
+	continue_button.tooltip_text = tr("Continue: %s") % latest_save.get("name", "") if not latest_save.is_empty() else tr("No saved games yet")
 	continue_info.text = tr("No saved games yet") if latest_save.is_empty() else latest_save.detail
 	load_game_button.disabled = latest_save.is_empty()
+	load_game_button.tooltip_text = tr("No saved games yet") if latest_save.is_empty() else tr("Load game")
+	new_game_button.theme_type_variation = "MainMenuPrimary"
+	fit_main_page.call_deferred()
+
+# The tall fixed menu fits its choices without scrolling. Keep the gateway clear on the right.
+func fit_main_page() -> void:
+	if navigation != null: navigation.fit()
 
 func change_language() -> void:
 	language = UiText.set_language(UiText.next_language(language))
@@ -231,36 +272,68 @@ func change_language() -> void:
 	Engine.set_meta("ezeus_language", language)
 	retranslate()
 
-func go_city() -> void:
+func go_city(save_retry := false) -> void:
+	if entering_city:
+		return
+	entering_city = true
+	preview_generation += 1
+	preview_busy = false
 	Engine.set_meta("ezeus_language", language)
 	Engine.set_meta("ezeus_from_start", true)
-	get_tree().change_scene_to_file(CITY)
+	var loading := LoadingScreen.open(get_tree())
+	process_mode = Node.PROCESS_MODE_DISABLED
+	await loading.present()
+	if save_retry and Engine.has_meta("ezeus_simulation"):
+		# Keep the native retry checkpoint, after the loading screen has drawn.
+		var pending: RefCounted = Engine.get_meta("ezeus_simulation")
+		pending.save_city("autosave replay")
+	var error := get_tree().change_scene_to_file(CITY)
+	if error != OK:
+		Engine.remove_meta("ezeus_load")
+		Engine.remove_meta("ezeus_from_start")
+		Engine.remove_meta("ezeus_editor")
+		if Engine.has_meta("ezeus_simulation"):
+			var pending: RefCounted = Engine.get_meta("ezeus_simulation")
+			pending.close_city()
+			Engine.remove_meta("ezeus_simulation")
+		loading.fail(func():
+			entering_city = false
+			process_mode = Node.PROCESS_MODE_INHERIT
+			show_page("main"))
 
 func load_save(path: String) -> void:
-	if path.is_empty() or not FileAccess.file_exists(path):
+	if entering_city or path.is_empty():
 		return
-	Engine.set_meta("ezeus_load", path)
+	if SaveFiles.candidates(path).is_empty():
+		save_info.text=tr("That save could not be opened")
+		return
+	entering_city=true
+	var checked: Dictionary=await preload("res://scripts/save_loader.gd").choose_city(self,path,core_language())
+	entering_city=false
+	if not checked.get("ok",false):return
+	Engine.set_meta("ezeus_load",checked.stage)
+	Engine.set_meta("ezeus_verified_save",checked)
+	SaveFiles.activate(str(checked.get("episode",{}).get("campaign_ref","")))
 	go_city()
 
 func open_saves() -> void:
 	save_entries = SaveFiles.list()
-	save_list.clear()
-	for entry in save_entries:
-		save_list.add_item(entry.name)
-	save_info.text = ""
-	if not save_entries.is_empty():
-		save_list.select(0)
-		save_info.text = save_entries[0].detail
+	navigation.save_pager.set_records(save_entries,func(entry):
+		var campaign := Campaigns.progress_text(entry.get("info",{}))
+		return str(entry.name)+("\n"+campaign if not campaign.is_empty() else ""))
+	save_info.text = save_entries[0].detail if not save_entries.is_empty() else ""
+	load_open.disabled = save_entries.is_empty()
 	show_page("load")
 
 func open_selected_save() -> void:
 	var chosen := save_list.get_selected_items()
 	if not chosen.is_empty():
-		load_save(save_entries[chosen[0]].path)
+		load_save(save_entries[navigation.save_pager.selected_index].path)
 
 # The adventures come from the simulation core (the SDL game's own list, in the interface language). For the editor an
 # adventure without a title yet (a new one) is listed by its folder's name.
 func open_adventures(edit := false) -> void:
+	navigation.parents.adventures = "extras" if edit else "main"
 	editing = edit
 	new_row.visible = editing
 	retranslate()
@@ -268,14 +341,18 @@ func open_adventures(edit := false) -> void:
 	var result: Dictionary = lister.adventures(engine, core_language()) if lister != null else {"error": "embedded_query_required"}
 	listing = []
 	for item in result.get("adventures", []):
+		var registered := Campaigns.record(str(item.ref))
+		if not editing and registered.get("hidden",false): continue
 		if String(item.title).is_empty() and editing:
 			item.title = String(item.ref).get_file()
 		if not String(item.title).is_empty():
 			listing.append(item)
-	listing.sort_custom(func(a, b): return String(a.title).naturalnocasecmp_to(String(b.title)) < 0)
-	adventure_list.clear()
-	for item in listing:
-		adventure_list.add_item(item.title)
+	listing.sort_custom(func(a, b):
+		var order_a := featured_order(str(a.ref))
+		var order_b := featured_order(str(b.ref))
+		return order_a < order_b if order_a != order_b else String(a.title).naturalnocasecmp_to(String(b.title)) < 0)
+	library_saves = SaveFiles.list()
+	navigation.adventure_pager.set_records(listing,func(item): return item.title)
 	adventure_status.text = "" if not listing.is_empty() else tr("No adventures were found")
 	adventure_start.disabled = listing.is_empty()
 	adventure_title.text = ""
@@ -290,12 +367,18 @@ func open_adventures(edit := false) -> void:
 func show_adventure(index: int) -> void:
 	if index < 0 or index >= listing.size():
 		return
+	navigation.adventure_pager.select_index(index,false)
 	preview_generation += 1
 	var generation := preview_generation
 	var item: Dictionary = listing[index]
+	chapter_picker.clear()
+	chapter_picker.visible = false
+	campaign_progress.text = ""
 	adventure_title.text = item.title
 	adventure_text.text = item.introduction
-	adventure_image.texture = adventure_art.texture(engine, int(item.get("bitmap", 0)))
+	var artwork := str(Campaigns.record(str(item.ref)).get("art",""))
+	adventure_image.texture = adventure_art.campaign_texture(artwork)
+	if adventure_image.texture==null:adventure_image.texture=adventure_art.texture(engine,int(item.get("bitmap",0)))
 	%AdventureArtFallback.visible = adventure_image.texture == null
 	adventure_scroll.scroll_vertical = 0
 	card_preview = {}
@@ -328,9 +411,58 @@ func show_adventure(index: int) -> void:
 	var sandbox: bool = card_preview.get("sandbox", false)
 	adventure_mode.text = tr("Sandbox · Open play") if sandbox else tr("Campaign")
 	var count := int(card_preview.get("episode_total", 1))
-	adventure_episodes.text = tr("No fixed victory objectives") if sandbox else (tr("1 episode") if count == 1 else tr("%d episodes") % count)
+	var parents := int(episode.get("episode_count", 1))
+	var colonies := count - parents
+	adventure_episodes.text = tr("No fixed victory objectives") if sandbox else (tr("%d main episodes · %d colony scenarios") % [parents, colonies] if colonies > 0 else (tr("1 episode") if count == 1 else tr("%d episodes") % count))
+	adventure_episodes.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var levels := ["Beginner","Mortal","Hero","Titan","Olympian"]
+	adventure_episodes.text += " · "+tr("Default difficulty: %s") % tr(levels[clampi(int(episode.get("difficulty",2)),0,4)])
+	var chapters: Array = card_preview.get("chapters",[episode])
+	for chapter in chapters:
+		chapter_picker.add_item(tr("Chapter %d · %s") % [int(chapter.episode_number),str(chapter.episode_title)])
+	chapter_picker.visible = not sandbox and chapters.size() > 1
+	for saved in library_saves:
+		if str(saved.get("info",{}).get("campaign_ref","")) == str(item.ref):
+			campaign_progress.text = tr("Latest save: %s") % Campaigns.progress_text(saved.info)
+			break
+	if campaign_progress.text.is_empty(): campaign_progress.text = tr("No saved progress for this campaign")
+	show_chapter(0)
+
+func featured_order(ref: String) -> int:
+	var index := 0
+	for item in Campaigns.records():
+		if item.get("featured",false):
+			if str(item.ref) == ref: return index
+			index += 1
+	return 1000
+
+func build_chapter_picker() -> void:
+	chapter_picker = OptionButton.new()
+	chapter_picker.name = "ChapterPreview"
+	chapter_picker.tooltip_text = tr("Preview a chapter; Start begins at chapter one")
+	chapter_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	chapter_picker.fit_to_longest_item = false
+	chapter_picker.clip_text = true
+	chapter_picker.item_selected.connect(show_chapter)
+	var details := adventure_goals.get_parent()
+	details.add_child(chapter_picker)
+	details.move_child(chapter_picker,adventure_episode.get_index())
+	campaign_progress = Label.new()
+	campaign_progress.name = "CampaignProgress"
+	campaign_progress.theme_type_variation = "Caption"
+	campaign_progress.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	adventure_episodes.get_parent().add_child(campaign_progress)
+
+func show_chapter(index: int) -> void:
+	var chapters: Array = card_preview.get("chapters",[card_preview.get("episode",{})])
+	if index < 0 or index >= chapters.size() or chapters[index].is_empty(): return
+	var episode: Dictionary = chapters[index]
+	var sandbox: bool = card_preview.get("sandbox",false)
+	clear_adventure_goals()
+	%AdventureGoalsHeading.text = tr("Chapter objectives") if not sandbox else tr("Opening objectives")
 	adventure_episode.text = tr("Episode 1 · %s") % episode.get("episode_title", "")
-	adventure_episode.visible = not sandbox
+	if not sandbox: adventure_episode.text = tr("Chapter %d · %s") % [int(episode.get("episode_number",1)),str(episode.get("episode_title",""))]
+	adventure_episode.visible = not sandbox and not chapter_picker.visible
 	var goals: Array = episode.get("goals", [])
 	adventure_empty_goals.visible = goals.is_empty()
 	adventure_empty_goals.text = tr("Build at your own pace. This adventure has no fixed victory objectives.") if sandbox else tr("No opening objectives are specified for this episode.")
@@ -342,26 +474,29 @@ func show_adventure(index: int) -> void:
 		mark.theme_type_variation = "AdventureGoalText"
 		row.add_child(mark)
 		var label := Label.new()
-		label.text = str(goal.text)
+		label.text = preview_goal_text(goal)
 		label.theme_type_variation = "AdventureGoalText"
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(label)
 		adventure_goals.add_child(row)
+	if navigation != null: navigation.goals_changed()
+
+func preview_goal_text(goal: Dictionary) -> String:
+	if not goal.has("relative_time"): return str(goal.text)
+	var duration := []
+	var fields := {"years":"%d years","months":"%d months","days":"%d days"}
+	for field in fields:
+		if int(goal.relative_time[field]) != 0: duration.append(tr(fields[field]) % int(goal.relative_time[field]))
+	return tr("Complete within %s") % ", ".join(duration) if goal.relative_time.deadline else tr("Remain for %s") % ", ".join(duration)
 
 func clear_adventure_goals() -> void:
 	for child in adventure_goals.get_children():
 		child.free()
 
-# Bound the page at independent interface/text sizes; the paper and list scroll.
+# Bound the page at independent interface/text sizes; catalogs, prose and goals use pages.
 func fit_adventure_page() -> void:
-	var available := get_viewport_rect().size - Vector2(64, 64)
-	var desired := Vector2(minf(1140, available.x), minf(760, available.y))
-	%AdventurePage.custom_minimum_size = desired
-	adventure_list.custom_minimum_size.x = clampf(desired.x * .30, 260, 340)
-	%AdventureHint.custom_minimum_size.x = adventure_list.custom_minimum_size.x
-	%AdventureHero.custom_minimum_size.y = clampf(desired.y * .31, 140, 240)
-	adventure_list.ensure_current_is_visible.call_deferred()
+	if navigation != null: navigation.fit()
 
 # Reads the chosen adventure's campaign (a moment), then shows its first episode's story and goals.
 func start_adventure() -> void:
@@ -372,7 +507,7 @@ func start_adventure() -> void:
 	var chosen := adventure_list.get_selected_items()
 	if chosen.is_empty():
 		return
-	var item: Dictionary = listing[chosen[0]]
+	var item: Dictionary = listing[navigation.adventure_pager.selected_index]
 	adventure_status.text = tr("Loading…")
 	adventure_start.disabled = true
 	await get_tree().process_frame
@@ -396,6 +531,7 @@ func start_adventure() -> void:
 	intro_card.show_intro(episode, true)
 	var levels: Dictionary = opened.command("difficulty")
 	intro_card.set_difficulty(int(levels.get("value", 2)), levels.get("names", []))
+	navigation.prepare_intro()
 	# The campaign's recorded introduction speaks over a silent menu; without one the mission fanfare plays.
 	GameAudio.play_briefing(str(episode.get("voice", "")))
 	show_page("intro")
@@ -409,18 +545,22 @@ func close_intro() -> void:
 	show_page("adventures")
 	var chosen := adventure_list.get_selected_items()
 	if not chosen.is_empty():
-		show_adventure(chosen[0])
+		show_adventure(navigation.adventure_pager.selected_index)
 
 # The opened adventure goes to the city scene, which adopts it instead of opening a city of its own.
 func begin() -> void:
-	if opened == null:
+	if entering_city or opened == null:
 		return
 	GameAudio.stop_voice()
-	# The state each episode can be retried from (the SDL game's "autosave replay").
-	opened.save_city("autosave replay")
+	SaveFiles.activate(str(opened.command("episode").get("campaign_ref","")))
+	opened.set_save_directory(SaveFiles.directory())
+	var campaign := Campaigns.record(str(opened.command("episode").get("campaign_ref","")))
+	if campaign.has("start_focus"): Engine.set_meta("ezeus_new_game_focus",campaign.start_focus)
+	else: Engine.remove_meta("ezeus_new_game_focus")
 	Engine.set_meta("ezeus_simulation", opened)
+	Engine.set_meta("ezeus_offer_settlement_guide",true)
 	opened = null
-	go_city()
+	go_city(true)
 
 # The chosen adventure opened for editing goes to the city scene, which shows the editor instead of the game.
 func edit_adventure(item: Dictionary) -> void:
@@ -440,6 +580,10 @@ func edit_adventure(item: Dictionary) -> void:
 func build_editor_entry() -> void:
 	editor_button = Button.new()
 	editor_button.name = "Editor"
+	editor_button.theme_type_variation = "MainMenuEditor"
+	editor_button.icon = load("res://ui/icons/menu_editor.svg")
+	editor_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	editor_button.custom_minimum_size.y = 34
 	load_game_button.get_parent().add_child(editor_button)
 	load_game_button.get_parent().move_child(editor_button, load_game_button.get_index() + 1)
 	editor_button.pressed.connect(func(): open_adventures(true))
@@ -474,8 +618,7 @@ func create_adventure() -> void:
 	open_adventures(true)
 	for index in listing.size():
 		if String(listing[index].ref).get_file() == name or String(listing[index].ref) == name:
-			adventure_list.select(index)
-			show_adventure(index)
+			navigation.adventure_pager.select_index(index)
 	adventure_status.text = tr("The adventure %s was made") % name
 
 # ---- the roster of leaders -----------------------------------------------------------------------------------------
@@ -500,7 +643,7 @@ func build_leaders() -> void:
 	leader_list.name = "LeaderList"
 	leader_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	leader_list.item_activated.connect(func(_index): proceed_leader())
-	leader_list.item_selected.connect(func(_index): leader_delete.disabled = false; leader_proceed.disabled = false)
+	leader_list.item_selected.connect(func(_index): leader_delete.disabled = not Leaders.can_delete(selected_leader()); leader_proceed.disabled = false)
 	column.add_child(leader_list)
 	var create_row := HBoxContainer.new()
 	create_row.add_theme_constant_override("separation", 10)
@@ -533,7 +676,7 @@ func build_leaders() -> void:
 	leader_back = Button.new()
 	leader_back.name = "LeaderBack"
 	leader_back.custom_minimum_size = Vector2(120, 46)
-	leader_back.pressed.connect(func(): show_page("main"))
+	leader_back.pressed.connect(back_to_parent)
 	buttons.add_child(leader_back)
 	leader_proceed = Button.new()
 	leader_proceed.name = "LeaderProceed"
@@ -546,29 +689,38 @@ func build_leaders() -> void:
 	add_child(leader_confirm)
 	# The main page's leader line, under the tagline.
 	var line := HBoxContainer.new()
-	line.alignment = BoxContainer.ALIGNMENT_CENTER
+	line.alignment = BoxContainer.ALIGNMENT_BEGIN
 	line.add_theme_constant_override("separation", 10)
+	var portrait := TextureRect.new()
+	portrait.texture = load("res://ui/icons/menu_profile.svg")
+	portrait.custom_minimum_size = Vector2(22,22)
+	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	line.add_child(portrait)
 	leader_line = Label.new()
 	leader_line.name = "LeaderLine"
 	leader_line.theme_type_variation = "Caption"
+	leader_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	leader_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	leader_line.clip_text = true
 	line.add_child(leader_line)
 	leader_change = Button.new()
 	leader_change.name = "LeaderChange"
 	leader_change.flat = true
+	leader_change.theme_type_variation = "MainMenuUtility"
 	leader_change.pressed.connect(open_leaders)
 	line.add_child(leader_change)
-	tagline.get_parent().add_child(line)
-	tagline.get_parent().move_child(line, tagline.get_index() + 1)
+	%LeaderSlot.add_child(line)
 
 func open_leaders() -> void:
-	leader_list.clear()
+	if page != "leaders": navigation.parents.leaders = "extras" if page == "extras" else "main"
 	var names := Leaders.list()
-	for name in names:
-		leader_list.add_item(name)
+	navigation.profile_pager.set_records(names,func(name): return name)
 	var current := Leaders.current()
 	if current in names:
-		leader_list.select(names.find(current))
-	leader_delete.disabled = leader_list.get_selected_items().is_empty()
+		navigation.profile_pager.select_index(names.find(current),false)
+	leader_delete.disabled = leader_list.get_selected_items().is_empty() or not Leaders.can_delete(selected_leader())
 	leader_proceed.disabled = leader_list.get_selected_items().is_empty()
 	leader_back.visible = not current.is_empty()
 	leader_status.text = "" if not names.is_empty() else tr("Name a leader to begin")

@@ -7,14 +7,17 @@ var templates: Dictionary = {}
 var group_signatures: Dictionary = {}
 var group_nodes: Dictionary = {}
 var last_rebuilt := 0
+var last_activity_updates := 0
 # Model path -> WorkerThreadPool task warming its imported file (see prefetch).
 var requested: Dictionary = {}
 var activity := preload("res://scripts/building_activity.gd").new()
+var finish := preload("res://scripts/building_finish.gd").new()
+var construction := preload("res://scripts/building_construction.gd").new()
 
 func collect(node: Node3D, parent: Transform3D, result: Array) -> void:
 	var transform := parent * node.transform
 	if node is MeshInstance3D and node.mesh != null:
-		result.append({"mesh": node.mesh, "transform": transform, "material": node.material_override, "activity":node.has_meta("building_activity")})
+		result.append({"mesh": node.mesh, "transform": transform, "material": node.material_override, "activity":node.has_meta("building_activity"),"construction":node.has_meta("construction_reveal")})
 	for child in node.get_children():
 		if child is Node3D:
 			collect(child, transform, result)
@@ -39,6 +42,11 @@ func prefetch(assets: Array) -> void:
 func prefetch_paths(paths: Array) -> void:
 	for path in paths:
 		if requested.has(path) or loaded.has(path) or not ResourceLoader.exists(path):
+			continue
+		# The dummy renderer's resource IDs are not safe to initialize from
+		# parallel GLB loaders. Headless CI/probes have no display to accelerate.
+		if DisplayServer.get_name()=="headless":
+			loaded[path]=load(path)
 			continue
 		if ResourceLoader.load_threaded_request(path) == OK:
 			requested[path] = true
@@ -89,6 +97,8 @@ func template(asset: String) -> Array:
 		if ResourceLoader.exists(path):
 			var source: Node3D = load_model(path).instantiate()
 			activity.apply(source,asset)
+			construction.apply(source,asset)
+			finish.apply(source,asset)
 			collect(source, Transform3D.IDENTITY, pieces)
 			source.free()
 	templates[asset] = pieces
@@ -96,6 +106,7 @@ func template(asset: String) -> Array:
 
 func rebuild(groups: Dictionary) -> void:
 	last_rebuilt = 0
+	last_activity_updates = 0
 	for key in group_nodes.keys():
 		if not groups.has(key) or groups[key].is_empty():
 			drop(key)
@@ -110,38 +121,52 @@ func rebuild(groups: Dictionary) -> void:
 		if group_signatures.get(key, 0) == signature and group_nodes.has(key):
 			update_activity(group_nodes[key],placements)
 			continue
-		drop(key)
-		var nodes: Array = []
-		for piece in template(str(key).get_slice("|", 0)):
-			var batch := MultiMesh.new()
-			batch.transform_format = MultiMesh.TRANSFORM_3D
-			batch.use_custom_data = bool(piece.get("activity",false))
-			batch.mesh = piece.mesh
-			batch.instance_count = placements.size()
+		# A group keeps the same imported template. Reuse its GPU objects when goods
+		# move or its instance count changes instead of destroying/recreating them.
+		var nodes: Array = group_nodes.get(key, [])
+		var pieces: Array = template(str(key).get_slice("|", 0))
+		for p in pieces.size():
+			var piece: Dictionary = pieces[p]
+			var node: MultiMeshInstance3D
+			if p < nodes.size():
+				node = nodes[p]
+			else:
+				node = MultiMeshInstance3D.new()
+				var fresh := MultiMesh.new()
+				fresh.transform_format = MultiMesh.TRANSFORM_3D
+				fresh.use_custom_data = bool(piece.get("activity", false)) or bool(piece.get("construction",false))
+				fresh.mesh = piece.mesh
+				node.multimesh = fresh
+				node.material_override = piece.material
+				if fresh.use_custom_data: node.extra_cull_margin = .5
+				add_child(node)
+				nodes.append(node)
+			var batch: MultiMesh = node.multimesh
+			if batch.instance_count != placements.size():
+				batch.instance_count = placements.size()
+				node.remove_meta("activity_data")
 			for index in range(placements.size()):
 				batch.set_instance_transform(index, transforms[index] * piece.transform)
-			var node := MultiMeshInstance3D.new()
-			node.multimesh = batch
-			node.material_override = piece.material
-			add_child(node)
-			nodes.append(node)
 		group_signatures[key] = signature
 		group_nodes[key] = nodes
 		update_activity(nodes,placements)
 		last_rebuilt += 1
 
 func update_activity(nodes: Array, placements: Array) -> void:
+	var data := PackedColorArray()
 	for node in nodes:
 		var batch: MultiMesh = node.multimesh
 		if not batch.use_custom_data:continue
-		for i in placements.size():
-			var placement = placements[i]
-			var data := Color(0,0,0,0)
-			if placement is Dictionary:
-				data = Color(1.0 if placement.get("working",false) else 0.0,float(placement.get("animation_offset",0)),0,0)
-			batch.set_instance_custom_data(i,data)
-		# Workers/tools can move beyond their rest bounds; don't cull their swings.
-		node.extra_cull_margin = .5
+		if data.is_empty():
+			for placement in placements:
+				data.append(Color(1.0 if placement.get("working",false) else 0.0,float(placement.get("animation_offset",0)),1.0 if placement.get("constructing",false) else 0.0,float(placement.get("construction_top",0))) if placement is Dictionary else Color(0,0,0,0))
+		var previous: PackedColorArray = node.get_meta("activity_data", PackedColorArray())
+		if previous == data: continue
+		for i in data.size():
+			if previous.size() == data.size() and previous[i] == data[i]: continue
+			batch.set_instance_custom_data(i,data[i])
+			last_activity_updates += 1
+		node.set_meta("activity_data", data)
 
 func drop(key) -> void:
 	for node in group_nodes.get(key, []):

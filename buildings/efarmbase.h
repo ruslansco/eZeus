@@ -20,6 +20,9 @@ public:
 
     void read(eReadStream& src) override;
     void write(eWriteStream& dst) const override;
+    // Read-only presentation of the existing five-stage native harvest cycle.
+    double harvestProgress() const;
+    int usedFields() const;
 private:
     const std::vector<eBuildingTextures>& mTextures;
     double mNextRipe = 0;

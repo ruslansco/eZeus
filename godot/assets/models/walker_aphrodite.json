@@ -1,5 +1,6 @@
 {
   "asset": "walker_aphrodite",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_aphrodite.glb",
   "bytes": 10539768,

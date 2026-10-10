@@ -1,0 +1,9 @@
+[configuration]
+entry_symbol = "ezeus_library_init"
+compatibility_minimum = "4.6"
+reloadable = false
+[libraries]
+macos.debug.arm64 = "res://bin/libezeus_godot.dylib"
+macos.release.arm64 = "res://bin/libezeus_godot.dylib"
+windows.debug.x86_64 = "res://bin/ezeus_godot.dll"
+windows.release.x86_64 = "res://bin/ezeus_godot.dll"

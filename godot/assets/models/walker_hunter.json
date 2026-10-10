@@ -2,18 +2,18 @@
   "asset": "walker_hunter",
   "source": "art/characters/people/build_person.py",
   "file": "walker_hunter.glb",
-  "bytes": 5238520,
-  "vertices": 15637,
+  "bytes": 17806564,
+  "vertices": 21184,
   "surfaces": 3,
-  "source_surfaces": 18,
+  "source_surfaces": 26,
   "bounds_blender": [
     [
-      -0.17651082575321198,
-      -0.18280071020126343,
+      -0.25825944542884827,
+      -0.1792658567428589,
       0.0005000140517950058
     ],
     [
-      0.20215146243572235,
+      0.20844152569770813,
       0.18021810054779053,
       1.190000057220459
     ]
@@ -25,6 +25,17 @@
   "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
   "draw_batching": "vertex_palette_compatible_PBR",
   "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "hunt": 24,
+      "carry": 12,
+      "die": 8
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
   "character": {
     "revision": "natural_people_v1",
     "identities": [
@@ -51,8 +62,8 @@
             ]
           ],
           "hair_length": 0.015,
-          "beard_length": 0,
-          "grey": 0.08,
+          "beard_length": 0.02,
+          "grey": 0.65,
           "seed": 2162363496,
           "skin": [
             0.66,
@@ -70,7 +81,7 @@
       }
     ],
     "vertex_budget": 22000,
-    "allocation_target": 15000,
+    "allocation_target": 20000,
     "shader": "res://shaders/character.gdshader",
     "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
     "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
@@ -78,8 +89,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 72,
+    "targets_before": 240,
+    "targets_after": 193,
     "uv_attributes_removed": 0
   }
 }

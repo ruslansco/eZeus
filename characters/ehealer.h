@@ -7,6 +7,7 @@
 class eHealer : public eBasicPatroler {
 public:
     eHealer(eGameBoard& board);
+    void provideToBuilding(eBuilding* b) override;
     void incTime(int by) override;
     std::shared_ptr<eTexture> getTexture(eTileSize size) const override;
     void beginVisualTick() { mPresentation.begin(absX(),absY(),time()); }

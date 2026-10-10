@@ -14,6 +14,7 @@ args = parser.parse_args()
 protected = [SAVE, REPO / 'settings.txt', ROOT / 'settings.txt',
              Path.home() / 'Library/Application Support/Godot/app_userdata/City Rebuild • 3D Pilot/settings.cfg']
 before = {path: fingerprint(path) for path in protected}
+subprocess.run(['python3', str(REPO / 'tools/adventure_art_metadata.py'), '--check'], check=True)
 log = REPO / f'godot/captures/adventure-card-{args.lang}-engine.log'
 command = [str(GODOT), '--path', str(REPO / 'godot'), '--script',
            'res://scripts/review_adventure_cards.gd', '--log-file', str(log),

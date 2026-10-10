@@ -1,15 +1,16 @@
 {
   "asset": "walker_dionysus",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_dionysus.glb",
-  "bytes": 8993348,
-  "vertices": 15869,
+  "bytes": 9013056,
+  "vertices": 15897,
   "surfaces": 3,
   "source_surfaces": 20,
   "bounds_blender": [
     [
       -0.640394389629364,
-      -0.5697174668312073,
+      -0.477824866771698,
       0.0
     ],
     [

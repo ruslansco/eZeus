@@ -6,12 +6,16 @@ extends Node3D
 
 const FLAME := preload("res://shaders/building_fire.gdshader")
 const SMOKE := preload("res://shaders/fire_smoke.gdshader")
+const CHAR := preload("res://shaders/building_char.gdshader")
+const CHAR_SECONDS := 28.0   # how long a fire takes to blacken a building fully
 const MAX_LIGHTS := 6
 const TONGUES := 7
 
 var fires: Dictionary = {}      # "x,y" -> the fire's root node
 var lights: Array = []          # [OmniLight3D, seed]
 var signature := ""
+var chars: Dictionary = {}      # "x,y" -> {"nodes", "material", "born"}: the soot over a burning building
+var clock := 0.0
 var flame_mesh: ArrayMesh
 var smoke_mesh: QuadMesh
 
@@ -39,6 +43,19 @@ func update(list: Array, city) -> void:
 		wanted[id] = true
 		if not fires.has(id):
 			fires[id] = make_fire(fire, float(heights.get(id, 1.0)), city)
+	# Soot over each burning building (not over rubble, which is already black).
+	var burning := {}
+	for fire in list:
+		if int(fire[5]) == 0:
+			var spot := "%d,%d" % [int(fire[0]), int(fire[1])]
+			burning[spot] = true
+			if not chars.has(spot):
+				chars[spot] = make_char(spot, city)
+	for spot in chars.keys():
+		if not burning.has(spot):
+			for node in chars[spot].nodes:
+				node.queue_free()
+			chars.erase(spot)
 	for id in fires.keys():
 		if not wanted.has(id):
 			var node: Node3D = fires[id]
@@ -104,14 +121,36 @@ func make_fire(fire: Array, height: float, city) -> Node3D:
 		lights.append([glow, rng.randf() * 10.0])
 	return root
 
-# The lights flicker with the flames.
-func _process(_dt: float) -> void:
+# The lights flicker with the flames, and the soot thickens.
+func _process(dt: float) -> void:
+	clock += dt
+	for key in chars:
+		var entry: Dictionary = chars[key]
+		entry.material.set_shader_parameter("amount", clampf(.3 + (clock - float(entry.born)) / CHAR_SECONDS * .62, .3, .92))
 	var time := Time.get_ticks_msec() / 1000.0
 	for entry in lights:
 		var glow: OmniLight3D = entry[0]
 		if is_instance_valid(glow):
 			var phase: float = entry[1]
 			glow.light_energy = 1.4 + .35 * sin(time * 9.0 + phase) + .25 * sin(time * 23.0 + phase * 2.3)
+
+# A shell over the building's own meshes (the placement main.gd recorded), darker the longer it burns.
+func make_char(key: String, city) -> Dictionary:
+	var placement: Dictionary = city.building_placements.get(key, {})
+	var finish := ShaderMaterial.new()
+	finish.shader = CHAR
+	var entry := {"nodes": [], "material": finish, "born": clock}
+	if placement.is_empty():
+		return entry
+	for piece in city.static_batches.template(str(placement.asset)):
+		var shell := MeshInstance3D.new()
+		shell.mesh = piece.mesh
+		shell.material_override = finish
+		shell.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		shell.transform = placement.transform * piece.transform
+		add_child(shell)
+		entry.nodes.append(shell)
+	return entry
 
 func count() -> int:
 	return fires.size()

@@ -11,7 +11,7 @@ extends RefCounted
 const StreetSetback = preload("res://scripts/street_setback.gd")
 const CORNER := -1
 const FRONTS := {
-	"common_house_0a": CORNER, "common_house_1a": 0, "common_house_2a": 0, "common_house_3a": 0,
+	"common_house_0a": 1, "common_house_1a": 1, "common_house_2a": 0, "common_house_3a": 0,
 	"common_house_4a": CORNER, "common_house_5a": 1, "common_house_6a": 1,
 }
 # Facing that means something to the engine or to the layout of a piece stays as it is.

@@ -1,15 +1,16 @@
 {
   "asset": "walker_inventor",
+  "variant_of": null,
   "source": "eZeus/tools/godot_science_walkers.py",
   "file": "walker_inventor.glb",
-  "bytes": 5144672,
-  "vertices": 15555,
+  "bytes": 5167660,
+  "vertices": 15622,
   "surfaces": 3,
   "source_surfaces": 14,
   "bounds_blender": [
     [
-      -0.1795804351568222,
-      -0.18249481916427612,
+      -0.19167278707027435,
+      -0.17033950984477997,
       0.0004999842494726181
     ],
     [

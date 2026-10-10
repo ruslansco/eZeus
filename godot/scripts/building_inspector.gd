@@ -10,12 +10,16 @@ var rows: Dictionary = {}
 var industry_buttons: Dictionary = {}
 var bay_label: Label
 var production_label: Label
+var harvest_label: Label
+var harvest_bar: ProgressBar
 var stock_label: Label
 var native_notes: Label
 var trade_status: Label
 var trade_rows: Dictionary = {}
 var hall_stage_label: Label
 var monument_lines: Label
+var construction_bar: ProgressBar
+var construction_advice: Label
 var monument_halt_button: Button
 var monument_help_button: Button
 var monument_help_bar: ProgressBar
@@ -31,7 +35,22 @@ var notes_label: Label
 var switch_button: Button
 # A walker building's route (the SDL route editor): the button that begins editing it (scripts/route_editor.gd).
 var route_button: Button
+var ruin_demolish_button: Button
 var pending := false
+# Edits apply by themselves: a changed order is sent at once, a typed limit once it settles (LIMIT_SETTLE_MS) or is committed. A draft
+# stays dirty (and keeps the player's value on screen) until the core has answered, and the drafts go out one at a time.
+const LIMIT_SETTLE_MS := 700
+var commit_at := {}
+var inflight := {}
+var sync_label: Label
+var all_order: OptionButton
+var all_limit: SpinBox
+var storage_grid: GridContainer
+var agora_tiles := {}
+var native_expanded := false
+# True while a command is being handed over: a refusal then (the command queue is full) keeps the draft and tries again.
+var handing_over := false
+const RETRY_MS := 1000
 
 func resource_name(resource: int) -> String:
 	return Goods.name_of(resource)
@@ -49,10 +68,17 @@ func label(text: String, heading := false) -> Label:
 func show_inspection(data: Dictionary) -> void:
 	value = data
 	var trade_shape := "%d/%d" % [data.get("trade", {}).get("imports", []).size(), data.get("trade", {}).get("exports", []).size()] if data.has("trade") else ""
-	var key := "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [data.get("target_token", 0), TranslationServer.get_locale(), data.get("storage", {}).get("resources", []).size(), data.has("production"), trade_shape, data.get("hall", {}).get("requirements", []).size(), data.get("monument", {}).get("finished", "-"), data.get("monument", {}).get("attack", {}).get("targets", []).size(), data.has("notes"), data.has("switch"), data.has("route")]
+	var key := "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s" % [data.get("target_token", 0), TranslationServer.get_locale(), data.get("storage", {}).get("resources", []).size(), data.has("production"), trade_shape, data.get("hall", {}).get("requirements", []).size(), data.get("monument", {}).get("finished", "-"), data.get("monument", {}).get("attack", {}).get("targets", []).size(), data.has("notes"), data.has("switch"), data.has("route"), data.get("agora", {}).get("vendors", []).size()]
 	if key != schema:
 		schema = key
 		pending = false
+		commit_at.clear()
+		inflight = {}
+		sync_label = null
+		all_order = null
+		all_limit = null
+		storage_grid = null
+		agora_tiles.clear()
 		rows.clear()
 		trade_rows.clear()
 		industry_buttons.clear()
@@ -62,7 +88,10 @@ func show_inspection(data: Dictionary) -> void:
 		notes_label = null
 		switch_button = null
 		route_button = null
+		ruin_demolish_button = null
 		monument_lines = null
+		construction_bar = null
+		construction_advice = null
 		monument_halt_button = null
 		monument_help_button = null
 		monument_help_bar = null
@@ -72,15 +101,29 @@ func show_inspection(data: Dictionary) -> void:
 		monument_attack_bar = null
 		monument_attack_result = null
 		native_notes = null
+		harvest_label = null
+		harvest_bar = null
 		for child in get_children():
 			remove_child(child)
 			child.queue_free()
 		add_theme_constant_override("separation", 10)
+		if data.has("ruin"):
+			ruin_demolish_button = Button.new()
+			ruin_demolish_button.name = "DemolishRuin"
+			ruin_demolish_button.focus_mode = Control.FOCUS_NONE
+			add_child(ruin_demolish_button)
+			ruin_demolish_button.pressed.connect(func():
+				if pending or not value.ruin.can_demolish: return
+				pending = true
+				action_requested.emit("demolish_ruin %d %d %d %d" % [int(value.x),int(value.y),int(value.target_token),int(value.ruin.target_token)])
+				update_live_data())
 		# A trade post is a store whose orders are its trade with one partner: show those instead of the raw store orders.
 		if data.has("trade"):
 			build_trade(data.trade)
 		elif data.has("storage"):
 			build_storage(data.storage)
+		if data.has("agora"):
+			build_agora(data.agora)
 		if data.has("production"):
 			build_production(data.production)
 		if data.has("hall"):
@@ -121,8 +164,12 @@ func show_inspection(data: Dictionary) -> void:
 			more.focus_mode = Control.FOCUS_NONE
 			add_child(more)
 			native_notes = label("\n\n".join(native_text))
-			native_notes.visible = false
-			more.pressed.connect(func(): native_notes.visible = not native_notes.visible)
+			native_notes.theme_type_variation = "Caption"
+			# An agora's words (what its peddler is doing) are part of its page; elsewhere the details fold away.
+			native_notes.visible = data.has("agora")
+			more.toggle_mode = true
+			more.button_pressed = native_notes.visible
+			more.pressed.connect(func(): native_notes.visible = more.button_pressed)
 	update_live_data()
 
 # A hero's hall: the hero's requirements, each with how far the city is from meeting it, the stage of the summoning and the button that
@@ -149,6 +196,10 @@ func build_hall(hall: Dictionary) -> void:
 func build_monument(monument: Dictionary) -> void:
 	label(str(monument.title), true)
 	if not bool(monument.finished):
+		label(tr("Construction progress"),true)
+		construction_bar=ProgressBar.new();construction_bar.max_value=100
+		construction_bar.custom_minimum_size.y=20;add_child(construction_bar)
+		construction_advice=label("")
 		monument_lines = label("")
 		monument_halt_button = Button.new()
 		monument_halt_button.focus_mode = Control.FOCUS_NONE
@@ -223,43 +274,193 @@ func ask_attack(city: int) -> void:
 	action_requested.emit("sanctuary_attack %d %d %d %d" % [int(value.x), int(value.y), int(value.target_token), city])
 	update_live_data()
 
+# ---- agora --------------------------------------------------------------------------------------------------
+# The SDL agora window's six boxes: each stall's goods, what it holds and whether it is handing them out.
+const AGORA_NAMES := {"food": "Food", "fleece": "Fleece", "oil": "Olive oil", "wine": "Wine", "arms": "Arms", "horses": "Horses", "chariots": "Chariots"}
+const AGORA_ICONS := {"food": "food_total", "fleece": "fleece", "oil": "oil", "wine": "wine", "arms": "arms", "horses": "horses", "chariots": "chariots"}
+
+func build_agora(agora: Dictionary) -> void:
+	label(tr("Stalls"), true)
+	var grid := GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	add_child(grid)
+	for vendor in agora.vendors:
+		var key := str(vendor.key)
+		var tile := PanelContainer.new()
+		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		tile.add_theme_stylebox_override("panel", tile_style(Color(.45, .55, .68, .35)))
+		var column := VBoxContainer.new()
+		column.add_theme_constant_override("separation", 2)
+		tile.add_child(column)
+		var head := HBoxContainer.new()
+		head.add_theme_constant_override("separation", 6)
+		column.add_child(head)
+		var icon := TextureRect.new()
+		icon.texture = Goods.icon_named(str(AGORA_ICONS.get(key, "")))
+		icon.custom_minimum_size = Vector2(24, 24)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		head.add_child(icon)
+		var name := Label.new()
+		name.text = tr(AGORA_NAMES.get(key, "Goods"))
+		name.theme_type_variation = "Detail"
+		name.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		name.tooltip_text = name.text
+		name.mouse_filter = Control.MOUSE_FILTER_PASS
+		name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		head.add_child(name)
+		var stock := Label.new()
+		stock.theme_type_variation = "ToolHeading"
+		column.add_child(stock)
+		var status := Label.new()
+		status.theme_type_variation = "Caption"
+		column.add_child(status)
+		grid.add_child(tile)
+		agora_tiles[key] = {"tile": tile, "stock": stock, "status": status}
+
+static func tile_style(border: Color) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color(.04, .08, .12, .7)
+	box.border_color = border
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(6)
+	box.content_margin_left = 9
+	box.content_margin_right = 9
+	box.content_margin_top = 6
+	box.content_margin_bottom = 7
+	return box
+
+# ---- stores ---------------------------------------------------------------------------------------------------
+const ORDER_NAMES := ["Reject", "Accept", "Get", "Empty"]
+
+func order_button() -> OptionButton:
+	var order := OptionButton.new()
+	order.focus_mode = Control.FOCUS_NONE
+	order.custom_minimum_size.x = 104
+	order.fit_to_longest_item = false
+	order.tooltip_text = tr("Get collects from other stores; Empty sends stock away through native carts.")
+	return order
+
+func limit_box(maximum: int, step: int) -> SpinBox:
+	var limit := SpinBox.new()
+	limit.min_value = 0
+	limit.max_value = maximum
+	limit.step = step
+	limit.custom_minimum_size.x = 86
+	limit.tooltip_text = tr("Stock limit")
+	return limit
+
+func small_caption(text: String, align := HORIZONTAL_ALIGNMENT_LEFT) -> Label:
+	var item := Label.new()
+	item.text = text
+	item.theme_type_variation = "Detail"
+	item.horizontal_alignment = align
+	return item
+
 func build_storage(storage: Dictionary) -> void:
 	label(tr("Stored goods"), true)
-	bay_label = label("")
+	var capacity := HBoxContainer.new()
+	capacity.add_theme_constant_override("separation", 10)
+	add_child(capacity)
+	bay_label = Label.new()
+	bay_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	capacity.add_child(bay_label)
+	sync_label = Label.new()
+	sync_label.theme_type_variation = "Caption"
+	capacity.add_child(sync_label)
 	var note := label(tr("Limits use cargo loads. Each bay holds 4 loads, or 1 sculpture. Lower limits keep existing stock."))
-	note.theme_type_variation="Caption"
+	note.theme_type_variation = "Caption"
+	storage_grid = GridContainer.new()
+	storage_grid.columns = 4
+	storage_grid.add_theme_constant_override("h_separation", 8)
+	storage_grid.add_theme_constant_override("v_separation", 5)
+	add_child(storage_grid)
+	storage_grid.add_child(small_caption(""))
+	storage_grid.add_child(small_caption(tr("Stock"), HORIZONTAL_ALIGNMENT_RIGHT))
+	storage_grid.add_child(small_caption(tr("Orders")))
+	storage_grid.add_child(small_caption(tr("Limit")))
+	# One row to set them all: choosing an order or a limit here sends it for every good below.
+	var largest := 0
+	for goods in storage.resources:
+		largest = maxi(largest, int(goods.max_limit))
+	var everything := Label.new()
+	everything.text = tr("All goods")
+	everything.theme_type_variation = "ToolHeading"
+	everything.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	storage_grid.add_child(everything)
+	storage_grid.add_child(small_caption(""))
+	all_order = order_button()
+	all_order.add_item(tr("Mixed"))
+	for names in ORDER_NAMES:
+		all_order.add_item(tr(names))
+	all_order.tooltip_text = tr("Set the order for every good in this store")
+	storage_grid.add_child(all_order)
+	all_limit = limit_box(largest, 4)
+	all_limit.tooltip_text = tr("Set the limit for every good in this store")
+	storage_grid.add_child(all_limit)
+	all_order.item_selected.connect(func(index):
+		if index <= 0 or not value.get("can_edit", false):
+			return
+		for resource in rows:
+			rows[resource].order.select(index - 1)
+			edit_storage(resource, 0))
+	all_limit.value_changed.connect(func(number):
+		if not value.get("can_edit", false):
+			return
+		for resource in rows:
+			var row: Dictionary = rows[resource]
+			row.limit.value = minf(number, row.limit.max_value))
+	all_limit.get_line_edit().text_submitted.connect(func(_text): settle_all())
+	all_limit.get_line_edit().focus_exited.connect(settle_all)
 	for goods in storage.resources:
 		var resource := int(goods.resource)
-		var count := label("")
-		var row := HBoxContainer.new()
-		add_child(row)
-		var order := OptionButton.new()
-		order.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		order.focus_mode = Control.FOCUS_NONE
-		for names in ["Reject", "Accept", "Get", "Empty"]:
+		var name_box := HBoxContainer.new()
+		name_box.add_theme_constant_override("separation", 6)
+		name_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var icon := TextureRect.new()
+		icon.texture = Goods.icon_of(resource)
+		icon.custom_minimum_size = Vector2(22, 22)
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		name_box.add_child(icon)
+		var caption := Label.new()
+		caption.text = resource_name(resource)
+		caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		caption.tooltip_text = caption.text
+		caption.mouse_filter = Control.MOUSE_FILTER_PASS
+		caption.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		name_box.add_child(caption)
+		storage_grid.add_child(name_box)
+		var count := Label.new()
+		count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		count.custom_minimum_size.x = 38
+		storage_grid.add_child(count)
+		var order := order_button()
+		for names in ORDER_NAMES:
 			order.add_item(tr(names))
-		order.tooltip_text = tr("Get collects from other stores; Empty sends stock away through native carts.")
-		row.add_child(order)
-		var limit := SpinBox.new()
-		limit.min_value = 0
-		limit.max_value = int(goods.max_limit)
-		limit.step = int(goods.step)
-		limit.custom_minimum_size.x = 90
-		limit.tooltip_text = tr("Stock limit")
-		row.add_child(limit)
-		var apply := Button.new()
-		apply.text = tr("Apply")
-		apply.focus_mode = Control.FOCUS_NONE
-		row.add_child(apply)
-		rows[resource] = {"count": count, "order": order, "limit": limit, "apply": apply, "dirty": false}
-		order.item_selected.connect(func(_index): mark_dirty(resource))
-		limit.value_changed.connect(func(_number): mark_dirty(resource))
-		apply.pressed.connect(func(): submit_storage(resource))
+		storage_grid.add_child(order)
+		var limit := limit_box(int(goods.max_limit), int(goods.step))
+		storage_grid.add_child(limit)
+		rows[resource] = {"caption": caption, "count": count, "order": order, "limit": limit, "dirty": false}
+		order.item_selected.connect(func(_index): edit_storage(resource, 0))
+		limit.value_changed.connect(func(_number): edit_storage(resource, LIMIT_SETTLE_MS))
+		limit.get_line_edit().text_submitted.connect(func(_text): settle(resource))
+		limit.get_line_edit().focus_exited.connect(func(): settle(resource))
 
 # ---- trade posts --------------------------------------------------------------------------------------------
 func build_trade(trade: Dictionary) -> void:
 	label(tr("Trade with %s") % trade.partner, true)
-	trade_status = label("")
+	var status_row := HBoxContainer.new()
+	add_child(status_row)
+	trade_status = Label.new()
+	trade_status.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	trade_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	status_row.add_child(trade_status)
+	sync_label = Label.new()
+	sync_label.theme_type_variation = "Caption"
+	status_row.add_child(sync_label)
 	var note := label(tr("Choose the goods this post trades and how much to keep in store: an import is bought until that much is held, an export is sold from the stock above nothing."))
 	note.theme_type_variation="Caption"
 	for section in [["imports", 0, "Imports: goods the partner sells"], ["exports", 1, "Exports: goods the partner buys"]]:
@@ -285,43 +486,95 @@ func build_trade(trade: Dictionary) -> void:
 			quota.custom_minimum_size.x = 90
 			quota.tooltip_text = tr("Stock to keep")
 			row.add_child(quota)
-			var apply := Button.new()
-			apply.text = tr("Apply")
-			apply.focus_mode = Control.FOCUS_NONE
-			row.add_child(apply)
-			trade_rows[key] = {"caption": caption, "toggle": toggle, "quota": quota, "apply": apply, "dirty": false, "direction": int(section[1]), "resource": int(item.resource)}
-			toggle.item_selected.connect(func(_index): mark_trade_dirty(key))
-			quota.value_changed.connect(func(_number): mark_trade_dirty(key))
-			apply.pressed.connect(func(): submit_trade(key))
+			trade_rows[key] = {"caption": caption, "toggle": toggle, "quota": quota, "dirty": false, "direction": int(section[1]), "resource": int(item.resource)}
+			toggle.item_selected.connect(func(_index): edit_trade(key, 0))
+			quota.value_changed.connect(func(_number): edit_trade(key, LIMIT_SETTLE_MS))
+			quota.get_line_edit().text_submitted.connect(func(_text): settle_trade(key))
+			quota.get_line_edit().focus_exited.connect(func(): settle_trade(key))
 
-func mark_trade_dirty(key: String) -> void:
+# ---- automatic apply ------------------------------------------------------------------------------------------
+func edit_trade(key: String, delay_ms: int) -> void:
 	trade_rows[key].dirty = true
-	trade_rows[key].apply.disabled = pending or not value.get("can_edit", false)
-
-func submit_trade(key: String) -> void:
-	if pending or not value.get("can_edit", false):
-		return
-	var row: Dictionary = trade_rows[key]
-	pending = true
-	action_requested.emit("trade %d %d %d %d %d %d %d" % [int(value.x), int(value.y), int(value.target_token), row.resource, row.direction, row.toggle.selected, int(row.quota.value)])
+	commit_at["t|" + key] = Time.get_ticks_msec() + delay_ms
 	update_live_data()
 
-func mark_dirty(resource: int) -> void:
+func edit_storage(resource: int, delay_ms: int) -> void:
 	rows[resource].dirty = true
-	rows[resource].apply.disabled = pending or not value.get("can_edit", false)
+	commit_at["s|%d" % resource] = Time.get_ticks_msec() + delay_ms
+	update_live_data()
+
+# A typed limit is committed now (Enter, or leaving the box) instead of waiting for the pause.
+func settle(resource: int) -> void:
+	if commit_at.has("s|%d" % resource):
+		commit_at["s|%d" % resource] = 0
+
+func settle_trade(key: String) -> void:
+	if commit_at.has("t|" + key):
+		commit_at["t|" + key] = 0
+
+func settle_all() -> void:
+	for key in commit_at:
+		commit_at[key] = 0
+
+func _process(_delta: float) -> void:
+	# Drafts go one at a time, in the order they came due, once the previous command has been answered.
+	if pending or commit_at.is_empty():
+		return
+	var now := Time.get_ticks_msec()
+	var due := ""
+	for key in commit_at:
+		if commit_at[key] <= now and (due.is_empty() or commit_at[key] < commit_at[due]):
+			due = key
+	if due.is_empty():
+		return
+	commit_at.erase(due)
+	var kind := due.get_slice("|", 0)
+	var id := due.get_slice("|", 1)
+	if kind == "s":
+		submit_storage(int(id))
+	else:
+		submit_trade(id)
+
+func submit_trade(key: String) -> void:
+	var row: Dictionary = trade_rows.get(key, {})
+	if row.is_empty():
+		return
+	if not value.get("can_edit", false):
+		row.dirty = false
+		return
+	pending = true
+	inflight = {"kind": "t", "key": key, "state": row.toggle.selected, "number": int(row.quota.value)}
+	handing_over = true
+	action_requested.emit("trade %d %d %d %d %d %d %d" % [int(value.x), int(value.y), int(value.target_token), row.resource, row.direction, row.toggle.selected, int(row.quota.value)])
+	handing_over = false
+	update_live_data()
 
 func submit_storage(resource: int) -> void:
-	if pending or not value.get("can_edit", false):
+	var row: Dictionary = rows.get(resource, {})
+	if row.is_empty():
 		return
-	var row: Dictionary = rows[resource]
+	if not value.get("can_edit", false):
+		row.dirty = false
+		return
 	# The native command includes the selected object's token, not just a tile.
 	pending = true
+	inflight = {"kind": "s", "key": resource, "state": row.order.selected, "number": int(row.limit.value)}
+	handing_over = true
 	action_requested.emit("storage %d %d %d %d %d %d" % [int(value.x), int(value.y), int(value.target_token), resource, row.order.selected, int(row.limit.value)])
+	handing_over = false
 	update_live_data()
 
 func build_production(production: Dictionary) -> void:
 	label(tr("Production"), true)
 	production_label = label("")
+	if production.has("harvest_progress"):
+		harvest_label = label("")
+		harvest_bar = ProgressBar.new()
+		harvest_bar.step = 0.0
+		harvest_bar.show_percentage = false
+		harvest_bar.custom_minimum_size.y = 6
+		harvest_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(harvest_bar)
 	stock_label = label("")
 	if not production.industries.is_empty():
 		var note := label(tr("Industry controls affect every producer of these goods in this city, including shared producers."))
@@ -344,6 +597,11 @@ func build_production(production: Dictionary) -> void:
 			update_live_data())
 
 func update_live_data() -> void:
+	if ruin_demolish_button != null:
+		ruin_demolish_button.text = tr("Demolish · Cost: %d") % int(value.ruin.cost)
+		ruin_demolish_button.disabled = pending or not value.ruin.can_demolish
+		var reasons := {"on_fire":"A burning building cannot be demolished","not_owned":"Another city's land","pending_decision":"Resolve the city's pending decision first","insufficient_funds":"The city's credit limit has been reached"}
+		ruin_demolish_button.tooltip_text = tr("Remove this entire ruined building. Demolition cannot be undone.") if value.ruin.can_demolish else tr(reasons.get(str(value.ruin.reason),"The selected building changed. Inspect it again"))
 	var editable: bool = value.get("can_edit", false) and not pending
 	if notes_label != null:
 		notes_label.text = "\n".join(PackedStringArray(value.get("notes", [])))
@@ -361,6 +619,8 @@ func update_live_data() -> void:
 			if not str(value.get(field, "")).is_empty():
 				lines.append(str(value[field]))
 		native_notes.text = "\n\n".join(lines)
+	if sync_label != null:
+		sync_label.text = tr("Saving…") if pending or not commit_at.is_empty() else (tr("Changes apply automatically") if editable else "")
 	if value.has("trade"):
 		var trade: Dictionary = value.trade
 		var kind := tr("A sea trade post (a pier).") if trade.water else tr("A land trade post.")
@@ -373,22 +633,47 @@ func update_live_data() -> void:
 				if not row.dirty:
 					row.toggle.select(1 if item.enabled else 0)
 					row.quota.set_value_no_signal(int(item.quota))
-				row.toggle.disabled = not editable
-				row.quota.editable = editable
-				row.apply.disabled = not editable or not row.dirty
+				row.toggle.disabled = not value.get("can_edit", false)
+				row.quota.editable = value.get("can_edit", false)
 	if value.has("storage") and not value.has("trade"):
 		bay_label.text = tr("Bays in use: %d / %d") % [int(value.storage.occupied_bays), int(value.storage.bays)]
+		var orders := {}
+		var limits := {}
 		for goods in value.storage.resources:
 			var row: Dictionary = rows[int(goods.resource)]
-			row.count.text = "%s  ·  %d" % [resource_name(int(goods.resource)), int(goods.count)]
+			row.count.text = str(int(goods.count))
+			row.count.tooltip_text = tr("(overflow: %d)") % int(goods.overflow) if int(goods.overflow) > 0 else ""
+			row.count.add_theme_color_override("font_color", Color(1.0, .78, .38) if int(goods.overflow) > 0 else Color(.93, .89, .82))
 			if int(goods.overflow) > 0:
-				row.count.text += tr(" (overflow: %d)") % int(goods.overflow)
+				row.count.text += " +%d" % int(goods.overflow)
 			if not row.dirty:
 				row.order.select(int(goods.order))
 				row.limit.set_value_no_signal(int(goods.limit))
-			row.order.disabled = not editable
-			row.limit.editable = editable
-			row.apply.disabled = not editable or not row.dirty
+			var can_edit: bool = value.get("can_edit", false)
+			row.order.disabled = not can_edit
+			row.limit.editable = can_edit
+			orders[row.order.selected] = true
+			limits[int(row.limit.value)] = true
+		# The "all goods" row shows what the goods share, or "Mixed".
+		if all_order != null and commit_at.is_empty() and not pending:
+			all_order.select(orders.keys()[0] + 1 if orders.size() == 1 else 0)
+			all_order.disabled = not value.get("can_edit", false)
+			if not all_limit.get_line_edit().has_focus():
+				all_limit.set_value_no_signal(limits.keys()[0] if limits.size() == 1 else all_limit.max_value)
+			all_limit.editable = value.get("can_edit", false)
+	if value.has("agora"):
+		for vendor in value.agora.vendors:
+			var tile: Dictionary = agora_tiles.get(str(vendor.key), {})
+			if tile.is_empty():
+				continue
+			var present: bool = vendor.present
+			var stocked: bool = int(vendor.stock) > 0
+			tile.stock.text = "%d / %d" % [int(vendor.stock), int(vendor.capacity)] if present else "—"
+			tile.status.text = tr("Distributing") if present and stocked else (tr("No goods") if present else tr("No vendor"))
+			var tint := Color(.55, .83, .66) if present and stocked else (Color(.97, .76, .40) if present else Color(.58, .64, .72))
+			tile.status.add_theme_color_override("font_color", tint)
+			tile.stock.add_theme_color_override("font_color", Color(.93, .89, .82) if present else Color(.58, .64, .72))
+			tile.tile.add_theme_stylebox_override("panel", tile_style(Color(tint, .55 if present else .25)))
 	if value.has("hall") and hall_stage_label != null:
 		var hall: Dictionary = value.hall
 		var stages := {"none": "The hero has not been summoned yet.", "summoned": "The hero has been summoned and is on his way.", "arrived": "The hero is in the city and defends it."}
@@ -409,6 +694,8 @@ func update_live_data() -> void:
 		summon_button.disabled = not hall.can_summon or pending
 	if value.has("monument"):
 		var monument: Dictionary = value.monument
+		if construction_bar!=null: construction_bar.value=clampf(float(monument.progress),0,100)
+		if construction_advice!=null: construction_advice.text=preload("res://ui/city_guidance.gd").construction_advice(monument)
 		if monument_lines != null:
 			var lines: Array[String] = []
 			for line in monument.lines:
@@ -430,6 +717,10 @@ func update_live_data() -> void:
 			"no_target": "No resource to collect"}
 		var status: String = statuses.get(value.production.status, statuses.operational)
 		production_label.text = tr(status)
+		if harvest_label != null:
+			var percent := clampf(float(value.production.harvest_progress)*100.0,0,100)
+			harvest_label.text = tr("Harvest readiness: %d%%") % floori(percent)
+			harvest_bar.value = percent
 		var lines: Array[String] = []
 		if value.production.has("input"):
 			var input: Dictionary = value.production.input
@@ -460,8 +751,30 @@ func command_done(command: String, succeeded: bool) -> void:
 	if int(command.get_slice(" ", 3)) != int(value.get("target_token", -1)):
 		return
 	pending = false
+	var sent := inflight
+	inflight = {}
+	if sent.is_empty():
+		update_live_data()
+		return
 	if succeeded:
+		# The draft is settled unless the player changed it again while the command was on its way.
+		if sent.kind == "s" and rows.has(sent.key):
+			var row: Dictionary = rows[sent.key]
+			if row.order.selected == sent.state and int(row.limit.value) == sent.number and not commit_at.has("s|%d" % sent.key):
+				row.dirty = false
+		elif sent.kind == "t" and trade_rows.has(sent.key):
+			var row: Dictionary = trade_rows[sent.key]
+			if row.toggle.selected == sent.state and int(row.quota.value) == sent.number and not commit_at.has("t|" + str(sent.key)):
+				row.dirty = false
+	elif handing_over:
+		# The command never left (the queue is full): the draft stays and goes again shortly.
+		var retry := ("s|%d" % sent.key) if sent.kind == "s" else ("t|" + str(sent.key))
+		commit_at[retry] = Time.get_ticks_msec() + RETRY_MS
+	else:
+		# Refused: the rest of the queue is dropped and every row goes back to what the building says.
+		commit_at.clear()
 		for row in rows.values():
 			row.dirty = false
 		for row in trade_rows.values():
 			row.dirty = false
+	update_live_data()

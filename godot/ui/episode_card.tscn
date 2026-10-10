@@ -1,97 +1,208 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://ui/episode_card.gd" id="1_fhv6u"]
+[ext_resource type="Script" path="res://ui/episode_card.gd" id="1_card"]
 
-[node name="EpisodeCard" type="VBoxContainer" unique_id=126904816]
-theme_override_constants/separation = 10
-script = ExtResource("1_fhv6u")
+[node name="EpisodeCard" type="VBoxContainer"]
+theme_override_constants/separation = 16
+script = ExtResource("1_card")
 
-[node name="Heading" type="Label" parent="." unique_id=2029681416]
+[node name="Banner" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_type_variation = &"EpisodeBanner"
+
+[node name="Header" type="HBoxContainer" parent="Banner"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Medal" type="TextureRect" parent="Banner/Header"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Titles" type="VBoxContainer" parent="Banner/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"Heading"
-autowrap_mode = 3
+theme_override_constants/separation = 4
 
-[node name="Subtitle" type="Label" parent="." unique_id=701698160]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"Subheading"
-autowrap_mode = 3
-
-[node name="Scroll" type="ScrollContainer" parent="." unique_id=191336979]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-
-[node name="Body" type="Label" parent="Scroll" unique_id=131585087]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-autowrap_mode = 3
-
-[node name="Colonies" type="ItemList" parent="." unique_id=639416996]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(0, 150)
-layout_mode = 2
-
-[node name="GoalsHeading" type="Label" parent="." unique_id=1479952762]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"Subheading"
-
-[node name="Goals" type="VBoxContainer" parent="." unique_id=1593297984]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="DifficultyRow" type="HBoxContainer" parent="." unique_id=1627023782]
-unique_name_in_owner = true
+[node name="Context" type="HBoxContainer" parent="Banner/Header/Titles"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="DifficultyLabel" type="Label" parent="DifficultyRow" unique_id=1999872168]
+[node name="Phase" type="Label" parent="Banner/Header/Titles/Context"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"EpisodeEyebrow"
+autowrap_mode = 3
+
+[node name="EpisodeProgress" type="Label" parent="Banner/Header/Titles/Context"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Caption"
 
-[node name="DifficultyDown" type="Button" parent="DifficultyRow" unique_id=1217085032]
+[node name="Heading" type="Label" parent="Banner/Header/Titles"]
 unique_name_in_owner = true
 layout_mode = 2
-focus_mode = 0
-text = "◀"
+size_flags_horizontal = 3
+theme_type_variation = &"EpisodeHeading"
+autowrap_mode = 3
 
-[node name="DifficultyValue" type="Label" parent="DifficultyRow" unique_id=1178668420]
+[node name="Subtitle" type="Label" parent="Banner/Header/Titles"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"EpisodeTitle"
+autowrap_mode = 3
+
+[node name="Content" type="BoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 18
+
+[node name="StoryPanel" type="PanelContainer" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.65
+theme_type_variation = &"EpisodePaper"
+
+[node name="StoryColumn" type="VBoxContainer" parent="Content/StoryPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StoryHeading" type="Label" parent="Content/StoryPanel/StoryColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"EpisodePaperHeading"
+
+[node name="Scroll" type="ScrollContainer" parent="Content/StoryPanel/StoryColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+follow_focus = true
+focus_mode = 2
+
+[node name="Body" type="Label" parent="Content/StoryPanel/StoryColumn/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"EpisodeBody"
+autowrap_mode = 3
+
+[node name="GoalsPanel" type="PanelContainer" parent="Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = &"EpisodeObjectives"
+
+[node name="GoalsColumn" type="VBoxContainer" parent="Content/GoalsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="GoalsHeading" type="Label" parent="Content/GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"EpisodeGoalHeading"
+autowrap_mode = 3
+
+[node name="GoalSummary" type="Label" parent="Content/GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+autowrap_mode = 3
+
+[node name="GoalScroll" type="ScrollContainer" parent="Content/GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+follow_focus = true
+focus_mode = 2
+
+[node name="Goals" type="VBoxContainer" parent="Content/GoalsPanel/GoalsColumn/GoalScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Colonies" type="ItemList" parent="Content/GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"AdventureLibrary"
+
+[node name="EmptyGoals" type="Label" parent="Content/GoalsPanel/GoalsColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"Caption"
+autowrap_mode = 3
+
+[node name="Rule" type="HSeparator" parent="."]
+layout_mode = 2
+theme_type_variation = &"MainMenuRule"
+
+[node name="Footer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="DifficultyRow" type="HBoxContainer" parent="Footer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 8
+
+[node name="DifficultyLabel" type="Label" parent="Footer/DifficultyRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Caption"
+
+[node name="DifficultyDown" type="Button" parent="Footer/DifficultyRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 40)
+layout_mode = 2
+theme_type_variation = &"EpisodeDifficultyButton"
+text = "‹"
+
+[node name="DifficultyValue" type="Label" parent="Footer/DifficultyRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_type_variation = &"Value"
 horizontal_alignment = 1
 
-[node name="DifficultyUp" type="Button" parent="DifficultyRow" unique_id=1079211334]
+[node name="DifficultyUp" type="Button" parent="Footer/DifficultyRow"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 40)
 layout_mode = 2
-focus_mode = 0
-text = "▶"
+theme_type_variation = &"EpisodeDifficultyButton"
+text = "›"
 
-[node name="Buttons" type="HBoxContainer" parent="." unique_id=130846777]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="Spacer" type="Control" parent="Buttons" unique_id=519926007]
+[node name="Spacer" type="Control" parent="Footer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Secondary" type="Button" parent="Buttons" unique_id=1705368828]
+[node name="Secondary" type="Button" parent="Footer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 46)
+custom_minimum_size = Vector2(140, 48)
 layout_mode = 2
+theme_type_variation = &"MainMenuSecondary"
 
-[node name="Primary" type="Button" parent="Buttons" unique_id=1324394450]
+[node name="Primary" type="Button" parent="Footer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 46)
+custom_minimum_size = Vector2(190, 48)
 layout_mode = 2
-theme_type_variation = &"Primary"
+theme_type_variation = &"MainMenuPrimary"

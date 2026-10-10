@@ -1,15 +1,16 @@
 {
   "asset": "walker_poseidon",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_poseidon.glb",
-  "bytes": 10520432,
-  "vertices": 15955,
+  "bytes": 10555668,
+  "vertices": 15996,
   "surfaces": 3,
   "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.5866109728813171,
-      -0.5735999345779419,
+      -0.5953428149223328,
+      -0.4654390215873718,
       0.0
     ],
     [

@@ -20,3 +20,15 @@ no pixels or graphics from the Nova Roma screenshots are embedded.
 Character window (3 October 2026): `voice.svg` (a speaker with two sound waves) and
 `stop.svg` (a rounded square) are original 32-unit drawings for the listen/stop
 button of `ui/character_panel.gd`.
+
+Settlement guide (8 October 2026): `guide_done.svg` (a green disc with a check),
+`guide_current.svg` (a gold ring around a pale dot), `guide_todo.svg` (a muted
+ring) and `next.svg` (a right chevron) are original 32-unit drawings for the
+stepper in `ui/city_help_panel.gd`. They keep their own colours; the step rows
+and status strips that carry them are styled by `Guide*` Theme variations.
+
+Issues tab (8 October 2026): `refresh.svg` (two circling arrows) and
+`previous.svg` (a left chevron, the mirror of `next.svg`) are original 32-unit
+drawings for the warning list's refresh and pager buttons in
+`ui/city_help_panel.gd`. Warning cards reuse `alert_fire`, `homes`, `people`,
+`road`, `industry`, `storage` and `build`, tinted by the `IssueStatus*` colours.

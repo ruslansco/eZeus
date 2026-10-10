@@ -1,15 +1,16 @@
 {
   "asset": "walker_oxhandler",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_oxhandler.glb",
-  "bytes": 5321656,
-  "vertices": 15991,
+  "bytes": 6882004,
+  "vertices": 16033,
   "surfaces": 3,
   "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.17736530303955078,
-      -0.18229085206985474,
+      -0.1916714459657669,
+      -0.17022454738616943,
       0.0005000438541173935
     ],
     [
@@ -78,8 +79,8 @@
   },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 105,
-    "targets_after": 61,
+    "targets_before": 129,
+    "targets_after": 85,
     "uv_attributes_removed": 0
   }
 }

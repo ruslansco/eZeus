@@ -93,7 +93,10 @@ static func animate(entry: Dictionary, dt: float) -> bool:
 		var b := int(table.get(names[second], -1))
 		var node: MeshInstance3D = morph.node
 		if morph.has("vat"):
-			node.set_instance_shader_parameter("vat_pose", Vector3(a, b, blend))
+			var pose := Vector3(a, b, 0.0 if a == b else blend)
+			if morph.get("pose") != pose:
+				node.set_instance_shader_parameter("vat_pose", pose)
+				morph.pose = pose
 			if morph.get("blend", -1.0) != 1.0:
 				node.set_instance_shader_parameter("vat_walk_blend", 1.0)
 				morph.blend = 1.0

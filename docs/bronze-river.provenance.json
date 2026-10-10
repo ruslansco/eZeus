@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "purpose": "Private second-campaign adaptation evidence; excluded from shipping",
+  "records": [
+    {
+      "id": "bronze-river-chapters-v1",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/bronze_river_chapters.json",
+        "build-content-research/bronze-river/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: Nightwolf / David Masters and underlying rightsholders; complete chain not verified",
+      "origin": "New three-parent-chapter production/trade campaign on reviewed Armory parent terrain/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=653",
+        "source_pak_sha256": "d997082df87a9880f5b6b4066256c0c89050a790ba999d1c1cd7ce76da5ff51a",
+        "recipe_version": 1
+      },
+      "license_or_agreement": "No explicit commercial redistribution permission established",
+      "evidence_location": [
+        "docs/BRONZE_RIVER.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/bronze-river/current.json"
+      ],
+      "reviewed_sha256_by_file": {
+        "content/scenarios/bronze_river_chapters.json": "e9140ddb4ba0375b395418438b9e904ccfab56ee24080a6793ccd93a3ec9f59f",
+        "build-content-research/bronze-river/build-1791548546056883000/eZeus/Adventures/Bronze River Chapters/ATTRIBUTION.md": "f76f492462a4456eab64075f525d8e985b5695a152f22966c616ba14b173768b",
+        "build-content-research/bronze-river/build-1791548546056883000/eZeus/Adventures/Bronze River Chapters/Bronze River Chapters.txt": "eee06ab8d3501e1aee8c3e367a353d3787b3e1c3609ebfee56d413504a08167c",
+        "build-content-research/bronze-river/build-1791548546056883000/eZeus/Adventures/Bronze River Chapters/Bronze River Chapters.epak": "a496155f0aa6b1c6b5e820b997a6fb8bd074af24c3ba28c6f878627e9161eb44",
+        "build-content-research/bronze-river/build-1791548546056883000/eZeus/Adventures/Bronze River Chapters/Bronze River Chapters_ru.txt": "a73ee42bf9720ef3641f409256c5eb4b00be24a56e047e134b4000db5b9a6940"
+      },
+      "source_input_records": [
+        "heavengames-adventure-653",
+        "Existing original-game/development compatibility resources; release review pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-09",
+        "scope": "New English/Russian story, briefings, endings, objectives, permission sets and partner/event settings; no new terrain/art/audio in this slice"
+      },
+      "attribution_requirements": [
+        "Retain Armory / Nightwolf / David Masters, source URL, untouched archive/notes/hashes and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Human playtesting/pacing; actual Windows/minimum machines; retained map/world/content commercial permission or replacement before release",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "authoring_checks": 9,
+        "visible_review_checks": {
+          "en": 53,
+          "ru": 53
+        },
+        "water_bridge_previews": 2925,
+        "valid_bridge_sites": 120,
+        "full_playthrough_verified": true,
+        "test_commands_used": false,
+        "commands": 567,
+        "native_service_calls": 2660,
+        "simulation_units": 792900.0,
+        "final_population": 1176.0,
+        "final_year_profit": 2390,
+        "final_year_exports": 3725,
+        "largest_observed_annual_armor_sales": 16,
+        "largest_observed_annual_fleece_imports": 32,
+        "reserve_committed": true,
+        "trade_recovery_verified": true,
+        "human_pacing_verified": false,
+        "windows_execution_verified": false,
+        "windows_package_contains_campaign": false,
+        "commercial_rights_verified": false
+      }
+    }
+  ]
+}

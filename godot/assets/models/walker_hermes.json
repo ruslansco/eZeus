@@ -1,15 +1,16 @@
 {
   "asset": "walker_hermes",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_hermes.glb",
-  "bytes": 6095816,
-  "vertices": 15661,
+  "bytes": 6104048,
+  "vertices": 15683,
   "surfaces": 3,
   "source_surfaces": 17,
   "bounds_blender": [
     [
-      -0.5495598912239075,
-      -0.5735999345779419,
+      -0.5980013608932495,
+      -0.4703657031059265,
       0.06532320380210876
     ],
     [

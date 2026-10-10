@@ -1,0 +1,58 @@
+{
+  "version": "olympian_sanctuary_v1",
+  "date": "2026-10-09",
+  "scope": "Presentation-only main menu. No native rules, saved cities, model originals, collision, navigation or game RNG changes.",
+  "geometry_source": "res://scripts/olympian_menu_world.gd",
+  "surface_source": "res://scripts/olympian_menu_surface.gd",
+  "derivative": "res://assets/menu/olympian_sanctuary.scn",
+  "rebuild": "Godot --headless --path godot --script res://scripts/bake_olympian_menu.gd --log-file /tmp/olympian-bake.log",
+  "references": [
+    "User-provided Athens through the Ages and The Trojan War images inform limestone, terracotta, Aegean coast and elevated Greek sanctuary composition. No image pixels embedded in the new backdrop."
+  ],
+  "original_work": [
+    "Procedural terrain, acropolis, temples, city houses, streets, harbour, boats, olive foliage, mountains, sky and sea shaders",
+    "Beveled 3D menu housings and projected interactive button slabs"
+  ],
+  "retained_inputs": [
+    {
+      "path": "res://assets/menu/rock_06_diff_2k.jpg",
+      "sha256": "cd0e306ee8fb9ddc11f8d7c4dc709fa09caf91ebdd7941ab79196654f1789481",
+      "bytes": 3266219,
+      "rights_status": "needs_evidence"
+    },
+    {
+      "path": "res://assets/menu/rock_06_nor_gl_2k.jpg",
+      "sha256": "d86110c0af6375563efa6d296d37300e04089b99124e29f16373b04ec492ab6e",
+      "bytes": 2764058,
+      "rights_status": "needs_evidence"
+    },
+    {
+      "path": "res://assets/menu/rock_06_rough_2k.jpg",
+      "sha256": "f030ddcd6b089037826bafb4f49a3999a364ae33187ff1d1e7f0b1fc4975c883",
+      "bytes": 862351,
+      "rights_status": "needs_evidence"
+    },
+    {
+      "path": "res://assets/models/common_house_3a.glb",
+      "sha256": "a821c11667f0c50afdddda96ee3a456ffcad0b539255078e0e17d8d94efe5a48",
+      "bytes": 5191340,
+      "rights_status": "needs_evidence"
+    },
+    {
+      "path": "res://assets/models/common_house_5a.glb",
+      "sha256": "7eae87f44584c41b3beadf5cd0d6c4f5b523d76e975775e563fdd7b5085c52cd",
+      "bytes": 6114728,
+      "rights_status": "needs_evidence"
+    },
+    {
+      "path": "res://assets/models/sanctuary_statue_zeus.glb",
+      "sha256": "576ed7c43560a6e49bd027fe648cf42c7f880c46b068c58045e6d29f06694574",
+      "bytes": 7186916,
+      "rights_status": "needs_evidence"
+    }
+  ],
+  "retained_portal": "res://scripts/login_scene_3d.gd hollow arch and res://shaders/login_portal.gdshader; earlier scenery sources remain intact.",
+  "attribution": "Retain assets/menu/menu_sources.json for Poly Haven scan attribution and individual model manifests for original source/provenance. Existing GPL notices retained.",
+  "rendering": "Forward Mobile; 27 static mesh/MultiMesh nodes plus bounded UI meshes, one shadowed sun with two cascades. Cached static scenery retains imported courtyard-house LODs. Animated portal/water and camera freeze under Reduce interface motion.",
+  "release_status": "Development presentation. User visual acceptance, sustained minimum-device and cross-platform profiling, and retained-input release evidence remain pending."
+}

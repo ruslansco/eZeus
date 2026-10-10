@@ -1,15 +1,16 @@
 {
   "asset": "walker_demeter",
+  "variant_of": null,
   "source": "art/characters/people/build_person.py",
   "file": "walker_demeter.glb",
-  "bytes": 11674512,
-  "vertices": 15490,
+  "bytes": 11681784,
+  "vertices": 15496,
   "surfaces": 3,
   "source_surfaces": 19,
   "bounds_blender": [
     [
-      -0.551767110824585,
-      -0.579357385635376,
+      -0.5588449835777283,
+      -0.532068133354187,
       0.0
     ],
     [

@@ -16,6 +16,7 @@ public:
     void timeChanged(const int by) override;
 
     int cattleCount() const { return mNCattle; }
+    bool processingCattle() const { return mProcessing > 0; }
     void addCattle();
     bool noCattle() const { return mNoCattle; }
     void setNoCattle(const bool c);

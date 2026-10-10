@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "purpose": "Private campaign menu artwork evidence",
+  "records": [
+    {
+      "id": "first-light-harbor-menu-city-view",
+      "category": "development_campaign_thumbnail",
+      "repository_paths": [
+        "godot/assets/campaigns/first_light_harbor.png"
+      ],
+      "package_paths": [],
+      "creator": "Local project development; Godot render of an ordinary-playthrough city",
+      "rightsholder": "Retained map/world and development model sources; complete rights chain not verified",
+      "origin": "Static view rendered from a copied, protected native playthrough checkpoint",
+      "source_input_records": [
+        "heavengames-adventure-532",
+        "first-light-harbor private adaptation",
+        "Existing Godot development terrain/material/building/walker assets; their provenance retained"
+      ],
+      "upstream_url_and_revision": {
+        "source_checkpoint_sha256": "3dcb967eea9a540f4138967eb2e2261f943ea1ac2c34c3c6fca5775b7609273d"
+      },
+      "license_or_agreement": "Development only; retained-input commercial permissions unresolved",
+      "reviewed_sha256_by_file": {
+        "godot/assets/campaigns/first_light_harbor.png": "4405fb4548c1ea5d031860883f57b2adfc7fdefb8bd5d69cb01963fbf3ebf12b"
+      },
+      "generated_content_details": {
+        "tool": "Godot 4.6.3 Mobile/Metal; scripts/capture_campaign_art.gd",
+        "date": "2026-10-09",
+        "scope": "960x360 static screenshot; HUD/aura presentation hidden; original checkpoint intact; native rules/time/geometry unchanged"
+      },
+      "evidence_location": [
+        "build-content-research/campaign-library/art/subjects.json",
+        "build-content-research/campaign-library/art/engine.log",
+        "docs/GODOT_CAMPAIGN_LIBRARY.md"
+      ],
+      "attribution_requirements": [
+        "Retain underlying fan-map, engine and asset author/license notices"
+      ],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/visual integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Establish retained map/model/content commercial rights or replace inputs before public distribution",
+      "ships_in_release": false
+    },
+    {
+      "id": "bronze-river-menu-city-view",
+      "category": "development_campaign_thumbnail",
+      "repository_paths": [
+        "godot/assets/campaigns/bronze_river.png"
+      ],
+      "package_paths": [],
+      "creator": "Local project development; Godot render of an ordinary-playthrough city",
+      "rightsholder": "Retained map/world and development model sources; complete rights chain not verified",
+      "origin": "Static view rendered from a copied, protected native playthrough checkpoint",
+      "source_input_records": [
+        "heavengames-adventure-653",
+        "bronze-river private adaptation",
+        "Existing Godot development terrain/material/building/walker assets; their provenance retained"
+      ],
+      "upstream_url_and_revision": {
+        "source_checkpoint_sha256": "ed35b1ace080b5e7dbaaed903d48f05c81a35e87ccb74f14ac19a6afa44c3024"
+      },
+      "license_or_agreement": "Development only; retained-input commercial permissions unresolved",
+      "reviewed_sha256_by_file": {
+        "godot/assets/campaigns/bronze_river.png": "641e702d97d1fb6dbb67bc37d531b9b95b63c739aa0d419c2c8891fa265df0ba"
+      },
+      "generated_content_details": {
+        "tool": "Godot 4.6.3 Mobile/Metal; scripts/capture_campaign_art.gd",
+        "date": "2026-10-09",
+        "scope": "960x360 static screenshot; HUD/aura presentation hidden; original checkpoint intact; native rules/time/geometry unchanged"
+      },
+      "evidence_location": [
+        "build-content-research/campaign-library/art/subjects.json",
+        "build-content-research/campaign-library/art/engine.log",
+        "docs/GODOT_CAMPAIGN_LIBRARY.md"
+      ],
+      "attribution_requirements": [
+        "Retain underlying fan-map, engine and asset author/license notices"
+      ],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/visual integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Establish retained map/model/content commercial rights or replace inputs before public distribution",
+      "ships_in_release": false
+    },
+    {
+      "id": "stonewatch-menu-city-view",
+      "category": "development_campaign_thumbnail",
+      "repository_paths": [
+        "godot/assets/campaigns/stonewatch.png"
+      ],
+      "package_paths": [],
+      "creator": "Local project development; Godot render of an ordinary-playthrough city",
+      "rightsholder": "Retained map/world and development model sources; complete rights chain not verified",
+      "origin": "Static view rendered from a copied, protected native playthrough checkpoint",
+      "source_input_records": [
+        "heavengames-adventure-514",
+        "stonewatch private adaptation",
+        "Existing Godot development terrain/material/building/walker assets; their provenance retained"
+      ],
+      "upstream_url_and_revision": {
+        "source_checkpoint_sha256": "16cd9863c1e5b2ab072acc11ca3efe34cb8ac4db6682a734d76d1135dcefc164"
+      },
+      "license_or_agreement": "Development only; retained-input commercial permissions unresolved",
+      "reviewed_sha256_by_file": {
+        "godot/assets/campaigns/stonewatch.png": "33cd90c3573a4b619aff7d0b4bffa064981f8921523402cf8f83247b301e30cb"
+      },
+      "generated_content_details": {
+        "tool": "Godot 4.6.3 Mobile/Metal; scripts/capture_campaign_art.gd",
+        "date": "2026-10-09",
+        "scope": "960x360 static screenshot; HUD/aura presentation hidden; original checkpoint intact; native rules/time/geometry unchanged"
+      },
+      "evidence_location": [
+        "build-content-research/stonewatch/art/subjects.json",
+        "build-content-research/stonewatch/art/source.json",
+        "build-content-research/stonewatch/art/engine.log",
+        "docs/STONEWATCH.md"
+      ],
+      "attribution_requirements": [
+        "Retain underlying fan-map, engine and asset author/license notices"
+      ],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/visual integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-09",
+      "replacement_task": "Establish retained map/model/content commercial rights or replace inputs before public distribution",
+      "ships_in_release": false
+    },
+    {
+      "id": "sunlit-terraces-menu-city-view",
+      "category": "development_campaign_thumbnail",
+      "repository_paths": [
+        "godot/assets/campaigns/sunlit_terraces.png"
+      ],
+      "package_paths": [],
+      "creator": "Local project development; Godot render of an ordinary-playthrough city",
+      "rightsholder": "Retained map/world and development model sources; complete rights chain not verified",
+      "origin": "Static view rendered from a copied, protected native playthrough checkpoint",
+      "source_input_records": [
+        "heavengames-adventure-828",
+        "Sunlit Terraces private adaptation",
+        "Existing Godot development terrain/material/building/walker assets; their provenance retained"
+      ],
+      "upstream_url_and_revision": {
+        "source_checkpoint_sha256": "a1a0192756d0af3e9058127cc517448d73570290b76d35c84cc92e7d27d8bd97"
+      },
+      "license_or_agreement": "Development only; retained-input commercial permissions unresolved",
+      "reviewed_sha256_by_file": {
+        "godot/assets/campaigns/sunlit_terraces.png": "52f4ed2b7171c8dd8ecb3deea4736a15cc7eb0901b4c19285977d1f5d9d83ff3"
+      },
+      "generated_content_details": {
+        "tool": "Godot 4.6.3 Mobile/Metal; scripts/capture_campaign_art.gd",
+        "date": "2026-10-10",
+        "scope": "960x360 static screenshot; HUD/aura presentation hidden; original checkpoint intact; native rules/time/geometry unchanged"
+      },
+      "evidence_location": [
+        "build-content-research/sunlit-terraces/art/subjects.json",
+        "build-content-research/sunlit-terraces/art/source.json",
+        "build-content-research/sunlit-terraces/art/capture_campaign_art.log",
+        "docs/SUNLIT_TERRACES.md"
+      ],
+      "attribution_requirements": [
+        "Retain underlying fan-map, engine and asset author/license notices"
+      ],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/visual integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-10",
+      "replacement_task": "Establish retained map/model/content commercial rights or replace inputs before public distribution",
+      "ships_in_release": false
+    },
+    {
+      "id": "tidebound-covenant-menu-city-view",
+      "category": "development_campaign_thumbnail",
+      "repository_paths": [
+        "godot/assets/campaigns/tidebound_covenant.png"
+      ],
+      "package_paths": [],
+      "creator": "Local project development; Godot render of an ordinary-playthrough city",
+      "rightsholder": "Retained map/world and development model sources; complete rights chain not verified",
+      "origin": "Static view rendered from a copied, protected native playthrough checkpoint",
+      "source_input_records": [
+        "heavengames-adventure-510",
+        "Tidebound Covenant private adaptation",
+        "Existing Godot development terrain/material/building/walker assets; their provenance retained"
+      ],
+      "upstream_url_and_revision": {
+        "source_checkpoint_sha256": "6f8e5881d21f15dd573c420a6d47103a65ad17d9e3ef9b5e877ee1ad5ab89c9a"
+      },
+      "license_or_agreement": "Development only; retained-input commercial permissions unresolved",
+      "reviewed_sha256_by_file": {
+        "godot/assets/campaigns/tidebound_covenant.png": "55096216a5cd7fa77db43033893f1d280f9a99a7591ae4c86cab36542f3ff2ca"
+      },
+      "generated_content_details": {
+        "tool": "Godot 4.6.3 Mobile/Metal; scripts/capture_campaign_art.gd",
+        "date": "2026-10-10",
+        "scope": "960x360 static screenshot; HUD/aura presentation hidden; original checkpoint intact; native rules/time/geometry unchanged"
+      },
+      "evidence_location": [
+        "build-content-research/tidebound-covenant/art/subjects.json",
+        "build-content-research/tidebound-covenant/art/source.json",
+        "build-content-research/tidebound-covenant/art/capture_campaign_art.log",
+        "docs/TIDEBOUND_COVENANT.md"
+      ],
+      "attribution_requirements": [
+        "Retain underlying fan-map, engine and asset author/license notices"
+      ],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/visual integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-10",
+      "replacement_task": "Establish retained map/model/content commercial rights or replace inputs before public distribution",
+      "ships_in_release": false
+    }
+  ]
+}

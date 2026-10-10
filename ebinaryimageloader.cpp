@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <filesystem>
+#include <set>
 
 #include "esplitbinary.h"
 #include "egamedir.h"
@@ -84,7 +85,10 @@ std::shared_ptr<eTexture> eBinaryImageLoader::load(SDL_Renderer* const r,
 
     std::ifstream file(epath, std::ios::in | std::ios::binary);
     if(!file) {
-        printf("Could not open '%s'\n", epath.c_str());
+        static std::set<std::string> reportedMissing;
+        if(reportedMissing.insert(epath).second) {
+            printf("Could not open '%s'\n", epath.c_str());
+        }
         return nullptr;
     }
 

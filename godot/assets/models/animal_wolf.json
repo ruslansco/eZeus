@@ -1,20 +1,22 @@
 {
   "asset": "animal_wolf",
+  "variant_of": null,
   "source": "art/characters/animals/build_animal.py",
   "file": "animal_wolf.glb",
-  "bytes": 4481472,
-  "vertices": 10274,
+  "bytes": 10219600,
+  "vertices": 10476,
   "surfaces": 2,
+  "source_surfaces": 4,
   "bounds_blender": [
     [
-      -0.07275931537151337,
-      -0.3912067711353302,
-      -0.0012817077804356813
+      -0.07911144196987152,
+      -0.3749085068702698,
+      -0.0012817119713872671
     ],
     [
-      0.072980135679245,
-      0.4002939462661743,
-      0.4468138515949249
+      0.07920557260513306,
+      0.3982020318508148,
+      0.4818436801433563
     ]
   ],
   "walk_samples": 24,
@@ -22,13 +24,23 @@
   "stride_tiles": 0.64,
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
-  "idle_mode": "static_authored_held_pose",
-  "source_surfaces": 4,
   "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "field_work": {
+    "revision": "authored_field_work_v1",
+    "clips": {
+      "fallen": 12,
+      "animalattack": 24,
+      "restanimal": 12
+    },
+    "adapter": "eZeus/tools/godot_field_work_art.py",
+    "clock": "native gameplay time; carrying/leading follows horizontal travel",
+    "state": "read-only native action, actual load and cattle-leading observations; no root-motion or production changes"
+  },
   "memory_optimization": {
     "version": 1,
-    "targets_before": 70,
-    "targets_after": 36,
+    "targets_before": 166,
+    "targets_after": 98,
     "uv_attributes_removed": 0
   }
 }

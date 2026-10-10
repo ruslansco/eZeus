@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "purpose": "Private fifth-campaign adaptation evidence; excluded from shipping",
+  "records": [
+    {
+      "id": "tidebound-covenant-chapters-v1",
+      "category": "campaign_adaptation_prototype",
+      "repository_paths": [
+        "content/scenarios/tidebound_covenant_chapters.json",
+        "build-content-research/tidebound-covenant/current.json"
+      ],
+      "package_paths": [],
+      "creator": "Project development; Codex-assisted narrative and scenario authoring",
+      "rightsholder": "Retained terrain/world: Nightwolf / David Masters and underlying rightsholders; complete chain not verified",
+      "origin": "New three-parent-chapter Atlantean settlement, domestic fleece/science and timber-supply campaign on reviewed Tributaries 3 parent terrain/world",
+      "upstream_url_and_revision": {
+        "url": "https://zeus.heavengames.com/downloads/showfile.php?fileid=510",
+        "source_pak_sha256": "0ba1cef045bde7bc62d2cd27c744adddfef6553173dafe602a713ec2b39ef777",
+        "recipe_version": 1
+      },
+      "license_or_agreement": "No explicit commercial redistribution permission established",
+      "evidence_location": [
+        "docs/TIDEBOUND_COVENANT.md",
+        "docs/custom-adventures.provenance.json",
+        "build-content-research/tidebound-covenant/current.json"
+      ],
+      "reviewed_sha256_by_file": {
+        "content/scenarios/tidebound_covenant_chapters.json": "564b247c81049b56de80fd0c2746d8151f8fbe1e6fc3d4808743a601f846e879",
+        "build-content-research/tidebound-covenant/build-1791637478099902000/eZeus/Adventures/Tidebound Covenant Chapters/ATTRIBUTION.md": "511fb81887cebf970286bde32480c2266d44271f94d00b537724f1ee04e0e083",
+        "build-content-research/tidebound-covenant/build-1791637478099902000/eZeus/Adventures/Tidebound Covenant Chapters/Tidebound Covenant Chapters.txt": "d40f23fe54894395253ad284709055e4745e3d1822444980296cda775c1055c4",
+        "build-content-research/tidebound-covenant/build-1791637478099902000/eZeus/Adventures/Tidebound Covenant Chapters/Tidebound Covenant Chapters.epak": "253921e64ae6031ab5f668a7176bd86b6de019cae64936decaa70ec89eda8698",
+        "build-content-research/tidebound-covenant/build-1791637478099902000/eZeus/Adventures/Tidebound Covenant Chapters/Tidebound Covenant Chapters_ru.txt": "43e9a996c9e0f036923406a1e2809206937dd12bfed0fa178cb6282c0c2cbd2a"
+      },
+      "source_input_records": [
+        "heavengames-adventure-510",
+        "Existing original-game/development compatibility resources; release review pending"
+      ],
+      "generated_content_details": {
+        "tool": "Codex",
+        "date": "2026-10-10",
+        "scope": "New English/Russian story, briefings, endings, goals and phased permissions; no imports, exports or tribute; native parent terrain and Atlantean science retained"
+      },
+      "attribution_requirements": [
+        "Retain Tributaries 3 / Nightwolf / David Masters, source URL, untouched archive/text/hashes and campaign ATTRIBUTION.md"
+      ],
+      "other_license_obligations": [],
+      "obligations_completed": false,
+      "review_status": "needs_evidence",
+      "reviewer": "Codex implementation/integrity review; not commercial clearance",
+      "reviewed_at": "2026-10-10",
+      "replacement_task": "Human playtesting/pacing; actual Windows/minimum machines; retained map/world/content commercial permission or replacement before release",
+      "ships_in_release": false,
+      "notes": {
+        "native_import_verified": true,
+        "authoring_checks": 9,
+        "validation_pending": false,
+        "ordinary_playthrough": {
+          "okay": true,
+          "chapters": 3,
+          "commands": 496,
+          "service_calls": 2410,
+          "test_commands_used": false,
+          "final_population": 757.0,
+          "final_treasury": 27293.0,
+          "proof": {
+            "committed_reserves": {
+              "2": 8192,
+              "3": 4096
+            },
+            "largest_annual_local_production": {
+              "64": 32,
+              "4096": 21,
+              "8192": 26
+            },
+            "no_trade": true
+          }
+        },
+        "visible_review_checks": {
+          "en": 52,
+          "ru": 52
+        },
+        "shared_menu_review_checks": {
+          "en": 137,
+          "ru": 137
+        }
+      }
+    }
+  ]
+}

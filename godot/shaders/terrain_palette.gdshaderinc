@@ -1,6 +1,7 @@
 // Shared Mediterranean ground palette for the native board (ground.gdshader) and the
 // countryside around it (surroundings.gdshader), so the two meet without a seam.
-// cover follows the native field: 0 plain land (fertile meadow included), 0.3 chopped forest/scrub, 0.75 forest.
+// cover follows the native field: 0 plain land, 0.3 chopped forest/scrub, 0.75 forest;
+// fertile meadow is a separate weight drawn with meadow_colour().
 // Needs `surface_noise`. Albedos are linear; the scene uses a linear tonemap.
 
 // Large-scale noise from two rotated lookups: the seamless texture's blend skirt
@@ -39,6 +40,23 @@ vec3 land_colour(vec2 p, float cover) {
 	}
 	// Clumped grass and fine tufts break up the flat colour at street scale.
 	return colour * (0.88 + clumps * 0.16) * (0.93 + tufts * 0.12);
+}
+
+// Fertile land: ripening hay and wild grain, warm gold against the grazed green, with
+// greener swathes, darker seed heads and a scatter of poppies and daisies.
+vec3 meadow_colour(vec2 p) {
+	float broad = macro_noise(p, 31.0);
+	float swathes = texture(surface_noise, p / 4.1 + vec2(2.6, 8.3)).r;
+	float heads = texture(surface_noise, p / 0.47 + vec2(7.1, 3.4)).r;
+	float blooms = texture(surface_noise, p / 0.29 + vec2(4.4, 1.9)).r;
+	vec3 hay = mix(vec3(0.300, 0.255, 0.075), vec3(0.385, 0.320, 0.105), broad);
+	hay = mix(hay, vec3(0.175, 0.230, 0.060), smoothstep(0.52, 0.78, swathes) * 0.55);
+	hay *= 0.86 + heads * 0.2;
+	hay = mix(hay, vec3(0.200, 0.150, 0.060), smoothstep(0.72, 0.84, heads) * 0.45);
+	float poppy = smoothstep(0.80, 0.84, blooms);
+	float daisy = smoothstep(0.80, 0.84, 1.0 - blooms) * 0.7;
+	hay = mix(hay, vec3(0.55, 0.06, 0.03), poppy * 0.75);
+	return mix(hay, vec3(0.70, 0.68, 0.58), daisy * 0.6);
 }
 
 vec3 sand_colour(vec2 p) {

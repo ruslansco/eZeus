@@ -48,8 +48,9 @@ static func number(value: float) -> String:
 	var whole := int(round(value))
 	var digits := str(absi(whole))
 	var grouped := ""
+	var separator := " " if TranslationServer.get_locale().begins_with("ru") else ","
 	while digits.length() > 3:
-		grouped = "," + digits.right(3) + grouped
+		grouped = separator + digits.right(3) + grouped
 		digits = digits.left(digits.length() - 3)
 	return ("-" if whole < 0 else "") + digits + grouped
 

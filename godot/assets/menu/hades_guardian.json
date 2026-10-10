@@ -2,7 +2,7 @@
   "asset": "hades_guardian",
   "source": "eZeus/tools/make_hades_guardian.py",
   "source_model": "res://assets/models/walker_hades.glb",
-  "source_sha256": "1cbe2133133bea40e9c32b17119a59989ff633e0d8cedc39e35fea97268f1b32",
+  "source_sha256": "d4cdc7c7660e6f86acda00217b0995b011329069941027eb378ac8961b93ba66",
   "art_direction": "underworld_lord_v2",
   "method": "same idle_00 geometry, no morph targets, 1.85 root scale; menu stone finish",
   "vertices": 19523,

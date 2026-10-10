@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "purpose": "Explicit private development library; no shipping clearance",
+  "campaigns": [
+    {
+      "id": "first_light_harbor_chapters",
+      "ref": "First Light Harbor Chapters",
+      "featured": true,
+      "start_focus": [
+        127,
+        -34
+      ],
+      "art": "res://assets/campaigns/first_light_harbor.png",
+      "hidden": false,
+      "ships_in_release": false,
+      "rights_status": "needs_evidence",
+      "profile_roots": [
+        "build-content-research/first-light-harbor/play/chapters/saves"
+      ],
+      "source_pak_sha256": "989f096ddbdf5f8f053e7805dcf078effcf8697f088b2a00b49281377a643b48",
+      "title": {
+        "en": "First Light Harbor",
+        "ru": "Гавань первого света"
+      },
+      "chapters": {
+        "en": [
+          "A Shore Worth Staying On",
+          "Homes for the Winter",
+          "The Harbor Keeps Its Word"
+        ],
+        "ru": [
+          "Берег, на котором хочется остаться",
+          "Дома к зиме",
+          "Гавань держит слово"
+        ]
+      }
+    },
+    {
+      "id": "bronze_river_chapters",
+      "ref": "Bronze River Chapters",
+      "featured": true,
+      "start_focus": [
+        73,
+        14
+      ],
+      "art": "res://assets/campaigns/bronze_river.png",
+      "hidden": false,
+      "ships_in_release": false,
+      "rights_status": "needs_evidence",
+      "profile_roots": [
+        "build-content-research/bronze-river/play/chapters/saves"
+      ],
+      "source_pak_sha256": "d997082df87a9880f5b6b4066256c0c89050a790ba999d1c1cd7ce76da5ff51a",
+      "title": {
+        "en": "Bronze River",
+        "ru": "Бронзовая река"
+      },
+      "chapters": {
+        "en": [
+          "A Town Before a Forge",
+          "Ore, Hands and Hearths",
+          "The River Covenant"
+        ],
+        "ru": [
+          "Город прежде кузницы",
+          "Руда, труд и домашний очаг",
+          "Речное соглашение"
+        ]
+      }
+    },
+    {
+      "id": "stonewatch_chapters",
+      "ref": "Stonewatch Chapters",
+      "featured": true,
+      "start_focus": [
+        125,
+        15
+      ],
+      "art": "res://assets/campaigns/stonewatch.png",
+      "hidden": false,
+      "ships_in_release": false,
+      "rights_status": "needs_evidence",
+      "profile_roots": [
+        "build-content-research/stonewatch/play/chapters/saves"
+      ],
+      "source_pak_sha256": "450a507cf59ca8b4abf19307ede142dfdaa30ff7e2b96d29f93cad056edf3ddf",
+      "title": {
+        "en": "Stonewatch",
+        "ru": "Каменный дозор"
+      },
+      "chapters": {
+        "en": [
+          "A Refuge in the Forest",
+          "The Watch Takes Its Post",
+          "Theseus at the Gate"
+        ],
+        "ru": [
+          "Убежище среди леса",
+          "Дозор занимает пост",
+          "Тесей у ворот"
+        ]
+      }
+    },
+    {
+      "id": "sunlit_terraces_chapters",
+      "ref": "Sunlit Terraces Chapters",
+      "featured": true,
+      "start_focus": [
+        100,
+        -5
+      ],
+      "art": "res://assets/campaigns/sunlit_terraces.png",
+      "hidden": false,
+      "ships_in_release": false,
+      "rights_status": "needs_evidence",
+      "profile_roots": [
+        "build-content-research/sunlit-terraces/play/chapters/saves"
+      ],
+      "source_pak_sha256": "01a69cc5d1d3665208e726113d58f713af3dd814c7a93c8ec53dc6dc56b7caa2",
+      "title": {
+        "en": "Sunlit Terraces",
+        "ru": "Солнечные террасы"
+      },
+      "chapters": {
+        "en": [
+          "The First Orange Harvest",
+          "Oil for the Household",
+          "The Shared Cellar"
+        ],
+        "ru": [
+          "Первый урожай апельсинов",
+          "Масло для дома",
+          "Общий погреб"
+        ]
+      }
+    },
+    {
+      "id": "tidebound_covenant_chapters",
+      "ref": "Tidebound Covenant Chapters",
+      "featured": true,
+      "start_focus": [
+        110,
+        -45
+      ],
+      "art": "res://assets/campaigns/tidebound_covenant.png",
+      "hidden": false,
+      "ships_in_release": false,
+      "rights_status": "needs_evidence",
+      "profile_roots": [
+        "build-content-research/tidebound-covenant/play/chapters/saves"
+      ],
+      "source_pak_sha256": "0ba1cef045bde7bc62d2cd27c744adddfef6553173dafe602a713ec2b39ef777",
+      "title": {
+        "ru": "Завет побережья",
+        "en": "Tidebound Covenant"
+      },
+      "chapters": {
+        "ru": [
+          "Хлеб прежде торговли",
+          "Город ткачей",
+          "Припасы для дальнего берега"
+        ],
+        "en": [
+          "Bread Before Bargains",
+          "The Woven City",
+          "Supplies for the Far Shore"
+        ]
+      }
+    },
+    {
+      "id": "first_light_harbor_previous",
+      "ref": "First Light Harbor",
+      "featured": false,
+      "hidden": true,
+      "ships_in_release": false,
+      "rights_status": "needs_evidence",
+      "profile_roots": [
+        "build-content-research/first-light-harbor/play/saves"
+      ],
+      "title": {
+        "en": "First Light Harbor (previous version)",
+        "ru": "Первая гавань (предыдущая версия)"
+      },
+      "chapters": {}
+    }
+  ]
+}

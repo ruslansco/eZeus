@@ -74,8 +74,9 @@ func update(walkers: Dictionary, camera_position: Vector3, batches, models: Dict
 	for id in wanted:
 		if not active.has(id):
 			acquire(walkers[id], id, batches, models)
-	# Keep a few skeletal models instantiated ahead of need, one per call.
-	if pool.size() + active.size() < PREWARM and batches.warmed(SkeletalCitizen.MODEL):
+	# Prepare spares only while this detail is in use. A new physician far below a
+	# zoomed-out camera must not load/instantiate six unused skeletons during play.
+	if not near.is_empty() and pool.size() + active.size() < PREWARM and batches.warmed(SkeletalCitizen.MODEL):
 		pool.append(instantiate_skeletal(batches, models))
 
 func acquire(entry: Dictionary, id: int, batches, models: Dictionary) -> void:

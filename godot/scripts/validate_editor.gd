@@ -21,6 +21,10 @@ func check(value: bool, message: String) -> void:
 	okay = okay and value
 
 func _initialize() -> void:
+	if not OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH").is_empty():
+		Engine.set_meta("ezeus_settings_path", OS.get_environment("EZEUS_REVIEW_SETTINGS_PATH"))
+	if not OS.get_environment("EZEUS_REVIEW_SAVE_DIRECTORY").is_empty():
+		Engine.set_meta("ezeus_save_directory", OS.get_environment("EZEUS_REVIEW_SAVE_DIRECTORY"))
 	call_deferred("run")
 
 func copy_tree(from: String, to: String) -> void:
@@ -257,6 +261,17 @@ func run() -> void:
 	check(kept.has(spot) and int(kept[spot][3]) & 4, "the painted water is kept")
 	var named: Dictionary = core.command("editor_city %d" % index)
 	check(str(named.get("name", "")) == "Testopolis", "the renamed city is kept")
+	# A terrain adaptation gets independent files, one blank episode and no colonies.
+	var before_fork: Array = core.snapshot(true).tiles
+	check(core.command("editor_single_parent Editor Test").get("error") == "name_taken" and core.command("editor_single_parent ../invalid").get("error") == "invalid_name", "fork refuses existing adventures and unsafe names")
+	var forked: Dictionary = core.command("editor_single_parent Editor Fork")
+	check(forked.parent.size() == 1 and forked.colonies.is_empty() and core.command("editor_episode p 0").goals.is_empty() and core.snapshot(true).tiles == before_fork, "fork retains parent terrain and resets episode/colony content")
+	check(core.command("editor_difficulty 9").get("error") == "invalid_difficulty" and core.command("editor_difficulty 1").get("kind") == "editor", "editor difficulty is validated and explicitly changed")
+	check(core.command("editor_save").saved, "fork writes its own native adventure")
+	core.close_city()
+	var fork_state: Dictionary = core.open_adventure(engine, "folder", "Editor Fork", "en")
+	check(not fork_state.has("error") and core.command("episode").episode_count == 1 and int(core.command("difficulty").value) == 1, "zero-colony fork opens as a playable native adventure with the chosen difficulty")
+	check(core.command("editor_single_parent Illegal").get("error") == "not_editing", "a running adventure refuses authoring forks")
 	core.close_city()
 	check(core.command("editor").get("error", "") != "", "with nothing open the editor's commands are refused")
 	core.set_adventures_directory("")

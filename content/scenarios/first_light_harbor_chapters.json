@@ -1,0 +1,211 @@
+{
+  "id": "first_light_harbor_chapters",
+  "development_name": "First Light Harbor Chapters",
+  "profile_namespace": "chapters",
+  "version": 4,
+  "source_record": "heavengames-adventure-532",
+  "rights_status": "needs_evidence",
+  "ships_in_release": false,
+  "target_minutes": [
+    30,
+    60
+  ],
+  "start_year": -1200,
+  "initial_funds": 18000,
+  "difficulty": 1,
+  "trade": {
+    "buys": {
+      "8192": 36,
+      "64": 24
+    },
+    "sells": {
+      "4096": 24,
+      "2048": 16
+    }
+  },
+  "chapters": [
+    {
+      "id": "settlement",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 160
+        },
+        {
+          "type": 7,
+          "housing": 1,
+          "count": 64
+        },
+        {
+          "type": 12,
+          "enum1": 64,
+          "count": 16
+        }
+      ]
+    },
+    {
+      "id": "daily_life",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "hospital",
+        "warehouse",
+        "cardingShed",
+        "dairy",
+        "fleeceVendor",
+        "bibliotheke",
+        "park",
+        "bench",
+        "flowerGarden"
+      ],
+      "goals": [
+        {
+          "type": 0,
+          "count": 400
+        },
+        {
+          "type": 7,
+          "housing": 3,
+          "count": 64
+        },
+        {
+          "type": 12,
+          "enum1": 4096,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "id": "prosperity",
+      "allowed_buildings": [
+        "commonHouse",
+        "road",
+        "fountain",
+        "maintenanceOffice",
+        "watchPost",
+        "granary",
+        "commonAgora",
+        "foodVendor",
+        "wheatFarm",
+        "carrotsFarm",
+        "onionsFarm",
+        "fishery",
+        "huntingLodge",
+        "bridge",
+        "hospital",
+        "warehouse",
+        "cardingShed",
+        "dairy",
+        "fleeceVendor",
+        "bibliotheke",
+        "park",
+        "bench",
+        "flowerGarden",
+        "timberMill",
+        "tradePost",
+        "taxOffice",
+        "oilVendor",
+        "observatory",
+        "palace"
+      ],
+      "goals": [
+        {
+          "type": 12,
+          "enum1": 8192,
+          "count": 16
+        },
+        {
+          "type": 11,
+          "count": 1,
+          "working_route": 1
+        },
+        {
+          "type": 13,
+          "count": 500
+        },
+        {
+          "type": 12,
+          "enum1": 64,
+          "count": 24
+        },
+        {
+          "type": 9,
+          "count": 0,
+          "enum1": 2,
+          "enum2": 6
+        }
+      ],
+      "challenge": {
+        "event_type": 22,
+        "god": 12,
+        "year": 0,
+        "month": 3,
+        "duration_days": 90
+      }
+    }
+  ],
+  "text": {
+    "en": {
+      "Adventure_Title": "First Light Harbor",
+      "Adventure_Introduction": "A small fleet has found a sheltered bay between the rivers. Three chapters will turn this landing place into a permanent home: feed the first families, prepare comfortable homes, and build a harbor that can keep its promises.",
+      "Adventure_Complete": "The harbor lights stay bright through the winter. Grain fills the stores, timber reaches the quay, and neighboring captains know your city can keep its promises. Your first settlement is ready to welcome a new generation.",
+      "Parent_Episode_1_Title": "A Shore Worth Staying On",
+      "Parent_Episode_1_Introduction": "The council has chosen this shore for a permanent home. Use the prepared roads to connect houses, fountains and maintenance offices. Build wheat farms on meadow tiles, then a granary, a common agora and a food vendor. Leave enough people for every workplace. Welcome 160 residents, feed at least 64 people in Shacks or better, and produce 16 wheat in one year. You can pause while planning. Your city and treasury carry into the next chapter.",
+      "Parent_Episode_1_Complete": "The first harvest has reached the market. Families are staying, and the council can plan for a permanent town.",
+      "Parent_Episode_2_Title": "Homes for the Winter",
+      "Parent_Episode_2_Introduction": "The next fleet brings families who want more than a temporary shelter. Science, clothing and small gardens are now available. Add a storehouse, sheep on meadow, a carding shed and a fleece vendor. A bibliotheke supplies science; place flower gardens close to homes, and keep workshops and stores farther away to preserve appeal. Reach 400 residents, house at least 64 in Homesteads or better, and produce eight fleece in one year. Keep food and maintenance services from the first chapter working.",
+      "Parent_Episode_2_Complete": "Warm clothing reaches the homes, scholars walk the streets, and the winter settlement feels like a city. The harbor can now look beyond its own shores.",
+      "Parent_Episode_3_Title": "The Harbor Keeps Its Word",
+      "Parent_Episode_3_Introduction": "Reedhaven is ready to trade. Timber mills, trading posts, a palace, tax offices and an observatory are now available. Reedhaven buys timber and wheat and sells fleece and olive oil. Place timber mills near forest. Build a palace so tax collectors can collect revenue. Build a road-connected trade post, staff it, enable an export and set its stock limit above zero (for example, 32 timber). Produce 16 timber and 24 wheat in a year and earn annual profit of 500. Three months into this chapter, Poseidon will interrupt trade for ninety days. Keep local food and clothing supplies ready. Trade reopens without payment or battle; remain through the six-month settling period and complete every objective. There is no defeat deadline.",
+      "Parent_Episode_3_Complete": "The harbor has endured the sea's interruption and kept its promises. Trade is flowing, the stores are supplied, and First Light can welcome the next generation.",
+      "parent_name": "First Light",
+      "partner_name": "Reedhaven",
+      "leader": "Harbor Council"
+    },
+    "ru": {
+      "Adventure_Title": "Гавань первого света",
+      "Adventure_Introduction": "Небольшой флот нашёл защищённую бухту между реками. За три главы вы превратите место высадки в постоянный город: накормите первые семьи, подготовьте удобные дома и создайте гавань, способную держать слово.",
+      "Adventure_Complete": "Огни гавани не погасли зимой. Склады полны зерна, древесина поступает к причалу, а соседние капитаны знают: ваш город держит слово. Первое поселение готово принять новое поколение.",
+      "Parent_Episode_1_Title": "Берег, на котором хочется остаться",
+      "Parent_Episode_1_Introduction": "Совет выбрал этот берег для постоянного поселения. Соедините готовыми дорогами дома, фонтаны и службы обслуживания. Постройте пшеничные фермы на плодородной земле, затем амбар, малую агору и продовольственную лавку. Оставьте достаточно жителей для всех рабочих мест. Примите 160 жителей, накормите не менее 64 человек в домах второго уровня или выше и произведите 16 пшеницы за год. Планировать можно на паузе. Город и казна перейдут в следующую главу.",
+      "Parent_Episode_1_Complete": "Первый урожай поступил на рынок. Семьи остаются, и совет может планировать постоянный город.",
+      "Parent_Episode_2_Title": "Дома к зиме",
+      "Parent_Episode_2_Introduction": "Следующий флот привозит семьи, которым нужен настоящий дом. Теперь доступны наука, одежда и небольшие сады. Добавьте склад, овец на плодородной земле, чесальную мастерскую и шерстяную лавку. Библиотека даст научное обслуживание. Сажайте цветы рядом с домами, а мастерские и склады размещайте дальше, чтобы сохранить привлекательность. Достигните 400 жителей, поселите не менее 64 человек в домах четвёртого уровня или выше и произведите восемь шерсти за год. Продолжайте снабжать город едой и обслуживать здания первой главы.",
+      "Parent_Episode_2_Complete": "В дома поступает тёплая одежда, по улицам ходят учёные, а зимнее поселение становится настоящим городом. Гавань готова обратиться к соседям.",
+      "Parent_Episode_3_Title": "Гавань держит слово",
+      "Parent_Episode_3_Introduction": "Камышовая гавань готова торговать. Теперь доступны лесопилки, торговые посты, дворец, налоговые службы и обсерватория. Сосед покупает древесину и пшеницу и продаёт шерсть и оливковое масло. Ставьте лесопилки рядом с лесом. Для сбора налогов нужен дворец. Соедините торговый пост с дорогой, обеспечьте его сотрудниками, включите экспорт и задайте лимит хранения больше нуля, например 32 древесины. Произведите за год 16 древесины и 24 пшеницы и получите годовую прибыль 500. Через три месяца после начала главы Посейдон прервёт торговлю на девяносто дней. Подготовьте местные запасы еды и одежды. Торговля возобновится без платы и сражения; проживите шестимесячный период становления и выполните все цели. Срока поражения нет.",
+      "Parent_Episode_3_Complete": "Гавань выдержала испытание морем и сдержала обещания. Торговля идёт, склады снабжены, а Первый свет готов принять новое поколение.",
+      "parent_name": "Первый свет",
+      "partner_name": "Камышовая гавань",
+      "leader": "Совет гавани"
+    }
+  }
+}

@@ -1,7 +1,6 @@
 extends SceneTree
 
 const Batches = preload("res://scripts/building_batches.gd")
-const Main = preload("res://scripts/main.gd")
 
 var okay := true
 var checks := 0

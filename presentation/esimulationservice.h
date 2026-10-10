@@ -1,4 +1,5 @@
 #pragma once
+#include <deque>
 #include <memory>
 #include <map>
 #include <unordered_map>
@@ -16,6 +17,7 @@
 #include "engine/eeventdata.h"
 #include "engine/etradepartners.h"
 #include "buildings/epatrolbuildingbase.h"
+enum class eEvent;
 class eGameBoard;
 class eCampaign;
 struct eEpisode;
@@ -25,6 +27,7 @@ class eSoldierBanner;
 struct eEnlistSession;
 class eEditorSession;
 class eMissile;
+class eRuins;
 struct eGameWidgetSettings;
 class eSimulationService {
 public:
@@ -54,7 +57,10 @@ public:
     void setSaveDirectory(const std::string& directory);
     // Writes the city to "<save directory>/<name>.ez" in the native format (the SDL game opens it too). The name
     // is 1 to 64 bytes of letters (UTF-8 allowed), digits, spaces, '_', '-' or '.', never starting with '.'.
-    std::string save(const std::string& name);
+    std::string save(const std::string& name, const std::optional<std::array<double,5>>& camera=std::nullopt);
+    std::string checkSave(const std::string& path) const;
+    // Bounded informational prefix only; loading still requires full preflight.
+    std::string saveInfo(const std::string& path) const;
     std::string snapshot(bool full = false);
     std::string command(const std::string& command);
     std::string diagnostics() const;
@@ -79,6 +85,7 @@ private:
     std::vector<std::string> takeSounds();
     // One overlay (native view mode): visible buildings and walker kinds, value columns, supplies, appeal grid.
     std::string overlay(const std::string& name);
+    std::string cityAttention(); // Read-only; never changes the selected inspector or its edit token.
     std::string placement(const std::string& name, int x, int y, int orientation, int partner = -1);
     std::optional<eTradePartner> tradePartner(eCityId cid, int index, bool water);
     std::string tradePartners();
@@ -119,6 +126,9 @@ private:
     ePatrolBuildingBase* routeTarget(eBuilding* b) const;
     std::string routeJson();
     std::string inspect(int x, int y);
+    std::vector<eRuins*> ruinGroup(eRuins* seed) const;
+    uint64_t trackRuinDemolition(const std::vector<eRuins*>& ruins);
+    std::string ruinDemolitionReason(const std::vector<eRuins*>& ruins) const;
     // Drag-to-place roads: the tiles of the native drag path (the same path finder and ground rules as the
     // SDL view) between two tiles, the placement verdict for each, and the one-step build.
     bool roadPath(int x1, int y1, int x2, int y2, std::vector<eTile*>& tiles);
@@ -132,6 +142,16 @@ private:
     // steps from the pressed tile toward the released one, parks on every tile; each footprint is built or skipped on its own.
     std::vector<std::pair<int,int>> areaCells(const std::string& name, int x1, int y1, int x2, int y2) const;
     std::string areaPreview(const std::string& name, int x1, int y1, int x2, int y2);
+    // Demolition is dragged over a rectangle as the SDL view's erase tool is: every building with a tile in it (roads, houses,
+    // a whole agora or temple for any one of its tiles) and every forest tile, in the player's own districts, except what burns.
+    // Landmarks (a palace, a temple, a stocked agora) are listed as protected: they go only with the player's confirmation.
+    struct DemolitionPlan {
+        std::vector<std::pair<eBuilding*,bool>> buildings; // each target once, and whether it needs the confirmation
+        std::vector<eTile*> forests;
+        bool outside = false;
+    };
+    void demolitionPlan(int x1, int y1, int x2, int y2, DemolitionPlan& plan) const;
+    std::string demolitionAreaPreview(int x1, int y1, int x2, int y2);
     // Columns, avenues and boulevards are dragged along a path (see esimulationservice.cpp): the plan, or the build.
     std::string pathCommand(const std::string& name, int x1, int y1, int x2, int y2, bool build);
     // A gatehouse is two 2x2 towers around a one-tile passage; the verdict for one of its tiles (empty when it fits).
@@ -158,12 +178,24 @@ private:
     double mAccumulator = 0;
     uint64_t mSequence = 0, mNextId = 1, mTicks = 0, mNextEvent = 1;
     std::map<const void*, uint64_t> mIds;
-    // Presentation facing for new square buildings; save-facing migration is pending.
-    std::map<const void*, int> mOrientations;
+    // Presentation facing follows stable native identity, never transient pointers
+    // or presentation IDs. Parent episodes share board -1; colonies use their index.
+    using FacingKey=std::array<int,8>;
+    std::map<FacingKey,int> mFacings;
+    FacingKey facingKey(const eBuilding* building) const;
+    std::string facingMetadata() const;
+    bool readFacingMetadata(const std::string& text);
+    std::string mSaveFailure; // Only set by an explicitly enabled validator.
+    std::optional<std::array<double,5>> mSavedCamera; // Native tile x/y, yaw, pitch, distance.
+    int mCameraBoard=-1;
     std::vector<stdptr<eBuilding>> mUndoBuildings;
     int mUndoRefund = 0, mUndoGameTime = 0;
     std::chrono::steady_clock::time_point mUndoRealTime;
     stdptr<eBuilding> mDemolitionTarget;
+    std::vector<stdptr<eBuilding>> mRuinDemolitionTargets;
+    std::vector<stdptr<eBuilding>> mRuinInspectionTargets;
+    // The landmarks the last area demolition preview listed; a confirmed area demolition must match them.
+    std::vector<stdptr<eBuilding>> mAreaProtected;
     uint64_t mDemolitionToken = 0;
     stdptr<eBuilding> mInspectionTarget;
     stdptr<ePatrolBuildingBase> mRouteBuilding;
@@ -202,11 +234,19 @@ private:
     std::array<double,10> mOpenProfile{};
     struct Event { std::string title, text, brief; eEventData data; std::string kind; };
     std::map<uint64_t, Event> mEvents;
+    // Hazard alerts (the SDL view's top-right alert tiles): one per hazard event of the player's city, kept for the last few
+    // so a snapshot never misses one. The front end shows each id once, as an icon of its own, and goes to its tile when clicked.
+    struct Alert { uint64_t id; std::string kind; int x, y; };
+    std::deque<Alert> mAlerts;
+    uint64_t mNextAlert = 1;
+    void raiseAlert(eEvent kind, const eEventData& data);
     std::mutex mSoundLock;
     std::vector<std::string> mSounds;
     std::string mMusicMode = "city";
     std::string mSentBanners;
-    std::string mSentFires;
+    std::string mSentFires, mSentAuras;
+    // The tiles the camera shows (x0 y0 x1 y1, set by `view_box`): the engine plays the sounds that the SDL view plays only for what is on screen.
+    std::atomic<int> mViewX0{0}, mViewY0{0}, mViewX1{-1}, mViewY1{-1};
     void observeMonsterMissile(eMissile* missile, int phase);
     struct MonsterShot {
         stdptr<eMissile> native;
@@ -219,6 +259,10 @@ private:
     };
     std::map<const eMissile*,MonsterShot> mMonsterShots;
     std::vector<std::string> mMonsterEffects;
+    // Arrows, spears and rocks thrown by soldiers and towers: launch records (bounded, drained by each snapshot) for the front end to fly.
+    std::vector<std::string> mThrownShots;
+    uint64_t mNextThrownShot = 1;
+    std::mutex mThrownLock;
     uint64_t mNextMonsterShot = 1, mNextMonsterEffect = 1;
     std::shared_ptr<eEnlistSession> mEnlist;
 };

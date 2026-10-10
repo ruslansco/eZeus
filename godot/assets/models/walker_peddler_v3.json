@@ -1,0 +1,86 @@
+{
+  "asset": "walker_peddler_v3",
+  "variant_of": "walker_peddler",
+  "source": "art/characters/people/build_person.py",
+  "file": "walker_peddler_v3.glb",
+  "bytes": 6506240,
+  "vertices": 16050,
+  "surfaces": 3,
+  "source_surfaces": 40,
+  "bounds_blender": [
+    [
+      -0.3029065430164337,
+      -0.1602245569229126,
+      -0.006553112529218197
+    ],
+    [
+      0.30235230922698975,
+      1.173964500427246,
+      0.8793284296989441
+    ]
+  ],
+  "walk_samples": 24,
+  "idle_samples": 12,
+  "stride_tiles": 0.64,
+  "rights_status": "needs_evidence",
+  "material_mode": "painted_anatomical_skin_rest_clavi_procedural_realtime_finishes",
+  "draw_batching": "vertex_palette_compatible_PBR",
+  "idle_mode": "static_authored_held_pose",
+  "character": {
+    "revision": "natural_people_v1",
+    "identities": [
+      {
+        "name": "Peddler",
+        "sex": "male",
+        "profile": {
+          "age": 30,
+          "jaw": 0.9365528198600447,
+          "cheek": 0.9597864214046783,
+          "nose": -2.864840362446679e-05,
+          "chin": -0.0006323906748085498,
+          "eye": 1.000799020373646,
+          "hair": [
+            [
+              0.09,
+              0.05,
+              0.025
+            ],
+            [
+              0.24,
+              0.14,
+              0.07
+            ]
+          ],
+          "hair_length": 0.022632713771740372,
+          "beard_length": 0.036,
+          "grey": 0.04,
+          "seed": 120835904,
+          "skin": [
+            0.53,
+            0.365,
+            0.255
+          ]
+        },
+        "body_height": 0.8700601623859257,
+        "body_sha256": "59a029cab533cf39418e4858448e3ecaf254c208ebf46b3774479aa73b7bccfb",
+        "clavi_srgb": [
+          0.18,
+          0.3,
+          0.56
+        ]
+      }
+    ],
+    "vertex_budget": 22000,
+    "allocation_target": 15000,
+    "shader": "res://shaders/character.gdshader",
+    "surfaces": "UV2.x * 8: skin/cloth/hair/eye/leather/metal/wood/other/tunica; floor(UV2.y * 8): person",
+    "rest_coordinates": "Godot UV: local rest X/(1-Z), stable through morph poses",
+    "seed": "local stable hashes, never simulation RNG"
+  },
+  "memory_optimization": {
+    "version": 1,
+    "targets_before": 129,
+    "targets_after": 96,
+    "uv_attributes_removed": 0
+  }
+}

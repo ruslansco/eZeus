@@ -1,20 +1,22 @@
 {
   "asset": "wall_9",
-  "source": "art/walls/build_sprites.py",
+  "variant_of": null,
+  "source": "eZeus/tools/godot_defences.py",
   "file": "wall_9.glb",
-  "bytes": 32996,
-  "vertices": 224,
-  "surfaces": 1,
+  "bytes": 147792,
+  "vertices": 1030,
+  "surfaces": 2,
+  "source_surfaces": 8,
   "bounds_blender": [
     [
-      -0.5009999871253967,
-      -0.2800000011920929,
+      -0.5049999952316284,
+      -0.4000000059604645,
       0.0
     ],
     [
-      0.2800000011920929,
-      0.5009999871253967,
-      0.9859999418258667
+      0.4000000059604645,
+      0.5049999952316284,
+      2.240000009536743
     ]
   ],
   "walk_samples": 0,
@@ -22,13 +24,16 @@
   "stride_tiles": null,
   "rights_status": "needs_evidence",
   "material_mode": "preview_vertex_colours_with_grouped_PBR_finishes_not_full_procedural_bake",
-  "idle_mode": null,
-  "source_surfaces": 2,
   "draw_batching": "vertex_palette_compatible_PBR",
-  "memory_optimization": {
-    "version": 1,
-    "targets_before": 0,
-    "targets_after": 0,
-    "uv_attributes_removed": 0
+  "idle_mode": null,
+  "defence": {
+    "revision": 3,
+    "wall_walk": 2.0,
+    "tower_platform": 3.05,
+    "tower_safe_half": 0.58,
+    "wall_lane_half": 0.15,
+    "design": "Original Olympian marble adaptation: coursed white stone, Ionic propylon, carved laurel relief, restrained blue/red meander and bronze details",
+    "source": "eZeus/tools/godot_defences.py",
+    "rights_status": "needs_evidence"
   }
 }

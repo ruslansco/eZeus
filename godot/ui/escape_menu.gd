@@ -65,7 +65,7 @@ func _ready() -> void:
 	var views:=GridContainer.new();views.columns=2
 	views.add_theme_constant_override("h_separation",20);views.add_theme_constant_override("v_separation",6)
 	column.add_child(views)
-	for action in ["city","world","army","mythology","trade"]:add_action(views,action)
+	for action in ["city","world","army","mythology","trade","attention","guide"]:add_action(views,action)
 	access.changed.connect(fit)
 	resized.connect(fit)
 	retranslate();fit()
