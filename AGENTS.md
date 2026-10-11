@@ -1,5 +1,27 @@
 # eZeus / Godot 3D development instructions
 
+## World-map wood frames and painted rulers — 10 October 2026
+
+`ui/world_map_skin.gd` defines original atlas wood/gold/ivory frame, slate goods
+inset, ruler frame and enamel action variations. Merge only these with the shared
+Theme generator's `--atlas-only`; never save scaled Themes. Keep the live map
+viewport uncovered, title/hint content inside the frame, adaptive action columns,
+reachable return controls and compact portraits/spacing at enlarged UI sizes.
+Only the current city's unusable self-dealings are hidden; foreign eligibility
+and exact native world/army/goods/diplomacy/quest callbacks remain authoritative.
+
+World-map `envoy_portrait.gd` uses `ruler_card=true`: prefer supplied painted
+`assets/leaders/<leader or city slug>.png` for both owned and foreign cities,
+including `player_ruler.png` when provided for the player's ruler. Locale aliases
+must resolve the same image. Missing art shows a neutral civic seal, never a
+city landscape, unrelated person or the old rendered envoy bust. Correspondence
+retains its separate static fallback. Remaining supplied image paths/coverage are
+pending the user's folder location. No new native IDs/rules/RNG/saves or portrait
+3D viewports are added. Run owned sequential EN/RU atlas and native UI reviews;
+record teardown diagnostics separately from assertion results. GameCursor releases
+registered hardware textures in `_exit_tree` while RenderingServer is alive;
+preserve its cached runtime sizes, hotspots and native cursor roles.
+
 ## Simplified people and image-only panels — 10 October 2026
 
 The user's cleanup/performance request supersedes rich city face/hand allocations.

@@ -1402,11 +1402,11 @@ func place_monster_card() -> void:
 	if monster_card == null or not monster_card.visible:
 		return
 	var rail: Control = hud.get_node("%EventRail")
-	var top: float = maxf(hud.get_node("%ResourceRibbon").get_global_rect().end.y+12,hud.get_node("%ObjectivesButton").get_global_rect().end.y+8)
+	var top: float = maxf(rail.get_global_rect().end.y + 8, hud.get_node("%ResourceRibbon").get_global_rect().end.y + 12)
 	var wanted: float = monster_card.list.get_combined_minimum_size().y + 80
-	var room: float = maxf(0,hud.get_node("%BottomBar").position.y-top-8)
-	monster_card.offset_right = rail.position.x-8-hud.size.x
-	monster_card.offset_left = monster_card.offset_right-minf(maxf(400,monster_card.get_combined_minimum_size().x),hud.size.x-100)
+	var room: float = maxf(0, hud.get_node("%BottomBar").position.y - top - 8)
+	monster_card.offset_right = rail.position.x - 8 - hud.size.x
+	monster_card.offset_left = monster_card.offset_right - minf(maxf(400, monster_card.get_combined_minimum_size().x), hud.size.x - 100)
 	monster_card.offset_top = top
 	monster_card.offset_bottom = top + minf(wanted, room)
 

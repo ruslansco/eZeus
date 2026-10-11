@@ -95,6 +95,10 @@ func fit_atlas_controls() -> void:
 	heading.offset_bottom = heading.offset_top+heading.get_combined_minimum_size().y
 	var toolbar:Control=%AtlasToolbar
 	var width:=minf(660,maxf(250,atlas.size.x-24))
+	var tools: GridContainer = %AtlasOverview.get_parent()
+	var controls_width := 0.0
+	for button in tools.get_children(): controls_width += button.get_combined_minimum_size().x
+	tools.columns = 4 if controls_width+18+56 <= width else 2
 	toolbar.offset_left=-width*.5;toolbar.offset_right=width*.5
 	var height := toolbar.get_combined_minimum_size().y
 	toolbar.offset_top = -height-16; toolbar.offset_bottom = -16
@@ -103,10 +107,17 @@ func fit_atlas_controls() -> void:
 	var longest := 0.0
 	for button in actions.get_children(): longest = maxf(longest,button.get_combined_minimum_size().x)
 	var viewport: Vector2 = get_node("Themed").size
-	side.custom_minimum_size.x = minf(440,maxf(360,viewport.x*.32))
+	get_node("Themed/Margin/Row/Side/Column").add_theme_constant_override("separation",3 if viewport.y < 670 else 8)
+	# Widen the city card before adding a third action row at larger text sizes.
+	var width_limit := minf(560,viewport.x*.48)
+	side.custom_minimum_size.x = minf(width_limit,maxf(360,maxf(viewport.x*.30,longest*3+76)))
+	var side_style: StyleBox = get_node("/root/UiAccess").shared.get_stylebox("panel","AtlasPanel").duplicate()
+	side_style.content_margin_top = 24 if viewport.y < 670 else 30
+	side_style.content_margin_bottom = side_style.content_margin_top
+	side.add_theme_stylebox_override("panel",side_style)
 	actions.columns = 3 if longest*3+12 <= side.size.x-64 else 2
 	if envoy_portrait != null:
-		var portrait_size := 104 if viewport.y < 670 else 168
+		var portrait_size := 88 if viewport.y < 670 else 168
 		envoy_portrait.custom_minimum_size = Vector2(portrait_size,portrait_size)
 	# Empty native fields should not consume scarce reading space at larger scales.
 	for label in [leader,regard_name,tribute,status]: label.visible = not label.text.is_empty()

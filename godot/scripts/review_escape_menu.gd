@@ -79,7 +79,7 @@ func window() -> Window:
 	var windows: Array=city.hud.get_children().filter(func(child):return child is Window and child.visible)
 	return windows[-1] if not windows.is_empty() else null
 func capture(name: String) -> void:
-	DisplayServer.window_move_to_foreground();await frames(12);await RenderingServer.frame_post_draw
+	DisplayServer.window_move_to_foreground();await frames(12);RenderingServer.force_draw(true,.016)
 	root.get_texture().get_image().save_png("res://captures/escape-"+name+"-"+language+".png")
 func run() -> void:
 	for argument in OS.get_cmdline_user_args():
@@ -133,13 +133,19 @@ func run() -> void:
 	hud.set_decision({});hud.set_minimap_open(false,true)
 	city.open_escape_menu();await frames();await right_click(Vector2(500,400))
 	check(not is_instance_valid(city.escape_menu),"right-click closes game menu through its existing return callback")
-	var speed_popup: PopupMenu=hud.overlay_catalog.get_popup()
+	# The legacy overlay MenuButton is hidden by the current dock. Exercise the
+	# existing nested-popup dismissal handler on a visible owned HUD fixture.
+	var speed_popup := PopupMenu.new()
+	hud.add_child(speed_popup); speed_popup.add_item("Review popup")
+	hud._attach_right_click_back(speed_popup)
+	DisplayServer.window_move_to_foreground(); await frames(3)
 	speed_popup.popup(Rect2i(Vector2i(300,300),Vector2i(180,140)))
 	await frames()
 	check(speed_popup.visible,"a nested popup opens for right-click dismissal")
 	# Popup OS events enter through Window.window_input in local coordinates.
 	await right_click(Vector2(speed_popup.size)*.5,speed_popup)
 	check(not speed_popup.visible,"right-click folds a nested popup without choosing an item")
+	speed_popup.queue_free()
 	city.close_inspection()
 	hud.set_messages_open(true);await frames();await escape()
 	check(not hud.message_panel.visible and not is_instance_valid(city.escape_menu),"Escape closes journal without opening settings")

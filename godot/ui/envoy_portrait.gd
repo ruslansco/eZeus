@@ -62,7 +62,7 @@ func set_city(city: Dictionary) -> void:
 		queue_redraw()
 		return
 
-	var is_my_city: bool = bool(city.get("current", false)) or bool(city.get("mine", false)) or String(city.get("type", "")) != "foreign"
+	var is_my_city: bool = bool(city.get("current", false)) or bool(city.get("mine", false)) or String(city.get("type", "")) in ["parent","colony"]
 	var c_slug := _city_slug(String(city.get("name", "")))
 	var l_slug := _leader_slug(String(city.get("leader", "")))
 

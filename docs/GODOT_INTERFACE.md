@@ -1,5 +1,22 @@
 # City interface — 3 October 2026
 
+## World atlas frames and ruler cards — 10 October 2026
+
+`world_map_skin.gd` adds scoped shared Theme variations for the atlas border,
+walnut title/toolbar/city panels, slate goods inset, gold portrait surround and
+larger enamel actions. Use generator `--atlas-only`. Border-only map drawing leaves
+the live viewport visible. Full text determines title/toolbar height and action
+columns; compact views reclaim empty field/spacing height. Native goods remain in
+their bounded reading scroller. The current city hides only its unusable economic/
+military self-dealings. Native handlers and foreign-city eligibility are unchanged.
+
+The map's existing EnvoyPortrait Control now opts into painted-ruler selection for
+every city type. Supplied art resolves by leader/city aliases; `player_ruler.png`
+can cover the player's ruler. Missing images show a neutral civic seal and never
+fall back to a city landscape or a rendered bust. No portrait SubViewport/model is
+allocated. Complete supplied-portrait coverage awaits the user's folder location;
+correspondence portrait fallback behavior remains separate.
+
 ## Calendar and three-speed transport panel — 10 October 2026
 
 The clock under the circular map now places its full date on a quiet slate row,

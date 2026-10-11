@@ -53,12 +53,17 @@ func run() -> void:
 					var combat_clip: bool = label in ["fight", "fight2", "die", "bless", "curse", "disappear", "appear"]
 					var declared: int = int(manifest.get("gathering",{}).get(str(label)+"_samples",0))
 					var gathering_clip: bool = label in ["collect","carry","deposit"] and declared > 0 and int(clip_sizes[label]) == declared
-					clips_ok = clips_ok and (combat_clip or gathering_clip)
+					var field_clips: Dictionary = manifest.get("field_work", {}).get("clips", {})
+					var field_clip: bool = field_clips.has(label) and int(clip_sizes[label]) == int(field_clips[label])
+					clips_ok = clips_ok and (combat_clip or gathering_clip or field_clip)
 					for frame in int(clip_sizes[label]):
 						clips_ok = clips_ok and names.has("%s_%02d" % [label, frame])
 				for label in ["collect","carry","deposit"]:
 					var declared: int = int(manifest.get("gathering",{}).get(label+"_samples",0))
 					if declared > 0: clips_ok = clips_ok and int(clip_sizes.get(label,0)) == declared
+				var declared_field_clips: Dictionary = manifest.get("field_work", {}).get("clips", {})
+				for label in declared_field_clips:
+					clips_ok = clips_ok and int(clip_sizes.get(label,0)) == int(declared_field_clips[label])
 				frames_ok = frames_ok and clips_ok
 				clip_frames = max(clip_frames, names.size() - 35)
 				var base: PackedVector3Array = mesh.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]

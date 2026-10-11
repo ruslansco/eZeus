@@ -6,7 +6,7 @@ The root has six choices: Return to city, Saved games, Settings, City views,
 Help and Main menu. Resume is the primary full-width action; the four category
 choices form a compact grid, and the confirmed exit sits below a divider.
 Subpages have the same title/content/Back order. Settings uses concise category
-names, with language beneath them; Gameplay contains only its own options.
+names; Interface owns language and Gameplay contains only its own options.
 
 Navigation pages never scroll or shrink their text. At the supported 720p and
 larger sizes, 52-pixel enamel actions, 18-pixel baseline labels and measured

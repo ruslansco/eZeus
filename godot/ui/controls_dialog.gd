@@ -258,4 +258,5 @@ func restore_defaults() -> void:
 func close() -> void:
 	if access != null:
 		access.dialog_open = false
+	hide()
 	queue_free()

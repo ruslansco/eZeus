@@ -56,3 +56,11 @@ func refresh() -> void:
 		var name: String = SHAPES[shape]
 		Input.set_custom_mouse_cursor(textures[name],shape,hotspots[name])
 		registered_shapes.append(shape)
+
+func _exit_tree() -> void:
+	# Input retains custom cursor textures. Release them while RenderingServer is
+	# still alive instead of leaving their destruction until engine teardown.
+	if DisplayServer.get_name() != "headless":
+		for shape in registered_shapes: Input.set_custom_mouse_cursor(null,shape)
+	registered_shapes.clear()
+	textures.clear(); cache.clear(); hotspots.clear(); originals.clear()

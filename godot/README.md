@@ -1,5 +1,19 @@
 # Godot 3D city rebuild
 
+## World-map frames and painted city rulers — 10 October 2026
+
+The world atlas, city card and map controls now carry walnut, antique-gold trim,
+ivory corners and blue-enamel buttons. Readable slate goods panels keep the map
+and city information clear. Enlarged layouts adapt their spacing and action
+columns; the current city no longer displays unusable self-diplomacy buttons.
+
+City ruler cards use installed painted portraits for both foreign cities and
+**Your city**. The old rendered busts and city-landscape substitutions are removed
+from map cards. Cities without matching supplied artwork show a neutral civic seal
+while the remaining portrait folder is pending. Relaunch **Launch Godot 3D.command**
+to load the frames. Native map controls, city actions, stock and return flow retain
+their behavior.
+
 ## Lighter people and image-only portraits — 10 October 2026
 
 103 people assets now use fitted scalp/short-beard shapes and painted eyebrows,

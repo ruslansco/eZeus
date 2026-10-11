@@ -22,7 +22,7 @@ static func open(parent: Node, include_navigation := false, core_node: Node = nu
 	return dialog
 
 func _init() -> void:
-	exclusive = true
+	exclusive = false
 
 func _ready() -> void:
 	get_tree().root.get_node("UiAccess").dialog_open=true

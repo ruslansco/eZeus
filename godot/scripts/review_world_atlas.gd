@@ -259,6 +259,21 @@ func run() -> void:
 		check(labels_fit,"full native action labels clear the gold bevel at enlarged interface size")
 		await capture("large-%d"%int(144000/scale_size.x))
 	root.content_scale_size=Vector2i(1440,900);await frames(8)
+	DisplayServer.window_set_size(Vector2i(1280,720))
+	root.get_node("UiAccess").apply(125,130); await frames(20)
+	for city_index in [selected_before,foreign]:
+		wm.select_city(city_index); await frames(16)
+		var bounds := Rect2(Vector2.ZERO,root.get_visible_rect().size)
+		var side: Control = wm.get_node("Themed/Margin/Row/Side")
+		var fits := bounds.encloses(side.get_global_rect()) and bounds.encloses(wm.get_node("%AtlasToolbar").get_global_rect())
+		for button in [wm.request_button,wm.fulfil_button,wm.gift_button,wm.raid_button,wm.conquer_button,wm.aid_button,wm.quests_button,wm.get_node("%Back")]:
+			if not button.is_visible_in_tree(): continue
+			var required: Vector2 = button.get_theme_font("font").get_string_size(button.text,HORIZONTAL_ALIGNMENT_LEFT,-1,button.get_theme_font_size("font_size")) + button.get_theme_stylebox("normal").get_minimum_size()
+			fits = fits and side.get_global_rect().encloses(button.get_global_rect()) and button.size.x >= required.x and button.size.y >= 46
+		check(fits,"owned/foreign card and full labels fit 720p at 125% UI and 130% text")
+		await capture("text-large-"+str(city_index))
+	root.get_node("UiAccess").apply(100,100)
+	DisplayServer.window_set_size(size); await frames(16)
 	# Native army fractions are projected; presentation never invents their progress.
 	var a:Dictionary=wm.world.cities[0];var b:Dictionary=wm.world.cities[1]
 	wm.armies_layer.set_state([{"from":a.index,"to":b.index,"frac":.4,"reason":"raid","size":2}],wm.world.cities,wm.image_rect())

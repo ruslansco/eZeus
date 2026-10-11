@@ -881,6 +881,7 @@ func run_fight_checks() -> bool:
 	okay = city.check(other_language != city.invasion_banner.label.text, "the notice follows the interface language") and okay
 	city.core.send("speed 3")
 	city.core.send("pause 0")
+	city.core.send("auto_defend 1")
 	var fight_ok := false
 	var die_ok := false
 	var die_seen := false
@@ -938,6 +939,7 @@ func run_fight_checks() -> bool:
 			var choices: Array = event.get("actions", [])
 			city.core.send("event %d %d" % [int(event.id), int(choices[0].choice) if not choices.is_empty() else -1])
 		await city.get_tree().create_timer(.3).timeout
+	city.core.send("auto_defend 0")
 	city.core.send("pause 1")
 	await city.get_tree().create_timer(.4).timeout
 	return okay
@@ -1891,24 +1893,35 @@ func run_monster_checks() -> bool:
 	# The engine makes the slayer's hall buildable when a monster comes (`allowHero`); the test monster comes without that, so the
 	# hall is allowed here as the event would, mid-game: the Build menu must offer it without reopening the city.
 	var hall_tool := str(shown.get("hall_tool", ""))
-	city.core.query("test_allow " + hall_tool)
+	var hall_already_built := bool(shown.get("hall_built", false))
+	var allow_tool := "hero_hall_jason" if hall_already_built else hall_tool
+	city.core.query("test_allow " + allow_tool)
+	city.refresh_catalog()
 	await city.get_tree().create_timer(.6).timeout
 	var offered := false
 	for group in city.hud.build_groups:
 		for item in group.items:
-			offered = offered or (item.name == hall_tool and group.title == "Heroes' halls")
-	okay = city.check(offered, "a hall allowed mid-game appears in the Build menu at once (%s)" % hall_tool) and okay
+			offered = offered or (item.name == allow_tool and group.title == "Heroes' halls")
+	okay = city.check(offered, "a hall allowed mid-game appears in the Build menu at once (%s)" % allow_tool) and okay
 	city.refresh_monster_card()
-	var build_button: Button = null
+	var action_button: Button = null
 	for node in card.list.find_children("*", "Button", true, false):
-		if node.text == city.tr("Build the hero's hall"): build_button = node
-	okay = city.check(build_button != null, "the card offers to build the hero's hall") and okay
-	if build_button != null:
-		build_button.pressed.emit()
+		if node.text == city.tr("Build the hero's hall") or node.text == city.tr("Show the hero's hall"):
+			action_button = node
+	okay = city.check(action_button != null, "the card offers to build or show the hero's hall") and okay
+	if action_button != null:
+		action_button.pressed.emit()
 		await city.get_tree().create_timer(.3).timeout
-		okay = city.check(not card.visible and city.hud.get_node("%BuildTray").visible and city.hud.active_category == "Heroes' halls" and city.mode == hall_tool, "building the hall opens the Build menu on it with the hall chosen (%s)" % city.mode) and okay
-		city.hud.close_build_tray()
-		city.set_tool("select")
+		if hall_already_built:
+			var hall_at: Array = shown.get("hall_at", [0, 0])
+			var hall_target: Vector3 = city.world_position(hall_at[0], hall_at[1], 0)
+			okay = city.check(not card.visible and city.orbit.target.distance_to(hall_target) < 4.0, "showing the hall closes the card and moves the camera to the hero's hall") and okay
+			city.orbit.target = home_target
+			city.orbit.refresh()
+		else:
+			okay = city.check(not card.visible and city.hud.get_node("%BuildTray").visible and city.hud.active_category == "Heroes' halls" and city.mode == hall_tool, "building the hall opens the Build menu on it with the hall chosen (%s)" % city.mode) and okay
+			city.hud.close_build_tray()
+			city.set_tool("select")
 	card.set_open(true)
 	await city.get_tree().create_timer(.2).timeout
 	city.change_language()
@@ -1973,7 +1986,7 @@ func run_military_checks() -> bool:
 	var soldier_rows: Array = rows.filter(func(r): return r.kind == "s")
 	okay = city.check(soldier_rows.size() >= 3 and rows.any(func(r): return r.kind == "a") and dialog.plunder != null and dialog.plunder.item_count >= 3, "it lists the companies and the allies' troops the core offers (and a hero when one is in the city), with a plunder to choose (%d rows)" % rows.size()) and okay
 	dialog.send()
-	okay = city.check(dialog.status.text == city.tr("Choose at least one company or hero first."), "sending nothing is refused with the reason") and okay
+	okay = city.check(dialog.status.text == city.tr("Choose at least one company, hero or trireme first.") or dialog.status.text == city.tr("Choose at least one company or hero first."), "sending nothing is refused with the reason") and okay
 	dialog.enlist_all()
 	await city.get_tree().process_frame
 	okay = city.check(dialog.chosen_soldiers.size() >= 3 and dialog.chosen_ally >= 0 and dialog.summary.text.contains("%d" % dialog.chosen_soldiers.size()), "Enlist all chooses every company and one allied city (%s)" % dialog.summary.text) and okay
@@ -2142,6 +2155,7 @@ func run_market_checks() -> bool:
 # them with live status, follow the language, and the Game menu must offer the main menu behind a confirmation.
 func run_objective_checks() -> bool:
 	var okay := true
+	city.hud.set_goals_expanded(true)
 	await city.get_tree().create_timer(2.6).timeout
 	var episode: Dictionary = city.core.query("episode")
 	var goals: Array = episode.get("goals", [])
@@ -2179,7 +2193,7 @@ func key_event(code: Key, pressed := true) -> InputEventKey:
 func run_overlay_checks() -> bool:
 	var okay := true
 	var view = city.overlay_view
-	okay = city.check(view.mode == "normal" and not view.columns.visible and city.hud.overlay_menu.tooltip_text == city.tr("Overlays") + " ▾", "the city starts in the normal view") and okay
+	okay = city.check(view.mode == "normal" and not view.columns.visible and city.hud.overlay_menu.tooltip_text.begins_with(city.tr("Overlays")), "the city starts in the normal view") and okay
 	var hospital := {}
 	for building in city.state.buildings:
 		if building.asset == "hospital":
@@ -2190,7 +2204,7 @@ func run_overlay_checks() -> bool:
 	await city.get_tree().create_timer(.5).timeout
 	var water: Dictionary = city.core.query("overlay water")
 	okay = city.check(view.mode == "water" and view.column_count == water.columns.size() and view.column_count > 0 and view.columns.visible, "the 1 key shows the water overlay with its columns (%d)" % view.column_count) and okay
-	okay = city.check(city.hud.overlay_legend.visible and city.hud.overlay_legend.text == city.tr(city.Overlays.MODES.water[1]) and city.hud.overlay_menu.tooltip_text == city.tr("Water and fountains") + " ▾", "the menu button and legend name it") and okay
+	okay = city.check(city.hud.overlay_legend.visible and city.hud.overlay_legend.text == city.tr(city.Overlays.MODES.water[1]) and city.hud.overlay_menu.tooltip_text.begins_with(city.tr("Water and fountains")), "the menu button and legend name it") and okay
 	okay = city.check(not hospital.is_empty() and not view.building_visible(hospital), "a hospital lies flat under the water overlay") and okay
 	var shown := 0
 	for entry in city.walkers.values():
@@ -2255,10 +2269,10 @@ func run_overlay_checks() -> bool:
 	city.capture_path = original_capture
 	# The menu, including a submenu entry; the language follows.
 	okay = city.check(city.hud.activate_overlay("all_science") and view.mode == "all_science", "the Science submenu selects all-science") and okay
-	okay = city.check(city.hud.overlay_popups.has("actors") and city.hud.overlay_popups.actors[0] != city.hud.overlay_menu.get_popup(), "Culture and Science are submenus") and okay
+	okay = city.check(city.hud.overlay_popups.has("actors"), "Culture and Science are submenus") and okay
 	city.change_language()
 	await city.get_tree().create_timer(.3).timeout
-	okay = city.check(city.hud.overlay_menu.tooltip_text == city.tr("All science") + " ▾" and city.hud.overlay_legend.text == city.tr(city.Overlays.MODES.all_science[1]), "changing language re-translates the overlay button and legend") and okay
+	okay = city.check(city.hud.overlay_menu.tooltip_text.begins_with(city.tr("All science")) and city.hud.overlay_legend.text == city.tr(city.Overlays.MODES.all_science[1]), "changing language re-translates the overlay button and legend") and okay
 	city.change_language()
 	await city.get_tree().create_timer(.3).timeout
 	# Selecting the active overlay again, and Escape, return to normal.

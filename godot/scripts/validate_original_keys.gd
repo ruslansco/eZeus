@@ -62,7 +62,9 @@ func run(scene) -> bool:
 	expected.append("")
 	check(distribution.slice(0, expected.size()) == expected, "Shift+4 goes through the Distribution tab's categories the city has, then closes %s" % str(distribution))
 	city.hud.close_build_tray()
-	var speed := int(city.state.get("speed", 0))
+	city.core.send("speed 1")
+	await city.get_tree().create_timer(.2).timeout
+	var speed := int(city.state.get("speed", 1))
 	await press(KEY_BRACKETRIGHT)
 	for frame in 6: await city.get_tree().process_frame
 	check(int(city.state.get("speed", -1)) == mini(speed + 1, 3) and city.hud.speed_buttons[mini(speed + 1, 3) - 1].button_pressed, "] makes the game faster (speed %d)" % int(city.state.get("speed", -1)))
@@ -172,11 +174,18 @@ func run(scene) -> bool:
 		city.pick_tile(view * Vector2(.2, .7))
 		check(not city.hotkeys.holds_placement(city) and city.picked != held, "and M lets it follow the pointer again")
 		city.set_tool("select")
+	for child in city.hud.get_children():
+		if child is Window and (child.has_method("show_page") or child.title == city.tr("City")):
+			child.hide()
+			child.queue_free()
+	var access: Node = city.get_tree().root.get_node_or_null("UiAccess")
+	if access != null:
+		access.dialog_open = false
 	await press(KEY_MINUS)
-	await city.get_tree().create_timer(.3).timeout
-	var windows: Array = city.hud.get_children().filter(func(child): return child is Window and child.visible and child.title == city.tr("City"))
+	await city.get_tree().create_timer(.4).timeout
+	var windows: Array = city.hud.get_children().filter(func(child): return child is Window and child.visible and (child.title == city.tr("City") or child.has_method("show_page")))
 	check(windows.size() == 1, "Classic: - opens the City window (the overview)")
-	for window in windows: window.queue_free()
+	for window in windows: window.hide(); window.queue_free()
 	await city.get_tree().process_frame
 	await press(KEY_P)
 	for frame in 8: await city.get_tree().process_frame

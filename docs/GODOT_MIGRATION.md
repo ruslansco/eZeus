@@ -1,5 +1,20 @@
 # Preserve the simulation, replace the presentation
 
+## World-atlas presentation and painted rulers — 10 October 2026
+
+Original walnut/gold/ivory art now frames the live atlas, title, toolbar, city card
+and portrait. Enamel actions, slate goods and measured responsive spacing protect
+readability at enlarged UI sizes. `world_map_skin.gd` merges scoped variations
+through `--atlas-only`. The native current city omits unusable self-dealings;
+foreign permissions and every existing callback remain intact.
+
+Map portraits resolve installed painted ruler images for owned and foreign cities,
+with no model viewport or old rendered-bust fallback. Unmatched cities use a
+neutral civic seal while the full generated portrait folder is requested from the
+user. Image coverage is pending; frame/navigation implementation is complete.
+Camera geometry/projection, native stocks/actions, decision callbacks, pause/queue
+and save authority are retained. See world-atlas contracts and current validation.
+
 ## Simplified city people and portrait allocation — 10 October 2026
 
 Implemented: `city_people_v2` removes protruding scalp curls, beard locks, thick

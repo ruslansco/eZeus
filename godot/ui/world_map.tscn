@@ -123,9 +123,11 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 6
 
-[node name="AtlasControls" type="HBoxContainer" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools"]
+[node name="AtlasControls" type="GridContainer" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
 mouse_filter = 2
 
 [node name="AtlasOverview" type="Button" parent="Themed/Margin/Row/MapFrame/MapBox/AtlasToolbar/Tools/AtlasControls"]

@@ -1,5 +1,32 @@
 # Living regional world atlas — 2–3 October 2026
 
+## Wood-and-gold atlas and painted rulers — 10 October 2026
+
+The live viewport now sits inside the approved original walnut/gold/ivory frame
+family. Its border draws no center, leaving the regional scene visible. Matching
+title plaque, toolbar, city side panel and portrait frame reserve reading insets;
+slate goods surfaces and larger enamel actions keep information clear. Shared
+generator-owned `ui/world_map_skin.gd` types merge with `--atlas-only`, preserving
+unrelated Theme work and independent UiAccess scaling. Titles/toolbars follow
+their minimum reading height. Compact views reduce spacing and portrait footprint;
+action columns follow measured complete native labels. Empty fields consume no
+height, and the current city omits unusable self-diplomacy actions. Foreign-city
+eligibility and all original native handlers remain intact.
+
+World cards now set `envoy_portrait.ruler_card=true`, resolving installed painted
+art by leader first, then city, for both owned and foreign cities. English/Russian
+aliases remain presentation-only. `assets/leaders/player_ruler.png`, when supplied,
+is the owned-city fallback. Missing art uses a neutral civic seal instead of an
+unrelated ruler, a city landscape or the previous rendered bust. The remaining
+generated image folder has been requested from the user; complete ruler coverage,
+including the designated Atlantis/Athens player portrait, is pending those files.
+Correspondence uses its separate historical static portrait fallback. Map cards
+allocate no live portrait viewport or model and draw no native RNG.
+
+These changes preserve normalized anchors, camera controls, native stock/trade/
+military/quest authority, exact city hold/return and disabled hidden atlas rendering.
+They do not change atlas terrain, model geometry or simulation/saved coordinates.
+
 ## Water and keyboard refinement — 4 October 2026
 
 `atlas_land.gdshader` discards coast coverage below 0.5, including the shadow pass.

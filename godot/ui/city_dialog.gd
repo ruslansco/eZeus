@@ -45,6 +45,9 @@ var history_chart: Control
 var history_series := 0
 var history_span := 0
 
+func _init() -> void:
+	exclusive = false
+
 func _ready() -> void:
 	title = tr("City")
 	ok_button_text = tr("Done")

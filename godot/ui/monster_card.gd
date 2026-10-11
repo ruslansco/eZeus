@@ -59,12 +59,13 @@ func attach(rail_column: Control, close_icon: Texture2D, monster_icon: Texture2D
 # The snapshot's count of monsters at large. The button appears with the first one (and pulses once to catch the eye) and goes with
 # the last; the card closes when nothing is left to show.
 func set_count(value: int) -> void:
-	if value == count:
+	if value == count and button.text == (str(count) if count > 0 else ""):
 		return
 	var arrived := value > count
 	count = value
 	button.visible = count > 0
-	button.set_badge(str(count) if count > 0 else "")
+	button.text = str(count) if count > 0 else ""
+	button.set_badge(button.text)
 	if count == 0:
 		set_open(false)
 	elif arrived:
@@ -80,6 +81,7 @@ func set_open(open: bool) -> void:
 		opened.emit()
 
 func set_monsters(entries: Array) -> void:
+	set_count(entries.size())
 	if entries == monsters:
 		return
 	monsters = entries
